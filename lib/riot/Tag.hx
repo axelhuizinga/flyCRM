@@ -1,5 +1,5 @@
 package riot;
-
+import js.html.Node;
 /**
  * ...
  * @author axel@cunity.me

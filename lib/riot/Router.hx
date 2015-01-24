@@ -8,6 +8,6 @@ package riot;
  extern class Router
 {
 
-	 static public function exec(collection:String, id:String, action:String) :Void:
+	static public function exec(collection:String, id:String, action:String) :Void;
 	
 }

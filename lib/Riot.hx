@@ -12,14 +12,15 @@ import riot.Tag;
 extern class Riot
 {
 
-	public static function mount(selector:String, ?opts:Dynamic):Array<Tag>
+	static function mount(selector:String, ?opts:Dynamic):Array<Tag>;
 	
-	public static function route(to:String ):Void;
+	static function mountTo(domNode:Node, tagName:String, ?opts:Dynamic);
 	
-	//public static function render(tmpl:String, data:Dynamic, ?escape_fn:Dynamic):String;
+	@:overload ( function route(collection:String, id:String, action:String):Void{})
+	static function route(to:String):Void;
+
+	static function observable(el:Dynamic):Observable;
 	
-	public static function observable(el:Dynamic):Observable;
-	
-	public static function update():Array<Tag>;
+	static function update():Array<Tag>;
 	
 }
