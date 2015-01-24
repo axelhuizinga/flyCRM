@@ -1,2 +1,4 @@
-src/php/config/config.private.php
+bin/php/config/config.private.php
+lib/me
+
 
