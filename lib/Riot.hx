@@ -1,5 +1,5 @@
 package;
-import js.html.Node;
+import js.html.Element;
 import riot.Observable;
 import riot.Tag;
 
@@ -14,7 +14,7 @@ extern class Riot
 
 	static function mount(selector:String, ?opts:Dynamic):Array<Tag>;
 	
-	static function mountTo(domNode:Node, tagName:String, ?opts:Dynamic);
+	static function mountTo(domNode:Element, tagName:String, ?opts:Dynamic);
 	
 	@:overload ( function route(collection:String, id:String, action:String):Void{})
 	static function route(to:String):Void;
