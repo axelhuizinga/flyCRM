@@ -1,5 +1,6 @@
 package;
 import js.html.Element;
+import js.html.UIEvent;
 import riot.Observable;
 import riot.Tag;
 
@@ -14,12 +15,14 @@ extern class Riot
 
 	static function mount(selector:String, ?opts:Dynamic):Array<Tag>;
 	
-	static function mountTo(domNode:Element, tagName:String, ?opts:Dynamic);
+	static function mountTo(domNode:Element, tagName:String, ?opts:Dynamic):Tag;
 	
-	@:overload ( function route(collection:String, id:String, action:String):Void{})
-	static function route(to:String):Void;
+	@:overload(function(collection:String, id:String, action:String):Void{})
+	public static function route(to:String):Void;
 
 	static function observable(el:Dynamic):Observable;
+	
+	static function tag(name:String, tmpl:String, ?fn:Dynamic->Void):Void;
 	
 	static function update():Array<Tag>;
 	

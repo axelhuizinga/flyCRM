@@ -1,5 +1,7 @@
 package;
 import js.JQuery;
+import js.JQuery.JQueryHelper.J;
+import me.cunity.debug.Out;
 import riot.Tag;
 
 /**
@@ -8,11 +10,20 @@ import riot.Tag;
  */
 class View
 {
-	var tag:Tag;
+
+	var name:String;
 	
-	public function new(name:String, ?data:Dynamic) 
+	public function new(name:String, ?opt:Dynamic) 
 	{
-		//this.tag = Riot.mount(name,data);
+		this.name = name;
+		trace(Type.getClassName(Type.getClass(this))); 
+		Riot.tag(name, J(name).html(), tag);
+		Riot.mount(name, opt);
 	}
-	
+		
+	function tag(data:Dynamic) :Void
+	{
+		Out.dumpObject(data);
+		trace(Reflect.fields(this));
+	};
 }
