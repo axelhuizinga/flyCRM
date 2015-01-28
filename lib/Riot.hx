@@ -22,7 +22,7 @@ extern class Riot
 
 	static function observable(el:Dynamic):Observable;
 	
-	static function tag(name:String, tmpl:String, ?fn:Dynamic->Void):Void;
+	static function tag(name:String, tmpl:String, ?fn:Dynamic->Void):Tag;
 	
 	static function update():Array<Tag>;
 	

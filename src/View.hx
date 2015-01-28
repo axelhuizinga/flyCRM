@@ -1,8 +1,10 @@
 package;
+import js.Browser;
+import js.html.Element;
 import js.JQuery;
 import js.JQuery.JQueryHelper.J;
 import me.cunity.debug.Out;
-import riot.Tag;
+
 
 /**
  * ...
@@ -12,18 +14,23 @@ class View
 {
 
 	var name:String;
+	var root:Array<Element>;
+	var template:Array<String>;
 	
-	public function new(name:String, ?opt:Dynamic) 
+	public function new(?data:Dynamic) 
 	{
-		this.name = name;
-		trace(Type.getClassName(Type.getClass(this))); 
-		Riot.tag(name, J(name).html(), tag);
-		Riot.mount(name, opt);
+		name = Type.getClassName(Type.getClass(this)).split('.').pop();
+		var j:JQuery = J('.app[data="' + name+'"]');
+		template = new Array();
+		j.each(function()
+		{
+			template.push(JQuery.cur.html());
+			JQuery.cur.html('') ;
+		});
+		root = j.get();
+		
+		//trace(Type.getClassName(Type.getClass(this))); 
+		trace(name + ':' + template.); 		
 	}
 		
-	function tag(data:Dynamic) :Void
-	{
-		Out.dumpObject(data);
-		trace(Reflect.fields(this));
-	};
 }

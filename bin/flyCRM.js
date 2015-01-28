@@ -1,4 +1,5 @@
 (function ($hx_exports) { "use strict";
+$hx_exports.view = $hx_exports.view || {};
 var $estr = function() { return js.Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
@@ -214,19 +215,14 @@ Type["typeof"] = function(v) {
 		return ValueType.TUnknown;
 	}
 };
-var View = function(name,opt) {
-	this.name = name;
-	haxe.Log.trace(Type.getClassName(Type.getClass(this)),{ fileName : "View.hx", lineNumber : 19, className : "View", methodName : "new"});
-	riot.tag(name,new js.JQuery(name).html(),$bind(this,this.tag));
-	riot.mount(name,opt);
+var View = function(data) {
+	this.name = Type.getClassName(Type.getClass(this)).split(".").pop().toLowerCase();
+	haxe.Log.trace(this.name + ":" + new js.JQuery(this.name).html(),{ fileName : "View.hx", lineNumber : 22, className : "View", methodName : "new"});
 };
 View.__name__ = ["View"];
 View.prototype = {
 	name: null
-	,tag: function(data) {
-		me.cunity.debug.Out.dumpObject(data,{ fileName : "View.hx", lineNumber : 26, className : "View", methodName : "tag"});
-		haxe.Log.trace(Reflect.fields(this),{ fileName : "View.hx", lineNumber : 27, className : "View", methodName : "tag"});
-	}
+	,tag: null
 	,__class__: View
 };
 var haxe = {};
@@ -936,21 +932,32 @@ me.cunity.tools.ArrayTools.sum = function(arr) {
 	return s;
 };
 var view = {};
-view.ContextMenu = function(data) {
-	View.call(this,"ContextMenu",data);
+view.ContextMenu = $hx_exports.view.ContextMenu = function(data) {
+	View.call(this,data);
+	view.ContextMenu.instance = this;
+	this.tag = riot.tag(this.name,new js.JQuery("#" + this.name).html(),window['contextmenu']);
+	haxe.Log.trace(this.tag,{ fileName : "ContextMenu.hx", lineNumber : 20, className : "view.ContextMenu", methodName : "new"});
+	var instances = riot.mount(this.name,data);
+	haxe.Log.trace(instances.length + ":" + Std.string(instances[0]),{ fileName : "ContextMenu.hx", lineNumber : 22, className : "view.ContextMenu", methodName : "new"});
 };
 view.ContextMenu.__name__ = ["view","ContextMenu"];
 view.ContextMenu.create = function(data) {
 	var me = new view.ContextMenu(data);
 	return me;
 };
-view.ContextMenu.toggle = function(e) {
-	me.cunity.debug.Out.dumpObject(e,{ fileName : "ContextMenu.hx", lineNumber : 27, className : "view.ContextMenu", methodName : "toggle"});
-	return true;
-};
 view.ContextMenu.__super__ = View;
 view.ContextMenu.prototype = $extend(View.prototype,{
-	__class__: view.ContextMenu
+	toggle: function(e) {
+		me.cunity.debug.Out.dumpObject(e,{ fileName : "ContextMenu.hx", lineNumber : 34, className : "view.ContextMenu", methodName : "toggle"});
+		return true;
+	}
+	,initTag: function(data,itag) {
+		me.cunity.debug.Out.dumpObject(data,{ fileName : "ContextMenu.hx", lineNumber : 40, className : "view.ContextMenu", methodName : "initTag"});
+		itag.items = data.items;
+		me.cunity.debug.Out.dumpObject(itag,{ fileName : "ContextMenu.hx", lineNumber : 42, className : "view.ContextMenu", methodName : "initTag"});
+		haxe.Log.trace(Type.getInstanceFields(Type.getClass(this)),{ fileName : "ContextMenu.hx", lineNumber : 43, className : "view.ContextMenu", methodName : "initTag"});
+	}
+	,__class__: view.ContextMenu
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;

@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html lang="de">
   	<head>
-    		<meta charset="utf-8">
+    	<meta charset="utf-8">
+		<link rel="stylesheet" href="css/app.css">
 	</head>
 	<body>
-		<ContextMenu>
-			<ul>
-				<li each="{ items }">{item.label}</li>
-			</ul>
-		</ContextMenu>	
+		<div data="TabWindow" class="app">
+		  <ul>
+			<li data="links"><a href="id" data="label"></a></li>
+		  </ul>
+		  <div  data="tabs">
+		  </div>			
+		</div>
+		<div data="ContextMenu" class="app">
+			<ul >
+				<li data="items"></li>
+			</ul>			
+		</div>	
 	
 		<script src="js/jquery.min.js"></script>
 		<script src="js/jquery-ui.min.js"></script>
 		<script src="js/debugJq.js"></script>
 		<script src="js/stacktrace.js"></script>
-		<script src="js/riot-2.0.1.js"></script>
 		<script src="flyCRM.js"></script>
+
 	</body>
 </html>

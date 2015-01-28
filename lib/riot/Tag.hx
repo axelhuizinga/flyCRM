@@ -5,15 +5,15 @@ import js.html.Element;
  * @author axel@cunity.me
  */
 
-typedef Tag = 
+/*typedef Tag = 
 {
 	var opt:Dynamic;
 	var parent: Tag;
 	var root: Element;	
 	var update:?Dynamic->?Bool->Tag;
-}
-/*@:native('riot.tag')
-extern class Tag extends Observable
+}*/
+@:native('riot.tag')
+extern class Tag extends Observable implements Dynamic
 {
 	var opt:Dynamic;
 	var parent: Tag;
@@ -23,4 +23,4 @@ extern class Tag extends Observable
 	
 	public static function update(?data:Dynamic,?_system:Bool):Tag;
 	
-}*/
+}
