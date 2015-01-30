@@ -1,13 +1,116 @@
 (function ($hx_exports) { "use strict";
-$hx_exports.view = $hx_exports.view || {};
-var $estr = function() { return js.Boot.__string_rec(this,''); };
+var $hxClasses = {},$estr = function() { return js.Boot.__string_rec(this,''); };
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
 	for (var name in fields) proto[name] = fields[name];
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
+var Application = function() {
+	this.views = new haxe.ds.StringMap();
+	var config = window.config;
+	Application.basePath = window.location.pathname.split(config.appName)[0] + Std.string(config.appName) + "/";
+	haxe.Log.trace(Application.basePath,{ fileName : "Application.hx", lineNumber : 38, className : "Application", methodName : "new"});
+	this.initUI(config.views);
+};
+$hxClasses["Application"] = Application;
+Application.__name__ = ["Application"];
+Application.main = function() {
+	haxe.Log.trace = me.cunity.debug.Out._trace;
+	Application.instance = new Application();
+};
+Application.prototype = {
+	views: null
+	,initUI: function(viewConfigs) {
+		var _g = 0;
+		while(_g < viewConfigs.length) {
+			var v = viewConfigs[_g];
+			++_g;
+			var className = Reflect.fields(v)[0];
+			haxe.Log.trace(className,{ fileName : "Application.hx", lineNumber : 47, className : "Application", methodName : "initUI"});
+			var cl = Type.resolveClass("view." + className);
+			if(cl != null) {
+				haxe.Log.trace(cl,{ fileName : "Application.hx", lineNumber : 51, className : "Application", methodName : "initUI"});
+				var av = Type.createInstance(cl,[Reflect.field(v,className)]);
+				this.views.set(v.id,av);
+			}
+		}
+	}
+	,__class__: Application
+};
+var DataEvent = function(type,canBubble,cancelable) {
+	if(cancelable == null) cancelable = true;
+	if(canBubble == null) canBubble = true;
+	UIEvent.call(this,type,canBubble,cancelable);
+};
+$hxClasses["DataEvent"] = DataEvent;
+DataEvent.__name__ = ["DataEvent"];
+DataEvent.__super__ = UIEvent;
+DataEvent.prototype = $extend(UIEvent.prototype,{
+	data: null
+	,__class__: DataEvent
+});
+var EReg = function(r,opt) {
+	opt = opt.split("u").join("");
+	this.r = new RegExp(r,opt);
+};
+$hxClasses["EReg"] = EReg;
+EReg.__name__ = ["EReg"];
+EReg.prototype = {
+	r: null
+	,match: function(s) {
+		if(this.r.global) this.r.lastIndex = 0;
+		this.r.m = this.r.exec(s);
+		this.r.s = s;
+		return this.r.m != null;
+	}
+	,matched: function(n) {
+		if(this.r.m != null && n >= 0 && n < this.r.m.length) return this.r.m[n]; else throw "EReg::matched";
+	}
+	,matchedPos: function() {
+		if(this.r.m == null) throw "No string matched";
+		return { pos : this.r.m.index, len : this.r.m[0].length};
+	}
+	,matchSub: function(s,pos,len) {
+		if(len == null) len = -1;
+		if(this.r.global) {
+			this.r.lastIndex = pos;
+			this.r.m = this.r.exec(len < 0?s:HxOverrides.substr(s,0,pos + len));
+			var b = this.r.m != null;
+			if(b) this.r.s = s;
+			return b;
+		} else {
+			var b1 = this.match(len < 0?HxOverrides.substr(s,pos,null):HxOverrides.substr(s,pos,len));
+			if(b1) {
+				this.r.s = s;
+				this.r.m.index += pos;
+			}
+			return b1;
+		}
+	}
+	,map: function(s,f) {
+		var offset = 0;
+		var buf = new StringBuf();
+		do {
+			if(offset >= s.length) break; else if(!this.matchSub(s,offset)) {
+				buf.add(HxOverrides.substr(s,offset,null));
+				break;
+			}
+			var p = this.matchedPos();
+			buf.add(HxOverrides.substr(s,offset,p.pos - offset));
+			buf.add(f(this));
+			if(p.len == 0) {
+				buf.add(HxOverrides.substr(s,p.pos,1));
+				offset = p.pos + 1;
+			} else offset = p.pos + p.len;
+		} while(this.r.global);
+		if(!this.r.global && offset > 0 && offset < s.length) buf.add(HxOverrides.substr(s,offset,null));
+		return buf.b;
+	}
+	,__class__: EReg
+};
 var HxOverrides = function() { };
+$hxClasses["HxOverrides"] = HxOverrides;
 HxOverrides.__name__ = ["HxOverrides"];
 HxOverrides.substr = function(s,pos,len) {
 	if(pos != null && pos != 0 && len != null && len < 0) return "";
@@ -44,6 +147,7 @@ HxOverrides.iter = function(a) {
 	}};
 };
 var Lambda = function() { };
+$hxClasses["Lambda"] = Lambda;
 Lambda.__name__ = ["Lambda"];
 Lambda.has = function(it,elt) {
 	var $it0 = $iterator(it)();
@@ -73,6 +177,7 @@ Lambda.filter = function(it,f) {
 var List = function() {
 	this.length = 0;
 };
+$hxClasses["List"] = List;
 List.__name__ = ["List"];
 List.prototype = {
 	h: null
@@ -102,20 +207,12 @@ List.prototype = {
 	}
 	,__class__: List
 };
-var Main = function(element) {
-	riot.observable.call(this,element);
-};
-Main.__name__ = ["Main"];
-Main.main = function() {
-	haxe.Log.trace = me.cunity.debug.Out._trace;
-	var contextMenu = view.ContextMenu.create({ items : [{ label : "first"},{ label : "2nd"},{ label : "3rd"}]});
-};
-Main.__super__ = riot.observable;
-Main.prototype = $extend(riot.observable.prototype,{
-	__class__: Main
-});
+var IMap = function() { };
+$hxClasses["IMap"] = IMap;
+IMap.__name__ = ["IMap"];
 Math.__name__ = ["Math"];
 var Reflect = function() { };
+$hxClasses["Reflect"] = Reflect;
 Reflect.__name__ = ["Reflect"];
 Reflect.field = function(o,field) {
 	try {
@@ -135,6 +232,7 @@ Reflect.fields = function(o) {
 	return a;
 };
 var Std = function() { };
+$hxClasses["Std"] = Std;
 Std.__name__ = ["Std"];
 Std.string = function(s) {
 	return js.Boot.__string_rec(s,"");
@@ -142,9 +240,13 @@ Std.string = function(s) {
 var StringBuf = function() {
 	this.b = "";
 };
+$hxClasses["StringBuf"] = StringBuf;
 StringBuf.__name__ = ["StringBuf"];
 StringBuf.prototype = {
 	b: null
+	,add: function(x) {
+		this.b += Std.string(x);
+	}
 	,__class__: StringBuf
 };
 var ValueType = { __ename__ : true, __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] };
@@ -172,6 +274,7 @@ ValueType.TUnknown = ["TUnknown",8];
 ValueType.TUnknown.toString = $estr;
 ValueType.TUnknown.__enum__ = ValueType;
 var Type = function() { };
+$hxClasses["Type"] = Type;
 Type.__name__ = ["Type"];
 Type.getClass = function(o) {
 	if(o == null) return null;
@@ -180,6 +283,37 @@ Type.getClass = function(o) {
 Type.getClassName = function(c) {
 	var a = c.__name__;
 	return a.join(".");
+};
+Type.resolveClass = function(name) {
+	var cl = $hxClasses[name];
+	if(cl == null || !cl.__name__) return null;
+	return cl;
+};
+Type.createInstance = function(cl,args) {
+	var _g = args.length;
+	switch(_g) {
+	case 0:
+		return new cl();
+	case 1:
+		return new cl(args[0]);
+	case 2:
+		return new cl(args[0],args[1]);
+	case 3:
+		return new cl(args[0],args[1],args[2]);
+	case 4:
+		return new cl(args[0],args[1],args[2],args[3]);
+	case 5:
+		return new cl(args[0],args[1],args[2],args[3],args[4]);
+	case 6:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5]);
+	case 7:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6]);
+	case 8:
+		return new cl(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+	default:
+		throw "Too many arguments";
+	}
+	return null;
 };
 Type.getInstanceFields = function(c) {
 	var a = [];
@@ -216,13 +350,25 @@ Type["typeof"] = function(v) {
 	}
 };
 var View = function(data) {
-	this.name = Type.getClassName(Type.getClass(this)).split(".").pop().toLowerCase();
-	haxe.Log.trace(this.name + ":" + new js.JQuery(this.name).html(),{ fileName : "View.hx", lineNumber : 22, className : "View", methodName : "new"});
+	var data1 = data;
+	this.id = data1.id;
+	this.name = Type.getClassName(Type.getClass(this)).split(".").pop();
+	var j = new js.JQuery(".app[id=\"" + data1.id + "\"]");
+	this.root = j.find(".template");
+	haxe.Log.trace(j.length + ":" + this.root.length,{ fileName : "View.hx", lineNumber : 32, className : "View", methodName : "new"});
+	this.template = this.root.html();
+	this.root.html("");
+	this.root.removeAttr("class");
+	j.removeClass("app");
+	haxe.Log.trace(this.name + ":" + this.template,{ fileName : "View.hx", lineNumber : 37, className : "View", methodName : "new"});
 };
+$hxClasses["View"] = View;
 View.__name__ = ["View"];
 View.prototype = {
-	name: null
-	,tag: null
+	id: null
+	,name: null
+	,root: null
+	,template: null
 	,__class__: View
 };
 var haxe = {};
@@ -235,6 +381,7 @@ haxe.StackItem.FilePos = function(s,file,line) { var $x = ["FilePos",2,s,file,li
 haxe.StackItem.Method = function(classname,method) { var $x = ["Method",3,classname,method]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; };
 haxe.StackItem.LocalFunction = function(v) { var $x = ["LocalFunction",4,v]; $x.__enum__ = haxe.StackItem; $x.toString = $estr; return $x; };
 haxe.CallStack = function() { };
+$hxClasses["haxe.CallStack"] = haxe.CallStack;
 haxe.CallStack.__name__ = ["haxe","CallStack"];
 haxe.CallStack.callStack = function() {
 	var oldValue = Error.prepareStackTrace;
@@ -282,6 +429,7 @@ haxe.Http = function(url) {
 	this.params = new List();
 	this.async = true;
 };
+$hxClasses["haxe.Http"] = haxe.Http;
 haxe.Http.__name__ = ["haxe","Http"];
 haxe.Http.prototype = {
 	url: null
@@ -374,12 +522,28 @@ haxe.Http.prototype = {
 	,__class__: haxe.Http
 };
 haxe.Log = function() { };
+$hxClasses["haxe.Log"] = haxe.Log;
 haxe.Log.__name__ = ["haxe","Log"];
 haxe.Log.trace = function(v,infos) {
 	js.Boot.__trace(v,infos);
 };
+haxe.ds = {};
+haxe.ds.StringMap = function() {
+	this.h = { };
+};
+$hxClasses["haxe.ds.StringMap"] = haxe.ds.StringMap;
+haxe.ds.StringMap.__name__ = ["haxe","ds","StringMap"];
+haxe.ds.StringMap.__interfaces__ = [IMap];
+haxe.ds.StringMap.prototype = {
+	h: null
+	,set: function(key,value) {
+		this.h["$" + key] = value;
+	}
+	,__class__: haxe.ds.StringMap
+};
 var js = {};
 js.Boot = function() { };
+$hxClasses["js.Boot"] = js.Boot;
 js.Boot.__name__ = ["js","Boot"];
 js.Boot.__unhtml = function(s) {
 	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
@@ -516,6 +680,7 @@ js.Boot.__cast = function(o,t) {
 	if(js.Boot.__instanceof(o,t)) return o; else throw "Cannot cast " + Std.string(o) + " to " + Std.string(t);
 };
 js.Browser = function() { };
+$hxClasses["js.Browser"] = js.Browser;
 js.Browser.__name__ = ["js","Browser"];
 js.Browser.createXMLHttpRequest = function() {
 	if(typeof XMLHttpRequest != "undefined") return new XMLHttpRequest();
@@ -536,6 +701,7 @@ me.cunity.debug.DebugOutput.NATIVE = ["NATIVE",2];
 me.cunity.debug.DebugOutput.NATIVE.toString = $estr;
 me.cunity.debug.DebugOutput.NATIVE.__enum__ = me.cunity.debug.DebugOutput;
 me.cunity.debug.Out = $hx_exports.Out = function() { };
+$hxClasses["me.cunity.debug.Out"] = me.cunity.debug.Out;
 me.cunity.debug.Out.__name__ = ["me","cunity","debug","Out"];
 me.cunity.debug.Out._trace = function(v,i) {
 	if(me.cunity.debug.Out.suspended) return;
@@ -707,6 +873,7 @@ me.cunity.debug.Out.fTrace = function(str,arr,i) {
 };
 me.cunity.tools = {};
 me.cunity.tools.ArrayTools = function() { };
+$hxClasses["me.cunity.tools.ArrayTools"] = me.cunity.tools.ArrayTools;
 me.cunity.tools.ArrayTools.__name__ = ["me","cunity","tools","ArrayTools"];
 me.cunity.tools.ArrayTools.atts2field = function(aAtts) {
 	var f = new Array();
@@ -932,32 +1099,67 @@ me.cunity.tools.ArrayTools.sum = function(arr) {
 	return s;
 };
 var view = {};
-view.ContextMenu = $hx_exports.view.ContextMenu = function(data) {
+view.ContextMenu = function(data) {
 	View.call(this,data);
 	view.ContextMenu.instance = this;
-	this.tag = riot.tag(this.name,new js.JQuery("#" + this.name).html(),window['contextmenu']);
-	haxe.Log.trace(this.tag,{ fileName : "ContextMenu.hx", lineNumber : 20, className : "view.ContextMenu", methodName : "new"});
-	var instances = riot.mount(this.name,data);
-	haxe.Log.trace(instances.length + ":" + Std.string(instances[0]),{ fileName : "ContextMenu.hx", lineNumber : 22, className : "view.ContextMenu", methodName : "new"});
 };
+$hxClasses["view.ContextMenu"] = view.ContextMenu;
 view.ContextMenu.__name__ = ["view","ContextMenu"];
 view.ContextMenu.create = function(data) {
-	var me = new view.ContextMenu(data);
-	return me;
+	return new view.ContextMenu(data);
 };
 view.ContextMenu.__super__ = View;
 view.ContextMenu.prototype = $extend(View.prototype,{
-	toggle: function(e) {
-		me.cunity.debug.Out.dumpObject(e,{ fileName : "ContextMenu.hx", lineNumber : 34, className : "view.ContextMenu", methodName : "toggle"});
-		return true;
-	}
-	,initTag: function(data,itag) {
-		me.cunity.debug.Out.dumpObject(data,{ fileName : "ContextMenu.hx", lineNumber : 40, className : "view.ContextMenu", methodName : "initTag"});
-		itag.items = data.items;
-		me.cunity.debug.Out.dumpObject(itag,{ fileName : "ContextMenu.hx", lineNumber : 42, className : "view.ContextMenu", methodName : "initTag"});
-		haxe.Log.trace(Type.getInstanceFields(Type.getClass(this)),{ fileName : "ContextMenu.hx", lineNumber : 43, className : "view.ContextMenu", methodName : "initTag"});
+	items: null
+	,toggle: function(e) {
+		me.cunity.debug.Out.dumpObject(e,{ fileName : "ContextMenu.hx", lineNumber : 35, className : "view.ContextMenu", methodName : "toggle"});
 	}
 	,__class__: view.ContextMenu
+});
+view.TabBox = function(data) {
+	View.call(this,data);
+	if(data != null) {
+		this.root.addClass("my-tabs");
+		var tabBoxData = data;
+		var index = 1;
+		var _g = 0;
+		var _g1 = tabBoxData.tabs;
+		while(_g < _g1.length) {
+			var tab = [_g1[_g]];
+			++_g;
+			var ctempl = new EReg("{([a-x]*)}","g").map(this.template,(function(tab) {
+				return function(r) {
+					var m = r.matched(1);
+					switch(m) {
+					case "something":
+						return "xxx";
+					default:
+						return Reflect.field(tab[0],m);
+					}
+				};
+			})(tab));
+			this.root.append(ctempl);
+			var tabPanel = "<div id=\"" + this.id + "-" + index + "\" >" + tab[0].label + "</div>";
+			haxe.Log.trace(tabPanel,{ fileName : "TabBox.hx", lineNumber : 52, className : "view.TabBox", methodName : "new"});
+			haxe.Log.trace(this.root.parent().find("div").last().html(),{ fileName : "TabBox.hx", lineNumber : 55, className : "view.TabBox", methodName : "new"});
+			index++;
+		}
+		new js.JQuery("#" + this.id).tabs({ create : function(event,ui) {
+			haxe.Log.trace(Std.string(event) + ":" + ui,{ fileName : "TabBox.hx", lineNumber : 61, className : "view.TabBox", methodName : "new"});
+		}, beforeLoad : function(event1,ui1) {
+			event1.preventDefault();
+			haxe.Log.trace("OK " + ui1.panel,{ fileName : "TabBox.hx", lineNumber : 65, className : "view.TabBox", methodName : "new"});
+		}, heightStyle : "fill"});
+	}
+};
+$hxClasses["view.TabBox"] = view.TabBox;
+view.TabBox.__name__ = ["view","TabBox"];
+view.TabBox.__super__ = View;
+view.TabBox.prototype = $extend(View.prototype,{
+	go: function(evt) {
+		me.cunity.debug.Out.dumpObject(evt.target,{ fileName : "TabBox.hx", lineNumber : 76, className : "view.TabBox", methodName : "go"});
+	}
+	,__class__: view.TabBox
 });
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
@@ -965,16 +1167,18 @@ function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id
 if(Array.prototype.indexOf) HxOverrides.indexOf = function(a,o,i) {
 	return Array.prototype.indexOf.call(a,o,i);
 };
-String.prototype.__class__ = String;
+$hxClasses.Math = Math;
+String.prototype.__class__ = $hxClasses.String = String;
 String.__name__ = ["String"];
+$hxClasses.Array = Array;
 Array.__name__ = ["Array"];
-var Int = { __name__ : ["Int"]};
-var Dynamic = { __name__ : ["Dynamic"]};
-var Float = Number;
+var Int = $hxClasses.Int = { __name__ : ["Int"]};
+var Dynamic = $hxClasses.Dynamic = { __name__ : ["Dynamic"]};
+var Float = $hxClasses.Float = Number;
 Float.__name__ = ["Float"];
 var Bool = Boolean;
 Bool.__ename__ = ["Bool"];
-var Class = { __name__ : ["Class"]};
+var Class = $hxClasses.Class = { __name__ : ["Class"]};
 var Enum = { };
 var q = window.jQuery;
 js.JQuery = q;
@@ -983,5 +1187,5 @@ me.cunity.debug.Out.skipFunctions = true;
 me.cunity.debug.Out.traceToConsole = false;
 me.cunity.debug.Out.traceTarget = me.cunity.debug.DebugOutput.NATIVE;
 me.cunity.debug.Out.aStack = haxe.CallStack.callStack;
-Main.main();
+Application.main();
 })(typeof window != "undefined" ? window : exports);

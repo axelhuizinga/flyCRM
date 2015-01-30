@@ -1,53 +1,46 @@
 package view;
 import js.html.Event;
+import js.JQuery.JqEvent;
 import js.JQuery.JQueryHelper.J;
 import me.cunity.debug.Out;
-import riot.RiotEvent;
-import riot.Tag;
+
 
 typedef MenuItem =
 {
 	var link:String;
-	var action
+	var action:JqEvent->Void;
 }
 /**
  * ...
  * @author axel@cunity.me
  */
-@:expose class ContextMenu extends View
+@:keep class ContextMenu extends View
 {
 	public static var instance:ContextMenu;
-	var items:Array
+	var items:Array<MenuItem>;
 	
 	public function new(?data:Dynamic) 
 	{
 		super(data);
-		instance = this;
-		tag = Riot.tag(name, J('#'+name).html(), untyped __js__("window['contextmenu']"));
-		trace(tag);
-		var instances:Array<Tag> = Riot.mount(name, data);
-		trace(instances.length + ':' + instances[0]);		
+		instance = this;	
 	}
 	
 	public static function create(data:Dynamic):ContextMenu 
 	{
-		var me:ContextMenu = new ContextMenu(data);
-		
-		return me;
+		return new ContextMenu(data);	
 	}
 	
-	public  function toggle(e:RiotEvent):Bool
+	public  function toggle(e:JqEvent):Void
 	{
 		Out.dumpObject(e);
-		return true;
 	}
 	
-	public function initTag(data:Dynamic, itag:Tag) :Void
+/*	public function initTag(data:Dynamic, itag:Tag) :Void
 	{
 		Out.dumpObject(data);
 		itag.items = data.items;
 		Out.dumpObject(itag);
 		trace(Type.getInstanceFields(Type.getClass(this)));
 	};
-	
+	*/
 }

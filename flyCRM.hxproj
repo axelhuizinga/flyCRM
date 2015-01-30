@@ -24,9 +24,9 @@
     <option directives="" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
-    <option mainClass="Main" />
+    <option mainClass="Application" />
     <option enabledebug="False" />
-    <option additional="" />
+    <option additional="-dce std" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
