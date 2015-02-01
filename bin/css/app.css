@@ -2,6 +2,7 @@
 {
 	font-family:verdana,sans;
 	color:#eee;
+	
 }
 
 body,html{
@@ -16,6 +17,7 @@ contextmenu ul
 	list-style:none;
 }
 
+:focus{outline:none;}
 .app{display:none;}
 
 .menu-right{

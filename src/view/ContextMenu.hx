@@ -1,14 +1,14 @@
 package view;
-import js.html.Event;
-import js.JQuery.JqEvent;
-import js.JQuery.JQueryHelper.J;
+import jQuery.JHelper;
+import jQuery.*;
+
 import me.cunity.debug.Out;
 
 
 typedef MenuItem =
 {
 	var link:String;
-	var action:JqEvent->Void;
+	var action:jQuery.Event->Void;
 }
 /**
  * ...
@@ -30,7 +30,7 @@ typedef MenuItem =
 		return new ContextMenu(data);	
 	}
 	
-	public  function toggle(e:JqEvent):Void
+	public  function toggle(e:Event):Void
 	{
 		Out.dumpObject(e);
 	}
