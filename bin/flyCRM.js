@@ -699,11 +699,14 @@ js.Browser.createXMLHttpRequest = function() {
 	if(typeof ActiveXObject != "undefined") return new ActiveXObject("Microsoft.XMLHTTP");
 	throw "Unable to create XMLHttpRequest object.";
 };
-js.Tabs = function() { };
-$hxClasses["js.Tabs"] = js.Tabs;
-js.Tabs.__name__ = ["js","Tabs"];
-js.Tabs.tabs = function(tb,options) {
+js.JqueryUI = function() { };
+$hxClasses["js.JqueryUI"] = js.JqueryUI;
+js.JqueryUI.__name__ = ["js","JqueryUI"];
+js.JqueryUI.tabs = function(tb,options) {
 	return tb.tabs(options);
+};
+js.JqueryUI.accordion = function(ac,options) {
+	return tb.accordion(options);
 };
 var me = {};
 me.cunity = {};
@@ -1266,26 +1269,14 @@ view.ContextMenu.prototype = $extend(View.prototype,{
 view.TabBox = function(data) {
 	var _g = this;
 	View.call(this,data);
+	this.tabLabel = new Array();
 	this.tabLinks = new Array();
 	if(data != null) {
 		this.root.addClass("my-tabs");
 		this.tabBoxData = data;
 		if(this.tabBoxData.isNav) {
 			pushstate.PushState.init();
-			pushstate.PushState.addEventListener(null,function(url) {
-				view.TabBox.stateChangeCount++;
-				haxe.Log.trace(url + ":" + view.TabBox.stateChangeCount,{ fileName : "TabBox.hx", lineNumber : 65, className : "view.TabBox", methodName : "new"});
-				var p = url.split(Application.basePath);
-				haxe.Log.trace(p.toString() + ":" + p.length + " basePath:" + Application.basePath,{ fileName : "TabBox.hx", lineNumber : 67, className : "view.TabBox", methodName : "new"});
-				if(p.length == 2 && p[1] == "") p[1] = _g.tabLinks[0]; else if(p.length == 1) p[1] = url;
-				if(_g.tabLinks[_g.tabsInstance.options.active] != p[1]) {
-					haxe.Log.trace("set { selected:" + HxOverrides.indexOf(_g.tabLinks,p[1],0) + "}",{ fileName : "TabBox.hx", lineNumber : 74, className : "view.TabBox", methodName : "new"});
-					_g.tabObj.tabs("option","active",HxOverrides.indexOf(_g.tabLinks,p[1],0));
-				}
-				haxe.Log.trace(p.toString() + ":" + Std.string(_g.tabsInstance.options.active) + ":" + HxOverrides.indexOf(_g.tabLinks,p[1],0),{ fileName : "TabBox.hx", lineNumber : 78, className : "view.TabBox", methodName : "new"});
-				_g.tabObj.tabs("load",_g.tabLinks[_g.tabsInstance.options.active]);
-				window.document.title = Application.company + " " + Application.appName + "/" + _g.tabLinks[_g.tabsInstance.options.active];
-			});
+			pushstate.PushState.addEventListener(null,$bind(this,this.go));
 		}
 		this.active = 0;
 		var _g1 = 0;
@@ -1302,15 +1293,15 @@ view.TabBox = function(data) {
 			this.root.append(ctempl);
 			new $("#" + this.id).append("<div id=\"ui-id-" + (this.tabLinks.length * 2 + 2) + "\" ><p>" + tab[0].label + "</p></div>");
 			if(tab[0].link == this.tabBoxData.action) this.active = this.tabLinks.length;
+			this.tabLabel.push(tab[0].label);
 			this.tabLinks.push(tab[0].link);
 		}
-		this.tabObj = js.Tabs.tabs(new $("#" + this.id),{ active : this.active, activate : function(event,ui) {
-			haxe.Log.trace("activate:" + ui.newPanel.selector + ":" + ui.newTab.context + ":" + Std.string(_g.tabsInstance.options.active),{ fileName : "TabBox.hx", lineNumber : 107, className : "view.TabBox", methodName : "new"});
+		this.tabObj = js.JqueryUI.tabs(new $("#" + this.id),{ active : this.active, activate : function(event,ui) {
+			pushstate.PushState.replace(Std.string(ui.newTab.context).split(window.location.hostname).pop());
 		}, create : function(event1,ui1) {
-			_g.tabsInstance = js.Tabs.tabs(new $("#" + _g.id),"instance");
-			haxe.Log.trace(new $(_g.tabsInstance.tablist[0]).find("a").length + ":" + Std.string(_g.tabsInstance.options.active) + ":" + _g.tabLinks[_g.tabsInstance.options.active] + (_g.tabsInstance == _g.tabObj?" Y":" N"),{ fileName : "TabBox.hx", lineNumber : 114, className : "view.TabBox", methodName : "new"});
+			_g.tabsInstance = js.JqueryUI.tabs(new $("#" + _g.id),"instance");
 		}, beforeLoad : function(event2,ui2) {
-			haxe.Log.trace("OK " + ui2.ajaxSettings.url,{ fileName : "TabBox.hx", lineNumber : 120, className : "view.TabBox", methodName : "new"});
+			haxe.Log.trace("beforeLoad " + ui2.ajaxSettings.url,{ fileName : "TabBox.hx", lineNumber : 98, className : "view.TabBox", methodName : "new"});
 			return false;
 		}, heightStyle : this.tabBoxData.heightStyle == null?"auto":this.tabBoxData.heightStyle});
 	}
@@ -1324,9 +1315,18 @@ view.TabBox.prototype = $extend(View.prototype,{
 	,tabsInstance: null
 	,tabObj: null
 	,tabLinks: null
-	,go: function(res,data,xhr) {
-		me.cunity.debug.Out.dumpObject(res,{ fileName : "TabBox.hx", lineNumber : 131, className : "view.TabBox", methodName : "go"});
-		haxe.Log.trace(data,{ fileName : "TabBox.hx", lineNumber : 132, className : "view.TabBox", methodName : "go"});
+	,tabLabel: null
+	,go: function(url) {
+		haxe.Log.trace(url,{ fileName : "TabBox.hx", lineNumber : 112, className : "view.TabBox", methodName : "go"});
+		if(!(typeof(url) == "string")) {
+			me.cunity.debug.Out.dumpStack(haxe.CallStack.callStack(),{ fileName : "TabBox.hx", lineNumber : 115, className : "view.TabBox", methodName : "go"});
+			return;
+		}
+		var p = url.split(Application.basePath);
+		if(p.length == 2 && p[1] == "") p[1] = this.tabLinks[0]; else if(p.length == 1) p[1] = url;
+		if(this.tabsInstance.options.active == HxOverrides.indexOf(this.tabLinks,p[1],0)) return;
+		if(this.tabLinks[this.tabsInstance.options.active] != p[1]) this.tabObj.tabs("option","active",HxOverrides.indexOf(this.tabLinks,p[1],0));
+		window.document.title = Application.company + " " + Application.appName + "  " + this.tabLabel[this.tabsInstance.options.active];
 	}
 	,__class__: view.TabBox
 });
@@ -1356,7 +1356,6 @@ me.cunity.debug.Out.skipFunctions = true;
 me.cunity.debug.Out.traceToConsole = false;
 me.cunity.debug.Out.traceTarget = me.cunity.debug.DebugOutput.NATIVE;
 me.cunity.debug.Out.aStack = haxe.CallStack.callStack;
-view.TabBox.stateChangeCount = 0;
 Application.main();
 })(typeof window != "undefined" ? window : exports);
 

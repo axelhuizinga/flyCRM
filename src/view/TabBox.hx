@@ -1,5 +1,6 @@
 package view;
 
+import haxe.CallStack;
 import haxe.ds.StringMap;
 import js.Browser;
 import js.html.Element;
@@ -7,11 +8,11 @@ import js.html.Node;
 import View;
 import jQuery.*;
 import jQuery.JHelper.J;
-import js.Tabs;
+import js.JqueryUI;
 import pushstate.PushState;
 import me.cunity.debug.Out;
 
-using js.Tabs;
+using js.JqueryUI;
 
 /**
  * ...
@@ -44,12 +45,14 @@ typedef TabBoxData =
 	var tabsInstance:Tabs;
 	var tabObj:Dynamic;
 	var tabLinks:Array<String>;
-	static var stateChangeCount = 0;
+	var tabLabel:Array<String>;
+	//static var stateChangeCount = 0;
 	
 	public function new(?data:Dynamic<TabBoxData>) 
 	{
 		super(data);
 
+		tabLabel = new Array();
 		tabLinks = new Array();
 		if (data != null )
 		{
@@ -58,28 +61,7 @@ typedef TabBoxData =
 			if (tabBoxData.isNav)
 			{
 				PushState.init();
-				//PushState.init(J('base').attr('href'));
-				PushState.addEventListener(function(url:String)
-				{
-					stateChangeCount++;
-					trace(url + ':' + stateChangeCount);
-					var p:Array<String> = url.split(Application.basePath);
-					trace(p.toString() + ':' + p.length + ' basePath:' + Application.basePath);
-					if (p.length == 2 && p[1] == '')
-						p[1] = tabLinks[0];
-					else if (p.length == 1)
-						p[1] = url;
-					if (tabLinks[tabsInstance.options.active] != p[1])
-					{
-						trace('set { selected:' + tabLinks.indexOf(p[1]) + '}');
-						tabObj.tabs( "option", "active", tabLinks.indexOf(p[1]) );
-						//tabObj.tabs( { selected:tabsInstance.options.active } );
-					}
-					trace(p.toString() + ':' + tabsInstance.options.active + ':' + tabLinks.indexOf(p[1]));
-				tabObj.tabs( "load", tabLinks[tabsInstance.options.active]);
-					//Browser.document.title = app.company + " " + app.appName + '/' + tabLinks[tabsInstance.options.active];
-					Browser.document.title = Application.company + " " + Application.appName + '/' + tabLinks[tabsInstance.options.active];
-				});
+				PushState.addEventListener(go);
 			}			
 			//var index:Int = 0;
 			active = 0;
@@ -94,30 +76,27 @@ typedef TabBoxData =
 				J('#' + id).append('<div id="ui-id-' + (tabLinks.length*2 + 2) +  '" ><p>' + tab.label + '</p></div>');
 				if (tab.link == tabBoxData.action)
 					active = tabLinks.length;
+				tabLabel.push(tab.label);
 				tabLinks.push(tab.link);
 			}
-			
-			
+						
 			tabObj = J( "#" + id ).tabs( 
 			{
 				active:active,
 				activate: function( event:Event, ui ) 
 				{
-					//trace(ui.newPanel);
-					trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active);
+					//trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active);
+					PushState.replace(Std.string(ui.newTab.context).split(Browser.window.location.hostname).pop());
 				},				
 				create: function( event:Event, ui ) 
 				{
-					//trace(ui);
 					tabsInstance =  J('#' + id).tabs("instance");
-					//Out.dumpObject(tabsInstance);
-					trace(J(tabsInstance.tablist[0]).find('a').length + ':' + tabsInstance.options.active + ':'  + tabLinks[tabsInstance.options.active] + 
-						(tabsInstance == tabObj?' Y':' N') );
-					//JQuery._static.post(ui.ajaxSettings.url,{},go, 'json');					
+										
 				},
 				beforeLoad: function( event:Event, ui ) 
 				{
-					trace('OK ' + ui.ajaxSettings.url);
+					trace('beforeLoad ' + ui.ajaxSettings.url);
+					//JQuery._static.post(ui.ajaxSettings.url,{},load, 'json');
 					return false;
 				},
 				heightStyle: tabBoxData.heightStyle == null ? 'auto':tabBoxData.heightStyle				
@@ -126,10 +105,31 @@ typedef TabBoxData =
 		
 	}
 	
-	public function go(res:Dynamic, data:String, xhr:JqXHR):Void
+	//public function load(res:Dynamic, data:String, xhr:JqXHR):Void
+	
+	public function go(url:String):Void
 	{
-		Out.dumpObject(res);
-		trace(data);
+		trace(url);
+		if (!Std.is(url, String))
+		{
+			Out.dumpStack(CallStack.callStack());
+			return;
+		}
+		var p:Array<String> = url.split(Application.basePath);
+		//trace(p.toString() + ':' + p.length + ' basePath:' + Application.basePath);
+		if (p.length == 2 && p[1] == '')
+			p[1] = tabLinks[0];
+		else if (p.length == 1)
+			p[1] = url;
+		if (tabsInstance.options.active == tabLinks.indexOf(p[1]))
+			return;
+		if (tabLinks[tabsInstance.options.active] != p[1])
+		{
+			//trace('set { selected:' + tabLinks.indexOf(p[1]) + '}');
+			tabObj.tabs( "option", "active", tabLinks.indexOf(p[1]) );
+		}
+		//trace(p.toString() + ':' + tabsInstance.options.active + ':' + tabLinks.indexOf(p[1]));
+		Browser.document.title = Application.company + " " + Application.appName + '  ' + tabLabel[tabsInstance.options.active];
 	}
 	
 }

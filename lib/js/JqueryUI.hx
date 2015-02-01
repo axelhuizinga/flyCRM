@@ -6,13 +6,18 @@ import jQuery.*;
  * @author axel@cunity.me
  */
 
-class Tabs
+class JqueryUI
 {
-	//@:overload(function(tb:Tabs,?options:Dynamic):JQuery{})
+
 	public static function tabs(tb:JQuery, ?options:Dynamic) :JQuery
 	{
 		return untyped tb.tabs(options);
 	};	
+	
+	public static function accordion(ac:JQuery, ?options:Dynamic):JQuery
+	{
+		return untyped tb.accordion(options);
+	}
 	
 	
 }

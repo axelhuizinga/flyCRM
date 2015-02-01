@@ -1,2 +1,2 @@
-# flyCrm
-customer resource management
+# flyCRM
+customer resource management with ViciDial interfaces
