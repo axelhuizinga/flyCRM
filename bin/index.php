@@ -26,65 +26,82 @@
 		<base href="<?php echo $base;?>">
 	</head>
 	<body>
-		<div  class="bgBox">
-			<div  id="mtabs" class="app">
-			  <ul class="template">
-				  <li><a href="#{link}">{label}</a></li>
-			  </ul>			
-			</div>
-			<div id="ContextMenu" class="app menu-right">
-				<ul class="template">
-					<li><a href="{link}">{label}</a></li>
-				</ul>			
-			</div>	
-		</div>	
+	<!-- MAIN APP SCREEN -->
+		<div  id="bgBox">
 
-		<script>
-		var config = 
-		{
-			appName:"flyCRM",
-			views:
-			[
-				{
-					TabBox:
-					{
-						id:"mtabs",
-						action:"<?php echo $action;?>",
-						params:<?php echo $params;?>,
-						tabs:
-						[
-							{
-								link:"clients",
-								label:"Mitglieder",
-								onclick:"go"
-							},
-							{
-								link:"campaigns",
-								label:"Kampagnen",
-								onclick:"go"
-							},	
-							{
-								link:"stats",
-								label:"Statistik",
-								onclick:"go"
-							},
-							{
-								link:"settings",
-								label:"Einstellungen",
-								onclick:"go"
-							}		
-						],
-						heightStyle: "fill"
-					}
-				}
-			]
-		}
+		</div>
+		
+		<!-- MAIN TABS -->
+		<script type="text/html" id="t-mtabs">
+			<div  id="mtabs" class="app" >
+				<ul >
+					<li><a href="${link}" rel="pushstate">${label}</a></li>
+				</ul>			
+			</div>
 		</script>
-		<script src="js/jquery.min.js"></script>
+		
+		<!-- DATETIME -->		
+		<script type="text/html"  id="t-datetime" >					
+			<div id="datetime" class="app menu-right">					
+					<span >${datetime}</span>					
+			</div>		
+		</script>
+		
+		<!-- MEMBERS TAB -->
+		<script type="text/html"  id="t-clients">
+			<div id="clients">
+				<form action="clients">										
+					<table >
+					{{each(i,v) clients}}
+						<tr id="${vendor_lead_code}" class="${i % 2 ? 'odd' : 'even'}">
+						{{each(i,v) fields}}
+								{{if fieldFormats[v]}}
+							<td><input type="${type}" name="${field}" class="app-right" </li>	
+								{{else}}
+							<li><span>${fieldNames[v]}</span><input type="{{= ${type}|'text'}}" name="${field}" ></li>
+								{{/if}}
+							{{/each}}
+						</tr>
+					{{/each}}
+					</table>
+				</form>
+			</div>
+		</script>
+		
+			<!-- MEMBERS MENU -->
+			
+		<script type="text/html" id="t-clients.menu">
+			<div id="clients.menu">
+				<h3>${label}</h3>
+				<div>
+					<form action="clients" >
+						<input type="hidden" name="action" value="${action}">
+						<ul >
+							{{each(i,v) fields}}
+							<li><span>${fieldNames[v]}</span><input type="${ fieldTypes[v] ? fieldTypes[v] : 'text' }" name="${v}" class="app-right"> </li>
+							{{/each}}
+						</ul>
+					</form>
+				</div>
+			</div>	
+		</script>
+		
+
+		
+		<script src="js/jquery-2.1.3.min.js"></script>
 		<script src="js/jquery-ui.js"></script>
 		<script src="js/debugJq.js"></script>
 		<script src="js/stacktrace.js"></script>
+		<script src="js/sprintf-0.7.js"></script>
 		<script src="flyCRM.js"></script>
-
+		<script src="uiData.js"></script>			
+		<script 	>$(document).ready(function()
+		{
+			uiData.basePath="<?php echo $basePath;?>";
+			uiData.action="<?php echo $action;?>";
+			uiData.params="<?php echo $params;?>";
+			initApp(uiData);
+		});
+		</script>
 	</body>
 </html>

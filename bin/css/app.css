@@ -1,18 +1,19 @@
 *
 {
 	font-family:verdana,sans;
-	color:#eee;
+	color:#555555;
 	
 }
 
 body,html{
-	background-color: #2b1600;
+	/*background-color: #2b1600;*/
+	background-color: #586202;
 	height:100%;
 	overflow:hidden;
 	margin:0;
 	padding:0;
 }
-contextmenu ul
+body ul
 {
 	list-style:none;
 }
@@ -20,13 +21,18 @@ contextmenu ul
 :focus{outline:none;}
 .app{display:none;}
 
+.app-right{
+	float:right;
+	clear:right;
+}
+
 .menu-right{
 	float:right;
-	min-width:240px;
+	min-width:320px;
 	height:100%;
 }
 
-.bgBox{
+#bgBox{
 	top:0;
 	bottom:0;
 	left:0;
@@ -35,8 +41,15 @@ contextmenu ul
 	padding:8px;
 	
 }
+
 #mtabs{
-	float:left;
-	width:70%;
-	/*height:100%;*/
+    background-image: -moz-linear-gradient(top, #ffffff, #dddddd); /* Firefox 3.6 */
+    background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0, #dddddd),color-stop(1, #ffffff)); /* Safari & Chrome */
 }
+
+#datetime div{
+	margin:3px;
+	padding: 13px 5px;
+	text-align: center;
+}
+/*#datetime  span{margin: 15px auto;}*/

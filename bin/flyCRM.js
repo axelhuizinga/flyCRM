@@ -25,10 +25,10 @@ Application.init = $hx_exports.initApp = function(config) {
 		var f = fields[_g];
 		++_g;
 		Reflect.setField(Application,f,Reflect.field(config,f));
-		haxe.Log.trace(Reflect.field(Application,f),{ fileName : "Application.hx", lineNumber : 48, className : "Application", methodName : "init"});
+		haxe.Log.trace(Reflect.field(Application,f),{ fileName : "Application.hx", lineNumber : 50, className : "Application", methodName : "init"});
 	}
 	Application.basePath = window.location.pathname.split(config.appName)[0] + Std.string(config.appName) + "/";
-	haxe.Log.trace(Application.basePath,{ fileName : "Application.hx", lineNumber : 51, className : "Application", methodName : "init"});
+	haxe.Log.trace(Application.basePath,{ fileName : "Application.hx", lineNumber : 53, className : "Application", methodName : "init"});
 	ist.initUI(config.views);
 };
 Application.prototype = {
@@ -39,6 +39,7 @@ Application.prototype = {
 			var v = viewConfigs[_g];
 			++_g;
 			var className = Reflect.fields(v)[0];
+			haxe.Log.trace(className,{ fileName : "Application.hx", lineNumber : 62, className : "Application", methodName : "initUI"});
 			var cl = Type.resolveClass("view." + className);
 			if(cl != null) {
 				var av = Type.createInstance(cl,[Reflect.field(v,className)]);
@@ -46,7 +47,91 @@ Application.prototype = {
 			}
 		}
 	}
+	,test: function() {
+		var template = "{a} Hello {c} World!";
+		var data = { a : 123, b : 333, c : "{nested}"};
+		var t = "hello";
+		haxe.Log.trace(t + ":" + t.indexOf("lo"),{ fileName : "Application.hx", lineNumber : 78, className : "Application", methodName : "test"});
+		var ctempl = new EReg("{([a-x]*)}","g").map(template,function(r) {
+			var m = r.matched(1);
+			var d = Std.string(Reflect.field(data,m));
+			if(d.indexOf("{") == 0) haxe.Log.trace("nested template :) " + d.indexOf("{"),{ fileName : "Application.hx", lineNumber : 85, className : "Application", methodName : "test"});
+			return d;
+		});
+		haxe.Log.trace(ctempl,{ fileName : "Application.hx", lineNumber : 88, className : "Application", methodName : "test"});
+	}
 	,__class__: Application
+};
+var DateTools = function() { };
+$hxClasses["DateTools"] = DateTools;
+DateTools.__name__ = ["DateTools"];
+DateTools.__format_get = function(d,e) {
+	switch(e) {
+	case "%":
+		return "%";
+	case "C":
+		return StringTools.lpad(Std.string(Std["int"](d.getFullYear() / 100)),"0",2);
+	case "d":
+		return StringTools.lpad(Std.string(d.getDate()),"0",2);
+	case "D":
+		return DateTools.__format(d,"%m/%d/%y");
+	case "e":
+		return Std.string(d.getDate());
+	case "H":case "k":
+		return StringTools.lpad(Std.string(d.getHours()),e == "H"?"0":" ",2);
+	case "I":case "l":
+		var hour = d.getHours() % 12;
+		return StringTools.lpad(Std.string(hour == 0?12:hour),e == "I"?"0":" ",2);
+	case "m":
+		return StringTools.lpad(Std.string(d.getMonth() + 1),"0",2);
+	case "M":
+		return StringTools.lpad(Std.string(d.getMinutes()),"0",2);
+	case "n":
+		return "\n";
+	case "p":
+		if(d.getHours() > 11) return "PM"; else return "AM";
+		break;
+	case "r":
+		return DateTools.__format(d,"%I:%M:%S %p");
+	case "R":
+		return DateTools.__format(d,"%H:%M");
+	case "s":
+		return Std.string(Std["int"](d.getTime() / 1000));
+	case "S":
+		return StringTools.lpad(Std.string(d.getSeconds()),"0",2);
+	case "t":
+		return "\t";
+	case "T":
+		return DateTools.__format(d,"%H:%M:%S");
+	case "u":
+		var t = d.getDay();
+		if(t == 0) return "7"; else if(t == null) return "null"; else return "" + t;
+		break;
+	case "w":
+		return Std.string(d.getDay());
+	case "y":
+		return StringTools.lpad(Std.string(d.getFullYear() % 100),"0",2);
+	case "Y":
+		return Std.string(d.getFullYear());
+	default:
+		throw "Date.format %" + e + "- not implemented yet.";
+	}
+};
+DateTools.__format = function(d,f) {
+	var r = new StringBuf();
+	var p = 0;
+	while(true) {
+		var np = f.indexOf("%",p);
+		if(np < 0) break;
+		r.addSub(f,p,np - p);
+		r.add(DateTools.__format_get(d,HxOverrides.substr(f,np + 1,1)));
+		p = np + 2;
+	}
+	r.addSub(f,p,f.length - p);
+	return r.b;
+};
+DateTools.format = function(d,f) {
+	return DateTools.__format(d,f);
 };
 var EReg = function(r,opt) {
 	opt = opt.split("u").join("");
@@ -85,6 +170,9 @@ EReg.prototype = {
 			}
 			return b1;
 		}
+	}
+	,replace: function(s,by) {
+		return s.replace(this.r,by);
 	}
 	,map: function(s,f) {
 		var offset = 0;
@@ -238,6 +326,9 @@ Std.__name__ = ["Std"];
 Std.string = function(s) {
 	return js.Boot.__string_rec(s,"");
 };
+Std["int"] = function(x) {
+	return x | 0;
+};
 var StringBuf = function() {
 	this.b = "";
 };
@@ -248,7 +339,41 @@ StringBuf.prototype = {
 	,add: function(x) {
 		this.b += Std.string(x);
 	}
+	,addSub: function(s,pos,len) {
+		if(len == null) this.b += HxOverrides.substr(s,pos,null); else this.b += HxOverrides.substr(s,pos,len);
+	}
 	,__class__: StringBuf
+};
+var StringTools = function() { };
+$hxClasses["StringTools"] = StringTools;
+StringTools.__name__ = ["StringTools"];
+StringTools.lpad = function(s,c,l) {
+	if(c.length <= 0) return s;
+	while(s.length < l) s = c + s;
+	return s;
+};
+var Template = function() { };
+$hxClasses["Template"] = Template;
+Template.__name__ = ["Template"];
+Template.compile = function(template,data) {
+	haxe.Log.trace(template + ":" + Std.string(data),{ fileName : "Template.hx", lineNumber : 21, className : "Template", methodName : "compile"});
+	return new EReg("{([a-x]*)}","g").map(template,function(r) {
+		var m = r.matched(1);
+		var d = Std.string(Reflect.field(data,m));
+		return Reflect.field(data,m);
+	});
+};
+Template.include = function(template,ids) {
+	var _g = 0;
+	while(_g < ids.length) {
+		var id = ids[_g];
+		++_g;
+		id = new EReg("[{}]","g").replace(id,"");
+		haxe.Log.trace(id,{ fileName : "Template.hx", lineNumber : 35, className : "Template", methodName : "include"});
+		var r = new EReg("{" + id + "}","g");
+		template = r.replace(template,new $("#" + id).wrap("div").html());
+	}
+	return template;
 };
 var ValueType = { __ename__ : true, __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] };
 ValueType.TNull = ["TNull",0];
@@ -360,18 +485,22 @@ Type["typeof"] = function(v) {
 	}
 };
 var View = function(data) {
-	var app = Application;
+	var _g = this;
+	this.views = new Array();
+	this.templates = new haxe.ds.StringMap();
 	var data1 = data;
 	this.id = data1.id;
 	this.name = Type.getClassName(Type.getClass(this)).split(".").pop();
-	var j = new $(".app[id=\"" + data1.id + "\"]");
-	this.root = j.find(".template");
-	haxe.Log.trace(j.length + ":" + this.root.length,{ fileName : "View.hx", lineNumber : 37, className : "View", methodName : "new"});
+	var j = new $(".app[id=\"" + this.id + "\"]");
+	if(j.attr("data") == "template") this.root = j; else this.root = j.find("[data=\"template\"]");
+	this.root.find("[data]").each(function(i,node) {
+		_g.templates.set(Std.string(new $(node).attr("data")),new $(node).html());
+	});
+	haxe.Log.trace(j.length + ":" + this.root.length,{ fileName : "View.hx", lineNumber : 49, className : "View", methodName : "new"});
 	this.template = this.root.html();
 	this.root.html("");
-	this.root.removeAttr("class");
 	j.removeClass("app");
-	haxe.Log.trace(this.name + ":" + this.template,{ fileName : "View.hx", lineNumber : 42, className : "View", methodName : "new"});
+	haxe.Log.trace(this.name + ":" + this.id + ":" + this.template,{ fileName : "View.hx", lineNumber : 54, className : "View", methodName : "new"});
 };
 $hxClasses["View"] = View;
 View.__name__ = ["View"];
@@ -380,7 +509,8 @@ View.prototype = {
 	,name: null
 	,root: null
 	,template: null
-	,app: null
+	,templates: null
+	,views: null
 	,__class__: View
 };
 var haxe = {};
@@ -539,6 +669,20 @@ haxe.Log.__name__ = ["haxe","Log"];
 haxe.Log.trace = function(v,infos) {
 	js.Boot.__trace(v,infos);
 };
+haxe.Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
+$hxClasses["haxe.Timer"] = haxe.Timer;
+haxe.Timer.__name__ = ["haxe","Timer"];
+haxe.Timer.prototype = {
+	id: null
+	,run: function() {
+	}
+	,__class__: haxe.Timer
+};
 haxe.ds = {};
 haxe.ds.StringMap = function() {
 	this.h = { };
@@ -550,6 +694,9 @@ haxe.ds.StringMap.prototype = {
 	h: null
 	,set: function(key,value) {
 		this.h["$" + key] = value;
+	}
+	,get: function(key) {
+		return this.h["$" + key];
 	}
 	,__class__: haxe.ds.StringMap
 };
@@ -761,7 +908,7 @@ me.cunity.debug.Out.log2 = function(v,i) {
 	http.setParameter("log",msg);
 	http.async = true;
 	http.onData = function(data) {
-		if(data != "OK") haxe.Log.trace(data,{ fileName : "Out.hx", lineNumber : 195, className : "me.cunity.debug.Out", methodName : "log2"});
+		if(data != "OK") haxe.Log.trace(data,{ fileName : "Out.hx", lineNumber : 190, className : "me.cunity.debug.Out", methodName : "log2"});
 	};
 	http.request(true);
 };
@@ -791,15 +938,15 @@ me.cunity.debug.Out._dumpObjectTree = function(root,parent,recursive,i) {
 	if(Type.getClass(root) != null) fields = Type.getInstanceFields(Type.getClass(root)); else fields = Reflect.fields(root);
 	me.cunity.debug.Out.dumpedObjects.push(root);
 	try {
-		me.cunity.debug.Out._trace(m + " fields:" + fields.length + ":" + fields.slice(0,5).toString(),{ fileName : "Out.hx", lineNumber : 266, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
+		me.cunity.debug.Out._trace(m + " fields:" + fields.length + ":" + fields.slice(0,5).toString(),{ fileName : "Out.hx", lineNumber : 261, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
 		var _g = 0;
 		while(_g < fields.length) {
 			var f = fields[_g];
 			++_g;
-			haxe.Log.trace(f,{ fileName : "Out.hx", lineNumber : 269, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
+			haxe.Log.trace(f,{ fileName : "Out.hx", lineNumber : 264, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
 			if(recursive) {
 				if(me.cunity.debug.Out.dumpedObjects.length > 1000) {
-					me.cunity.debug.Out._trace(me.cunity.debug.Out.dumpedObjects.toString(),{ fileName : "Out.hx", lineNumber : 274, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
+					me.cunity.debug.Out._trace(me.cunity.debug.Out.dumpedObjects.toString(),{ fileName : "Out.hx", lineNumber : 269, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
 					throw "oops";
 					break;
 					return;
@@ -810,7 +957,7 @@ me.cunity.debug.Out._dumpObjectTree = function(root,parent,recursive,i) {
 			}
 		}
 	} catch( ex ) {
-		haxe.Log.trace(ex,{ fileName : "Out.hx", lineNumber : 294, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
+		haxe.Log.trace(ex,{ fileName : "Out.hx", lineNumber : 289, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
 	}
 };
 me.cunity.debug.Out.dumpObject = function(ob,i) {
@@ -1248,23 +1395,63 @@ pushstate.PushState.replace = function(url,state) {
 	return true;
 };
 var view = {};
-view.ContextMenu = function(data) {
+view.Clients = function(data) {
 	View.call(this,data);
-	view.ContextMenu.instance = this;
+};
+$hxClasses["view.Clients"] = view.Clients;
+view.Clients.__name__ = ["view","Clients"];
+view.Clients.__super__ = View;
+view.Clients.prototype = $extend(View.prototype,{
+	paint: function() {
+		var _g = 0;
+		var _g1 = this.views;
+		while(_g < _g1.length) {
+			var v = _g1[_g];
+			++_g;
+			this.root.append((function($this) {
+				var $r;
+				var html = "#" + Std.string(v);
+				$r = new $(html);
+				return $r;
+			}(this)));
+		}
+	}
+	,__class__: view.Clients
+});
+view.ContextMenu = function(data) {
+	haxe.Log.trace(this.id + ":" + Std.string(data),{ fileName : "ContextMenu.hx", lineNumber : 35, className : "view.ContextMenu", methodName : "new"});
+	View.call(this,data);
+	this.contextData = data;
 };
 $hxClasses["view.ContextMenu"] = view.ContextMenu;
 view.ContextMenu.__name__ = ["view","ContextMenu"];
-view.ContextMenu.instance = null;
-view.ContextMenu.create = function(data) {
-	return new view.ContextMenu(data);
-};
 view.ContextMenu.__super__ = View;
 view.ContextMenu.prototype = $extend(View.prototype,{
-	items: null
-	,toggle: function(e) {
-		me.cunity.debug.Out.dumpObject(e,{ fileName : "ContextMenu.hx", lineNumber : 35, className : "view.ContextMenu", methodName : "toggle"});
+	accordion: null
+	,contextData: null
+	,draw: function() {
 	}
 	,__class__: view.ContextMenu
+});
+view.DateTime = function(data) {
+	View.call(this,data);
+	haxe.Log.trace(this.template,{ fileName : "DateTime.hx", lineNumber : 19, className : "view.DateTime", methodName : "new"});
+	this.interval = data.interval;
+	this.format = data.format;
+	this.draw();
+	var t = new haxe.Timer(this.interval);
+	t.run = $bind(this,this.draw);
+};
+$hxClasses["view.DateTime"] = view.DateTime;
+view.DateTime.__name__ = ["view","DateTime"];
+view.DateTime.__super__ = View;
+view.DateTime.prototype = $extend(View.prototype,{
+	format: null
+	,interval: null
+	,draw: function() {
+		new $("#" + this.id).html(new EReg("{([a-x]*)}","g").replace(this.template,DateTools.format(new Date(),this.format)));
+	}
+	,__class__: view.DateTime
 });
 view.TabBox = function(data) {
 	var _g = this;
@@ -1279,18 +1466,22 @@ view.TabBox = function(data) {
 			pushstate.PushState.addEventListener(null,$bind(this,this.go));
 		}
 		this.active = 0;
+		this.template = Template.include(this.template,this.tabBoxData.includes);
+		this.root.append(this.template);
+		var tabsTemplate = this.templates.get("tabs");
+		var tabLinksRoot = new $("[data=\"tabs\"]");
 		var _g1 = 0;
 		var _g11 = this.tabBoxData.tabs;
 		while(_g1 < _g11.length) {
 			var tab = [_g11[_g1]];
 			++_g1;
-			var ctempl = new EReg("{([a-x]*)}","g").map(this.template,(function(tab) {
+			var ctempl = new EReg("{([a-x]*)}","g").map(tabsTemplate,(function(tab) {
 				return function(r) {
 					var m = r.matched(1);
 					return Reflect.field(tab[0],m);
 				};
 			})(tab));
-			this.root.append(ctempl);
+			tabLinksRoot.append(ctempl);
 			new $("#" + this.id).append("<div id=\"ui-id-" + (this.tabLinks.length * 2 + 2) + "\" ><p>" + tab[0].label + "</p></div>");
 			if(tab[0].link == this.tabBoxData.action) this.active = this.tabLinks.length;
 			this.tabLabel.push(tab[0].label);
@@ -1301,7 +1492,7 @@ view.TabBox = function(data) {
 		}, create : function(event1,ui1) {
 			_g.tabsInstance = js.JqueryUI.tabs(new $("#" + _g.id),"instance");
 		}, beforeLoad : function(event2,ui2) {
-			haxe.Log.trace("beforeLoad " + ui2.ajaxSettings.url,{ fileName : "TabBox.hx", lineNumber : 98, className : "view.TabBox", methodName : "new"});
+			haxe.Log.trace("beforeLoad " + ui2.ajaxSettings.url,{ fileName : "TabBox.hx", lineNumber : 102, className : "view.TabBox", methodName : "new"});
 			return false;
 		}, heightStyle : this.tabBoxData.heightStyle == null?"auto":this.tabBoxData.heightStyle});
 	}
@@ -1317,9 +1508,9 @@ view.TabBox.prototype = $extend(View.prototype,{
 	,tabLinks: null
 	,tabLabel: null
 	,go: function(url) {
-		haxe.Log.trace(url,{ fileName : "TabBox.hx", lineNumber : 112, className : "view.TabBox", methodName : "go"});
+		haxe.Log.trace(url,{ fileName : "TabBox.hx", lineNumber : 116, className : "view.TabBox", methodName : "go"});
 		if(!(typeof(url) == "string")) {
-			me.cunity.debug.Out.dumpStack(haxe.CallStack.callStack(),{ fileName : "TabBox.hx", lineNumber : 115, className : "view.TabBox", methodName : "go"});
+			me.cunity.debug.Out.dumpStack(haxe.CallStack.callStack(),{ fileName : "TabBox.hx", lineNumber : 119, className : "view.TabBox", methodName : "go"});
 			return;
 		}
 		var p = url.split(Application.basePath);
@@ -1341,6 +1532,8 @@ String.prototype.__class__ = $hxClasses.String = String;
 String.__name__ = ["String"];
 $hxClasses.Array = Array;
 Array.__name__ = ["Array"];
+Date.prototype.__class__ = $hxClasses.Date = Date;
+Date.__name__ = ["Date"];
 var Int = $hxClasses.Int = { __name__ : ["Int"]};
 var Dynamic = $hxClasses.Dynamic = { __name__ : ["Dynamic"]};
 var Float = $hxClasses.Float = Number;

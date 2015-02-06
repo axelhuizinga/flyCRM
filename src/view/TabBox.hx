@@ -32,7 +32,7 @@ typedef TabBoxData =
 {>ViewData,
 	var tabs:Array<TabData>;
 	@:optional var action:String;
-	@:optional var basePath:String;
+	@:optional var includes:Array<String>;
 	@:optional var isNav:Bool;
 	@:optional var onLoad:String;
 	@:optional var heightStyle:String;
@@ -65,14 +65,18 @@ typedef TabBoxData =
 			}			
 			//var index:Int = 0;
 			active = 0;
+			template = Template.include(template, tabBoxData.includes);
+			root.append(template);
+			var tabsTemplate = templates.get('tabs');
+			var tabLinksRoot = J('[data="tabs"]');
 			for (tab in tabBoxData.tabs)
 			{
-				var ctempl:String = ~/{([a-x]*)}/g.map(template, function(r:EReg)
+				var ctempl:String = ~/{([a-x]*)}/g.map(tabsTemplate, function(r:EReg)
 				{
 					var m:String = r.matched(1);
 					return Reflect.field(tab, m);
 				});
-				root.append(ctempl);				
+				tabLinksRoot.append(ctempl);			
 				J('#' + id).append('<div id="ui-id-' + (tabLinks.length*2 + 2) +  '" ><p>' + tab.label + '</p></div>');
 				if (tab.link == tabBoxData.action)
 					active = tabLinks.length;

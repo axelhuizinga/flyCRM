@@ -5,7 +5,7 @@ import haxe.ds.StringMap;
  * ...
  * @author axel@cunity.me
  */
-class Client extends Model
+class Clients extends Model
 {
 	public var data:StringMap<Dynamic>;
 	
