@@ -60,7 +60,6 @@ typedef TabBoxData =
 		tabLinks = new Array();
 		if (data != null )
 		{
-			//root.addClass('my-tabs');
 			tabBoxData = cast data;
 			//trace(tabBoxData);
 			if (tabBoxData.isNav)
@@ -68,12 +67,9 @@ typedef TabBoxData =
 				PushState.init();
 				PushState.addEventListener(go);
 			}			
-			//var index:Int = 0;
+
 			active = 0;
-			//template = Template.include(template, tabBoxData.includes);
-			//root.append(template);
-			//var tabsTemplate = templates.get('tabs');
-			//var tabLinksRoot = J('[data="tabs"]');
+
 			for (tab in tabBoxData.tabs)
 			{
 				if (tab.link == tabBoxData.action)

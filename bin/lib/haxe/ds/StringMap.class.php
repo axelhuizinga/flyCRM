@@ -6,6 +6,9 @@ class haxe_ds_StringMap implements IMap, IteratorAggregate{
 		$this->h = array();
 	}}
 	public $h;
+	public function set($key, $value) {
+		$this->h[$key] = $value;
+	}
 	public function get($key) {
 		if(array_key_exists($key, $this->h)) {
 			return $this->h[$key];

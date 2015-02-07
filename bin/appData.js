@@ -1,11 +1,3 @@
-/*	FORMAT FUNCTIONS*/
-
-var run = function(args)
-{
-	var f = args.unshift();
-	return f.apply(null, n);
-}
-
 var fieldNames =
 {
 	first_name:'Vorname',
@@ -16,19 +8,17 @@ var fieldNames =
 	city:'Ort',
 	last_local_call_time:'Anrufdatum',
 	vendor_lead_code:'Mitgliedsnummer'
-};
+}
 
 var fieldFormats =
 {
 	phone_number:'0%d'
-};
+}
 
 var fieldTypes =
 {
 	title:'select'
 }
-
-
 
 var uiData = {
 	appName:"flyCRM",
@@ -39,9 +29,8 @@ var uiData = {
 			DateTime:
 			{
 				id:"datetime",
-				//format:", %e. %n. %Y %H:%M",
-				format:"%s, %d. %d. %s %02d:%02d",
-				interval:10000
+				format:"%s, %d.%d.%s %02d:%02d",
+				interval:60000
 			}
 		},
 		{
@@ -98,4 +87,4 @@ var uiData = {
 			}
 		}
 
-	]};
+	]}

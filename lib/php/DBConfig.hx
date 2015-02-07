@@ -13,7 +13,6 @@ class DBConfig
 	
 	static function __init__() 
 	{
-		untyped __call__('error_log', 'hi from DBConfig.__init__ :)');
 		untyped __call__('require_once', '../../config/flyCRM.db.php');
 		db = untyped __var__("VARDB");
 		user = untyped __var__("VARDB_user");

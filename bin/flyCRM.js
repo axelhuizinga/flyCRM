@@ -1334,10 +1334,8 @@ view.ContextMenu.prototype = $extend(View.prototype,{
 view.DateTime = function(data) {
 	var _g = this;
 	View.call(this,data);
-	haxe.Log.trace(data,{ fileName : "DateTime.hx", lineNumber : 23, className : "view.DateTime", methodName : "new"});
 	this.interval = data.interval;
 	this.format = data.format;
-	haxe.Log.trace(this.format,{ fileName : "DateTime.hx", lineNumber : 26, className : "view.DateTime", methodName : "new"});
 	var t = new haxe.Timer(this.interval);
 	var d = new Date();
 	this.template = new $("#t-" + this.id).tmpl({ datetime : (function($this) {
@@ -1350,6 +1348,7 @@ view.DateTime = function(data) {
 	var start = d.getSeconds();
 	if(start == 0) t.run = $bind(this,this.draw); else haxe.Timer.delay(function() {
 		t.run = $bind(_g,_g.draw);
+		_g.draw();
 	},(60 - start) * 1000);
 };
 $hxClasses["view.DateTime"] = view.DateTime;
@@ -1360,12 +1359,12 @@ view.DateTime.prototype = $extend(View.prototype,{
 	,interval: null
 	,draw: function() {
 		var d = new Date();
-		haxe.Log.trace(this.template.html((function($this) {
+		this.template.html((function($this) {
 			var $r;
 			var args = [view.DateTime.wochentage[d.getDay()],d.getDate(),d.getMonth() + 1,d.getFullYear(),d.getHours(),d.getMinutes()];
 			$r = vsprintf($this.format,args);
 			return $r;
-		}(this))),{ fileName : "DateTime.hx", lineNumber : 46, className : "view.DateTime", methodName : "draw"});
+		}(this)));
 	}
 	,__class__: view.DateTime
 });
@@ -1395,13 +1394,13 @@ view.TabBox = function(data) {
 			pushstate.PushState.replace(Std.string(ui.newTab.context).split(window.location.hostname).pop());
 		}, create : function(event1,ui1) {
 			_g.tabsInstance = js.JqueryUI.tabs(new $("#" + _g.id),"instance");
-			haxe.Log.trace("ready2load",{ fileName : "TabBox.hx", lineNumber : 96, className : "view.TabBox", methodName : "new"});
+			haxe.Log.trace("ready2load",{ fileName : "TabBox.hx", lineNumber : 92, className : "view.TabBox", methodName : "new"});
 			if(_g.tabBoxData.append2header != null) {
 				var views = Application.getViews();
 				views.get(_g.tabBoxData.append2header).template.appendTo(new $("#" + _g.id + " ul"));
 			}
 		}, beforeLoad : function(event2,ui2) {
-			haxe.Log.trace("beforeLoad " + ui2.ajaxSettings.url,{ fileName : "TabBox.hx", lineNumber : 106, className : "view.TabBox", methodName : "new"});
+			haxe.Log.trace("beforeLoad " + ui2.ajaxSettings.url,{ fileName : "TabBox.hx", lineNumber : 102, className : "view.TabBox", methodName : "new"});
 			return false;
 		}, heightStyle : this.tabBoxData.heightStyle == null?"auto":this.tabBoxData.heightStyle});
 	}
@@ -1417,9 +1416,9 @@ view.TabBox.prototype = $extend(View.prototype,{
 	,tabLinks: null
 	,tabLabel: null
 	,go: function(url) {
-		haxe.Log.trace(url,{ fileName : "TabBox.hx", lineNumber : 120, className : "view.TabBox", methodName : "go"});
+		haxe.Log.trace(url,{ fileName : "TabBox.hx", lineNumber : 116, className : "view.TabBox", methodName : "go"});
 		if(!(typeof(url) == "string")) {
-			me.cunity.debug.Out.dumpStack(haxe.CallStack.callStack(),{ fileName : "TabBox.hx", lineNumber : 123, className : "view.TabBox", methodName : "go"});
+			me.cunity.debug.Out.dumpStack(haxe.CallStack.callStack(),{ fileName : "TabBox.hx", lineNumber : 119, className : "view.TabBox", methodName : "go"});
 			return;
 		}
 		var p = url.split(Application.basePath);

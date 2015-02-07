@@ -117,8 +117,8 @@
 	jQuery.extend({
 		// Return wrapped set of template items, obtained by rendering template against data.
 		tmpl: function( tmpl, data, options, parentItem ) {
-		console.log(tmpl);
-		console.log(data);
+		//console.log(tmpl);
+		//console.log(data);
 			var ret, topLevel = !parentItem;
 			if ( topLevel ) {
 				// This is a top-level tmpl call (not from a nested template using {{tmpl}})

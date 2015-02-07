@@ -20,30 +20,29 @@ using js.JqueryUI;
 	public function new(?data:Dynamic) 
 	{
 		super(data);
-		trace(data);
 		interval = data.interval;
 		format = data.format;
-		trace(format);
 		var t:Timer = new Timer(interval);
 		var d:Date = Date.now();
-		//template = J('#t-' + id).tmpl( { datetime:DateTools.format(d, wochentage[d.getDay()] +  format) } );
 		template = J('#t-' + id).tmpl( { datetime:JHelper.vsprintf(format, [wochentage[d.getDay()] , d.getDate(), d.getMonth()+1, d.getFullYear(), d.getHours(), d.getMinutes()]) } );
 		draw();
 		var start:Int = d.getSeconds();
 		if (start == 0)
 		{
 			t.run = draw;
-			//draw();
 		}
 		else
-			Timer.delay(function() { t.run = draw; }, (60 - start) * 1000);
+			Timer.delay(function() { 
+				t.run = draw; 
+				draw();
+			}, (60 - start) * 1000);
 		
 	}
 	
 	public function draw():Void
 	{
 		var d:Date = Date.now();
-		trace(template.html(JHelper.vsprintf(format, [wochentage[d.getDay()] , d.getDate(), d.getMonth()+1, d.getFullYear(), d.getHours(), d.getMinutes()])));
+		template.html(JHelper.vsprintf(format, [wochentage[d.getDay()] , d.getDate(), d.getMonth() + 1, d.getFullYear(), d.getHours(), d.getMinutes()]));
 	}
 	
 }
