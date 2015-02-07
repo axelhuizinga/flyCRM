@@ -27,24 +27,20 @@
 	</head>
 	<body>
 	<!-- MAIN APP SCREEN -->
-		<div  id="bgBox">
-
+		<div  class="bgBox" id="bgBox">
+			<div  id="mtabs" >
+				<ul ></ul>
+			</div>
 		</div>
 		
 		<!-- MAIN TABS -->
-		<script type="text/html" id="t-mtabs">
-			<div  id="mtabs" class="app" >
-				<ul >
-					<li><a href="${link}" rel="pushstate">${label}</a></li>
-				</ul>			
-			</div>
+		<script type="text/html" id="t-mtabs">						
+			<li><a href="${link}" rel="pushstate">${label}</a></li>								
 		</script>
 		
 		<!-- DATETIME -->		
 		<script type="text/html"  id="t-datetime" >					
-			<div id="datetime" class="app menu-right">					
-					<span >${datetime}</span>					
-			</div>		
+			<li id="datetime" class="tabs-header" >${datetime}</li>			
 		</script>
 		
 		<!-- MEMBERS TAB -->
@@ -90,12 +86,14 @@
 		
 		<script src="js/jquery-2.1.3.min.js"></script>
 		<script src="js/jquery-ui.js"></script>
+		<script src="js/jquery.tmpl.js"></script>
 		<script src="js/debugJq.js"></script>
 		<script src="js/stacktrace.js"></script>
-		<script src="js/sprintf-0.7.js"></script>
+		<script src="js/sprintf.min.js"></script>
 		<script src="flyCRM.js"></script>
 		<script src="uiData.js"></script>			
-		<script 	>$(document).ready(function()
+		<script 	>
+		$(document).ready(function()
 		{
 			uiData.basePath="<?php echo $basePath;?>";
 			uiData.action="<?php echo $action;?>";

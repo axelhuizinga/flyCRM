@@ -8,11 +8,14 @@ import js.html.Node;
 import View;
 import jQuery.*;
 import jQuery.JHelper.J;
+//import jQuery.Template;
 import js.JqueryUI;
 import pushstate.PushState;
 import me.cunity.debug.Out;
 
+
 using js.JqueryUI;
+
 
 /**
  * ...
@@ -35,6 +38,7 @@ typedef TabBoxData =
 	@:optional var includes:Array<String>;
 	@:optional var isNav:Bool;
 	@:optional var onLoad:String;
+	@:optional var append2header:String;
 	@:optional var heightStyle:String;
 }
 
@@ -56,8 +60,9 @@ typedef TabBoxData =
 		tabLinks = new Array();
 		if (data != null )
 		{
-			root.addClass('my-tabs');
+			//root.addClass('my-tabs');
 			tabBoxData = cast data;
+			//trace(tabBoxData);
 			if (tabBoxData.isNav)
 			{
 				PushState.init();
@@ -65,26 +70,19 @@ typedef TabBoxData =
 			}			
 			//var index:Int = 0;
 			active = 0;
-			template = Template.include(template, tabBoxData.includes);
-			root.append(template);
-			var tabsTemplate = templates.get('tabs');
-			var tabLinksRoot = J('[data="tabs"]');
+			//template = Template.include(template, tabBoxData.includes);
+			//root.append(template);
+			//var tabsTemplate = templates.get('tabs');
+			//var tabLinksRoot = J('[data="tabs"]');
 			for (tab in tabBoxData.tabs)
 			{
-				var ctempl:String = ~/{([a-x]*)}/g.map(tabsTemplate, function(r:EReg)
-				{
-					var m:String = r.matched(1);
-					return Reflect.field(tab, m);
-				});
-				tabLinksRoot.append(ctempl);			
-				J('#' + id).append('<div id="ui-id-' + (tabLinks.length*2 + 2) +  '" ><p>' + tab.label + '</p></div>');
 				if (tab.link == tabBoxData.action)
 					active = tabLinks.length;
 				tabLabel.push(tab.label);
 				tabLinks.push(tab.link);
 			}
-						
-			tabObj = J( "#" + id ).tabs( 
+			J('#t-' + id).tmpl(tabBoxData.tabs).appendTo(root.find('ul:first'));	
+			tabObj = root.tabs( 
 			{
 				active:active,
 				activate: function( event:Event, ui ) 
@@ -94,8 +92,14 @@ typedef TabBoxData =
 				},				
 				create: function( event:Event, ui ) 
 				{
-					tabsInstance =  J('#' + id).tabs("instance");
-										
+					tabsInstance =  J('#' + id).tabs("instance");		
+					trace('ready2load');
+					if (tabBoxData.append2header != null)
+					{
+						var views:StringMap<View> = Application.getViews();
+						//trace(views.toString());
+						views.get(tabBoxData.append2header).template.appendTo(J('#' + id + ' ul'));
+					}
 				},
 				beforeLoad: function( event:Event, ui ) 
 				{

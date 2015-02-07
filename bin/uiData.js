@@ -29,17 +29,27 @@ var fieldTypes =
 }
 
 
+
 var uiData = {
 	appName:"flyCRM",
 	company:"X-Press Marketing GmbH",
 	views:
 	[
 		{
+			DateTime:
+			{
+				id:"datetime",
+				//format:", %e. %n. %Y %H:%M",
+				format:"%s, %d. %d. %s %02d:%02d",
+				interval:10000
+			}
+		},
+		{
 			TabBox:
 			{
 				id:"mtabs",
 				isNav:true,
-				includes:['datetime'],
+				append2header:'datetime',
 				tabs:
 				[
 					{
@@ -86,13 +96,6 @@ var uiData = {
 				],
 				heightStyle: "fill"
 			}
-		},
-		{
-			DateTime:
-			{
-				id:"datetime",
-				format:"%d. %m. %Y %H:%M",
-				interval:10000
-			}
 		}
+
 	]};

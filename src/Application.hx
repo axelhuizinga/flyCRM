@@ -21,7 +21,7 @@ import view.TabBox;
 
 class Application
 {
-	//public static var instance:Application;
+	public static var ist:Application;
 	public static var basePath:String;
 	public static var appName:String;
 	public static var company:String;
@@ -41,11 +41,12 @@ class Application
 	@:expose("initApp") 
 	public static function init(config:Dynamic)
 	{
-		var ist:Application = 	new Application();
+		ist = new Application();
 		//ist.test(); return;
 		var fields:Array<String> = Type.getClassFields(Application);
 		for (f in fields)
 		{
+			if(Reflect.field(config, f)!=null)
 			Reflect.setField(Application, f, Reflect.field(config, f));
 			trace(Reflect.field(Application, f));
 		}
@@ -59,15 +60,22 @@ class Application
 		for (v in viewConfigs)
 		{
 			var className:String = Reflect.fields(v)[0];
-			trace(className);
+			var iParam:Dynamic = Reflect.field(v, className);
+			//trace(className + ':' + iParam);
 			var cl:Class<Dynamic> = Type.resolveClass('view.' + className);
 			if (cl != null)
 			{
 				//trace(cl);
-				var av:View = Type.createInstance(cl, [Reflect.field(v, className)]);
-				views.set(v.id, av);				
+				var av:View = Type.createInstance(cl, [iParam]);
+				views.set(iParam.id, av);				
+				trace("views.set(" +iParam.id +")");
 			}
 		}
+	}
+	
+	public static function getViews(): StringMap<View>
+	{
+		return ist.views;
 	}
 	
 	function test()

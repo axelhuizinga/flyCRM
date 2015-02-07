@@ -26,7 +26,7 @@
     <option noInlineOnDebug="False" />
     <option mainClass="Application" />
     <option enabledebug="False" />
-    <option additional="-dce std" />
+    <option additional="-dce std&#xA;--macro jQuery.haxe.Config.addPlugin('jQuery.Template')" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
@@ -44,7 +44,7 @@
   <!-- Executed before build -->
   <preBuildCommand />
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False">cp -ur $(OutputDir)\* flyCRM</postBuildCommand>
+  <postBuildCommand alwaysRun="False">cp -ur $(OutputDir)\*  C:\www\cunity.me\httpdocs\devel\flyCRM</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />

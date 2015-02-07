@@ -13,10 +13,10 @@ import me.cunity.debug.Out;
 
 //using js.JqueryUI;
 
-class Template
+extern class Template
 {
 
-	public static function compile(template:String, data:Dynamic):String
+	/*public static function compile(template:String, data:Dynamic):String
 	{
 		trace(template + ':' + data);
 		return ~/{([a-x]*)}/g.map(template, function(r:EReg)
@@ -38,6 +38,8 @@ class Template
 		}
 
 		return template;
-	}
+	}*/
+	
+	public static function tmpl2(j:JQuery, data:Dynamic):JQuery;
 	
 }

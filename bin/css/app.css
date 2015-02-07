@@ -32,7 +32,12 @@ body ul
 	height:100%;
 }
 
-#bgBox{
+.ui-tabs-nav .tabs-header{
+	float:right!important;
+	padding: .5em 1em!important;
+}
+
+.bgBox{
 	top:0;
 	bottom:0;
 	left:0;
@@ -42,14 +47,13 @@ body ul
 	
 }
 
+tr.even{ background-color: #aaa;}
+tr.odd{ background-color: #888;}
+
 #mtabs{
     background-image: -moz-linear-gradient(top, #ffffff, #dddddd); /* Firefox 3.6 */
     background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0, #dddddd),color-stop(1, #ffffff)); /* Safari & Chrome */
 }
 
-#datetime div{
-	margin:3px;
-	padding: 13px 5px;
-	text-align: center;
-}
-/*#datetime  span{margin: 15px auto;}*/
+
+

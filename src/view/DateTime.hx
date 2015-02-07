@@ -3,12 +3,16 @@ import haxe.Timer;
 import jQuery.JHelper;
 import jQuery.*;
 import jQuery.JHelper.J;
+
+using js.JqueryUI;
 /**
  * ...
  * @author axel@cunity.me
  */
 @:keep class DateTime extends View
 {
+	static var wochentage =  ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+	static var monate =  ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 	var format:String;
 	
 	var interval:Int;
@@ -16,17 +20,30 @@ import jQuery.JHelper.J;
 	public function new(?data:Dynamic) 
 	{
 		super(data);
-		trace(template);
+		trace(data);
 		interval = data.interval;
 		format = data.format;
-		draw();
+		trace(format);
 		var t:Timer = new Timer(interval);
-		t.run = draw;		
+		var d:Date = Date.now();
+		//template = J('#t-' + id).tmpl( { datetime:DateTools.format(d, wochentage[d.getDay()] +  format) } );
+		template = J('#t-' + id).tmpl( { datetime:JHelper.vsprintf(format, [wochentage[d.getDay()] , d.getDate(), d.getMonth()+1, d.getFullYear(), d.getHours(), d.getMinutes()]) } );
+		draw();
+		var start:Int = d.getSeconds();
+		if (start == 0)
+		{
+			t.run = draw;
+			//draw();
+		}
+		else
+			Timer.delay(function() { t.run = draw; }, (60 - start) * 1000);
+		
 	}
 	
 	public function draw():Void
 	{
-		J('#' + id).html(~/{([a-x]*)}/g.replace(template, DateTools.format(Date.now(), format)));
+		var d:Date = Date.now();
+		trace(template.html(JHelper.vsprintf(format, [wochentage[d.getDay()] , d.getDate(), d.getMonth()+1, d.getFullYear(), d.getHours(), d.getMinutes()])));
 	}
 	
 }
