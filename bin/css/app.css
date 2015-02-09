@@ -26,6 +26,12 @@ body ul
 	clear:right;
 }
 
+.main-left
+{
+	float:left;
+	width:80%;
+	overflow: auto;
+}
 .menu-right{
 	float:right;
 	min-width:320px;
@@ -47,8 +53,23 @@ body ul
 	
 }
 
+.ui-tabs-panel table{
+	font-size: 0.75em;
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+.ui-tabs-panel th
+{
+	background-color: #777;
+	color:#fff;
+}
+.ui-tabs-panel th,.ui-tabs-panel td
+{
+	padding:2px 5px;
+}
 tr.even{ background-color: #aaa;}
-tr.odd{ background-color: #888;}
+tr.odd{ background-color: #bbb;}
 
 #mtabs{
     background-image: -moz-linear-gradient(top, #ffffff, #dddddd); /* Firefox 3.6 */

@@ -8,7 +8,6 @@ import js.html.Node;
 import View;
 import jQuery.*;
 import jQuery.JHelper.J;
-//import jQuery.Template;
 import js.JqueryUI;
 import pushstate.PushState;
 import me.cunity.debug.Out;
@@ -25,10 +24,11 @@ using js.JqueryUI;
 typedef Tabs = Dynamic;
 
 typedef TabData = 
-{
+{>ViewData,
 	var link:String;
 	var label:String;
 	@:optional var action:String;
+	
 }
 
 typedef TabBoxData = 
@@ -52,7 +52,7 @@ typedef TabBoxData =
 	var tabLabel:Array<String>;
 	//static var stateChangeCount = 0;
 	
-	public function new(?data:Dynamic<TabBoxData>) 
+	public function new(?data:TabBoxData) 
 	{
 		super(data);
 
@@ -90,11 +90,25 @@ typedef TabBoxData =
 				{
 					tabsInstance =  J('#' + id).tabs("instance");		
 					trace('ready2load');
+					//Out.dumpObject(tabsInstance.panels);
 					if (tabBoxData.append2header != null)
 					{
 						var views:StringMap<View> = Application.getViews();
 						//trace(views.toString());
+						//trace(views.get(tabBoxData.append2header));
 						views.get(tabBoxData.append2header).template.appendTo(J('#' + id + ' ul'));
+						var tabIndex:Int = 0;
+						for (t in tabBoxData.tabs)
+						{
+							//trace(t.views);
+							for (v in t.views)
+							{
+								trace(v);
+								v.parent =  tabsInstance.panels[tabIndex++];
+								trace('adding:' + v + ' to:' + v.parent);
+								addView(v);
+							}
+						}
 					}
 				},
 				beforeLoad: function( event:Event, ui ) 
@@ -109,11 +123,17 @@ typedef TabBoxData =
 		
 	}
 	
+	public function drawPanels():Void
+	{
+		
+	}
+	
 	//public function load(res:Dynamic, data:String, xhr:JqXHR):Void
 	
-	public function go(url:String):Void
+	public function go(url:String, p:Dynamic):Void
 	{
 		trace(url);
+		//Out.dumpObject(p);
 		if (!Std.is(url, String))
 		{
 			Out.dumpStack(CallStack.callStack());

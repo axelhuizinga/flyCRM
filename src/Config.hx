@@ -24,7 +24,7 @@ class Config
 			var data:Array<String> = v.split('=');
 			var json:Dynamic = jsonS.decode(data[1]);
 			result.set(data[0].trim(), json);
-			trace(':' + data[0].trim() +'|'+json + '|' );
+			//trace(':' + data[0].trim() +'|'+json + '|' );
 		}
 		
 		return result;

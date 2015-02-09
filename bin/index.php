@@ -45,26 +45,33 @@
 		
 		<!-- MEMBERS TAB -->
 		<script type="text/html"  id="t-clients">
-			<div id="clients">
+			<div id="clients" class="main-left">
 				<form action="clients">										
 					<table >
-					{{each(i,v) clients}}
-						<tr id="${vendor_lead_code}" class="${i % 2 ? 'odd' : 'even'}">
+						<tr>
 						{{each(i,v) fields}}
-								{{if fieldFormats[v]}}
-							<td><input type="${type}" name="${field}" class="app-right" </li>	
-								{{else}}
-							<li><span>${fieldNames[v]}</span><input type="{{= ${type}|'text'}}" name="${field}" ></li>
-								{{/if}}
-							{{/each}}
+							<th>${fieldNames[v]}</th>
+						{{/each}}
 						</tr>
-					{{/each}}
 					</table>
 				</form>
 			</div>
 		</script>
 		
-			<!-- MEMBERS MENU -->
+		<!-- MEMBERS LIST -->
+		<script type="text/html"  id="t-list">
+			<tr id="${vendor_lead_code}" class="${i % 2 ? 'odd' : 'even'}">
+			{{each(i,v) fields}}
+					{{if fieldFormats[v]}}
+				<td><input type="${type}" name="${field}" class="app-right" readonly="readonly"></li>	
+					{{else}}
+				<li><span>${fieldNames[v]}</span><input type="{{= ${type}|'text'}}" name="${field}"  readonly="readonly"></li>
+					{{/if}}
+			{{/each}}
+			</tr>
+		</script>
+		
+		<!-- MEMBERS MENU -->
 			
 		<script type="text/html" id="t-clients.menu">
 			<div id="clients.menu">
@@ -85,13 +92,13 @@
 
 		
 		<script src="js/jquery-2.1.3.min.js"></script>
-		<script src="js/jquery-ui.js"></script>
+		<script src="js/jquery-ui.min.js"></script>
 		<script src="js/jquery.tmpl.js"></script>
 		<script src="js/debugJq.js"></script>
 		<script src="js/stacktrace.js"></script>
 		<script src="js/sprintf.min.js"></script>
 		<script src="flyCRM.js"></script>
-		<script src="uiData.js"></script>			
+		<script src="appData.js"></script>			
 		<script 	>
 		$(document).ready(function()
 		{

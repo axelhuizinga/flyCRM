@@ -25,12 +25,11 @@ class Application
 	public static var basePath:String;
 	public static var appName:String;
 	public static var company:String;
-	var views(default,default):StringMap<View>; 
+	var views:StringMap<View>; 
 	
 	static function main() 
 	{
-		Log.trace = Out._trace;
-		
+		Log.trace = Out._trace;		
 	}
 	
 	public function new()

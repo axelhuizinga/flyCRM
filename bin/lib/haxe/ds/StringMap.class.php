@@ -16,11 +16,37 @@ class haxe_ds_StringMap implements IMap, IteratorAggregate{
 			return null;
 		}
 	}
+	public function exists($key) {
+		return array_key_exists($key, $this->h);
+	}
+	public function remove($key) {
+		if(array_key_exists($key, $this->h)) {
+			unset($this->h[$key]);
+			return true;
+		} else {
+			return false;
+		}
+	}
 	public function keys() {
 		return new _hx_array_iterator(array_keys($this->h));
 	}
 	public function iterator() {
 		return new _hx_array_iterator(array_values($this->h));
+	}
+	public function toString() {
+		$s = "{";
+		$it = $this->keys();
+		$__hx__it = $it;
+		while($__hx__it->hasNext()) {
+			$i = $__hx__it->next();
+			$s .= _hx_string_or_null($i);
+			$s .= " => ";
+			$s .= Std::string($this->get($i));
+			if($it->hasNext()) {
+				$s .= ", ";
+			}
+		}
+		return _hx_string_or_null($s) . "}";
 	}
 	public function getIterator() {
 		return $this->iterator();
@@ -35,5 +61,5 @@ class haxe_ds_StringMap implements IMap, IteratorAggregate{
 		else
 			throw new HException('Unable to call <'.$m.'>');
 	}
-	function __toString() { return 'haxe.ds.StringMap'; }
+	function __toString() { return $this->toString(); }
 }

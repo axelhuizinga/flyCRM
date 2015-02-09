@@ -18,7 +18,6 @@ class Config {
 				$data = _hx_explode("=", $v);
 				$json = $jsonS->decode($data[1]);
 				$result->set(trim($data[0]), $json);
-				haxe_Log::trace(":" . _hx_string_or_null(trim($data[0])) . "|" . Std::string($json) . "|", _hx_anonymous(array("fileName" => "Config.hx", "lineNumber" => 27, "className" => "Config", "methodName" => "load")));
 				unset($v,$json,$data);
 			}
 		}

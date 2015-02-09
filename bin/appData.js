@@ -40,49 +40,49 @@ var uiData = {
 				isNav:true,
 				append2header:'datetime',
 				tabs:
-				[
-					{
-						link:"clients",
-						label:"Mitglieder",
-						views:
-						{
-							ContextMenu:
-							{
-								id:"clients.menu",
-								heightStyle: "auto",
-								items:[
-									{
-										action:'find',
-										label:'Finden',
-										fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time']
-									}
-								]
-							},
-							Clients:
-							{
-								id:"clients",
-								limit:15,
-								fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time']
-							}
-						},
-													
+				[{				
+					link:"clients",
+					label:"Mitglieder",
+					views:
+					[{	
+						Clients:{
+							fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+							id:"clients",
+							limit:15,
+							list_id:10000,
+							table:'vicidial_list'
+						}
 					},
 					{
-						link:"campaigns",
-						label:"Kampagnen",
-						views:[]									
-					},	
-					{
-						link:"stats",
-						label:"Statistik",
-						views:[]									
-					},
-					{
-						link:"settings",
-						label:"Einstellungen",
-						views:[]									
-					}		
-				],
+						ContextMenu:{
+							id:"clients.menu",
+							heightStyle: "auto",
+							items:[
+								{
+									action:'find',
+									label:'Finden',
+									fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+									table:'vicidial_list'
+								}
+							]
+						}
+					}]									
+				},
+				{
+					link:"campaigns",
+					label:"Kampagnen",
+					views:[]									
+				},	
+				{
+					link:"stats",
+					label:"Statistik",
+					views:[]									
+				},
+				{
+					link:"settings",
+					label:"Einstellungen",
+					views:[]									
+				}],
 				heightStyle: "fill"
 			}
 		}
