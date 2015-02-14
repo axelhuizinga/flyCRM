@@ -29,6 +29,7 @@ class S
 	
 	static function main() 
 	{		
+		untyped __call__('error_log', 'hi');
 		haxe.Log.trace = Debug._trace;	
 		conf =  Config.load('appData.js');
 		
@@ -45,22 +46,25 @@ class S
 		}
 		trace(params);		
 		var action:String = params.get('action');
-		if (action.length > 0)
-			my = new MySQLi('localhost', DBConfig.user, DBConfig.pass,DBConfig.db);
-		params.remove('action');
-		trace (action);
-		var result:EitherType<String,Bool> = switch (action)
+		if (action.length == 0 || params.get('className') == null)
 		{
-			case "clients":
-				trace( 'clients');
-				Clients.get(params);
-			default:
-				trace( 'oops' + action);
-				null;
+			dump( { error:"required params missing" } );
+			return;
 		}
+			
+		my = new MySQLi('localhost', DBConfig.user, DBConfig.pass,DBConfig.db);
+
+		trace (action);
+		var result:EitherType<String,Bool> = Model.dispatch(params);
 		
 		trace(result);
-		
+		if (!htmlStart)
+		{
+			Web.setHeader('Content-Type', 'application/json');
+			htmlStart = true;
+		}		
+		Lib.println( result);
+		//Lib.println(Json.stringify({result:result}));
 		//dump
 /*
 		var keys:Iterator<String> = conf.keys();

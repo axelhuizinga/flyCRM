@@ -15,7 +15,7 @@ class me_cunity_php_Debug {
 		} else {
 			$info = "";
 		}
-		trace($v, $info);
+		error_log(_hx_string_or_null($info) . ":" . Std::string($v));
 	}
 	function __toString() { return 'me.cunity.php.Debug'; }
 }

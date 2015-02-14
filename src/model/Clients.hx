@@ -7,42 +7,51 @@ import me.cunity.php.db.MySQLi_Result;
 import php.Lib;
 import php.NativeArray;
 
+using Lambda;
+
 /**
  * ...
  * @author axel@cunity.me
  */
-class Clients extends Model
+@:keep
+ class Clients extends Model
 {
 		
-	public static function get(param:StringMap<Dynamic>):EitherType<String,Bool>
+	public static function create(param:StringMap<Dynamic>):EitherType<String,Bool>
 	{
-		var self:Clients = new Clients();
-		var sb:StringBuf = new StringBuf();
-		var method:String = 'SELECT';
-		
-		if (param.exists('method'))
-		{
-			method = param.get('method');
-		}
-		
-		sb.add(method + ' ');
+		var self:Clients = new Clients();		
+		return Reflect.callMethod(self, param.get('action'), [param]);
+	}
+	
+	public function find(param:StringMap<Dynamic>):EitherType<String,Bool>
+	{
+		var sb:StringBuf = new StringBuf();		
+		sb.add('SELECT ');
 		sb.add(param.get('fields') + ' FROM ');
 		sb.add(param.get('table')+ ' ');
 		if (param.exists('join'))
-			sb.add(param.get('join') + ' \n');
-		sb.add('WHERE ' + param.get('where') + ' \n');
+			sb.add(param.get('join') + ' ');
+		sb.add('WHERE ' + param.get('where') + ' ');
 		if(param.exists('group'))
-			sb.add(param.get('group') + ' \n');
+			sb.add('GROUP BY ' +param.get('group') + ' ');
+		if(param.exists('order'))
+			sb.add('ORDER BY ' + param.get('order') + ' ');				
 		if(param.exists('limit'))
-			sb.add('LIMIT ' + param.get('limit'));		
-		trace(sb.toString());
-		self.data =  self.query(sb.toString());
-		return self.json_encode();
+			sb.add('LIMIT ' + param.get('limit'));			
+			
+		//trace(sb.toString());
+		data =  {
+			rows: query(sb.toString())
+		}
+		return json_encode();
 	}
 	
 	//public function query(sql:String):StringMap<Dynamic>
 	public function query(sql:String):NativeArray
 	{
+		//trace(sql);
+		sql = S.my.real_escape_string(sql);
+		trace(sql);
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query(sql, MySQLi.MYSQLI_ASSOC);
 		if (res)
 		{

@@ -2,12 +2,13 @@
 {
 	font-family:verdana,sans;
 	color:#555555;
-	
+	font-family: 0.9 em;
 }
 
 body,html{
-	/*background-color: #2b1600;*/
-	background-color: #586202;
+	/*background-color: #2b1600;
+	background-color: #586202;*/
+	background-color: #fff;
 	height:100%;
 	overflow:hidden;
 	margin:0;
@@ -15,7 +16,7 @@ body,html{
 }
 body ul
 {
-	list-style:none;
+	list-style:none;padding:0;
 }
 
 :focus{outline:none;}
@@ -29,7 +30,7 @@ body ul
 .main-left
 {
 	float:left;
-	width:80%;
+	/*width:80%;*/
 	overflow: auto;
 }
 .menu-right{
@@ -49,14 +50,20 @@ body ul
 	left:0;
 	right:0;
 	position:absolute;
-	padding:8px;
+	/*padding:8px;*/
 	
 }
-
+.ui-helper-reset, .ui-widget,
 .ui-tabs-panel table{
-	font-size: 0.75em;
+	font-size: 0.9em;
 	border-spacing: 0;
 	border-collapse: collapse;
+}
+
+.ui-tabs-panel table input[type="text"]{
+	border: 0;
+	outline: none;
+	font-size: 0.9em;
 }
 
 .ui-tabs-panel th
@@ -71,10 +78,46 @@ body ul
 tr.even{ background-color: #aaa;}
 tr.odd{ background-color: #bbb;}
 
+input[namei="submit"]{margin: auto;}
+
+tr:first-line{background: none;}
+
+th:first-child {
+    border-radius: 6px 0 0 0;
+}
+
+th:last-child {
+    border-radius: 0 6px 0 0;
+}
+
+th:only-child{
+    border-radius: 6px 6px 0 0;
+}
+form button{display:table;margin: 2px auto;}
+#clients-list th{
+	cursor: pointer;
+}
+#clients-menu li
+{
+	height: 2em;
+}
+
 #mtabs{
     background-image: -moz-linear-gradient(top, #ffffff, #dddddd); /* Firefox 3.6 */
     background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0, #dddddd),color-stop(1, #ffffff)); /* Safari & Chrome */
 }
 
 
-
+/*	 FIELD CLASSES 
+.first_name, .last_name
+{
+	
+}
+	:'Vorname',
+	:'Name',
+	phone_number:'Telefon',
+	address1:'Straße',
+	postal_code:'PLZ',
+	city:'Ort',
+	last_local_call_time:'Anrufdatum',
+	vendor_lead_code:'Mitgliedsnummer'*/

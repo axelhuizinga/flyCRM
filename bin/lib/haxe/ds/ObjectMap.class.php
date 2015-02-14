@@ -1,37 +1,52 @@
 <?php
 
-class haxe_ds_StringMap implements IMap, IteratorAggregate{
+class haxe_ds_ObjectMap implements IMap{
 	public function __construct() {
 		if(!php_Boot::$skip_constructor) {
 		$this->h = array();
+		$this->hk = array();
 	}}
 	public $h;
+	public $hk;
 	public function set($key, $value) {
-		$this->h[$key] = $value;
+		$id = haxe_ds_ObjectMap::getId($key);
+		$this->h[$id] = $value;
+		$this->hk[$id] = $key;
 	}
 	public function get($key) {
-		if(array_key_exists($key, $this->h)) {
-			return $this->h[$key];
+		$id = haxe_ds_ObjectMap::getId($key);
+		if(array_key_exists($id, $this->h)) {
+			return $this->h[$id];
 		} else {
 			return null;
 		}
 	}
 	public function exists($key) {
-		return array_key_exists($key, $this->h);
+		return array_key_exists(haxe_ds_ObjectMap::getId($key), $this->h);
+	}
+	public function remove($key) {
+		$id = haxe_ds_ObjectMap::getId($key);
+		if(array_key_exists($id, $this->h)) {
+			unset($this->h[$id]);
+			unset($this->hk[$id]);
+			return true;
+		} else {
+			return false;
+		}
 	}
 	public function keys() {
-		return new _hx_array_iterator(array_keys($this->h));
+		return new _hx_array_iterator(array_values($this->hk));
 	}
 	public function iterator() {
 		return new _hx_array_iterator(array_values($this->h));
 	}
 	public function toString() {
 		$s = "{";
-		$it = $this->keys();
+		$it = new _hx_array_iterator(array_values($this->hk));
 		$__hx__it = $it;
 		while($__hx__it->hasNext()) {
 			$i = $__hx__it->next();
-			$s .= _hx_string_or_null($i);
+			$s .= Std::string($i);
 			$s .= " => ";
 			$s .= Std::string($this->get($i));
 			if($it->hasNext()) {
@@ -39,9 +54,6 @@ class haxe_ds_StringMap implements IMap, IteratorAggregate{
 			}
 		}
 		return _hx_string_or_null($s) . "}";
-	}
-	public function getIterator() {
-		return $this->iterator();
 	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
@@ -52,6 +64,9 @@ class haxe_ds_StringMap implements IMap, IteratorAggregate{
 			return $this->__toString();
 		else
 			throw new HException('Unable to call <'.$m.'>');
+	}
+	static function getId($key) {
+		return spl_object_hash($key);
 	}
 	function __toString() { return $this->toString(); }
 }

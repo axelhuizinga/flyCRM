@@ -7,7 +7,7 @@ var fieldNames =
 	postal_code:'PLZ',
 	city:'Ort',
 	last_local_call_time:'Anrufdatum',
-	vendor_lead_code:'Mitgliedsnummer'
+	vendor_lead_code:'Mitgliedsnr.'
 }
 
 var fieldFormats =
@@ -46,16 +46,20 @@ var uiData = {
 					views:
 					[{	
 						Clients:{
-							fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+							action:'find',
+							fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
 							id:"clients",
 							limit:15,
-							list_id:10000,
-							table:'vicidial_list'
+							order:'vendor_lead_code',
+							where:"list_id=10000",
+							table:'vicidial_list',
+							//attach2:'#clients-list-anchor',
+							listattach2:'#clients-list-anchor'
 						}
 					},
 					{
 						ContextMenu:{
-							id:"clients.menu",
+							id:"clients-menu",
 							heightStyle: "auto",
 							items:[
 								{
@@ -64,7 +68,8 @@ var uiData = {
 									fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
 									table:'vicidial_list'
 								}
-							]
+							],
+							attach2:'#clients'
 						}
 					}]									
 				},
@@ -86,5 +91,4 @@ var uiData = {
 				heightStyle: "fill"
 			}
 		}
-
 	]}

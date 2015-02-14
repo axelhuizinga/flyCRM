@@ -27,14 +27,14 @@ typedef TabData =
 {>ViewData,
 	var link:String;
 	var label:String;
-	@:optional var action:String;
+	//@:optional var action:String;
 	
 }
 
 typedef TabBoxData = 
 {>ViewData,
 	var tabs:Array<TabData>;
-	@:optional var action:String;
+	//@:optional var action:String;
 	@:optional var includes:Array<String>;
 	@:optional var isNav:Bool;
 	@:optional var onLoad:String;
@@ -67,9 +67,8 @@ typedef TabBoxData =
 				PushState.init();
 				PushState.addEventListener(go);
 			}			
-
+			
 			active = 0;
-
 			for (tab in tabBoxData.tabs)
 			{
 				if (tab.link == tabBoxData.action)
@@ -77,7 +76,9 @@ typedef TabBoxData =
 				tabLabel.push(tab.label);
 				tabLinks.push(tab.link);
 			}
+			
 			J('#t-' + id).tmpl(tabBoxData.tabs).appendTo(root.find('ul:first'));	
+			
 			tabObj = root.tabs( 
 			{
 				active:active,
@@ -97,19 +98,21 @@ typedef TabBoxData =
 						//trace(views.toString());
 						//trace(views.get(tabBoxData.append2header));
 						views.get(tabBoxData.append2header).template.appendTo(J('#' + id + ' ul'));
+					}
 						var tabIndex:Int = 0;
 						for (t in tabBoxData.tabs)
 						{
 							//trace(t.views);
 							for (v in t.views)
 							{
-								trace(v);
-								v.parent =  tabsInstance.panels[tabIndex++];
-								trace('adding:' + v + ' to:' + v.parent);
+								//trace(v);
+								v.attach2 =  tabsInstance.panels[tabIndex];
+								//trace('adding:' + v + ' to:' + v.parent);
 								addView(v);
 							}
+							tabIndex++;
 						}
-					}
+					//}
 				},
 				beforeLoad: function( event:Event, ui ) 
 				{

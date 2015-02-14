@@ -16,7 +16,7 @@ class JqueryUI
 	
 	public static function accordion(ac:JQuery, ?options:Dynamic):JQuery
 	{
-		return untyped tb.accordion(options);
+		return untyped ac.accordion(options);
 	}
 	
 	

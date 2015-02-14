@@ -18,20 +18,11 @@ extern class JHelper {
 		return new JQuery(html);
 	}
 	
-	public static function templ(j:JQuery, data:Dynamic): JQuery;
-
-	
 	public static inline function vsprintf(format:String, args:Array<Dynamic>):String
 	{
 		//trace(format);
 		//trace(args);
 		return (untyped __js__("vsprintf"))(format, args);
 	};
-	
-	/*public static var JTHIS(get, null) : JQuery;
-
-	static inline function get_JTHIS() : JQuery {
-		return untyped __js__("$(this)");
-	}*/
 
 }

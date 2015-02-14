@@ -26,7 +26,7 @@
     <option noInlineOnDebug="False" />
     <option mainClass="S" />
     <option enabledebug="False" />
-    <option additional="--php-front server.php" />
+    <option additional="--php-front server.php&#xA;-dce std" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>

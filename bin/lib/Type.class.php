@@ -2,6 +2,37 @@
 
 class Type {
 	public function __construct(){}
+	static function resolveClass($name) {
+		$c = _hx_qtype($name);
+		if($c instanceof _hx_class || $c instanceof _hx_interface) {
+			return $c;
+		} else {
+			return null;
+		}
+	}
+	static function getInstanceFields($c) {
+		if($c->__qname__ === "String") {
+			return (new _hx_array(array("substr", "charAt", "charCodeAt", "indexOf", "lastIndexOf", "split", "toLowerCase", "toUpperCase", "toString", "length")));
+		}
+		if($c->__qname__ === "Array") {
+			return (new _hx_array(array("push", "concat", "join", "pop", "reverse", "shift", "slice", "sort", "splice", "toString", "copy", "unshift", "insert", "remove", "iterator", "length")));
+		}
+		
+		$rfl = $c->__rfl__();
+		if($rfl === null) return new _hx_array(array());
+		$r = array();
+		$internals = array('__construct', '__call', '__get', '__set', '__isset', '__unset', '__toString');
+		$ms = $rfl->getMethods();
+		while(list(, $m) = each($ms)) {
+			$n = $m->getName();
+			if(!$m->isStatic() && !in_array($n, $internals)) $r[] = $n;
+		}
+		$ps = $rfl->getProperties();
+		while(list(, $p) = each($ps))
+			if(!$p->isStatic() && ($name = $p->getName()) !== '__dynamics') $r[] = $name;
+		;
+		return new _hx_array(array_values(array_unique($r)));
+	}
 	static function typeof($v) {
 		if($v === null) {
 			return ValueType::$TNull;
