@@ -30,7 +30,7 @@ body ul
 .main-left
 {
 	float:left;
-	/*width:80%;*/
+	width:70%;
 	overflow: auto;
 }
 .menu-right{
@@ -75,6 +75,10 @@ body ul
 {
 	padding:2px 5px;
 }
+
+table {
+	width: 100%;
+}
 tr.even{ background-color: #aaa;}
 tr.odd{ background-color: #bbb;}
 
@@ -83,15 +87,15 @@ input[namei="submit"]{margin: auto;}
 tr:first-line{background: none;}
 
 th:first-child {
-    border-radius: 6px 0 0 0;
+    border-radius: 4.5px 0 0 0;
 }
 
 th:last-child {
-    border-radius: 0 6px 0 0;
+    border-radius: 0 4.5px 0 0;
 }
 
 th:only-child{
-    border-radius: 6px 6px 0 0;
+    border-radius: 4.5px 4.5px 0 0;
 }
 form button{display:table;margin: 2px auto;}
 #clients-list th{

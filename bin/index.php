@@ -44,11 +44,10 @@
 		</script>
 		
 		<!-- MEMBERS TAB -->
-		<!-- MEMBERS TAB {{if fieldFormats[v] !='row-title'}}{{/if}}-->
+		<!-- MEMBERS TAB {{if displayFormats[v] !='row-title'}}{{/if}}-->
 		<script type="text/html"  id="t-clients">
 			<div id="clients">
-				<form  id="clients-list-anchor" action="clients" class="main-left">										
-
+				<form  id="clients-list-anchor" action="clients" class="main-left">
 				</form>
 			</div>
 		</script>
@@ -56,7 +55,7 @@
 		<!-- ${console.log($item.data)}<input type="${ !$item.type ?'text':$item.type}" name="${ri}" class="app-right" disabled="disabled" value="${rv}">
 		${console.log(jQuery.isArray($item.data))}${console.log($item)}${console.log(ri + ":" + rv)}${ console.log("tr.length:"+ $(this).parent('tr').length)}
 		MEMBERS LIST
-		${sprintf(fieldFormats[v],$item)}${$item}class="${i % 2 ? 'odd' : 'even'}{{each(i,v) $item.data}}{{/each}}${console.log(v)}"-->
+		${sprintf(displayFormats[v],$item)}${$item}class="${i % 2 ? 'odd' : 'even'}{{each(i,v) $item.data}}{{/each}}${console.log(v)}"-->
 		
 		<script type="text/html"  id="t-clients-list">
 		
@@ -73,8 +72,8 @@
 					<tr id="${v.vendor_lead_code}" class="${((i+1) % 2 ? 'odd' : 'even')}">
 					{{each(ri,rv) v}}
 						
-							{{if fieldFormats[ri]}}
-						<td data-name="${ri}" >${sprintf(fieldFormats[ri],rv)}</td>	
+							{{if displayFormats[ri]}}
+						<td data-name="${ri}" >${sprintf(displayFormats[ri],rv)}</td>	
 							{{else}}
 						<td data-name="${ri}" >${rv}</td>	
 							{{/if}}
@@ -85,8 +84,7 @@
 		</script>
 		
 		<!-- MEMBERS MENU ${trace($data)}-->
-		<script type="text/html" id="t-clients-menu">
-		
+		<script type="text/html" id="t-clients-menu">		
 			<div id="clients-menu" class="menu-right">
 			{{each(i,v) $data.items}}
 				<h3>${v.label}</h3>

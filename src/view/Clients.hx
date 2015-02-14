@@ -9,6 +9,9 @@ import jQuery.JHelper.J;
 import js.html.Element;
 import View;
 
+using jQuery.FormData;
+
+
 typedef ClientsData =
 {>ViewData,
 	@:optional var fields:Array<String>;
@@ -34,8 +37,8 @@ typedef ClientsData =
 			data.limit = 15;
 		trace('#t-' + id + ' attach2:' + data.attach2);
 		
-		trace(J('#t-' + id));
-		trace(J('#t-' + id).tmpl(data));
+		//trace(J('#t-' + id));
+		//trace(J('#t-' + id).tmpl(data));
 		J('#t-' + id).tmpl(data).appendTo(data.attach2);	
 		if (data.table != null) // 	LOAD TABLE DATA
 		{
@@ -44,9 +47,11 @@ typedef ClientsData =
 				params.order = data.order;
 			loadData('server.php', params, update, listattach2);
 		}
+		if(data.views != null)
+			addViews(data.views);
 	}
 	
-	private function resetParams():Dynamic
+	private function resetParams(where:String = ''):Dynamic
 	{
 		fields = vData.fields;
 		params = {
@@ -56,9 +61,23 @@ typedef ClientsData =
 			fields:fields.join(','),
 			limit:vData.limit,
 			table:vData.table,
-			where:vData.where
+			where:(vData.where.length>0 ? vData.where + where : vData.where )
 		}
+		/*for (a in Reflect.fields(add))
+		{
+			var v:Dynamic = Reflect.field(add, a);
+			if (v != null && Std.string(v) != '')
+			{
+				Reflect.setField(params, a, v);
+			}
+		}*/
 		return params;
+	}
+	
+	public function find(where:String):Void
+	{
+		resetParams(where);
+		loadData('server.php', params, update);
 	}
 	
 	public function order(field:String):Void

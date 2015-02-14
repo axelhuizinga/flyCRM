@@ -26,7 +26,6 @@ class model_Clients extends Model {
 		return $this->json_encode();
 	}
 	public function query($sql) {
-		$sql = S::$my->real_escape_string($sql);
 		haxe_Log::trace($sql, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 54, "className" => "model.Clients", "methodName" => "query")));
 		$res = S::$my->query($sql, 1);
 		if($res) {

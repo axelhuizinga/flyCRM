@@ -10,9 +10,14 @@ var fieldNames =
 	vendor_lead_code:'Mitgliedsnr.'
 }
 
-var fieldFormats =
+var displayFormats =
 {
 	phone_number:'0%d'
+}
+
+var storeFormats =
+{
+	phone_number:['replace', /^0+/,'']
 }
 
 var fieldTypes =
@@ -54,24 +59,33 @@ var uiData = {
 							where:"list_id=10000",
 							table:'vicidial_list',
 							//attach2:'#clients-list-anchor',
-							listattach2:'#clients-list-anchor'
-						}
-					},
-					{
-						ContextMenu:{
-							id:"clients-menu",
-							heightStyle: "auto",
-							items:[
-								{
-									action:'find',
-									label:'Finden',
-									fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
-									table:'vicidial_list'
+							listattach2:'#clients-list-anchor',
+							views:[
+							{
+								ContextMenu:{
+									id:"clients-menu",
+									heightStyle: "auto",
+									items:[
+										{
+											action:'find',
+											label:'Finden',
+											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+											table:'vicidial_list'
+										},
+										{
+											action:'test',
+											label:'Test',
+											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+											table:'vicidial_list'
+										}										
+									],
+									attach2:'#clients'
 								}
-							],
-							attach2:'#clients'
+							}
+							]
 						}
-					}]									
+					}
+					]									
 				},
 				{
 					link:"campaigns",

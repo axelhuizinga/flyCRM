@@ -50,7 +50,7 @@ using Lambda;
 	public function query(sql:String):NativeArray
 	{
 		//trace(sql);
-		sql = S.my.real_escape_string(sql);
+		//sql = S.my.real_escape_string(sql);
 		trace(sql);
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query(sql, MySQLi.MYSQLI_ASSOC);
 		if (res)

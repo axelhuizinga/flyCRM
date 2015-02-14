@@ -63,13 +63,23 @@ class View
 			//trace(cl);
 			if (Reflect.hasField(v, 'attach2'))
 				iParam.attach2 = v.attach2;
-			iParam.
-			trace(Std.string(iParam));
+			iParam.parentView = this;
+			//trace(Std.string(iParam));
 			av = Type.createInstance(cl, [iParam]);
 			views.set(iParam.id, av);				
 			trace("views.set(" +iParam.id +")");
 		}		
 		return av;
+	}
+	
+	public function addViews(v2add:Array<ViewData>):Void
+	{
+		for (vD in v2add)
+		{
+			vD.parentView = this;
+			addView(vD);
+		}
+		
 	}
 	
 	public function loadData(url:String,params:Dynamic, callBack:Dynamic->String->Void, ?parent:String):Void
