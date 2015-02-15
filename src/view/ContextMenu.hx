@@ -69,8 +69,6 @@ typedef ContextMenuData =
 		trace(options.active); 
 		var fields:Array<String> = vData.items[options.active].fields;
 		trace(fields);
-		//trace(J(cast( evt.target, Element)).parent().get()[0 ].nodeName);
-		//var formData = J(cast( evt.target, Element)).parent().serialize();
 		var form:JQuery = J(cast( evt.target, Element)).parent();
 		var where:String = FormData.where(form, fields);
 		trace(where);

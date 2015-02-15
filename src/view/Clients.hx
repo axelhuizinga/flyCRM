@@ -61,16 +61,8 @@ typedef ClientsData =
 			fields:fields.join(','),
 			limit:vData.limit,
 			table:vData.table,
-			where:(vData.where.length>0 ? vData.where + where : vData.where )
+			where:(vData.where.length>0 ? vData.where + (where == '' ? where : ',' + where) : vData.where )
 		}
-		/*for (a in Reflect.fields(add))
-		{
-			var v:Dynamic = Reflect.field(add, a);
-			if (v != null && Std.string(v) != '')
-			{
-				Reflect.setField(params, a, v);
-			}
-		}*/
 		return params;
 	}
 	

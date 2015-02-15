@@ -25,6 +25,8 @@ class Application
 	public static var basePath:String;
 	public static var appName:String;
 	public static var company:String;
+	public static var storeFormats:Dynamic;
+	
 	var views:StringMap<View>; 
 	
 	static function main() 
@@ -38,20 +40,21 @@ class Application
 	}
 	
 	@:expose("initApp") 
-	public static function init(config:Dynamic)
+	public static function init(config:Dynamic):Application
 	{
 		ist = new Application();
-		//ist.test(); return;
+		storeFormats = config.storeFormats;
 		var fields:Array<String> = Type.getClassFields(Application);
-		for (f in fields)
+		/*for (f in fields)
 		{
 			if(Reflect.field(config, f)!=null)
 			Reflect.setField(Application, f, Reflect.field(config, f));
 			trace(Reflect.field(Application, f));
-		}
+		}*/
 		basePath = Browser.location.pathname.split(config.appName)[0] + config.appName + '/';
 		trace(basePath);
 		ist.initUI(config.views);		
+		return ist;
 	}
 	
 	function initUI(viewConfigs:Array<Dynamic>):Void

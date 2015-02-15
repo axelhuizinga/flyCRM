@@ -10,8 +10,8 @@
 	if ($actionPath)
 	{
 		$actionParam = preg_split("/\//", $actionPath);
-		$action = array_pop($actionParam);
 		edump($actionParam);
+		$action = array_pop($actionParam);
 		#exit(printf("<div><pre>%s</pre></div>",print_r($actionParam,1)));
 	}
 	$params = array2json($actionParam);
@@ -94,6 +94,38 @@
 						<ul >
 							{{each(fi,fv) v.fields}}
 							<li >
+								<span>${fieldNames[fv]}</span>
+								{{tmpl(fv) "#t-find-match"}}
+								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="app-right">
+								
+							</li>							
+							{{/each}}
+						</ul>
+						<button data-action="${action}">${v.label}</button>
+					</form>
+				</div>
+			{{/each}}	
+			</div>	
+		</script>
+		
+		<script type="text/x-jquery-tmpl" id="t-find-match">
+			<select name="${$item.data}_match_option"  class="end-right">
+			{{each(i,v) matchOptions}}
+				<option value="${i}" title="${v}" >${v.substr(0,1)}</option>
+			{{/each}}
+			</select>
+		</script>
+		
+		<script type="text/html" id="t-clients-menu-1">		
+			<div id="clients-menu" class="menu-right">
+			{{each(i,v) $data.items}}
+				<h3>${v.label}</h3>
+				<div>
+					<form >
+						<input type="hidden" name="action" value="${action}">
+						<ul >
+							{{each(fi,fv) v.fields}}
+							<li >
 							<span>${fieldNames[fv]}</span><input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="app-right">
 							</li>							
 							{{/each}}
@@ -103,7 +135,7 @@
 				</div>
 			{{/each}}	
 			</div>	
-		</script>		
+		</script>	
 
 		
 		<script src="js/jquery-2.1.3.js"></script>

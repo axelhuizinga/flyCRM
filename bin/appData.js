@@ -10,6 +10,34 @@ var fieldNames =
 	vendor_lead_code:'Mitgliedsnr.'
 }
 
+var matchOptions =
+{
+	exact:'Genauso',
+	any:'Bestandteil',
+	start:'Anfang',
+	end:'Ende'	
+}
+
+var dbFieldTypes =
+{
+	first_name:'s',
+	last_name:'s',
+	list_id:'s',
+	phone_number:'s',
+	address1:'s',
+	postal_code:'s',
+	city:'s',
+	last_local_call_time:'s',
+	vendor_lead_code:'s'
+}
+
+var dbQueryFormats =
+{
+	last_local_call_time:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
+	entry_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
+	modify_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s']
+}
+
 var displayFormats =
 {
 	phone_number:'0%d'
@@ -17,7 +45,7 @@ var displayFormats =
 
 var storeFormats =
 {
-	phone_number:['replace', /^0+/,'']
+	phone_number:['replace', '^0+','']
 }
 
 var fieldTypes =
@@ -28,6 +56,7 @@ var fieldTypes =
 var uiData = {
 	appName:"flyCRM",
 	company:"X-Press Marketing GmbH",
+	storeFormats:storeFormats,
 	views:
 	[
 		{
@@ -56,7 +85,8 @@ var uiData = {
 							id:"clients",
 							limit:15,
 							order:'vendor_lead_code',
-							where:"list_id=10000",
+							//where:"list_id=10000",
+							where:"list_id|10000|exact",
 							table:'vicidial_list',
 							//attach2:'#clients-list-anchor',
 							listattach2:'#clients-list-anchor',

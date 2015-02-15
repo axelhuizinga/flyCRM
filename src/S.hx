@@ -23,28 +23,30 @@ import php.Services_JSON;
 class S 
 {
 	static inline var debug:Bool = true;
-	static  var htmlStart:Bool = false;
+	static  var headerSent:Bool = false;
 	public static var conf:StringMap<Dynamic>;
 	public static var my:MySQLi;
 	
 	static function main() 
 	{		
 		untyped __call__('error_log', 'hi');
+		untyped __call__('edump', 'hi');
 		haxe.Log.trace = Debug._trace;	
 		conf =  Config.load('appData.js');
 		
-		var fieldNames:Dynamic = Lib.objectOfAssociativeArray(conf.get('fieldNames'));
+		//var fieldNames:Dynamic = Lib.objectOfAssociativeArray(conf.get('fieldNames'));
 		var pd:Dynamic = Web.getPostData();
 
 		var params:StringMap<String> = Web.getParams();
 		if (params.get('debug') == '1')
 		{
 			Web.setHeader('Content-Type', 'text/html; charset=utf-8');
-			htmlStart = true;
+			headerSent = true;
 			Lib.println('<div><pre>');
 			Lib.println(params);
 		}
 		trace(params);		
+		//trace(params.get('where'));
 		var action:String = params.get('action');
 		if (action.length == 0 || params.get('className') == null)
 		{
@@ -58,29 +60,21 @@ class S
 		var result:EitherType<String,Bool> = Model.dispatch(params);
 		
 		trace(result);
-		if (!htmlStart)
+		if (!headerSent)
 		{
 			Web.setHeader('Content-Type', 'application/json');
-			htmlStart = true;
+			headerSent = true;
 		}		
 		Lib.println( result);
-		//Lib.println(Json.stringify({result:result}));
-		//dump
-/*
-		var keys:Iterator<String> = conf.keys();
-		while (keys.hasNext())
-			trace("::" + keys.next() + '|<br>');
-		trace(fieldNames);
-*/
-		
+
 	}
 	
 	public static function dump(d:Dynamic):Void
 	{
-		if (!htmlStart)
+		if (!headerSent)
 		{
 			Web.setHeader('Content-Type', 'application/json');
-			htmlStart = true;
+			headerSent = true;
 		}
 		
 		Lib.println(Json.stringify(d));

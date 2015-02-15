@@ -19,10 +19,17 @@ body ul
 	list-style:none;padding:0;
 }
 
+span
+{
+	padding: 2px 5px;
+}
 :focus{outline:none;}
 .app{display:none;}
 
 .app-right{
+	float:right;
+}
+.end-right{
 	float:right;
 	clear:right;
 }
@@ -39,6 +46,10 @@ body ul
 	height:100%;
 }
 
+.ui-accordion .ui-accordion-content
+{
+	padding: 1em;
+}
 .ui-tabs-nav .tabs-header{
 	float:right!important;
 	padding: .5em 1em!important;
