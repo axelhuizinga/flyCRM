@@ -94,7 +94,7 @@ typedef TabBoxData =
 					//Out.dumpObject(tabsInstance.panels);
 					if (tabBoxData.append2header != null)
 					{
-						var views:StringMap<View> = Application.getViews();
+						var views:StringMap<View> = App.getViews();
 						//trace(views.toString());
 						//trace(views.get(tabBoxData.append2header));
 						views.get(tabBoxData.append2header).template.appendTo(J('#' + id + ' ul'));
@@ -142,7 +142,7 @@ typedef TabBoxData =
 			Out.dumpStack(CallStack.callStack());
 			return;
 		}
-		var p:Array<String> = url.split(Application.basePath);
+		var p:Array<String> = url.split(App.basePath);
 		//trace(p.toString() + ':' + p.length + ' basePath:' + Application.basePath);
 		if (p.length == 2 && p[1] == '')
 			p[1] = tabLinks[0];
@@ -156,7 +156,7 @@ typedef TabBoxData =
 			tabObj.tabs( "option", "active", tabLinks.indexOf(p[1]) );
 		}
 		//trace(p.toString() + ':' + tabsInstance.options.active + ':' + tabLinks.indexOf(p[1]));
-		Browser.document.title = Application.company + " " + Application.appName + '  ' + tabLabel[tabsInstance.options.active];
+		Browser.document.title = App.company + " " + App.appName + '  ' + tabLabel[tabsInstance.options.active];
 	}
 	
 }

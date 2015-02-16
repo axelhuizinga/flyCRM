@@ -65,9 +65,9 @@ class FormData
 				continue;
 			if (item.value != null && item.value != '')
 			{
-				if (Reflect.hasField(Application.storeFormats, item.name))
+				if (Reflect.hasField(App.storeFormats, item.name))
 				{
-					var sForm:Array<Dynamic> = Reflect.field(Application.storeFormats, item.name);
+					var sForm:Array<Dynamic> = Reflect.field(App.storeFormats, item.name);
 					var callParam:Array<Dynamic> = sForm.slice(1);
 					var method:String = sForm[0];
 					trace('call FormData' + method);
@@ -93,9 +93,9 @@ class FormData
 				continue;
 			if (item.value != null && item.value != '')
 			{
-				if (Reflect.hasField(Application.storeFormats, item.name))
+				if (Reflect.hasField(App.storeFormats, item.name))
 				{
-					var sForm:Array<Dynamic> = Reflect.field(Application.storeFormats, item.name);
+					var sForm:Array<Dynamic> = Reflect.field(App.storeFormats, item.name);
 					var method:String = sForm.shift();
 					sForm.push(item.value);
 					item.value = Reflect.callMethod(FormData, Reflect.field(FormData, method), sForm);

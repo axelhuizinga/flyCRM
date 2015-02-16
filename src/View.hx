@@ -1,6 +1,8 @@
 package;
+import haxe.ds.ObjectMap;
 import haxe.ds.StringMap;
 import haxe.EitherType;
+import haxe.Timer;
 import js.Browser;
 import js.html.Element;
 import jQuery.JHelper.J;
@@ -10,17 +12,25 @@ import js.html.XMLHttpRequest;
 
 import me.cunity.debug.Out;
 
+using Lambda;
 
 /**
  * ...
  * @author axel@cunity.me
  */
 
+typedef  InteractionState =
+{
+	var disables:Array<String>;
+	var enables:Array<String>;
+}
+
 typedef   ViewData = 
 {
 	var action:String;
 	var attach2:String;
 	var id:String;
+	@:optional var fields:Array<String>;
 	@:optional var parent: String;
 	@:optional var parentView: View;
 	@:optional var views:Array<ViewData>;
@@ -29,6 +39,7 @@ typedef   ViewData =
 class View
 {
 	var attach2:EitherType<String, Element>; // parentSelector
+	var fields:Array<String>;
 	var repaint:Bool;
 	var id:String;
 	var name:String;
@@ -37,6 +48,13 @@ class View
 	var template:JQuery;
 	var views:StringMap<View>;
 	var parentView:View;
+	var params:Dynamic;
+	
+	var loading:Int;
+	var listening:ObjectMap<JQuery,String>;
+	var suspended:StringMap<JQuery>;
+	var interactionStates:StringMap<InteractionState>;
+	public var interactionState(default, set):String;
 	
 	public function new(?data:Dynamic ) 
 	{
@@ -49,6 +67,41 @@ class View
 		name = Type.getClassName(Type.getClass(this)).split('.').pop();
 		root = J('#' + id);
 		trace(name + ':'  + id + ':' + root.length + ':' + attach2); 		
+		interactionStates = new StringMap();
+		listening = new ObjectMap();
+		suspended = new StringMap();
+		loading = 0;
+	}
+	
+	public function set_interactionState(iState:String):String
+	{
+		interactionState = iState;
+		var iS:InteractionState = interactionStates.get(iState);
+		var lIt:Iterator<JQuery> = listening.keys();
+		while (lIt.hasNext())
+		{
+			var aListener:JQuery = lIt.next();
+			var aAction:String = listening.get(aListener);
+			if (iS.disables.has(aAction))
+				aListener.prop('disabled', true);
+			if (iS.enables.has(aAction))
+				aListener.prop('disabled', false);
+		}
+		trace(iState);
+		return iState;
+	}
+	
+	function addInteractionState(name:String, iS:InteractionState):Void
+	{
+		interactionStates.set(name, iS);
+	}
+	
+	public function addListener(jListener:JQuery)
+	{
+		jListener.each(function(i, n)
+		{
+			listening.set(J(n), n.attributes.getNamedItem('data-action'	).nodeValue);
+		});
 	}
 	
 	public function addView(v:Dynamic):View
@@ -82,21 +135,85 @@ class View
 		
 	}
 	
-	public function loadData(url:String,params:Dynamic, callBack:Dynamic->String->Void, ?parent:String):Void
+	function initState():Void
+	{
+		if (!loadingComplete())
+			Timer.delay(initState, 1000);
+		addListener(J('button[data-action]'));
+		interactionState = 'init';
+		J('td').attr('tabindex', -1);
+	}
+	
+	function loadingComplete():Bool
+	{
+		if (loading > 0)
+			return false;
+		return views.foreach(function(v:View) return v.loading==0);
+	}
+	
+	function suspendAll()
+	{
+		
+	}
+	
+	//public function loadData(url:String,params:Dynamic, callBack:Dynamic->String->Void, ?parent:String):Void
+	public function loadData(url:String,params:Dynamic, callBack:Dynamic->Void):Void
 	{
 		//Out.dumpObject(params);
 		trace(Std.string(params));
-		
-		trace(url);
+		loading++;
 		JQueryStatic.post(url, params , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
-		//JQueryStatic.getJSON(url, params , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
 		{
 			//trace(data);
-			callBack(data, parent);
+			callBack(data);
+			loading--;
 		});
 	}
 	
-	public function update(data:Dynamic, ?parent:String):Void
+	public function find(where:String):Void
+	{
+		resetParams(where);
+		loadData('server.php', params, update);
+	}
+	
+	public function order(field:String):Void
+	{
+		trace(field);
+		if (params.order != field)
+		{
+			params.order = field;
+			loadData('server.php', params, update);
+		}
+	}	
+	
+	private function resetParams(where:String = ''):Dynamic
+	{
+		fields = vData.fields;
+		params = {
+			action:'find',
+			className:name,
+			dataType:'json',
+			fields:fields.join(','),
+			limit:vData.limit,
+			table:vData.table,
+			where:(vData.where.length>0 ? vData.where + (where == '' ? where : ',' + where) : vData.where )
+		}
+		return params;
+	}
+	
+	public function update(data:Dynamic):Void
+	{
+		data.fields = fields;
+		if ( J('#' + id + '-list').length > 0)
+			J('#' + id + '-list').replaceWith(J('#t-' + id + '-list').tmpl(data));
+		else
+			J('#t-' + id + '-list').tmpl(data).appendTo(J(data.parentSelector).first());	
+		J('#' + id + '-list th').each(function(i, el) { J(el).click(function(_) { order(J(el).data('order')); } ); } );	
+		J('#' + id + '-list tr').first().siblings().click(select).find('td').off('click');
+		J('td').attr('tabindex', -1);
+	}
+	
+	public function select(evt:Event):Void
 	{
 		trace('has to be implemented in subclass!');
 	}

@@ -42,23 +42,26 @@ typedef ContextMenuData =
 		root = J('#' + id).accordion( 
 		{ 
 			active:0,
-			activate: function( event:Event, ui ) 
-			{
-				trace(ui);
-				//trace(ui.newPanel[0].innerHTML);
-				action = J(ui.newPanel[0]).find('input[name="action"]').first().val();
-				trace(action);
-				//trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active);
-
-			},				
-			create: function( event:Event, ui ) 
-			{ 
-				//trace(ui.panel[0].innerHTML);			
-				action = J(ui.panel[0]).find('input[name="action"]').first().val();
-				trace(action);
-			}
+			activate:activate,				
+			create:create
 		});
 		J('#' + id + ' button[data-action]').click(run);
+	}
+	
+	public function activate( event:Event, ui ) 
+	{
+		//trace(ui);
+		//trace(ui.newPanel[0].innerHTML);
+		action = J(ui.newPanel[0]).find('input[name="action"]').first().val();
+		trace(action);
+		//trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active);
+	}
+	
+	function create( event:Event, ui ) 
+	{ 
+		//trace(ui.panel[0].innerHTML);			
+		action = J(ui.panel[0]).find('input[name="action"]').first().val();
+		trace(action);
 	}
 	
 	public function run(evt:Event)

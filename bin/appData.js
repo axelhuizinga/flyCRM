@@ -100,13 +100,21 @@ var uiData = {
 											action:'find',
 											label:'Finden',
 											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
-											table:'vicidial_list'
+											table:'vicidial_list',
+											buttons:
+											{
+												find:'Finden'
+											}
 										},
 										{
-											action:'test',
-											label:'Test',
-											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
-											table:'vicidial_list'
+											action:'edit',
+											label:'Bearbeiten',
+											buttons:
+											{
+												edit:'Bearbeiten',
+												add:'Hinzufügen',
+												delete:'Löschen'
+											}
 										}										
 									],
 									attach2:'#clients'

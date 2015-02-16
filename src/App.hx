@@ -6,6 +6,7 @@ import haxe.Json;
 import haxe.Log;
 import js.Browser;
 import jQuery.*;
+import jQuery.JHelper.J;
 import js.Lib;
 import me.cunity.debug.Out;
 import view.Clients;
@@ -19,13 +20,17 @@ import view.TabBox;
  */
 
 
-class Application
+class App
 {
-	public static var ist:Application;
+	public static var ist:App;
 	public static var basePath:String;
 	public static var appName:String;
 	public static var company:String;
 	public static var storeFormats:Dynamic;
+	
+	public var altPressed:Bool;
+	public var ctrlPressed:Bool;
+	public var shiftPressed:Bool;
 	
 	var views:StringMap<View>; 
 	
@@ -40,11 +45,11 @@ class Application
 	}
 	
 	@:expose("initApp") 
-	public static function init(config:Dynamic):Application
+	public static function init(config:Dynamic):App
 	{
-		ist = new Application();
+		ist = new App();
 		storeFormats = config.storeFormats;
-		var fields:Array<String> = Type.getClassFields(Application);
+		var fields:Array<String> = Type.getClassFields(App);
 		/*for (f in fields)
 		{
 			if(Reflect.field(config, f)!=null)
@@ -54,6 +59,7 @@ class Application
 		basePath = Browser.location.pathname.split(config.appName)[0] + config.appName + '/';
 		trace(basePath);
 		ist.initUI(config.views);		
+
 		return ist;
 	}
 	
@@ -73,6 +79,25 @@ class Application
 				trace("views.set(" +iParam.id +")");
 			}
 		}
+		J(Browser.window).keydown(function(evt) {
+			switch (evt.which) { 
+				case 16:
+					shiftPressed = true;
+				case 17:
+					ctrlPressed = true;
+				case 18:
+					altPressed = true;			
+			}
+		}).keyup(function(evt) {
+			switch (evt.which) { 
+				case 16:
+					shiftPressed = false;
+				case 17:
+					ctrlPressed = false;
+				case 18:
+					altPressed = false;
+			 }
+		});		
 	}
 	
 	public static function getViews(): StringMap<View>

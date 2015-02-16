@@ -4,6 +4,7 @@ package view;
  * ...
  * @author axel@cunity.me
  */
+import haxe.Timer;
 import jQuery.*;
 import jQuery.JHelper.J;
 import js.html.Element;
@@ -14,7 +15,7 @@ using jQuery.FormData;
 
 typedef ClientsData =
 {>ViewData,
-	@:optional var fields:Array<String>;
+	
 	@:optional var limit:Int;
 	@:optional var listattach2:String;
 	@:optional var order:String;
@@ -24,8 +25,7 @@ typedef ClientsData =
 
 @:keep class Clients extends View
 {
-	var fields:Array<String>;
-	var params:Dynamic;
+	
 	var listattach2:String;
 	
 	public function new(?data:ClientsData) 
@@ -45,55 +45,40 @@ typedef ClientsData =
 			resetParams();
 			if(data.order != null)
 				params.order = data.order;
-			loadData('server.php', params, update, listattach2);
+			//loadData('server.php', params, update, listattach2);
+			loadData('server.php', params, function(data:Dynamic) { data.parentSelector = listattach2; update(data); } );
 		}
 		if(data.views != null)
 			addViews(data.views);
-	}
-	
-	private function resetParams(where:String = ''):Dynamic
-	{
-		fields = vData.fields;
-		params = {
-			action:'find',
-			className:name,
-			dataType:'json',
-			fields:fields.join(','),
-			limit:vData.limit,
-			table:vData.table,
-			where:(vData.where.length>0 ? vData.where + (where == '' ? where : ',' + where) : vData.where )
-		}
-		return params;
-	}
-	
-	public function find(where:String):Void
-	{
-		resetParams(where);
-		loadData('server.php', params, update);
-	}
-	
-	public function order(field:String):Void
-	{
-		trace(field);
-		if (params.order != field)
-		{
-			params.order = field;
-			loadData('server.php', params, update, listattach2);
-		}
-	}
-	
-	override public function update(data:Dynamic, ?parentSelector:String):Void
-	{
-		data.fields = fields;
-		//trace(data);
-		trace('parent:' + parentSelector + ':' + J(parentSelector).first());
-		//J(parent).find('tr').first().siblings().remove();
-		//J(parentSelector).children().remove();
-		if ( J('#' + id + '-list').length > 0)
-			J('#' + id + '-list').replaceWith(J('#t-' + id + '-list').tmpl(data));
+		addInteractionState('init', { disables:['edit', 'delete'], enables:['add'] } );
+		addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
+		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit'] } );
+		addInteractionState('unselected', { disables:['edit', 'delete'], enables:['add'] } );
+		if (loadingComplete())
+			initState();
 		else
-			J('#t-' + id + '-list').tmpl(data).appendTo(J(parentSelector).first());	
-		J('#' + id + '-list th').each(function(i, el) { J(el).click(function(_) { order(J(el).data('order')); } ); } );
+			Timer.delay(initState, 1000);
+	}
+	
+
+	override public function select(evt:Event):Void
+	{
+		evt.preventDefault();
+		trace(J(cast evt.target).get()[0].nodeName);
+		if (App.ist.ctrlPressed)
+			trace('ctrlPressed');
+		var jTarget = J(cast evt.target).parent();
+		if (jTarget.hasClass('selected'))
+			jTarget.removeClass('selected');
+		else
+		{
+			jTarget.siblings().removeClass('selected');	
+			jTarget.addClass('selected');
+		}
 		
+		if (jTarget.hasClass('selected'))
+			interactionState = 'selected';
+		else
+			interactionState = 'unselected';
 	}
 }

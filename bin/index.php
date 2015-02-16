@@ -34,18 +34,18 @@
 		</div>
 		
 		<!-- MAIN TABS -->
-		<script type="text/html" id="t-mtabs">						
+		<script type="text/x-jquery-tmpl" id="t-mtabs">						
 			<li><a href="${link}" rel="pushstate">${label}</a></li>								
 		</script>
 		
 		<!-- DATETIME -->		
-		<script type="text/html"  id="t-datetime" >					
+		<script type="text/x-jquery-tmpl"  id="t-datetime" >					
 			<li id="datetime" class="tabs-header" >${datetime}</li>			
 		</script>
 		
 		<!-- MEMBERS TAB -->
 		<!-- MEMBERS TAB {{if displayFormats[v] !='row-title'}}{{/if}}-->
-		<script type="text/html"  id="t-clients">
+		<script type="text/x-jquery-tmpl"  id="t-clients">
 			<div id="clients">
 				<form  id="clients-list-anchor" action="clients" class="main-left">
 				</form>
@@ -57,7 +57,7 @@
 		MEMBERS LIST
 		${sprintf(displayFormats[v],$item)}${$item}class="${i % 2 ? 'odd' : 'even'}{{each(i,v) $item.data}}{{/each}}${console.log(v)}"-->
 		
-		<script type="text/html"  id="t-clients-list">
+		<script type="text/x-jquery-tmpl"  id="t-clients-list">
 		
 			<table id="clients-list">
 				${($data.oddi=0,'')}
@@ -83,25 +83,26 @@
 			</table>		
 		</script>
 		
-		<!-- MEMBERS MENU ${trace($data)}-->
-		<script type="text/html" id="t-clients-menu">		
+		<!-- MEMBERS MENU ${trace($data)}${trace(v.fields)}<button data-action="${action}">${v.label}</button>-->
+		<script type="text/x-jquery-tmpl" id="t-clients-menu">		
 			<div id="clients-menu" class="menu-right">
 			{{each(i,v) $data.items}}
 				<h3>${v.label}</h3>
 				<div>
 					<form >
-						<input type="hidden" name="action" value="${action}">
-						<ul >
+						<input type="hidden" name="action" value="${action}">						
+						{{html v.fields ? '<ul >':''}}
 							{{each(fi,fv) v.fields}}
 							<li >
 								<span>${fieldNames[fv]}</span>
 								{{tmpl(fv) "#t-find-match"}}
-								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="app-right">
-								
+								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="app-right">								
 							</li>							
 							{{/each}}
-						</ul>
-						<button data-action="${action}">${v.label}</button>
+						{{html v.fields ? '</ul>':''}}						
+						{{each(bi,bv) v.buttons}}
+						<button data-action="${bi}">${bv}</button>
+						{{/each}}
 					</form>
 				</div>
 			{{/each}}	
@@ -115,28 +116,6 @@
 			{{/each}}
 			</select>
 		</script>
-		
-		<script type="text/html" id="t-clients-menu-1">		
-			<div id="clients-menu" class="menu-right">
-			{{each(i,v) $data.items}}
-				<h3>${v.label}</h3>
-				<div>
-					<form >
-						<input type="hidden" name="action" value="${action}">
-						<ul >
-							{{each(fi,fv) v.fields}}
-							<li >
-							<span>${fieldNames[fv]}</span><input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="app-right">
-							</li>							
-							{{/each}}
-						</ul>
-						<button data-action="${action}">${v.label}</button>
-					</form>
-				</div>
-			{{/each}}	
-			</div>	
-		</script>	
-
 		
 		<script src="js/jquery-2.1.3.js"></script>
 		<script src="js/jquery-ui.min.js"></script>
@@ -153,6 +132,10 @@
 			uiData.action="<?php echo $action;?>";
 			uiData.params="<?php echo $params;?>";
 			initApp(uiData);
+			
+			/*setTimeout(function(){
+				$('#clients-list tr').click(function(e){trace(e.target.nodeName)});
+			},2000)*/
 		});
 		
 		function trace(m) {
@@ -162,6 +145,8 @@
 			//console.log('rows:' + $(el).siblings().length);
 			return '';
 		}
+		
+		
 		
 		</script>
 	</body>

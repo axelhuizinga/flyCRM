@@ -108,13 +108,29 @@ th:last-child {
 th:only-child{
     border-radius: 4.5px 4.5px 0 0;
 }
-form button{display:table;margin: 2px auto;}
-#clients-list th{
-	cursor: pointer;
+form button{
+	display:table;
+	margin: 2px auto;
+	min-width: 40%;
 }
+
+tr.selected
+{
+	background-color: rgb(242,180,40);
+}
+
 #clients-menu li
 {
 	height: 2em;
+}
+
+#clients-list tr{
+	cursor: pointer;
+}
+
+#clients-list td:focus{
+	outline: none!important;
+	border: none!important;
 }
 
 #mtabs{
