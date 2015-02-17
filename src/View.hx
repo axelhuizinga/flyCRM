@@ -9,6 +9,7 @@ import jQuery.JHelper.J;
 import jQuery.*;
 import js.html.Node;
 import js.html.XMLHttpRequest;
+import view.Input;
 
 import me.cunity.debug.Out;
 
@@ -41,11 +42,11 @@ class View
 	var attach2:EitherType<String, Element>; // parentSelector
 	var fields:Array<String>;
 	var repaint:Bool;
-	var id:String;
 	var name:String;
 	var root:JQuery;
 	var vData:Dynamic;
 	var template:JQuery;
+	var inputs:StringMap<Input>;
 	var views:StringMap<View>;
 	var parentView:View;
 	var params:Dynamic;
@@ -54,11 +55,14 @@ class View
 	var listening:ObjectMap<JQuery,String>;
 	var suspended:StringMap<JQuery>;
 	var interactionStates:StringMap<InteractionState>;
+	
+	public var id:String;	
 	public var interactionState(default, set):String;
 	
 	public function new(?data:Dynamic ) 
 	{
 		views = new StringMap();
+		inputs = new StringMap();
 		vData = data;
 		var data:ViewData = cast data;
 		id = data.id;
@@ -148,7 +152,10 @@ class View
 	{
 		if (loading > 0)
 			return false;
-		return views.foreach(function(v:View) return v.loading==0);
+		if (! inputs.foreach(function(i:Input) return i.loading == 0))
+			return false;
+		else
+			return views.foreach(function(v:View) return v.loading==0);
 	}
 	
 	function suspendAll()
@@ -156,7 +163,6 @@ class View
 		
 	}
 	
-	//public function loadData(url:String,params:Dynamic, callBack:Dynamic->String->Void, ?parent:String):Void
 	public function loadData(url:String,params:Dynamic, callBack:Dynamic->Void):Void
 	{
 		//Out.dumpObject(params);
@@ -196,7 +202,7 @@ class View
 			fields:fields.join(','),
 			limit:vData.limit,
 			table:vData.table,
-			where:(vData.where.length>0 ? vData.where + (where == '' ? where : ',' + where) : vData.where )
+			where:(vData.where.length>0 ? vData.where + (where == '' ? where : ',' + where) : where )
 		}
 		return params;
 	}

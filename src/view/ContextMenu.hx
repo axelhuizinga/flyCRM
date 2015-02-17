@@ -58,8 +58,7 @@ typedef ContextMenuData =
 	}
 	
 	function create( event:Event, ui ) 
-	{ 
-		//trace(ui.panel[0].innerHTML);			
+	{ 	
 		action = J(ui.panel[0]).find('input[name="action"]').first().val();
 		trace(action);
 	}
@@ -67,15 +66,24 @@ typedef ContextMenuData =
 	public function run(evt:Event)
 	{
 		evt.preventDefault();
-		evt.stopImmediatePropagation();
+		//evt.stopImmediatePropagation();
+		var form:JQuery = J(cast( evt.target, Element)).parent();
 		var options = cast root.accordion( "option");
 		trace(options.active); 
 		var fields:Array<String> = vData.items[options.active].fields;
 		trace(fields);
-		var form:JQuery = J(cast( evt.target, Element)).parent();
-		var where:String = FormData.where(form, fields);
-		trace(where);
-		Reflect.callMethod(vData.parentView, Reflect.field(vData.parentView, action), [where]);
+		if (fields != null && fields.length > 0)/*FIND FORM*/
+		{
+			var where:String = FormData.where(form, fields);
+			trace(where);
+			Reflect.callMethod(parentView, Reflect.field(parentView, action), [where]);			
+		}
+		else 
+		{
+			action = J(cast( evt.target, Element)).data('action');
+			trace(action);
+		}
+
 	}
 	
 	public function showResult(data:Dynamic, _):Void

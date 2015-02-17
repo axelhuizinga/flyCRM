@@ -26,7 +26,8 @@
 		<base href="<?php echo $base;?>">
 	</head>
 	<body>
-	<!-- MAIN APP SCREEN -->
+		
+		<!-- MAIN APP SCREEN -->
 		<div  class="bgBox" id="bgBox">
 			<div  id="mtabs" >
 				<ul ></ul>
@@ -34,17 +35,19 @@
 		</div>
 		
 		<!-- MAIN TABS -->
+		
 		<script type="text/x-jquery-tmpl" id="t-mtabs">						
 			<li><a href="${link}" rel="pushstate">${label}</a></li>								
 		</script>
 		
-		<!-- DATETIME -->		
+		<!-- DATETIME -->
+		
 		<script type="text/x-jquery-tmpl"  id="t-datetime" >					
 			<li id="datetime" class="tabs-header" >${datetime}</li>			
 		</script>
 		
 		<!-- MEMBERS TAB -->
-		<!-- MEMBERS TAB {{if displayFormats[v] !='row-title'}}{{/if}}-->
+	
 		<script type="text/x-jquery-tmpl"  id="t-clients">
 			<div id="clients">
 				<form  id="clients-list-anchor" action="clients" class="main-left">
@@ -52,10 +55,7 @@
 			</div>
 		</script>
 		
-		<!-- ${console.log($item.data)}<input type="${ !$item.type ?'text':$item.type}" name="${ri}" class="app-right" disabled="disabled" value="${rv}">
-		${console.log(jQuery.isArray($item.data))}${console.log($item)}${console.log(ri + ":" + rv)}${ console.log("tr.length:"+ $(this).parent('tr').length)}
-		MEMBERS LIST
-		${sprintf(displayFormats[v],$item)}${$item}class="${i % 2 ? 'odd' : 'even'}{{each(i,v) $item.data}}{{/each}}${console.log(v)}"-->
+		<!--  MEMBERS LIST -->
 		
 		<script type="text/x-jquery-tmpl"  id="t-clients-list">
 		
@@ -83,7 +83,8 @@
 			</table>		
 		</script>
 		
-		<!-- MEMBERS MENU ${trace($data)}${trace(v.fields)}<button data-action="${action}">${v.label}</button>-->
+		<!-- MEMBERS MENU -->
+		
 		<script type="text/x-jquery-tmpl" id="t-clients-menu">		
 			<div id="clients-menu" class="menu-right">
 			{{each(i,v) $data.items}}
@@ -115,6 +116,73 @@
 				<option value="${i}" title="${v}" >${v.substr(0,1)}</option>
 			{{/each}}
 			</select>
+		</script>
+		
+		<!-- CAMPAIGNS TAB -->
+	
+		<script type="text/x-jquery-tmpl"  id="t-campaigns">
+			<div id="campaigns">
+				<form  id="campaigns-list-anchor" action="campaigns" class="main-left">
+				</form>
+			</div>
+		</script>
+		
+		<!--  CAMPAIGNS LEAD RESULTS LIST -->
+		
+		<script type="text/x-jquery-tmpl"  id="t-campaigns-list">
+		
+			<table id="campaigns-list">
+				${($data.oddi=0,'')}
+				<tr class="headrow" >
+				{{each(i,v) $data.fields}}
+					
+					<th data-order="${v}">${fieldNames[v]}</th>
+					
+				{{/each}}
+				</tr>
+				{{each(i,v) $data.rows}}
+					<tr id="${v.vendor_lead_code}" class="${((i+1) % 2 ? 'odd' : 'even')}">
+					{{each(ri,rv) v}}
+						
+							{{if displayFormats[ri]}}
+						<td data-name="${ri}" >${sprintf(displayFormats[ri],rv)}</td>	
+							{{else}}
+						<td data-name="${ri}" >${rv}</td>	
+							{{/if}}
+					{{/each}}
+					</tr>
+				{{/each}}
+			</table>		
+		</script>
+		
+		<!-- CAMPAIGNS MENU -->
+		
+		<script type="text/x-jquery-tmpl" id="t-campaigns-menu">		
+			<div id="campaigns-menu" class="menu-right">
+			{{each(i,v) $data.items}}
+				<h3>${v.label}</h3>
+				<div>
+					<form >
+						<input type="hidden" name="action" value="${action||''}">
+						{{each(si,sv) v.select}}
+						<select name="${sv.name}" ${sv.multi ? 'multiple':''} id="campaigns-menu_${sv.name}" size="${sv.size||5}">
+							{{each(oi,ov) sv.options}}
+							<option value="${ov.value}">${ov.label}</option>
+							{{/each}}
+						</select>
+						{{/each}}						
+						{{each(bi,bv) v.buttons}}
+						<button data-action="${bi}">${bv}</button>
+						{{/each}}
+					</form>
+				</div>
+			{{/each}}	
+			</div>	
+		</script>
+		
+		<!-- SELECT  OPTIONS TEMPLATE -->
+		<script type="text/x-jquery-tmpl" id="t-options">
+			<option value="${$item.value}">${$item.label}</option>
 		</script>
 		
 		<script src="js/jquery-2.1.3.js"></script>

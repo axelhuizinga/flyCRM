@@ -84,13 +84,13 @@ typedef TabBoxData =
 				active:active,
 				activate: function( event:Event, ui ) 
 				{
-					//trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active);
+					trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active);
 					PushState.replace(Std.string(ui.newTab.context).split(Browser.window.location.hostname).pop());
 				},				
 				create: function( event:Event, ui ) 
 				{
 					tabsInstance =  J('#' + id).tabs("instance");		
-					trace('ready2load');
+					trace('ready2load' + tabBoxData.tabs.length);
 					//Out.dumpObject(tabsInstance.panels);
 					if (tabBoxData.append2header != null)
 					{
@@ -102,7 +102,7 @@ typedef TabBoxData =
 						var tabIndex:Int = 0;
 						for (t in tabBoxData.tabs)
 						{
-							//trace(t.views);
+							//trace(t);
 							for (v in t.views)
 							{
 								//trace(v);

@@ -23,7 +23,7 @@ span
 {
 	padding: 2px 5px;
 }
-:focus{outline:none;}
+:focus{outline:0;}
 .app{display:none;}
 
 .app-right{

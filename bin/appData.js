@@ -7,7 +7,15 @@ var fieldNames =
 	postal_code:'PLZ',
 	city:'Ort',
 	last_local_call_time:'Anrufdatum',
-	vendor_lead_code:'Mitgliedsnr.'
+	vendor_lead_code:'Mitgliedsnr.',
+	vicidial_campaigns:'Kampagnen',
+	vicidial_lists:'Listen'
+}
+
+var label =
+{
+	active:'Nur Aktive',
+	edit:'Bearbeiten',
 }
 
 var matchOptions =
@@ -54,47 +62,45 @@ var fieldTypes =
 }
 
 var uiData = {
-	appName:"flyCRM",
-	company:"X-Press Marketing GmbH",
+	appName:'flyCRM',
+	company:'X-Press Marketing GmbH',
 	storeFormats:storeFormats,
 	views:
 	[
 		{
 			DateTime:
 			{
-				id:"datetime",
-				format:"%s, %d.%d.%s %02d:%02d",
+				id:'datetime',
+				format:'%s, %d.%d.%s %02d:%02d',
 				interval:60000
 			}
 		},
 		{
 			TabBox:
 			{
-				id:"mtabs",
+				id:'mtabs',
 				isNav:true,
 				append2header:'datetime',
 				tabs:
 				[{				
-					link:"clients",
-					label:"Mitglieder",
+					link:'clients',
+					label:'Mitglieder',
 					views:
 					[{	
 						Clients:{
 							action:'find',
 							fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
-							id:"clients",
+							id:'clients',
 							limit:15,
 							order:'vendor_lead_code',
-							//where:"list_id=10000",
-							where:"list_id|10000|exact",
+							where:'list_id|10000|exact',
 							table:'vicidial_list',
-							//attach2:'#clients-list-anchor',
 							listattach2:'#clients-list-anchor',
 							views:[
 							{
 								ContextMenu:{
-									id:"clients-menu",
-									heightStyle: "auto",
+									id:'clients-menu',
+									heightStyle: 'auto',
 									items:[
 										{
 											action:'find',
@@ -112,6 +118,7 @@ var uiData = {
 											buttons:
 											{
 												edit:'Bearbeiten',
+												save:'Speichern',
 												add:'Hinzufügen',
 												delete:'Löschen'
 											}
@@ -126,21 +133,102 @@ var uiData = {
 					]									
 				},
 				{
-					link:"campaigns",
-					label:"Kampagnen",
-					views:[]									
+					link:'campaigns',
+					label:'Kampagnen',
+					views:[{
+						Campaigns:
+						{
+							fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+							id:'campaigns',
+							limit:15,
+							order:'vendor_lead_code',
+							where:'',
+							table:'vicidial_list',
+							listattach2:'#campaigns-list-anchor',
+							views:[
+							{
+								ContextMenu:{
+									id:'campaigns-menu',
+									heightStyle: 'auto',
+									items:[
+										{
+											action:'selectCampaign',
+											label:'Kampagnen Auswahl',											
+											select:[
+											{
+												name:'vicidial_campaigns',
+												default:'all',
+												db:1,
+												multi:1,
+												value:'campaign_id',
+												label:'campaign_name',
+												size:5,
+												options:[],
+												check:[
+												{
+													name:'active',
+													selected:1
+												},
+												{
+													name:'filter',
+													selected:1
+												}												
+												]												
+											}																			
+											],
+											buttons:
+											{
+												listLeads:'Anzeigen'
+											}
+										},
+										{
+											action:'selectList',
+											label:'Listen Auswahl',
+											select:[
+											{
+												name:'vicidial_lists',
+												default:'all',
+												db:1,
+												multi:1,
+												value:'list_id',
+												label:'list_name',
+												size:5,
+												options:[],
+												check:[
+												{
+													name:'active',
+													selected:1
+												},
+												{
+													name:'filter',
+													selected:1
+												}		
+												]													
+											}		
+											],
+											buttons:
+											{
+												listLeads:'Anzeigen'
+											}
+										}										
+									],
+									attach2:'#campaigns'
+								}
+							}]
+						}
+					}]									
 				},	
 				{
-					link:"stats",
-					label:"Statistik",
+					link:'stats',
+					label:'Statistik',
 					views:[]									
 				},
 				{
-					link:"settings",
-					label:"Einstellungen",
+					link:'settings',
+					label:'Einstellungen',
 					views:[]									
 				}],
-				heightStyle: "fill"
+				heightStyle: 'fill'
 			}
 		}
 	]}

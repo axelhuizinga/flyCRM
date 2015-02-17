@@ -16,7 +16,10 @@ typedef FData =
 @:expose("FD")
 class FormData
 {
-
+	/*
+	 * Merge Data|Settings with Form 
+	 */
+	
 	public static function query(jForm:JQuery, ?eData:Dynamic) :String
 	{
 		var fD:Array<FData> = cast jForm.serializeArray();
@@ -44,8 +47,10 @@ class FormData
 		}
 		return ret;
 	}
+	/*
+	 * Regex replace parameter order switched
+	 */
 	
-	//public static function replace(eR:EReg, modifier:String, source:String, by:String):String
 	public static function replace(e:String, by:String, source:String):String
 	{		
 		var eR:EReg =  new EReg(e, '');
@@ -53,10 +58,13 @@ class FormData
 		return eR.replace(source, by);
 	}
 	
+	/*
+	 * Build WHERE data string with match type options exact|start|end|any
+	 */
+	
 	public static function where(jForm:JQuery, fields:Array<String>):String
 	{
 		var ret:Array<String> = new Array();
-		//var exact:Bool = cast jForm.find('[name="exact"]').val();
 		var fD:Array<FData> = cast jForm.serializeArray();
 		trace(fD);
 		for (item in fD)
@@ -82,30 +90,4 @@ class FormData
 		return ret.join(',');		
 	}
 	
-	public static function where1(jForm:JQuery, fields:Array<String>):String
-	{
-		var ret:String = ' ';
-		var exact:Bool = cast jForm.find('[name="exact"]').val();
-		var fD:Array<FData> = cast jForm.serializeArray();
-		for (item in fD)
-		{
-			if (!fields.has(item.name))
-				continue;
-			if (item.value != null && item.value != '')
-			{
-				if (Reflect.hasField(App.storeFormats, item.name))
-				{
-					var sForm:Array<Dynamic> = Reflect.field(App.storeFormats, item.name);
-					var method:String = sForm.shift();
-					sForm.push(item.value);
-					item.value = Reflect.callMethod(FormData, Reflect.field(FormData, method), sForm);
-				}
-				if (!exact)
-					ret +=  'AND ' + item.name + ' LIKE "' + item.value + '%" ';
-				else
-					ret +=  'AND ' + item.name + '="' + item.value + '" ';
-			}
-		}
-		return ret;		
-	}
 }

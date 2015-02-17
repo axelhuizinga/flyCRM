@@ -9,6 +9,7 @@ import jQuery.*;
 import jQuery.JHelper.J;
 import js.Lib;
 import me.cunity.debug.Out;
+import view.Campaigns;
 import view.Clients;
 import view.ContextMenu;
 import view.DateTime;
