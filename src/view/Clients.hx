@@ -53,10 +53,10 @@ typedef ClientsData =
 		addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
 		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit'] } );
 		addInteractionState('unselected', { disables:['edit', 'delete'], enables:['add'] } );
-		if (loadingComplete())
+		/*if (loadingComplete())
 			initState();
 		else
-			Timer.delay(initState, 1000);
+			Timer.delay(initState, 1000);*/
 	}
 	
 

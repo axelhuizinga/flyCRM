@@ -51,12 +51,12 @@ class App
 		ist = new App();
 		storeFormats = config.storeFormats;
 		var fields:Array<String> = Type.getClassFields(App);
-		/*for (f in fields)
+		for (f in fields)
 		{
 			if(Reflect.field(config, f)!=null)
-			Reflect.setField(Application, f, Reflect.field(config, f));
-			trace(Reflect.field(Application, f));
-		}*/
+			Reflect.setField(App, f, Reflect.field(config, f));
+			trace(Reflect.field(App, f));
+		}
 		basePath = Browser.location.pathname.split(config.appName)[0] + config.appName + '/';
 		trace(basePath);
 		ist.initUI(config.views);		

@@ -1,4 +1,5 @@
 package view;
+import haxe.Timer;
 import jQuery.JQueryStatic;
 import js.html.XMLHttpRequest;
 
@@ -6,6 +7,9 @@ import js.html.XMLHttpRequest;
  * ...
  * @author axel@cunity.me
  */
+
+using Lambda;
+
 class Input
 {
 	var vData:Dynamic;
@@ -22,19 +26,57 @@ class Input
 		vData = data;
 		parentView = data.parentView;
 		name = Type.getClassName(Type.getClass(this)).split('.').pop();
-		id = parentView.id + '_' + data.id ;
-		loading = 0;
+		id = parentView.id + '_' + data.name ;
+		loading = 0;	
+	}	
+	
+	public function init()
+	{
+		loadData( resetParams(), function(data:Dynamic) { //data.parentSelector = listattach2; 
+		update(data); });		
 	}
 	
 	function loadData(data:Dynamic, callBack:Dynamic->Void)
 	{
+		var dependsOn:Array<String> = vData.dependsOn;
+		if (dependsOn != null && dependsOn.length > 0)
+		{
+			if (! dependsOn.foreach(function(s:String) return parentView.inputs.exists(s) && parentView.inputs.get(s).loading == 0))
+			{
+				trace(id + ' still waiting on:' + dependsOn.toString());
+				Timer.delay(function() loadData(data, callBack), 1000);
+				return;
+			}
+		}
+		trace(id);
+		trace(data);
+		
 		loading++;
 		JQueryStatic.post('server.php', data , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
 		{
-			//trace(data);
+			trace(data);
 			callBack(data);
 			loading--;
 		});		
 	}
+
+	private function resetParams(?where:Dynamic):Dynamic
+	{
+		params = {
+			action:vData.action,
+			className:name,
+			dataType:'json',
+			fields:[vData.value, vData.label].join(','),
+			limit:vData.limit,
+			table:vData.name
+		};
+		if (where != null)
+			params.where = where;
+		return params;
+	}
 	
+	public function update(data:Dynamic)
+	{
+		trace('method has to be implemented by subclass');
+	}	
 }

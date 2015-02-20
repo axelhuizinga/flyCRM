@@ -21,40 +21,6 @@ class haxe_ds_ObjectMap implements IMap{
 			return null;
 		}
 	}
-	public function exists($key) {
-		return array_key_exists(haxe_ds_ObjectMap::getId($key), $this->h);
-	}
-	public function remove($key) {
-		$id = haxe_ds_ObjectMap::getId($key);
-		if(array_key_exists($id, $this->h)) {
-			unset($this->h[$id]);
-			unset($this->hk[$id]);
-			return true;
-		} else {
-			return false;
-		}
-	}
-	public function keys() {
-		return new _hx_array_iterator(array_values($this->hk));
-	}
-	public function iterator() {
-		return new _hx_array_iterator(array_values($this->h));
-	}
-	public function toString() {
-		$s = "{";
-		$it = new _hx_array_iterator(array_values($this->hk));
-		$__hx__it = $it;
-		while($__hx__it->hasNext()) {
-			$i = $__hx__it->next();
-			$s .= Std::string($i);
-			$s .= " => ";
-			$s .= Std::string($this->get($i));
-			if($it->hasNext()) {
-				$s .= ", ";
-			}
-		}
-		return _hx_string_or_null($s) . "}";
-	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);
@@ -68,5 +34,5 @@ class haxe_ds_ObjectMap implements IMap{
 	static function getId($key) {
 		return spl_object_hash($key);
 	}
-	function __toString() { return $this->toString(); }
+	function __toString() { return 'haxe.ds.ObjectMap'; }
 }

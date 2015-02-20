@@ -46,7 +46,7 @@ class View
 	var root:JQuery;
 	var vData:Dynamic;
 	var template:JQuery;
-	var inputs:StringMap<Input>;
+	
 	var views:StringMap<View>;
 	var parentView:View;
 	var params:Dynamic;
@@ -58,6 +58,7 @@ class View
 	
 	public var id:String;	
 	public var interactionState(default, set):String;
+	public var inputs:StringMap<Input>;
 	
 	public function new(?data:Dynamic ) 
 	{
@@ -69,18 +70,25 @@ class View
 		parentView = data.parentView;
 		attach2 = data.attach2 == null ? '#' + id : data.attach2;
 		name = Type.getClassName(Type.getClass(this)).split('.').pop();
-		root = J('#' + id);
+		root = J('#' + id).css({opacity:0});
 		trace(name + ':'  + id + ':' + root.length + ':' + attach2); 		
 		interactionStates = new StringMap();
 		listening = new ObjectMap();
 		suspended = new StringMap();
 		loading = 0;
+		if (loadingComplete())
+			initState();
+		else
+			Timer.delay(initState, 1000);
 	}
 	
 	public function set_interactionState(iState:String):String
 	{
 		interactionState = iState;
 		var iS:InteractionState = interactionStates.get(iState);
+		trace(id + ':' + iState);
+		if (iS == null)
+			return iState;
 		var lIt:Iterator<JQuery> = listening.keys();
 		while (lIt.hasNext())
 		{
@@ -100,6 +108,39 @@ class View
 		interactionStates.set(name, iS);
 	}
 	
+	function addInputs(v:Array<Dynamic>, className:String):Void
+	{
+		//trace(v);
+		for (aI in v)
+		{
+			aI.parentView = this;
+			addInput(aI, className);
+		}
+	}
+	
+	function addInput(v:Dynamic, className:String):Input
+	{
+		var aI:Input = null;
+		
+		var iParam:Dynamic = v;
+		//trace(className + ':' + iParam);
+		var cl:Class<Dynamic> = Type.resolveClass('view.' + className);
+		if (cl != null)
+		{
+			//trace(cl);
+			if (Reflect.hasField(v, 'attach2'))
+				iParam.attach2 = v.attach2;
+			iParam.parentView = this;
+			//trace(Std.string(iParam));
+			aI = Type.createInstance(cl, [iParam]);
+			inputs.set(iParam.id, aI);				
+			trace("inputs.set(" +iParam.id +")");
+			if (iParam.db == 1)
+				aI.init();
+		}		
+		return aI;
+	}
+	
 	public function addListener(jListener:JQuery)
 	{
 		jListener.each(function(i, n)
@@ -108,7 +149,7 @@ class View
 		});
 	}
 	
-	public function addView(v:Dynamic):View
+	public function addView(v:ViewData):View
 	{
 		var av:View = null;
 		var className:String = Reflect.fields(v)[0];
@@ -141,11 +182,21 @@ class View
 	
 	function initState():Void
 	{
+		trace (loadingComplete() ? 'Y':'N');	
 		if (!loadingComplete())
+		{			
 			Timer.delay(initState, 1000);
+			return;
+		}
 		addListener(J('button[data-action]'));
 		interactionState = 'init';
 		J('td').attr('tabindex', -1);
+		trace('initState complete :)');
+		J('#' + id).animate( { opacity:1 }, 300, 'linear', function() { 
+			trace(untyped __js__("this"));
+			trace(J(untyped __js__("this")).attr('id')); 
+			
+			} );
 	}
 	
 	function loadingComplete():Bool

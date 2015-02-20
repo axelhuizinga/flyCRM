@@ -64,6 +64,11 @@ span
 	/*padding:8px;*/
 	
 }
+.ui-tabs-panel>div
+{
+	height:100%;
+}
+
 .ui-helper-reset, .ui-widget,
 .ui-tabs-panel table{
 	font-size: 0.9em;
@@ -117,6 +122,12 @@ form button{
 tr.selected
 {
 	background-color: rgb(242,180,40);
+}
+
+.menuTable
+{
+	display: table;
+	margin: 8px auto;
 }
 
 #clients-menu li

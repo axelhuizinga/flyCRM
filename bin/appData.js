@@ -12,10 +12,11 @@ var fieldNames =
 	vicidial_lists:'Listen'
 }
 
-var label =
+var appLabel =
 {
 	active:'Nur Aktive',
 	edit:'Bearbeiten',
+	filter:'Kontextfilter'
 }
 
 var matchOptions =
@@ -149,33 +150,30 @@ var uiData = {
 							{
 								ContextMenu:{
 									id:'campaigns-menu',
-									heightStyle: 'auto',
+									heightStyle: 'content',
 									items:[
 										{
 											action:'selectCampaign',
 											label:'Kampagnen Auswahl',											
-											select:[
+											Select:[
 											{
 												name:'vicidial_campaigns',
 												default:'all',
+												dependsOn:[],
 												db:1,
 												multi:1,
 												value:'campaign_id',
 												label:'campaign_name',
-												size:5,
+												size:1,
 												options:[],
 												check:[
 												{
 													name:'active',
-													selected:1
-												},
-												{
-													name:'filter',
-													selected:1
-												}												
-												]												
-											}																			
-											],
+													checked:true
+												}
+												],
+												where:{check:['active']}
+											}],
 											buttons:
 											{
 												listLeads:'Anzeigen'
@@ -184,28 +182,28 @@ var uiData = {
 										{
 											action:'selectList',
 											label:'Listen Auswahl',
-											select:[
+											Select:[
 											{
 												name:'vicidial_lists',
 												default:'all',
+												dependsOn:['campaigns-menu_vicidial_campaigns'],
 												db:1,
 												multi:1,
 												value:'list_id',
 												label:'list_name',
-												size:5,
+												size:1,
 												options:[],
 												check:[
 												{
 													name:'active',
-													selected:1
+													checked:true
 												},
 												{
 													name:'filter',
-													selected:1
-												}		
-												]													
-											}		
-											],
+													checked:true
+												}]
+												,where:{check:['active','filter']}
+											}],
 											buttons:
 											{
 												listLeads:'Anzeigen'

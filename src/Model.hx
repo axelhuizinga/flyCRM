@@ -2,8 +2,10 @@ package;
 import haxe.ds.StringMap;
 import haxe.EitherType;
 import haxe.Json;
+
 import php.Lib;
 import php.NativeArray;
+import sys.db.RecordInfos;
 import model.*;
 
 
@@ -12,15 +14,13 @@ using Lambda;
  * ...
  * @author axel@cunity.me
  */
-typedef MData = 
+/*typedef MData = 
 {
 	var rows:NativeArray;
-};
+};*/
 
 class Model
 {
-
-	public var data:MData;
 	
 	public static function dispatch(param:StringMap<Dynamic>) :EitherType<String,Bool>
 	{
@@ -52,7 +52,7 @@ class Model
 		}
 	}
 	
-	public function fieldFormat(fields:String):String
+	public static function fieldFormat(fields:String):String
 	{
 		var fieldsWithFormat:Array<String> = new Array();
 		var sF:Array<String> = fields.split(',');
@@ -84,8 +84,54 @@ class Model
 		trace(fieldsWithFormat);
 		return fieldsWithFormat.join(',');
 	}
+
+	 
+	public static function quoteIf(t:RecordType):Bool
+	{
+		return switch(t)
+		{
+			case DId, DInt, DUId, DUInt, DBigId, DBigInt, DSingle, DFloat,DTinyInt,DTinyUInt,DSmallInt,DSmallUInt,DMediumInt,DMediumUInt:false;
+			default: true;
+		}
+	}
 	
-	public function prepare(whereParam:String, placeHolder:StringMap<Dynamic>):String
+	public static function whereParam2obj(whereParam:String, placeHolder:StringMap<Dynamic>):Dynamic
+	{
+		var where:Array<String> = whereParam.split(',');
+		trace(where);
+		if (where.length == 0)
+			return '';
+		var whereObj:Dynamic = {};
+		/*for (w in where)
+		{
+
+			var wData:Array<Dynamic> = w.split('|');
+			trace(wData);
+			if (phString == '')
+				phString += 'WHERE `' + 	wData[0] + '` ';	
+			else
+				phString += 'AND `' + 	wData[0] + '` ';
+			switch(wData[2])
+			{
+				case 'exact':
+					phString += '= ? ';
+					placeHolder.set(wData[0], wData[1]);
+				case 'any':
+					phString += 'LIKE ? ';
+					placeHolder.set(wData[0], '%' + wData[1] + '%');							
+				case 'end':
+					phString += 'LIKE ? ';
+					placeHolder.set(wData[0], '%' + wData[1]);		
+				case 'start':
+					phString += 'LIKE ? ';
+					placeHolder.set(wData[0],  wData[1] + '%');							
+			}
+			
+		}*/
+		return whereObj;
+	}
+	
+	public static function whereParam2sql(whereParam:String, placeHolder:StringMap<Dynamic>):String
 	{
 		var where:Array<Dynamic> = whereParam.split(',');
 		trace(where);
@@ -121,7 +167,7 @@ class Model
 		return phString;
 	}
 	
-	public function whereString(matchType:String):String 
+	public static function whereString(matchType:String):String 
 	{
 		var wS:String = '';
 		return switch(matchType)
@@ -134,11 +180,10 @@ class Model
 	}
 	
 	
-	public function new() {}
-	
-	public function json_encode():EitherType<String,Bool>
+	public function json_encode(data:Dynamic):EitherType<String,Bool>
 	{
 		return untyped __call__("json_encode", data);
 	}
 	
+
 }

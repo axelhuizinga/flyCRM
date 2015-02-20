@@ -164,12 +164,19 @@
 				<div>
 					<form >
 						<input type="hidden" name="action" value="${action||''}">
-						{{each(si,sv) v.select}}
-						<select name="${sv.name}" ${sv.multi ? 'multiple':''} id="campaigns-menu_${sv.name}" size="${sv.size||5}">
+						{{each(si,sv) v.Select}}
+						<select class="menuTable" name="${sv.name}" ${sv.multi ? 'multiple':''} id="campaigns-menu_${sv.name}"
+							size="${sv.options.length>0&&sv.options.length<15 ? sv.options.length :1}">
 							{{each(oi,ov) sv.options}}
 							<option value="${ov.value}">${ov.label}</option>
 							{{/each}}
 						</select>
+						<div class="menuTable" >
+							{{each(ci,cv) sv.check}}
+							<span class="label">${cv.label?cv.label:appLabel[cv.name]}</span>
+							<input type="checkbox" checked="${cv.checked}" name="${cv.name}">
+							{{/each}}
+						</div>	
 						{{/each}}						
 						{{each(bi,bv) v.buttons}}
 						<button data-action="${bi}">${bv}</button>
@@ -182,6 +189,7 @@
 		
 		<!-- SELECT  OPTIONS TEMPLATE -->
 		<script type="text/x-jquery-tmpl" id="t-options">
+			${trace($item)}
 			<option value="${$item.value}">${$item.label}</option>
 		</script>
 		
