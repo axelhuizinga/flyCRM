@@ -104,22 +104,23 @@ class Model
 		}
 	}
 	
-	//{ last_name:  'LIKE|Ad%', list_id:'BETWEEN|999|2000'}, { orderBy:vendor_lead_code, limit : 2 }
 	public static function param2obj(whereParam:String):Dynamic
 	{
 		var where:Array<String> = whereParam.split(',');
 		trace(where);
 		if (where.length == 0)
 			return null;
-		var whereObj:Dynamic = {'ORDER BY':'vendor_lead_code', limit:5};
+		var whereObj:Dynamic = {};
 		for (w in where)
 		{
-
 			var wData:Array<Dynamic> = w.split('|');
 			trace(wData);
 			var name:String = wData.shift();
+			if (name.toUpperCase() == 'LIMIT')
+				wData.unshift('LIMIT');
 			Reflect.setField(whereObj, name, wData.join('|'));			
 		}
+		
 		return whereObj;
 	}
 	

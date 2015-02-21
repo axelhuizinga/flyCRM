@@ -39,7 +39,7 @@ class Clients extends Object
 		var whereObj:Dynamic = Model.param2obj(where);
 		trace(whereObj);
 		//var result:List<Clients> = Clients.manager.search(  { last_name:  'LIKE|Ad%', list_id:'BETWEEN|999|2000'}, { orderBy:vendor_lead_code, limit : 2 } );
-		var result:List<Clients> = Clients.manager.dynamicSearch(  whereObj );
+		var result:List<Clients> = Clients.manager.dynamicSearch( whereObj, false );
 		//var result:List<Clients> = Clients.manager.search(  $last_name.like("Ad%") && $first_name == "Horst", { orderBy:vendor_lead_code, limit : 2 } );
 			//dump(result);
 			trace(result);

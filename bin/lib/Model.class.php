@@ -73,19 +73,22 @@ class Model {
 	}
 	static function param2obj($whereParam) {
 		$where = _hx_explode(",", $whereParam);
-		haxe_Log::trace($where, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 111, "className" => "Model", "methodName" => "param2obj")));
+		haxe_Log::trace($where, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 110, "className" => "Model", "methodName" => "param2obj")));
 		if($where->length === 0) {
 			return null;
 		}
-		$whereObj = _hx_anonymous(array("ORDER BY" => "vendor_lead_code", "limit" => 5));
+		$whereObj = _hx_anonymous(array());
 		{
 			$_g = 0;
 			while($_g < $where->length) {
 				$w = $where[$_g];
 				++$_g;
 				$wData = _hx_explode("|", $w);
-				haxe_Log::trace($wData, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 119, "className" => "Model", "methodName" => "param2obj")));
+				haxe_Log::trace($wData, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 117, "className" => "Model", "methodName" => "param2obj")));
 				$name = $wData->shift();
+				if(strtoupper($name) === "LIMIT") {
+					$wData->unshift("LIMIT");
+				}
 				{
 					$value = $wData->join("|");
 					$whereObj->{$name} = $value;
@@ -98,7 +101,7 @@ class Model {
 	}
 	static function whereParam2sql($whereParam, $placeHolder) {
 		$where = _hx_explode(",", $whereParam);
-		haxe_Log::trace($where, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 129, "className" => "Model", "methodName" => "whereParam2sql")));
+		haxe_Log::trace($where, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 130, "className" => "Model", "methodName" => "whereParam2sql")));
 		if($where->length === 0) {
 			return "";
 		}
@@ -109,7 +112,7 @@ class Model {
 				$w = $where[$_g];
 				++$_g;
 				$wData = _hx_string_call($w, "split", array("|"));
-				haxe_Log::trace($wData, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 137, "className" => "Model", "methodName" => "whereParam2sql")));
+				haxe_Log::trace($wData, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 138, "className" => "Model", "methodName" => "whereParam2sql")));
 				if($phString === "") {
 					$phString .= "WHERE `" . Std::string($wData[0]) . "` ";
 				} else {

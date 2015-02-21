@@ -116,7 +116,7 @@ var uiData = {
 							id:'clients',
 							limit:15,
 							order:'vendor_lead_code',
-							where:'list_id|10000|exact',
+							where:'list_id|10000',
 							table:'vicidial_list',
 							listattach2:'#clients-list-anchor',
 							views:[

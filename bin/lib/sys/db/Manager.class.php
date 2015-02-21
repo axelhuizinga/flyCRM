@@ -16,14 +16,6 @@ class sys_db_Manager {
 	public $table_name;
 	public $table_keys;
 	public $class_proto;
-	public function dynamicSearch($x, $lock = null) {
-		$s = new StringBuf();
-		$s->add("SELECT * FROM ");
-		$s->add($this->table_name);
-		$s->add(" WHERE ");
-		$this->addCondition($s, $x);
-		return $this->unsafeObjects($s->b, $lock);
-	}
 	public function doUpdateCache($x, $name, $v) {
 		$cache = Reflect::field($x, "cache_" . _hx_string_or_null($name));
 		if($cache === null) {
@@ -446,34 +438,6 @@ class sys_db_Manager {
 			unset($c);
 		}
 		return $l2;
-	}
-	public function addCondition($s, $x) {
-		$first = true;
-		if($x !== null) {
-			$_g = 0;
-			$_g1 = Reflect::fields($x);
-			while($_g < $_g1->length) {
-				$f = $_g1[$_g];
-				++$_g;
-				if($first) {
-					$first = false;
-				} else {
-					$s->add(" AND ");
-				}
-				$s->add($this->quoteField($f));
-				$d = Reflect::field($x, $f);
-				if($d === null) {
-					$s->add(" IS NULL");
-				} else {
-					$s->add(" = ");
-					$this->getCnx()->addValue($s, $d);
-				}
-				unset($f,$d);
-			}
-		}
-		if($first) {
-			$s->add("TRUE");
-		}
 	}
 	public function dbInfos() {
 		return $this->table_infos;

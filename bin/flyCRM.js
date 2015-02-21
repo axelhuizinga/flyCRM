@@ -1792,7 +1792,7 @@ view.Clients = function(data) {
 	new $("#t-" + this.id).tmpl(data).appendTo(data.attach2);
 	if(data.table != null) {
 		this.resetParams();
-		if(data.order != null) this.params.order = data.order;
+		if(data.order != null) this.params.data.order = "ORDER BY";
 		this.loadData("server.php",this.params,function(data1) {
 			data1.parentSelector = _g.listattach2;
 			_g.update(data1);

@@ -22,7 +22,7 @@ class model_Clients extends sys_db_Object {
 		$where = $param->get("where");
 		$whereObj = Model::param2obj($where);
 		haxe_Log::trace($whereObj, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 40, "className" => "model.Clients", "methodName" => "find")));
-		$result = model_Clients::$manager->dynamicSearch($whereObj, null);
+		$result = model_Clients::$manager->dynamicSearch($whereObj, false);
 		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 45, "className" => "model.Clients", "methodName" => "find")));
 		haxe_Log::trace($result->length, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 46, "className" => "model.Clients", "methodName" => "find")));
 		$c = null;
