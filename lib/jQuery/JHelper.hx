@@ -8,7 +8,7 @@ import jQuery.JQuery;
  * @author axel@cunity.me
  */
 
-extern class JHelper {
+class JHelper {
 	@:overload(function(j:JQuery):JQuery{})
 	@:overload(function(j:DOMWindow):JQuery{})
 	@:overload(function(j:Element):JQuery{})

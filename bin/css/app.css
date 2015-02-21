@@ -2,7 +2,7 @@
 {
 	font-family:verdana,sans;
 	color:#555555;
-	font-family: 0.9 em;
+	font-family: 0.88 em;
 }
 
 body,html{
@@ -29,6 +29,8 @@ span
 .app-right{
 	float:right;
 }
+
+.clear{clear: both;}
 .end-right{
 	float:right;
 	clear:right;
@@ -54,7 +56,35 @@ span
 	float:right!important;
 	padding: .5em 1em!important;
 }
-
+.datepicker
+{
+	margin:0px 15px;
+	float: right;
+	clear: right;
+	width:11em;
+}
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+    height: 1.5em;
+    overflow: hidden;
+    position: absolute;
+    top: 2px;
+    width: 1.1em;
+}
+.ui-datepicker .ui-datepicker-prev-hover, .ui-datepicker .ui-datepicker-next-hover {
+    top: 1px;
+}
+.ui-datepicker .ui-datepicker-prev {
+    left: 2px;
+}
+.ui-datepicker .ui-datepicker-next {
+    right: 2px;
+}
+.ui-datepicker .ui-datepicker-prev-hover {
+    left: 1px;
+}
+.ui-datepicker .ui-datepicker-next-hover {
+    right: 1px;
+}
 .bgBox{
 	top:0;
 	bottom:0;
@@ -71,7 +101,7 @@ span
 
 .ui-helper-reset, .ui-widget,
 .ui-tabs-panel table{
-	font-size: 0.9em;
+	font-size: 0.88em;
 	border-spacing: 0;
 	border-collapse: collapse;
 }
@@ -79,7 +109,7 @@ span
 .ui-tabs-panel table input[type="text"]{
 	border: 0;
 	outline: none;
-	font-size: 0.9em;
+	font-size: 0.88em;
 }
 
 .ui-tabs-panel th
@@ -91,7 +121,7 @@ span
 {
 	padding:2px 5px;
 }
-
+.ui-accordion-header-icon {display: none;}
 table {
 	width: 100%;
 }

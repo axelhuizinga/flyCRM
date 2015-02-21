@@ -21,11 +21,14 @@ class php_db__PDO_PHPNativeStrategy extends php_db__PDO_TypeStrategy {
 		case "date":case "datetime":{
 			return "date";
 		}break;
-		case "bool":{
+		case "bool":case "tinyint(1)":case "tiny":{
 			return "bool";
 		}break;
 		case "int":case "int24":case "int32":case "long":case "longlong":case "short":{
 			return "int";
+		}break;
+		case "blob":{
+			return "blob";
 		}break;
 		default:{
 			return "string";

@@ -5,8 +5,6 @@ import haxe.EitherType;
 import haxe.Json;
 import sys.db.Mysql;
 
-import model.Campaigns;
-import model.Clients;
 import model.Helper;
 import php.DBConfig;
 import php.Lib;
@@ -43,7 +41,7 @@ class S
 			Lib.println(params);
 		}
 		trace(params);		
-//trace( Helper.createExpr('last_name'));
+
 		var action:String = params.get('action');
 		if (action.length == 0 || params.get('className') == null)
 		{

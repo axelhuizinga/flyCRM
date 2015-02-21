@@ -59,7 +59,8 @@ class FormData
 	}
 	
 	/*
-	 * Build WHERE data string with match type options exact|start|end|any
+	 * Build WHERE data string based on match type options 4 LIKE: exact|start|end|any
+	 * and BETWEEN
 	 */
 	
 	public static function where(jForm:JQuery, fields:Array<String>):String
@@ -82,8 +83,40 @@ class FormData
 					callParam.push(item.value);
 					item.value = Reflect.callMethod(FormData, Reflect.field(FormData, method), callParam);
 				}
-				var matchType = cast jForm.find('[name="' + item.name + '_match_option"]').val();
-				ret.push (item.name + '|' + item.value + '|' + matchType);				
+				var matchTypeOption:JQuery =  jForm.find('[name="' + item.name + '_match_option"]');
+				if (matchTypeOption.length == 1)
+				{
+					ret.push(switch(matchTypeOption.val())
+					{
+						case 'exact':
+							item.name + '|' + item.value;
+						case 'start':
+							item.name + '|LIKE|' + item.value + '%';
+						case 'end':
+							item.name + '|LIKE|%' + item.value;
+						case 'any':
+							item.name + '|LIKE|%' + item.value + '%';		
+						case _:
+							trace('ERROR: unknown matchTypeOption value:' + matchTypeOption.val());
+							'ERROR|unknown matchTypeOption value:' + matchTypeOption.val();							
+					});
+				}
+				else if (item.name.indexOf('range_from_') == 0)
+				{
+					var from:String = item.value;
+					var name:String = item.name.substr(11);
+					var to:String = jForm.find('[name="range_to' + name + '"]').val();
+					if (from.length > 0 && to.length > 0)
+						ret.push(name + '|BETWEEN|' + from + '|' + to);
+					else if (from.length > 0)
+						ret.push(name + '|>' + from);
+					else if (to.length > 0)
+						ret.push(name + '|>' + to);
+				}
+				else if (item.name.indexOf('range_to_') == 0)
+					continue;
+				else
+					ret.push (item.name + '|' + item.value );
 			}
 		}
 		trace(ret.join(','));		

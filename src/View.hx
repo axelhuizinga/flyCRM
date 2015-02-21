@@ -14,7 +14,7 @@ import view.Input;
 import me.cunity.debug.Out;
 
 using Lambda;
-
+using js.JqueryUI;
 /**
  * ...
  * @author axel@cunity.me
@@ -192,10 +192,10 @@ class View
 		interactionState = 'init';
 		J('td').attr('tabindex', -1);
 		trace('initState complete :)');
+		//trace(J('#' + id).find('.datepicker').length);
 		J('#' + id).animate( { opacity:1 }, 300, 'linear', function() { 
-			trace(untyped __js__("this"));
-			trace(J(untyped __js__("this")).attr('id')); 
-			
+			//trace(untyped __js__("this"));
+			//trace(J(untyped __js__("this")).attr('id')); 			
 			} );
 	}
 	

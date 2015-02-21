@@ -97,8 +97,19 @@
 							<li >
 								<span>${fieldNames[fv]}</span>
 								{{tmpl(fv) "#t-find-match"}}
-								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="app-right">								
-							</li>							
+								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="app-right">
+
+							</li>
+							{{if rangeFields[fv]}}
+							<li>
+								<span>${rangeLabels.from}</span>
+								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'button' }" name="range_from_${fv}" class="datepicker" value="${appLabel.select}" >
+							</li>
+							<li>
+								<span>${rangeLabels.to}</span>
+								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'button' }" name="range_to_${fv}" class="datepicker" value="${appLabel.select}" >								
+							</li>
+							{{/if}}							
 							{{/each}}
 						{{html v.fields ? '</ul>':''}}						
 						{{each(bi,bv) v.buttons}}
@@ -195,6 +206,7 @@
 		
 		<script src="js/jquery-2.1.3.js"></script>
 		<script src="js/jquery-ui.min.js"></script>
+		<script src="js/datepicker-de.js"></script>
 		<script src="js/jquery.tmpl.js"></script>
 		<script src="js/debugJq.js"></script>
 		<script src="js/stacktrace.js"></script>
@@ -208,10 +220,6 @@
 			uiData.action="<?php echo $action;?>";
 			uiData.params="<?php echo $params;?>";
 			initApp(uiData);
-			
-			/*setTimeout(function(){
-				$('#clients-list tr').click(function(e){trace(e.target.nodeName)});
-			},2000)*/
 		});
 		
 		function trace(m) {

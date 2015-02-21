@@ -6,6 +6,9 @@ class Date {
 		$this->__t = mktime($hour, $min, $sec, $month + 1, $day, $year);
 	}}
 	public $__t;
+	public function getTime() {
+		return $this->__t * 1000;
+	}
 	public function toString() {
 		return date("Y-m-d H:i:s", $this->__t);
 	}
@@ -22,6 +25,11 @@ class Date {
 	static function fromPhpTime($t) {
 		$d = new Date(2000, 1, 1, 0, 0, 0);
 		$d->__t = $t;
+		return $d;
+	}
+	static function fromTime($t) {
+		$d = new Date(2000, 1, 1, 0, 0, 0);
+		$d->__t = $t / 1000;
 		return $d;
 	}
 	static function fromString($s) {

@@ -6,6 +6,7 @@ class HList implements IteratorAggregate{
 		$this->length = 0;
 	}}
 	public $h;
+	public $q;
 	public $length;
 	public function add($item) {
 		$x = array($item, null);

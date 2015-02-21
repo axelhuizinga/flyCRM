@@ -20,5 +20,9 @@ class JqueryUI
 		return untyped ac.accordion(options);
 	}
 	
+	public static function datepicker(dp:JQuery, ?options:Dynamic):JQuery
+	{
+		return untyped dp.datepicker(options);
+	}
 	
 }

@@ -1,8 +1,10 @@
 package model;
 
-
-import haxe.macro.Context;
+#if macro
 import haxe.macro.Expr;
+import haxe.macro.Type.ClassField;
+import haxe.macro.Context;
+#end
 
 
 import haxe.PosInfos;
@@ -14,10 +16,25 @@ import haxe.PosInfos;
 class Helper
 {
 
-	macro static public function createExpr( field:String, ?p : Position):Expr
+	macro static public function createCond( cond:Expr):Expr
 	{
-		 //return  Context.makeExpr('$' + field, p);
-		return { expr : EConst(CIdent('$' + field)), pos:Context.currentPos() };
+		var p = cond.pos;
+		trace(cond);
+		switch (cond.expr)
+		{
+			case EConst(e):
+				switch(e)
+				{
+					case CIdent(s): trace(s);
+					case _:
+						trace('ooops');
+				}
+			case _:
+				trace('ooops');
+		}
+		return  cond;
+		//return  Context.follow(cond, p);
+		//return { expr : EConst(CIdent('$' + 'last_name')), pos:Context.currentPos() };
 	}
 	
 }

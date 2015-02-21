@@ -9,6 +9,9 @@ class model_Campaigns extends sys_db_Object {
 	public function json() {
 		haxe_Json::phpJsonEncode($this, null, null);
 	}
+	public function __getManager() {
+		return model_Campaigns::$manager;
+	}
 	public function __call($m, $a) {
 		if(isset($this->$m) && is_callable($this->$m))
 			return call_user_func_array($this->$m, $a);

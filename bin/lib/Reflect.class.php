@@ -6,9 +6,6 @@ class Reflect {
 		return _hx_field($o, $field);
 	}
 	static function callMethod($o, $func, $args) {
-		if(is_string($o) && !is_array($func)) {
-			return call_user_func_array(Reflect::field($o, $func), $args->a);
-		}
 		return call_user_func_array(((is_callable($func)) ? $func : array($o, $func)), ((null === $args) ? array() : $args->a));
 	}
 	static function fields($o) {

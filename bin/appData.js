@@ -9,14 +9,17 @@ var fieldNames =
 	last_local_call_time:'Anrufdatum',
 	vendor_lead_code:'Mitgliedsnr.',
 	vicidial_campaigns:'Kampagnen',
-	vicidial_lists:'Listen'
+	vicidial_lists:'Listen',
+	order_date:'Auftragsdatum',
+	join_date:'Auftragsdatum'
 }
 
 var appLabel =
 {
 	active:'Nur Aktive',
 	edit:'Bearbeiten',
-	filter:'Kontextfilter'
+	filter:'Kontextfilter',
+	select:'Auswählen'
 }
 
 var matchOptions =
@@ -25,6 +28,25 @@ var matchOptions =
 	any:'Bestandteil',
 	start:'Anfang',
 	end:'Ende'	
+}
+
+var rangeLabels =
+{
+	from:'Von:',
+	to:'Bis:'
+}
+
+var rangeFields =
+{
+	last_local_call_time:1,
+	order_date:1,
+	join_date:1
+}
+
+var matchKeywords =
+{
+	LIKE:1,
+	BETWEEN:2
 }
 
 var dbFieldTypes =
@@ -107,6 +129,7 @@ var uiData = {
 											action:'find',
 											label:'Finden',
 											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+											ranges:['last_local_call_time'],
 											table:'vicidial_list',
 											buttons:
 											{

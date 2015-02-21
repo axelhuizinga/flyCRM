@@ -16,7 +16,7 @@ class S {
 			php_Lib::println("<div><pre>");
 			php_Lib::println($params);
 		}
-		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 45, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 43, "className" => "S", "methodName" => "main")));
 		$action = $params->get("action");
 		if(strlen($action) === 0 || $params->get("className") === null) {
 			S::dump(_hx_anonymous(array("error" => "required params missing")));
@@ -24,9 +24,9 @@ class S {
 		}
 		sys_db_Manager::set_cnx(sys_db_Mysql::connect(_hx_anonymous(array("user" => php_DBConfig::$user, "pass" => php_DBConfig::$pass, "database" => php_DBConfig::$db, "host" => "localhost"))));
 		sys_db_Manager::initialize();
-		haxe_Log::trace($action, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 63, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($action, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 61, "className" => "S", "methodName" => "main")));
 		$result = Model::dispatch($params);
-		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 66, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 64, "className" => "S", "methodName" => "main")));
 		if(!S::$headerSent) {
 			header("Content-Type" . ": " . "application/json");
 			S::$headerSent = true;

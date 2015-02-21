@@ -29,29 +29,18 @@ class Clients extends Object
 	public var status:SString<6>;
 	public var last_local_call_time:SDateTime;
 	public var vendor_lead_code:SString<20>;
-	public var LIKE:SString<4>;
 	
-	public static function create(param:StringMap<Dynamic>):EitherType<String,Bool>
-	{
-		var self:Clients = new Clients();		
-		trace(param);
-		return Reflect.callMethod(self, param.get('action'), [param]);
-	}
+	public static var manager = new SManager<Clients>(Clients);
 	
 	public function find(param:StringMap<Dynamic>):EitherType<String,Bool>
 	{	
-		/*fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
-							id:'clients',
-							limit:15,
-							order:'vendor_lead_code',
-							where:'list_id|10000|exact'*/
-		//var rm:RecordMacros = new RecordMacros(this);
-							//var test:Dynamic = $last_name.like("Ad%");
-							//trace(rm);
-							//trace(test);
-		//var result:List<Clients> = Clients.manager.search(  $last_name.like("Ad%"), { orderBy:vendor_lead_code, limit : 2 } );
-		var result:List<Clients> = Clients.manager.search(  { last_name:  'LIKE|Ad%', list_id:'BETWEEN|999|2000'}, { orderBy:vendor_lead_code, limit : 2 } );
-		//var result:List<Clients> = Clients.manager.search(  $last_name.like("Ad%") && $first_name == 'Horst', { orderBy:vendor_lead_code, limit : 2 } );
+		trace(param);
+		var where:String = cast (param.get('where'), String);
+		var whereObj:Dynamic = Model.param2obj(where);
+		trace(whereObj);
+		//var result:List<Clients> = Clients.manager.search(  { last_name:  'LIKE|Ad%', list_id:'BETWEEN|999|2000'}, { orderBy:vendor_lead_code, limit : 2 } );
+		var result:List<Clients> = Clients.manager.dynamicSearch(  whereObj );
+		//var result:List<Clients> = Clients.manager.search(  $last_name.like("Ad%") && $first_name == "Horst", { orderBy:vendor_lead_code, limit : 2 } );
 			//dump(result);
 			trace(result);
 			trace(result.length);

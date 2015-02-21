@@ -2,11 +2,14 @@ package;
 import haxe.ds.StringMap;
 import haxe.EitherType;
 import haxe.Json;
+import sys.db.Object;
+
 
 import php.Lib;
 import php.NativeArray;
 import sys.db.RecordInfos;
-import model.*;
+import model.Campaigns;
+import model.Clients;
 
 
 using Lambda;
@@ -31,25 +34,31 @@ class Model
 			trace('model.'+param.get('className') + ' ???');
 			return false;
 		}
-		var fl:Dynamic = Reflect.field(cl, 'create');
+		var action:String = param.get('action');
+		var fl:Dynamic = Reflect.field(cl, action);
 		trace(fl);
 		if (fl == null)
 		{
-			trace(cl + 'create is null');
-			return false;
+			trace(cl + '.' + action + ' is null');
+			//return false;
 		}
 		var iFields:Array<String> = Type.getInstanceFields(cl);
 		trace(iFields);
-		if (iFields.has(param.get('action')))
+		if (iFields.has(action))
 		{
-			trace('calling create ' + cl);
+			trace(param);
+			trace('calling ' + cl + '.' + param.get('action'));
+			//Helper.createCond(param.get('where'));
+			//Helper.createCond(param2obj(param.get('where')));
+			//return false;
 			return Reflect.callMethod(cl, fl, [param]);
 		}
 		else 
 		{
-			trace('not calling create ');
+			trace('not calling ' + action);
 			return false;
 		}
+		
 	}
 	
 	public static function fieldFormat(fields:String):String
@@ -95,39 +104,22 @@ class Model
 		}
 	}
 	
-	public static function whereParam2obj(whereParam:String, placeHolder:StringMap<Dynamic>):Dynamic
+	//{ last_name:  'LIKE|Ad%', list_id:'BETWEEN|999|2000'}, { orderBy:vendor_lead_code, limit : 2 }
+	public static function param2obj(whereParam:String):Dynamic
 	{
 		var where:Array<String> = whereParam.split(',');
 		trace(where);
 		if (where.length == 0)
-			return '';
-		var whereObj:Dynamic = {};
-		/*for (w in where)
+			return null;
+		var whereObj:Dynamic = {'ORDER BY':'vendor_lead_code', limit:5};
+		for (w in where)
 		{
 
 			var wData:Array<Dynamic> = w.split('|');
 			trace(wData);
-			if (phString == '')
-				phString += 'WHERE `' + 	wData[0] + '` ';	
-			else
-				phString += 'AND `' + 	wData[0] + '` ';
-			switch(wData[2])
-			{
-				case 'exact':
-					phString += '= ? ';
-					placeHolder.set(wData[0], wData[1]);
-				case 'any':
-					phString += 'LIKE ? ';
-					placeHolder.set(wData[0], '%' + wData[1] + '%');							
-				case 'end':
-					phString += 'LIKE ? ';
-					placeHolder.set(wData[0], '%' + wData[1]);		
-				case 'start':
-					phString += 'LIKE ? ';
-					placeHolder.set(wData[0],  wData[1] + '%');							
-			}
-			
-		}*/
+			var name:String = wData.shift();
+			Reflect.setField(whereObj, name, wData.join('|'));			
+		}
 		return whereObj;
 	}
 	
