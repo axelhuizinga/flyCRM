@@ -88,6 +88,7 @@ var uiData = {
 	appName:'flyCRM',
 	company:'X-Press Marketing GmbH',
 	storeFormats:storeFormats,
+	limit:15,
 	views:
 	[
 		{

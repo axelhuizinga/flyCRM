@@ -28,6 +28,7 @@ class App
 	public static var appName:String;
 	public static var company:String;
 	public static var storeFormats:Dynamic;
+	public static var limit:Int;
 	
 	public var altPressed:Bool;
 	public var ctrlPressed:Bool;
@@ -50,6 +51,7 @@ class App
 	{
 		ist = new App();
 		storeFormats = config.storeFormats;
+		limit = config.limit;
 		var fields:Array<String> = Type.getClassFields(App);
 		for (f in fields)
 		{

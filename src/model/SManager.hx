@@ -30,11 +30,18 @@ class SManager<T : Object> extends Manager<T>
 		else
 			s.add("SELECT * FROM ");
 		s.add(table_name);
-		s.add(" WHERE ");
-		var opt = Reflect.field(x, 'options');
+		
+		var where:Dynamic = Reflect.field(x, 'where');
+		if (where != null)
+		{
+			s.add(" WHERE ");
+			addCondition(s, x);
+		}
+		
+		var group = Reflect.field(x, 'group');
 		if (opt != null)
 			Reflect.deleteField(x, 'options');
-		addCondition(s, x);
+		
 		if (opt != null)
 		{
 			addOptions(s, opt);
@@ -73,8 +80,7 @@ class SManager<T : Object> extends Manager<T>
 							s.add(" AND ");						
 						s.add(quoteField(f));
 						s.add(' LIKE ');
-						getCnx().addValue(s, parts[1]);
-					
+						getCnx().addValue(s, parts[1]);					
 														
 					case _:
 					s.add(quoteField(f));
@@ -90,6 +96,27 @@ class SManager<T : Object> extends Manager<T>
 			}
 		if( first )
 			s.add("TRUE");
+	}
+	
+	function addGroup(s:StringBuf,  group:Dynamic)
+	{
+		var first:Bool = true;
+		for (f in Reflect.fields(group)
+		{
+			//TODO: HANDLE EXPR|POSITION
+			if (first)
+				s.add(' GROUP BY ');
+			else
+				first = false;
+			
+			s.add(quoteField(f));
+			if (v.length>0)
+			{
+				v = v.map(function(p:String) return quoteField(p));
+				s.add(v.join(','));
+			}				
+		}
+	
 	}
 	
 	function addOptions(s:StringBuf,  v:Dynamic)
@@ -109,13 +136,7 @@ class SManager<T : Object> extends Manager<T>
 						if (v == 'DESC')						
 							s.add(va);
 					case 'GROUP BY':
-						s.add(' GROUP BY ');
-						s.add(quoteField(f));
-						if (v.length>0)
-						{
-							v = v.map(function(p:String) return quoteField(p));
-							s.add(v.join(','));
-						}	
+	
 					case _:
 						trace('Unknow Option:' + f);	
 				}

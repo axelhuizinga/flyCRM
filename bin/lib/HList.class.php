@@ -1,55 +1,11 @@
 <?php
 
 class HList implements IteratorAggregate{
-	public function __construct() {
-		if(!php_Boot::$skip_constructor) {
-		$this->length = 0;
-	}}
+	public function __construct(){}
 	public $h;
 	public $q;
-	public $length;
-	public function add($item) {
-		$x = array($item, null);
-		if($this->h === null) {
-			$this->h =& $x;
-		} else {
-			$this->q[1] =& $x;
-		}
-		$this->q =& $x;
-		$this->length++;
-	}
 	public function iterator() {
 		return new _hx_list_iterator($this);
-	}
-	public function toString() {
-		$s = "";
-		$first = true;
-		$l = $this->h;
-		while($l !== null) {
-			if($first) {
-				$first = false;
-			} else {
-				$s .= ", ";
-			}
-			$s .= Std::string($l[0]);
-			$l = $l[1];
-		}
-		return "{" . _hx_string_or_null($s) . "}";
-	}
-	public function join($sep) {
-		$s = "";
-		$first = true;
-		$l = $this->h;
-		while($l !== null) {
-			if($first) {
-				$first = false;
-			} else {
-				$s .= _hx_string_or_null($sep);
-			}
-			$s .= Std::string($l[0]);
-			$l = $l[1];
-		}
-		return $s;
 	}
 	public function getIterator() {
 		return $this->iterator();
@@ -64,5 +20,5 @@ class HList implements IteratorAggregate{
 		else
 			throw new HException('Unable to call <'.$m.'>');
 	}
-	function __toString() { return $this->toString(); }
+	function __toString() { return 'List'; }
 }

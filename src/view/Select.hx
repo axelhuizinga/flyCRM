@@ -40,10 +40,10 @@ class Select extends Input
 				for (c in checks)
 				{
 					if(c.checked && whereCheck.has(c.name))
-					whereParam.push(c.name + "='Y'" );
+					whereParam.push(c.name);
 				}
 				if (whereParam.length > 0)
-				params.where = whereParam.join('|');
+				params.where = whereParam.join(',');
 			}			
 		}
 			

@@ -44,7 +44,7 @@ typedef ClientsData =
 		{
 			resetParams();
 			if(data.order != null)
-				params.data.order='ORDER BY';
+				params.order = data.order;
 			loadData('server.php', params, function(data:Dynamic) { data.parentSelector = listattach2; update(data); } );
 		}
 		if(data.views != null)

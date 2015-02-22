@@ -9,9 +9,6 @@ class Math {
 	static function ceil($v) {
 		return (int) ceil($v);
 	}
-	static function isNaN($f) {
-		return is_nan($f);
-	}
 	static function isFinite($f) {
 		return is_finite($f);
 	}

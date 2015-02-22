@@ -13,8 +13,10 @@ import view.Input;
 
 import me.cunity.debug.Out;
 
+
 using Lambda;
 using js.JqueryUI;
+using Util;
 /**
  * ...
  * @author axel@cunity.me
@@ -245,13 +247,14 @@ class View
 	
 	private function resetParams(where:String = ''):Dynamic
 	{
-		fields = vData.fields;
+		fields = vData.fields.limit.any2bool()?vData.fields:[];
 		params = {
 			action:'find',
 			className:name,
 			dataType:'json',
 			fields:fields.join(','),
-			limit:vData.limit,
+			limit:vData.limit.any2bool()?vData.limit:App.limit,
+			order:vData.order.any2bool()?vData.order:
 			table:vData.table,
 			where:(vData.where.length>0 ? vData.where + (where == '' ? where : ',' + where) : where )
 		}

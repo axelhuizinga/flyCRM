@@ -49,8 +49,6 @@ typedef ContextMenuData =
 			create:create,
 			heightStyle:contextData.heightStyle
 		});
-		trace(J('#' + id).find('.datepicker').length );
-		J('#' + id).find('.datepicker').datepicker();
 		J('#' + id + ' button[data-action]').click(run);
 	}
 	
