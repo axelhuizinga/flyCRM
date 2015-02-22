@@ -42,14 +42,14 @@ class Model
 			return false;
 		}
 		var fl:Dynamic = Reflect.field(cl, 'create');
-		trace(fl);
+		//trace(fl);
 		if (fl == null)
 		{
 			trace(cl + 'create is null');
 			return false;
 		}
 		var iFields:Array<String> = Type.getInstanceFields(cl);
-		trace(iFields);
+		//trace(iFields);
 		if (iFields.has(param.get('action')))
 		{
 			trace('calling create ' + cl);
@@ -62,15 +62,27 @@ class Model
 		}
 	}
 	
-	public function doQuery(q:StringMap<String>):NativeArray
+	public function doSelect(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
-		var sb:StringBuf = new StringBuf();		
-		var phValues:Array<Array<Dynamic>> = new Array();		
+		var fields:String = q.get('fields');		
+		sb.add('SELECT ' + (fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' ));
+		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
+		//TODO: JOINS
+		sb.add(' FROM ' + quoteField(qTable));		
 		var where:String = q.get('where');
 		if (where != null)
 			buildCond(where, sb, phValues);
-		
-		return null;
+		var groupParam:String = q.get('group');
+		if (groupParam != null)
+			buildGroup(groupParam, sb);
+		//TODO:HAVING
+		var order:String = q.get('order');
+		if (order != null)
+			buildOrder(order, sb);
+		var limit:String = q.get('limit');
+		if (limit != null)
+			buildLimit(limit, sb);	
+		return execute(sb.toString(), q, phValues);
 	}
 	
 	public function fieldFormat(fields:String):String
@@ -106,11 +118,20 @@ class Model
 		return fieldsWithFormat.join(',');
 	}
 	
+	public function find(param:StringMap<String>):EitherType<String,Bool>
+	{	
+		var sb:StringBuf = new StringBuf();
+		var phValues:Array<Array<Dynamic>> = new Array();
+		data =  {
+			rows: doSelect(param, sb, phValues)
+		}
+		return json_encode();
+	}
+	
 	public function execute(sql:String, param:StringMap<Dynamic>, ?phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		trace(sql);	
 		var stmt =  S.my.stmt_init();
-		trace(stmt);
 		var success:Bool = stmt.prepare(sql);
 		trace (success);
 		if (!success)
@@ -136,7 +157,7 @@ class Model
 		trace ('success:' + success);
 		if (success)
 		{
-			var fieldNames:Array<String> =  param.get('fields').split(',');
+			//var fieldNames:Array<String> =  param.get('fields').split(',');
 			var data:NativeArray = null;
 			success = stmt.execute();
 			if (!success)
@@ -159,8 +180,6 @@ class Model
 	
 	public function query(sql:String):NativeArray
 	{
-		//trace(sql);
-		//sql = S.my.real_escape_string(sql);
 		trace(sql);
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query(sql, MySQLi.MYSQLI_ASSOC);
 		if (res)
@@ -186,7 +205,8 @@ class Model
 			if (first)
 				sb.add(' WHERE ' );
 			else
-				first = false;
+				sb.add(' AND ');
+			first = false;
 				
 			var wData:Array<String> = w.split('|');
 			var values:Array<String> = wData.slice(2);
@@ -230,12 +250,7 @@ class Model
 		if (fields.length == 0)
 			return false;
 		sb.add(' GROUP BY ');
-		fields = fields.map(function(f:String)
-		{
-			var g:Array<String> = f.split('|');
-			return  quoteField(g[0]) + ( g.length == 2 && g[1] == 'DESC'  ?  ' DESC' : '');
-		});
-		sb.add(fields.join(','));
+		sb.add(fields.map(function(g:String) return  quoteField(g)).join(','));
 		return true;
 	}
 	
@@ -245,7 +260,11 @@ class Model
 		if (fields.length == 0)
 			return false;
 		sb.add(' ORDER BY ');
-		sb.add(fields.map(function(f:String) return quoteField(f)).join(','));
+		sb.add(fields.map(function(f:String)
+		{
+			var g:Array<String> = f.split('|');
+			return  quoteField(g[0]) + ( g.length == 2 && g[1] == 'DESC'  ?  ' DESC' : '');
+		}).join(','));
 		return true;
 	}
 	

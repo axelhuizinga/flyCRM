@@ -10,11 +10,10 @@ class Util
 	public static function any2bool(v:Dynamic) :Bool
 	{
 		#if js
-		return untyped __js__(v);
-		#elsif php
-		return untyped __php__(v);
+		return (untyped __js__("typeof"))(v) != "undefined" ;
+		#elseif php
+		return untyped __physeq__(true,v);
 		#end
-		return false;
 	}
 	
 }

@@ -113,10 +113,11 @@ var uiData = {
 					[{	
 						Clients:{
 							action:'find',
-							fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+							//fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+							fields:'vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
 							id:'clients',
 							limit:15,
-							order:'vendor_lead_code',
+							order:'vendor_lead_code|ASC',
 							where:'list_id|10000',
 							table:'vicidial_list',
 							listattach2:'#clients-list-anchor',
@@ -130,6 +131,7 @@ var uiData = {
 											action:'find',
 											label:'Finden',
 											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+											//fields:'first_name,last_name,phone_number,address1,city,last_local_call_time',
 											ranges:['last_local_call_time'],
 											table:'vicidial_list',
 											buttons:
@@ -163,10 +165,10 @@ var uiData = {
 					views:[{
 						Campaigns:
 						{
-							fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+							fields:'vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
 							id:'campaigns',
 							limit:15,
-							order:'vendor_lead_code',
+							order:'vendor_lead_code|ASC',
 							where:'',
 							table:'vicidial_list',
 							listattach2:'#campaigns-list-anchor',

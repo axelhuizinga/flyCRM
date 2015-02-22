@@ -64,7 +64,7 @@
 				<tr class="headrow" >
 				{{each(i,v) $data.fields}}
 					
-					<th data-order="${v}">${fieldNames[v]}</th>
+					<th data-order="${v}" data-direction="ASC">${fieldNames[v]}</th>
 					
 				{{/each}}
 				</tr>
@@ -91,7 +91,8 @@
 				<h3>${v.label}</h3>
 				<div>
 					<form >
-						<input type="hidden" name="action" value="${action}">						
+						<input type="hidden" name="action" value="${action}">
+						${trace(v.fields)}
 						{{html v.fields ? '<ul >':''}}
 							{{each(fi,fv) v.fields}}
 							<li >

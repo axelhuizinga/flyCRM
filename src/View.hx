@@ -226,37 +226,48 @@ class View
 			//trace(data);
 			callBack(data);
 			loading--;
-		});
+		}, 'json');
 	}
 	
 	public function find(where:String):Void
 	{
+		trace(where);
+		vData.where = (vData.where.any2bool() ? vData.where + ',' + where : where);
 		resetParams(where);
 		loadData('server.php', params, update);
 	}
 	
-	public function order(field:String):Void
+	public function order(j:JQuery):Void
 	{
-		trace(field);
-		if (params.order != field)
-		{
-			params.order = field;
-			loadData('server.php', params, update);
-		}
+		params.order = (params.order == j.data('order') + '|DESC' ? j.data('order') + '|ASC' : j.data('order') + '|DESC');		
+		trace( params.order);
+		loadData('server.php', params, update);
 	}	
 	
-	private function resetParams(where:String = ''):Dynamic
+	private function resetParams(?pData:Dynamic):Dynamic
 	{
-		fields = vData.fields.limit.any2bool()?vData.fields:[];
+		
+		var pkeys:Array<String> = 'action,className,fields,limit,order,table,where'.split(',');
+		var aData:Dynamic = pData.any2bool() ? pData : vData;
+		fields = aData.fields.any2bool()?aData.fields.split(','):null;
 		params = {
 			action:'find',
-			className:name,
-			dataType:'json',
-			fields:fields.join(','),
-			limit:vData.limit.any2bool()?vData.limit:App.limit,
-			order:vData.order.any2bool()?vData.order:
-			table:vData.table,
-			where:(vData.where.length>0 ? vData.where + (where == '' ? where : ',' + where) : where )
+			className:name
+		};
+
+		for (f in pkeys)
+		{
+			if (Reflect.field(aData, f) != null)
+			{trace(Reflect.field(aData, f));
+				switch(f)
+				{
+					//case 'fields':
+						//Reflect.setField(params, f, Reflect.field(aData, f).split(','));
+					default:
+						Reflect.setField(params, f, Reflect.field(aData, f));
+				}
+				
+			}
 		}
 		return params;
 	}
@@ -264,11 +275,13 @@ class View
 	public function update(data:Dynamic):Void
 	{
 		data.fields = fields;
+		trace(data.fields + ':' + Type.typeof(data.fields));
+		//data.fields = 
 		if ( J('#' + id + '-list').length > 0)
 			J('#' + id + '-list').replaceWith(J('#t-' + id + '-list').tmpl(data));
 		else
 			J('#t-' + id + '-list').tmpl(data).appendTo(J(data.parentSelector).first());	
-		J('#' + id + '-list th').each(function(i, el) { J(el).click(function(_) { order(J(el).data('order')); } ); } );	
+		J('#' + id + '-list th').each(function(i, el) { J(el).click(function(_) { order(J(el)); } ); } );	
 		J('#' + id + '-list tr').first().siblings().click(select).find('td').off('click');
 		J('td').attr('tabindex', -1);
 	}

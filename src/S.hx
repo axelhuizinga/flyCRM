@@ -15,7 +15,7 @@ import php.NativeArray;
 import php.Web;
 import php.Services_JSON;
 
-
+using Util;
 /**
  * ...
  * @author axel@cunity.me
@@ -30,14 +30,12 @@ class S
 	
 	static function main() 
 	{		
-		untyped __call__('error_log', 'hi');
-		untyped __call__('edump', 'hi');
 		haxe.Log.trace = Debug._trace;	
 		conf =  Config.load('appData.js');
 		
 		//var fieldNames:Dynamic = Lib.objectOfAssociativeArray(conf.get('fieldNames'));
 		var pd:Dynamic = Web.getPostData();
-
+		
 		var params:StringMap<String> = Web.getParams();
 		if (params.get('debug') == '1')
 		{
@@ -47,6 +45,9 @@ class S
 			Lib.println(params);
 		}
 		trace(params);		
+		//trace(untyped  __call__("print_r", __var__('_SERVER'), 1 ));		
+		//var p:Int = null;
+		//trace(p.any2bool() ?'Y':'N');
 		//trace(params.get('where'));
 		var action:String = params.get('action');
 		if (action.length == 0 || params.get('className') == null)

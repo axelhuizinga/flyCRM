@@ -38,6 +38,7 @@ typedef ContextMenuData =
 	{
 		super(data);
 		contextData = cast data;
+		trace(id);
 		if (contextData.heightStyle == null)
 			contextData.heightStyle = 'auto';
 		J('#t-' + id).tmpl(data).appendTo(J(data.attach2));
@@ -55,10 +56,8 @@ typedef ContextMenuData =
 	public function activate( event:Event, ui ) 
 	{
 		//trace(ui);
-		//trace(ui.newPanel[0].innerHTML);
 		action = J(ui.newPanel[0]).find('input[name="action"]').first().val();
 		trace(action);
-		//trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active);
 	}
 	
 	function createInputs():Void

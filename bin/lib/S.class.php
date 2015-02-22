@@ -7,8 +7,6 @@ class S {
 	static $conf;
 	static $my;
 	static function main() {
-		error_log("hi");
-		edump("hi");
 		haxe_Log::$trace = (isset(me_cunity_php_Debug::$_trace) ? me_cunity_php_Debug::$_trace: array("me_cunity_php_Debug", "_trace"));
 		S::$conf = Config::load("appData.js");
 		$pd = php_Web::getPostData();
@@ -19,16 +17,16 @@ class S {
 			php_Lib::println("<div><pre>");
 			php_Lib::println($params);
 		}
-		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 49, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 47, "className" => "S", "methodName" => "main")));
 		$action = $params->get("action");
 		if(strlen($action) === 0 || $params->get("className") === null) {
 			S::dump(_hx_anonymous(array("error" => "required params missing")));
 			return;
 		}
 		S::$my = new MySQLi("localhost", php_DBConfig::$user, php_DBConfig::$pass, php_DBConfig::$db, null, null);
-		haxe_Log::trace($action, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 60, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($action, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 61, "className" => "S", "methodName" => "main")));
 		$result = Model::dispatch($params);
-		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 63, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 64, "className" => "S", "methodName" => "main")));
 		if(!S::$headerSent) {
 			header("Content-Type" . ": " . "application/json");
 			S::$headerSent = true;

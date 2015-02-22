@@ -3,7 +3,7 @@
 class Util {
 	public function __construct(){}
 	static function any2bool($v) {
-		return false;
+		return (true === $v);
 	}
 	function __toString() { return 'Util'; }
 }
