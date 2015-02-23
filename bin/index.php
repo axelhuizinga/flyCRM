@@ -95,19 +95,19 @@
 						{{html v.fields ? '<ul >':''}}
 							{{each(fi,fv) v.fields}}
 							<li >
-								<span>${fieldNames[fv]}</span>
+								<span class="pad" >${fieldNames[fv]}</span>
 								{{tmpl(fv) "#t-find-match"}}
 								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="app-right">
 
 							</li>
 							{{if rangeFields[fv]}}
 							<li>
-								<span>${rangeLabels.from}</span>
-								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'button' }" name="range_from_${fv}" class="datepicker" value="${appLabel.select}" >
+								<span class="pad" >${rangeLabels.from}</span>
+								<input type="text" size="11" name="range_from_${fv}" class="datepicker" value="${appLabel.select}" >
 							</li>
 							<li>
-								<span>${rangeLabels.to}</span>
-								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'button' }" name="range_to_${fv}" class="datepicker" value="${appLabel.select}" >								
+								<span class="pad" >${rangeLabels.to}</span>
+								<input type="text" size="11" name="range_to_${fv}" class="datepicker" value="${appLabel.select}" >								
 							</li>
 							{{/if}}							
 							{{/each}}
@@ -206,6 +206,8 @@
 		<script src="js/jquery-2.1.3.js"></script>
 		<script src="js/jquery-ui.min.js"></script>
 		<script src="js/datepicker-de.js"></script>
+		<!--<script src="js/jquery.jeditable.js"></script>
+		<script src="js/jquery.jeditable.datepicker.js"></script>-->
 		<script src="js/jquery.tmpl.js"></script>
 		<script src="js/debugJq.js"></script>
 		<script src="js/stacktrace.js"></script>

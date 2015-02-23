@@ -1248,7 +1248,12 @@ js.JqueryUI.accordion = function(ac,options) {
 	return ac.accordion(options);
 };
 js.JqueryUI.datepicker = function(dp,options) {
-	return dp.datepicker(options);
+	return dp.datepicker(options).datepicker("setDate",new Date());
+};
+js.JqueryUI.editable = function(e,options) {
+	return e.editable(function(value,settings) {
+		date.html(value);
+	},options);
 };
 var me = {};
 me.cunity = {};
@@ -1859,6 +1864,8 @@ view.ContextMenu = function(data) {
 	new $("#t-" + this.id).tmpl(data).appendTo(jQuery.JHelper.J(data.attach2));
 	this.createInputs();
 	this.root = js.JqueryUI.accordion(new $("#" + this.id),{ active : 0, activate : $bind(this,this.activate), create : $bind(this,this.create), heightStyle : this.contextData.heightStyle});
+	haxe.Log.trace(new $("#" + this.id).find(".datepicker").length,{ fileName : "ContextMenu.hx", lineNumber : 53, className : "view.ContextMenu", methodName : "new"});
+	js.JqueryUI.datepicker(new $("#" + this.id).find(".datepicker"));
 	new $("#" + this.id + " button[data-action]").click($bind(this,this.run));
 };
 $hxClasses["view.ContextMenu"] = view.ContextMenu;
@@ -1870,7 +1877,7 @@ view.ContextMenu.prototype = $extend(View.prototype,{
 	,action: null
 	,activate: function(event,ui) {
 		this.action = new $(ui.newPanel[0]).find("input[name=\"action\"]").first().val();
-		haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 60, className : "view.ContextMenu", methodName : "activate"});
+		haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 62, className : "view.ContextMenu", methodName : "activate"});
 	}
 	,createInputs: function() {
 		var cData = this.vData;
@@ -1893,26 +1900,26 @@ view.ContextMenu.prototype = $extend(View.prototype,{
 	}
 	,create: function(event,ui) {
 		this.action = new $(ui.panel[0]).find("input[name=\"action\"]").first().val();
-		haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 83, className : "view.ContextMenu", methodName : "create"});
+		haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 85, className : "view.ContextMenu", methodName : "create"});
 	}
 	,run: function(evt) {
 		evt.preventDefault();
 		var form = jQuery.JHelper.J(js.Boot.__cast(evt.target , Element)).parent();
 		var options = js.JqueryUI.accordion(this.root,"option");
-		haxe.Log.trace(options.active,{ fileName : "ContextMenu.hx", lineNumber : 92, className : "view.ContextMenu", methodName : "run"});
+		haxe.Log.trace(options.active,{ fileName : "ContextMenu.hx", lineNumber : 94, className : "view.ContextMenu", methodName : "run"});
 		var fields = this.vData.items[options.active].fields;
-		haxe.Log.trace(fields,{ fileName : "ContextMenu.hx", lineNumber : 94, className : "view.ContextMenu", methodName : "run"});
+		haxe.Log.trace(fields,{ fileName : "ContextMenu.hx", lineNumber : 96, className : "view.ContextMenu", methodName : "run"});
 		if(fields != null && fields.length > 0) {
 			var where = jQuery.FormData.where(form,fields);
-			haxe.Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 98, className : "view.ContextMenu", methodName : "run"});
+			haxe.Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 100, className : "view.ContextMenu", methodName : "run"});
 			Reflect.callMethod(this.parentView,Reflect.field(this.parentView,this.action),[where]);
 		} else {
 			this.action = jQuery.JHelper.J(js.Boot.__cast(evt.target , Element)).data("action");
-			haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 104, className : "view.ContextMenu", methodName : "run"});
+			haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 106, className : "view.ContextMenu", methodName : "run"});
 		}
 	}
 	,showResult: function(data,_) {
-		haxe.Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 111, className : "view.ContextMenu", methodName : "showResult"});
+		haxe.Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 113, className : "view.ContextMenu", methodName : "showResult"});
 	}
 	,__class__: view.ContextMenu
 });

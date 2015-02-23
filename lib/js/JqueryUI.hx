@@ -22,7 +22,14 @@ class JqueryUI
 	
 	public static function datepicker(dp:JQuery, ?options:Dynamic):JQuery
 	{
-		return untyped dp.datepicker(options);
+		return untyped dp.datepicker(options).datepicker("setDate", Date.now());
 	}
+	
+	public static function editable(e:JQuery, ?options:Dynamic):JQuery
+	{
+		return untyped e.editable(function( value, settings ) {
+      date.html( value );
+    }, options);
+	}	
 	
 }
