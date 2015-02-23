@@ -80,8 +80,7 @@ class Model
 		if (order != null)
 			buildOrder(order, sb);
 		var limit:String = q.get('limit');
-		if (limit != null)
-			buildLimit(limit, sb);	
+		buildLimit((limit == null?'15':limit), sb);	
 		return execute(sb.toString(), q, phValues);
 	}
 	
@@ -153,28 +152,44 @@ class Model
 		}
 
 		trace(Std.string(values2bind));
-		success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
-		trace ('success:' + success);
-		if (success)
+		if (phValues.length > 0)
 		{
-			//var fieldNames:Array<String> =  param.get('fields').split(',');
+			success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+			trace ('success:' + success);
+			if (success)
+			{
+				//var fieldNames:Array<String> =  param.get('fields').split(',');
+				var data:NativeArray = null;
+				success = stmt.execute();
+				if (!success)
+				{
+					trace(stmt.error);
+					return null;
+				}
+				var result:EitherType<MySQLi_Result,Bool> = stmt.get_result();
+				if (result)
+				{
+					data = cast(result, MySQLi_Result).fetch_all(MySQLi.MYSQLI_ASSOC);
+				}			
+				return(data);		
+			}			
+		}
+		else {
 			var data:NativeArray = null;
 			success = stmt.execute();
 			if (!success)
 			{
 				trace(stmt.error);
-				return null;
+				return untyped __call__("array", 'ERROR', stmt.error);
 			}
 			var result:EitherType<MySQLi_Result,Bool> = stmt.get_result();
 			if (result)
 			{
 				data = cast(result, MySQLi_Result).fetch_all(MySQLi.MYSQLI_ASSOC);
 			}			
-			return(data);		
+			return(data);	
 		}
-		else
-			trace(stmt.error);
-		//return null;
+
 		return untyped __call__("array", 'ERROR', stmt.error);
 	}
 	

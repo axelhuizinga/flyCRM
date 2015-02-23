@@ -232,8 +232,24 @@ class View
 	public function find(where:String):Void
 	{
 		trace(where);
-		vData.where = (vData.where.any2bool() ? vData.where + ',' + where : where);
-		resetParams(where);
+		trace(vData);
+		var fData:Dynamic = { };
+		var pkeys:Array<String> = 'action,className,fields,limit,order,table,where'.split(',');
+		for (f in pkeys)
+		{
+			if (Reflect.field(vData, f) != null)		
+			{
+				if (f == 'where')					
+				{
+					fData.where = (vData.where.any2bool() ? vData.where + ',' + where : where);
+				}
+				else
+					Reflect.setField(fData, f, Reflect.field(vData, f));
+			}
+		}
+		
+		//trace(vData);
+		resetParams(fData);
 		loadData('server.php', params, update);
 	}
 	

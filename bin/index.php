@@ -92,7 +92,6 @@
 				<div>
 					<form >
 						<input type="hidden" name="action" value="${action}">
-						${trace(v.fields)}
 						{{html v.fields ? '<ul >':''}}
 							{{each(fi,fv) v.fields}}
 							<li >
@@ -199,9 +198,8 @@
 			</div>	
 		</script>
 		
-		<!-- SELECT  OPTIONS TEMPLATE -->
-		<script type="text/x-jquery-tmpl" id="t-options">
-			${trace($item)}
+		<!-- SELECT  OPTIONS TEMPLATE ${trace($item)}-->
+		<script type="text/x-jquery-tmpl" id="t-options">			
 			<option value="${$item.value}">${$item.label}</option>
 		</script>
 		

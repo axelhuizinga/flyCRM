@@ -603,13 +603,23 @@ View.prototype = {
 	}
 	,find: function(where) {
 		haxe.Log.trace(where,{ fileName : "View.hx", lineNumber : 234, className : "View", methodName : "find"});
-		if(Util.any2bool(this.vData.where)) this.vData.where = Std.string(this.vData.where) + "," + where; else this.vData.where = where;
-		this.resetParams(where);
+		haxe.Log.trace(this.vData,{ fileName : "View.hx", lineNumber : 235, className : "View", methodName : "find"});
+		var fData = { };
+		var pkeys = "action,className,fields,limit,order,table,where".split(",");
+		var _g = 0;
+		while(_g < pkeys.length) {
+			var f = pkeys[_g];
+			++_g;
+			if(Reflect.field(this.vData,f) != null) {
+				if(f == "where") if(Util.any2bool(this.vData.where)) fData.where = Std.string(this.vData.where) + "," + where; else fData.where = where; else Reflect.setField(fData,f,Reflect.field(this.vData,f));
+			}
+		}
+		this.resetParams(fData);
 		this.loadData("server.php",this.params,$bind(this,this.update));
 	}
 	,order: function(j) {
 		if(this.params.order == Std.string(j.data("order")) + "|DESC") this.params.order = Std.string(j.data("order")) + "|ASC"; else this.params.order = Std.string(j.data("order")) + "|DESC";
-		haxe.Log.trace(this.params.order,{ fileName : "View.hx", lineNumber : 243, className : "View", methodName : "order"});
+		haxe.Log.trace(this.params.order,{ fileName : "View.hx", lineNumber : 259, className : "View", methodName : "order"});
 		this.loadData("server.php",this.params,$bind(this,this.update));
 	}
 	,resetParams: function(pData) {
@@ -623,7 +633,7 @@ View.prototype = {
 			var f = pkeys[_g];
 			++_g;
 			if(Reflect.field(aData,f) != null) {
-				haxe.Log.trace(Reflect.field(aData,f),{ fileName : "View.hx", lineNumber : 261, className : "View", methodName : "resetParams"});
+				haxe.Log.trace(Reflect.field(aData,f),{ fileName : "View.hx", lineNumber : 277, className : "View", methodName : "resetParams"});
 				Reflect.setField(this.params,f,Reflect.field(aData,f));
 			}
 		}
@@ -632,7 +642,7 @@ View.prototype = {
 	,update: function(data) {
 		var _g = this;
 		data.fields = this.fields;
-		haxe.Log.trace(Std.string(data.fields) + ":" + Std.string(Type["typeof"](data.fields)),{ fileName : "View.hx", lineNumber : 278, className : "View", methodName : "update"});
+		haxe.Log.trace(Std.string(data.fields) + ":" + Std.string(Type["typeof"](data.fields)),{ fileName : "View.hx", lineNumber : 294, className : "View", methodName : "update"});
 		if(new $("#" + this.id + "-list").length > 0) new $("#" + this.id + "-list").replaceWith(new $("#t-" + this.id + "-list").tmpl(data)); else new $("#t-" + this.id + "-list").tmpl(data).appendTo(jQuery.JHelper.J(data.parentSelector).first());
 		new $("#" + this.id + "-list th").each(function(i,el) {
 			jQuery.JHelper.J(el).click(function(_) {
@@ -643,7 +653,7 @@ View.prototype = {
 		new $("td").attr("tabindex",-1);
 	}
 	,select: function(evt) {
-		haxe.Log.trace("has to be implemented in subclass!",{ fileName : "View.hx", lineNumber : 291, className : "View", methodName : "select"});
+		haxe.Log.trace("has to be implemented in subclass!",{ fileName : "View.hx", lineNumber : 307, className : "View", methodName : "select"});
 	}
 	,__class__: View
 };
@@ -999,7 +1009,6 @@ jQuery.FormData.replace = function(e,by,source) {
 jQuery.FormData.where = function(jForm,fields) {
 	var ret = [];
 	var fD = jForm.serializeArray();
-	haxe.Log.trace(fD,{ fileName : "FormData.hx", lineNumber : 70, className : "jQuery.FormData", methodName : "where"});
 	var _g = 0;
 	while(_g < fD.length) {
 		var item = fD[_g];

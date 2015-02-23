@@ -67,7 +67,7 @@ class FormData
 	{
 		var ret:Array<String> = new Array();
 		var fD:Array<FData> = cast jForm.serializeArray();
-		trace(fD);
+		//trace(fD);
 		for (item in fD)
 		{
 			if (!fields.has(item.name))
