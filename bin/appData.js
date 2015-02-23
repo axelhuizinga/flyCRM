@@ -6,7 +6,7 @@ var fieldNames =
 	address1:'Straße',
 	postal_code:'PLZ',
 	city:'Ort',
-	last_local_call_time:'Anrufdatum',
+	last_local_call_time:'Anrufzeit',
 	vendor_lead_code:'Mitgliedsnr.',
 	vicidial_campaigns:'Kampagnen',
 	vicidial_lists:'Listen',
@@ -24,8 +24,8 @@ var appLabel =
 
 var matchOptions =
 {
-	exact:'Genauso',
 	any:'Bestandteil',
+	exact:'Genauso',
 	start:'Anfang',
 	end:'Ende'	
 }
@@ -76,7 +76,8 @@ var displayFormats =
 
 var storeFormats =
 {
-	phone_number:['replace', '^0+','']
+	phone_number:['replace', '^0+',''],
+	last_local_call_time:['gDate2mysql']
 }
 
 var fieldTypes =

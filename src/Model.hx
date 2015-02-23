@@ -65,7 +65,7 @@ class Model
 	public function doSelect(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		var fields:String = q.get('fields');		
-		sb.add('SELECT ' + (fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' ));
+		sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
 		//TODO: JOINS
 		sb.add(' FROM ' + quoteField(qTable));		

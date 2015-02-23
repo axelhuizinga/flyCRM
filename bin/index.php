@@ -103,11 +103,11 @@
 							{{if rangeFields[fv]}}
 							<li>
 								<span class="pad" >${rangeLabels.from}</span>
-								<input type="text" size="11" name="range_from_${fv}" class="datepicker" value="${appLabel.select}" >
+								<input type="text" size="11" name="range_from_${fv}" class="datepicker"  >
 							</li>
 							<li>
 								<span class="pad" >${rangeLabels.to}</span>
-								<input type="text" size="11" name="range_to_${fv}" class="datepicker" value="${appLabel.select}" >								
+								<input type="text" size="11" name="range_to_${fv}" class="datepicker" >								
 							</li>
 							{{/if}}							
 							{{/each}}

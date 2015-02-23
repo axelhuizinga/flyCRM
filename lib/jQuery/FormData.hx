@@ -70,14 +70,14 @@ class FormData
 		//trace(fD);
 		for (item in fD)
 		{
-			if (!fields.has(item.name))
+			if (!(fields.has(item.name) || item.name.indexOf('range_from_') == 0))
 				continue;
-			if (item.value != null && item.value != '')
+			if (item.value != null && item.value != '' || item.name.indexOf('range_from_') == 0)
 			{
 				if (Reflect.hasField(App.storeFormats, item.name))
 				{
 					var sForm:Array<Dynamic> = Reflect.field(App.storeFormats, item.name);
-					var callParam:Array<Dynamic> = sForm.slice(1);
+					var callParam:Array<Dynamic> = sForm.length>1 ? sForm.slice(1) : [];
 					var method:String = sForm[0];
 					trace('call FormData' + method);
 					callParam.push(item.value);
@@ -101,17 +101,22 @@ class FormData
 							'ERROR|unknown matchTypeOption value:' + matchTypeOption.val();							
 					});
 				}
-				else if (item.name.indexOf('range_from_') == 0)
+				else if (item.name.indexOf('range_from_') == 0 )
 				{
 					var from:String = item.value;
+					if (from.length > 0)
+						from = gDate2mysql(from);
 					var name:String = item.name.substr(11);
-					var to:String = jForm.find('[name="range_to' + name + '"]').val();
+					trace(name + ':' +  jForm.find('[name="' + name + '"]').val() );
+					var to:String = jForm.find('[name="range_to_' + name + '"]').val();
+					if (to.length > 0)
+						to = gDate2mysql(to);
 					if (from.length > 0 && to.length > 0)
 						ret.push(name + '|BETWEEN|' + from + '|' + to);
 					else if (from.length > 0)
-						ret.push(name + '|>' + from);
+						ret.push(name + '|BETWEEN|' + from + '|' + DateTools.format(Date.now(), '%Y-%m-%d'));
 					else if (to.length > 0)
-						ret.push(name + '|>' + to);
+						ret.push(name + '|BETWEEN|2015-01-01|' + to);
 				}
 				else if (item.name.indexOf('range_to_') == 0)
 					continue;
@@ -121,6 +126,18 @@ class FormData
 		}
 		trace(ret.join(','));		
 		return ret.join(',');		
+	}
+	
+	@:expose('gDate2mysql')
+	public static function gDate2mysql(gDate:String):String
+	{
+		var d:Array<String> = gDate.split('.').map(function(s:String) return StringTools.trim(s));
+		if (d.length != 3)
+		{			
+			trace('Falsches Datumsformat');
+			return 'Falsches Datumsformat:' + gDate;
+		}
+		return d[2] + '-' + d[1] + '-' + d[0];
 	}
 	
 }

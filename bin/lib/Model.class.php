@@ -10,7 +10,7 @@ class Model {
 		if(!php_Boot::$skip_constructor) {
 		$_g = $this;
 		$fields = $q->get("fields");
-		$sb->add("SELECT " . _hx_string_or_null(((($fields !== null) ? _hx_explode(",", $fields)->map(array(new _hx_lambda(array(&$_g, &$fields, &$phValues, &$q, &$sb), "Model_0"), 'execute'))->join(",") : "*"))));
+		$sb->add("SELECT " . _hx_string_or_null($this->fieldFormat((($fields !== null) ? _hx_explode(",", $fields)->map(array(new _hx_lambda(array(&$_g, &$fields, &$phValues, &$q, &$sb), "Model_0"), 'execute'))->join(",") : "*"))));
 		$qTable = null;
 		if(Util::any2bool($q->get("table"))) {
 			$qTable = $q->get("table");

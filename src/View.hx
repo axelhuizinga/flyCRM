@@ -231,17 +231,17 @@ class View
 	
 	public function find(where:String):Void
 	{
-		trace(where);
-		trace(vData);
+		trace('|'+where+'|' + (where.any2bool() ? 'Y':'N'));
+		trace(vData.where);
 		var fData:Dynamic = { };
 		var pkeys:Array<String> = 'action,className,fields,limit,order,table,where'.split(',');
 		for (f in pkeys)
 		{
 			if (Reflect.field(vData, f) != null)		
 			{
-				if (f == 'where')					
+				if (f == 'where' && (where.any2bool() || 	vData.where.any2bool()))			
 				{
-					fData.where = (vData.where.any2bool() ? vData.where + ',' + where : where);
+					fData.where = (vData.where.any2bool() ? vData.where + (where.any2bool() ? ',' + where  : '') : where);
 				}
 				else
 					Reflect.setField(fData, f, Reflect.field(vData, f));
@@ -261,8 +261,7 @@ class View
 	}	
 	
 	private function resetParams(?pData:Dynamic):Dynamic
-	{
-		
+	{		
 		var pkeys:Array<String> = 'action,className,fields,limit,order,table,where'.split(',');
 		var aData:Dynamic = pData.any2bool() ? pData : vData;
 		fields = aData.fields.any2bool()?aData.fields.split(','):null;

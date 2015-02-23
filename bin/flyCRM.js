@@ -103,6 +103,79 @@ App.prototype = {
 	}
 	,__class__: App
 };
+var DateTools = function() { };
+$hxClasses["DateTools"] = DateTools;
+DateTools.__name__ = ["DateTools"];
+DateTools.__format_get = function(d,e) {
+	switch(e) {
+	case "%":
+		return "%";
+	case "C":
+		return StringTools.lpad(Std.string(Std["int"](d.getFullYear() / 100)),"0",2);
+	case "d":
+		return StringTools.lpad(Std.string(d.getDate()),"0",2);
+	case "D":
+		return DateTools.__format(d,"%m/%d/%y");
+	case "e":
+		return Std.string(d.getDate());
+	case "F":
+		return DateTools.__format(d,"%Y-%m-%d");
+	case "H":case "k":
+		return StringTools.lpad(Std.string(d.getHours()),e == "H"?"0":" ",2);
+	case "I":case "l":
+		var hour = d.getHours() % 12;
+		return StringTools.lpad(Std.string(hour == 0?12:hour),e == "I"?"0":" ",2);
+	case "m":
+		return StringTools.lpad(Std.string(d.getMonth() + 1),"0",2);
+	case "M":
+		return StringTools.lpad(Std.string(d.getMinutes()),"0",2);
+	case "n":
+		return "\n";
+	case "p":
+		if(d.getHours() > 11) return "PM"; else return "AM";
+		break;
+	case "r":
+		return DateTools.__format(d,"%I:%M:%S %p");
+	case "R":
+		return DateTools.__format(d,"%H:%M");
+	case "s":
+		return Std.string(Std["int"](d.getTime() / 1000));
+	case "S":
+		return StringTools.lpad(Std.string(d.getSeconds()),"0",2);
+	case "t":
+		return "\t";
+	case "T":
+		return DateTools.__format(d,"%H:%M:%S");
+	case "u":
+		var t = d.getDay();
+		if(t == 0) return "7"; else if(t == null) return "null"; else return "" + t;
+		break;
+	case "w":
+		return Std.string(d.getDay());
+	case "y":
+		return StringTools.lpad(Std.string(d.getFullYear() % 100),"0",2);
+	case "Y":
+		return Std.string(d.getFullYear());
+	default:
+		throw "Date.format %" + e + "- not implemented yet.";
+	}
+};
+DateTools.__format = function(d,f) {
+	var r = new StringBuf();
+	var p = 0;
+	while(true) {
+		var np = f.indexOf("%",p);
+		if(np < 0) break;
+		r.addSub(f,p,np - p);
+		r.add(DateTools.__format_get(d,HxOverrides.substr(f,np + 1,1)));
+		p = np + 2;
+	}
+	r.addSub(f,p,f.length - p);
+	return r.b;
+};
+DateTools.format = function(d,f) {
+	return DateTools.__format(d,f);
+};
 var EReg = function(r,opt) {
 	opt = opt.split("u").join("");
 	this.r = new RegExp(r,opt);
@@ -329,6 +402,9 @@ Std.__name__ = ["Std"];
 Std.string = function(s) {
 	return js.Boot.__string_rec(s,"");
 };
+Std["int"] = function(x) {
+	return x | 0;
+};
 Std.parseInt = function(x) {
 	var v = parseInt(x,10);
 	if(v == 0 && (HxOverrides.cca(x,1) == 120 || HxOverrides.cca(x,1) == 88)) v = parseInt(x);
@@ -345,7 +421,37 @@ StringBuf.prototype = {
 	,add: function(x) {
 		this.b += Std.string(x);
 	}
+	,addSub: function(s,pos,len) {
+		if(len == null) this.b += HxOverrides.substr(s,pos,null); else this.b += HxOverrides.substr(s,pos,len);
+	}
 	,__class__: StringBuf
+};
+var StringTools = function() { };
+$hxClasses["StringTools"] = StringTools;
+StringTools.__name__ = ["StringTools"];
+StringTools.isSpace = function(s,pos) {
+	var c = HxOverrides.cca(s,pos);
+	return c > 8 && c < 14 || c == 32;
+};
+StringTools.ltrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,r)) r++;
+	if(r > 0) return HxOverrides.substr(s,r,l - r); else return s;
+};
+StringTools.rtrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,l - r - 1)) r++;
+	if(r > 0) return HxOverrides.substr(s,0,l - r); else return s;
+};
+StringTools.trim = function(s) {
+	return StringTools.ltrim(StringTools.rtrim(s));
+};
+StringTools.lpad = function(s,c,l) {
+	if(c.length <= 0) return s;
+	while(s.length < l) s = c + s;
+	return s;
 };
 var ValueType = { __ename__ : true, __constructs__ : ["TNull","TInt","TFloat","TBool","TObject","TFunction","TClass","TEnum","TUnknown"] };
 ValueType.TNull = ["TNull",0];
@@ -460,7 +566,7 @@ var Util = function() { };
 $hxClasses["Util"] = Util;
 Util.__name__ = ["Util"];
 Util.any2bool = function(v) {
-	return typeof(v) != "undefined";
+	return v?true:false;
 };
 var View = function(data) {
 	this.views = new haxe.ds.StringMap();
@@ -602,8 +708,8 @@ View.prototype = {
 		},"json");
 	}
 	,find: function(where) {
-		haxe.Log.trace(where,{ fileName : "View.hx", lineNumber : 234, className : "View", methodName : "find"});
-		haxe.Log.trace(this.vData,{ fileName : "View.hx", lineNumber : 235, className : "View", methodName : "find"});
+		haxe.Log.trace("|" + where + "|" + (Util.any2bool(where)?"Y":"N"),{ fileName : "View.hx", lineNumber : 234, className : "View", methodName : "find"});
+		haxe.Log.trace(this.vData.where,{ fileName : "View.hx", lineNumber : 235, className : "View", methodName : "find"});
 		var fData = { };
 		var pkeys = "action,className,fields,limit,order,table,where".split(",");
 		var _g = 0;
@@ -611,7 +717,7 @@ View.prototype = {
 			var f = pkeys[_g];
 			++_g;
 			if(Reflect.field(this.vData,f) != null) {
-				if(f == "where") if(Util.any2bool(this.vData.where)) fData.where = Std.string(this.vData.where) + "," + where; else fData.where = where; else Reflect.setField(fData,f,Reflect.field(this.vData,f));
+				if(f == "where" && (Util.any2bool(where) || Util.any2bool(this.vData.where))) if(Util.any2bool(this.vData.where)) fData.where = Std.string(this.vData.where) + (Util.any2bool(where)?"," + where:""); else fData.where = where; else Reflect.setField(fData,f,Reflect.field(this.vData,f));
 			}
 		}
 		this.resetParams(fData);
@@ -633,7 +739,7 @@ View.prototype = {
 			var f = pkeys[_g];
 			++_g;
 			if(Reflect.field(aData,f) != null) {
-				haxe.Log.trace(Reflect.field(aData,f),{ fileName : "View.hx", lineNumber : 277, className : "View", methodName : "resetParams"});
+				haxe.Log.trace(Reflect.field(aData,f),{ fileName : "View.hx", lineNumber : 276, className : "View", methodName : "resetParams"});
 				Reflect.setField(this.params,f,Reflect.field(aData,f));
 			}
 		}
@@ -642,7 +748,7 @@ View.prototype = {
 	,update: function(data) {
 		var _g = this;
 		data.fields = this.fields;
-		haxe.Log.trace(Std.string(data.fields) + ":" + Std.string(Type["typeof"](data.fields)),{ fileName : "View.hx", lineNumber : 294, className : "View", methodName : "update"});
+		haxe.Log.trace(Std.string(data.fields) + ":" + Std.string(Type["typeof"](data.fields)),{ fileName : "View.hx", lineNumber : 293, className : "View", methodName : "update"});
 		if(new $("#" + this.id + "-list").length > 0) new $("#" + this.id + "-list").replaceWith(new $("#t-" + this.id + "-list").tmpl(data)); else new $("#t-" + this.id + "-list").tmpl(data).appendTo(jQuery.JHelper.J(data.parentSelector).first());
 		new $("#" + this.id + "-list th").each(function(i,el) {
 			jQuery.JHelper.J(el).click(function(_) {
@@ -653,7 +759,7 @@ View.prototype = {
 		new $("td").attr("tabindex",-1);
 	}
 	,select: function(evt) {
-		haxe.Log.trace("has to be implemented in subclass!",{ fileName : "View.hx", lineNumber : 307, className : "View", methodName : "select"});
+		haxe.Log.trace("has to be implemented in subclass!",{ fileName : "View.hx", lineNumber : 306, className : "View", methodName : "select"});
 	}
 	,__class__: View
 };
@@ -1013,11 +1119,12 @@ jQuery.FormData.where = function(jForm,fields) {
 	while(_g < fD.length) {
 		var item = fD[_g];
 		++_g;
-		if(!Lambda.has(fields,item.name)) continue;
-		if(item.value != null && item.value != "") {
+		if(!(Lambda.has(fields,item.name) || item.name.indexOf("range_from_") == 0)) continue;
+		if(item.value != null && item.value != "" || item.name.indexOf("range_from_") == 0) {
 			if(Object.prototype.hasOwnProperty.call(App.storeFormats,item.name)) {
 				var sForm = Reflect.field(App.storeFormats,item.name);
-				var callParam = sForm.slice(1);
+				var callParam;
+				if(sForm.length > 1) callParam = sForm.slice(1); else callParam = [];
 				var method = sForm[0];
 				haxe.Log.trace("call FormData" + method,{ fileName : "FormData.hx", lineNumber : 82, className : "jQuery.FormData", methodName : "where"});
 				callParam.push(item.value);
@@ -1055,14 +1162,27 @@ jQuery.FormData.where = function(jForm,fields) {
 				return $r;
 			}(this))); else if(item.name.indexOf("range_from_") == 0) {
 				var from = item.value;
+				if(from.length > 0) from = jQuery.FormData.gDate2mysql(from);
 				var name = HxOverrides.substr(item.name,11,null);
-				var to = jForm.find("[name=\"range_to" + name + "\"]").val();
-				if(from.length > 0 && to.length > 0) ret.push(name + "|BETWEEN|" + from + "|" + to); else if(from.length > 0) ret.push(name + "|>" + from); else if(to.length > 0) ret.push(name + "|>" + to);
+				haxe.Log.trace(name + ":" + Std.string(jForm.find("[name=\"" + name + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 110, className : "jQuery.FormData", methodName : "where"});
+				var to = jForm.find("[name=\"range_to_" + name + "\"]").val();
+				if(to.length > 0) to = jQuery.FormData.gDate2mysql(to);
+				if(from.length > 0 && to.length > 0) ret.push(name + "|BETWEEN|" + from + "|" + to); else if(from.length > 0) ret.push(name + "|BETWEEN|" + from + "|" + DateTools.format(new Date(),"%Y-%m-%d")); else if(to.length > 0) ret.push(name + "|BETWEEN|2015-01-01|" + to);
 			} else if(item.name.indexOf("range_to_") == 0) continue; else ret.push(item.name + "|" + Std.string(item.value));
 		}
 	}
-	haxe.Log.trace(ret.join(","),{ fileName : "FormData.hx", lineNumber : 122, className : "jQuery.FormData", methodName : "where"});
+	haxe.Log.trace(ret.join(","),{ fileName : "FormData.hx", lineNumber : 127, className : "jQuery.FormData", methodName : "where"});
 	return ret.join(",");
+};
+jQuery.FormData.gDate2mysql = $hx_exports.gDate2mysql = function(gDate) {
+	var d = gDate.split(".").map(function(s) {
+		return StringTools.trim(s);
+	});
+	if(d.length != 3) {
+		haxe.Log.trace("Falsches Datumsformat",{ fileName : "FormData.hx", lineNumber : 137, className : "jQuery.FormData", methodName : "gDate2mysql"});
+		return "Falsches Datumsformat:" + gDate;
+	}
+	return d[2] + "-" + d[1] + "-" + d[0];
 };
 jQuery.JHelper = function() { };
 $hxClasses["jQuery.JHelper"] = jQuery.JHelper;
@@ -1248,7 +1368,7 @@ js.JqueryUI.accordion = function(ac,options) {
 	return ac.accordion(options);
 };
 js.JqueryUI.datepicker = function(dp,options) {
-	return dp.datepicker(options).datepicker("setDate",new Date());
+	return dp.datepicker(options).attr("placeholder",DateTools.format(new Date(),"%d.%m.%Y"));
 };
 js.JqueryUI.editable = function(e,options) {
 	return e.editable(function(value,settings) {
@@ -1865,7 +1985,10 @@ view.ContextMenu = function(data) {
 	this.createInputs();
 	this.root = js.JqueryUI.accordion(new $("#" + this.id),{ active : 0, activate : $bind(this,this.activate), create : $bind(this,this.create), heightStyle : this.contextData.heightStyle});
 	haxe.Log.trace(new $("#" + this.id).find(".datepicker").length,{ fileName : "ContextMenu.hx", lineNumber : 53, className : "view.ContextMenu", methodName : "new"});
-	js.JqueryUI.datepicker(new $("#" + this.id).find(".datepicker"));
+	js.JqueryUI.datepicker(new $("#" + this.id).find(".datepicker"),{ beforeShow : function(el,ui) {
+		var jq = new $(el);
+		if(jq.val() == "") jq.val(jq.attr("placeholder"));
+	}});
 	new $("#" + this.id + " button[data-action]").click($bind(this,this.run));
 };
 $hxClasses["view.ContextMenu"] = view.ContextMenu;
@@ -1877,7 +2000,7 @@ view.ContextMenu.prototype = $extend(View.prototype,{
 	,action: null
 	,activate: function(event,ui) {
 		this.action = new $(ui.newPanel[0]).find("input[name=\"action\"]").first().val();
-		haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 62, className : "view.ContextMenu", methodName : "activate"});
+		haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 68, className : "view.ContextMenu", methodName : "activate"});
 	}
 	,createInputs: function() {
 		var cData = this.vData;
@@ -1900,26 +2023,26 @@ view.ContextMenu.prototype = $extend(View.prototype,{
 	}
 	,create: function(event,ui) {
 		this.action = new $(ui.panel[0]).find("input[name=\"action\"]").first().val();
-		haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 85, className : "view.ContextMenu", methodName : "create"});
+		haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 91, className : "view.ContextMenu", methodName : "create"});
 	}
 	,run: function(evt) {
 		evt.preventDefault();
 		var form = jQuery.JHelper.J(js.Boot.__cast(evt.target , Element)).parent();
 		var options = js.JqueryUI.accordion(this.root,"option");
-		haxe.Log.trace(options.active,{ fileName : "ContextMenu.hx", lineNumber : 94, className : "view.ContextMenu", methodName : "run"});
+		haxe.Log.trace(options.active,{ fileName : "ContextMenu.hx", lineNumber : 100, className : "view.ContextMenu", methodName : "run"});
 		var fields = this.vData.items[options.active].fields;
-		haxe.Log.trace(fields,{ fileName : "ContextMenu.hx", lineNumber : 96, className : "view.ContextMenu", methodName : "run"});
+		haxe.Log.trace(fields,{ fileName : "ContextMenu.hx", lineNumber : 102, className : "view.ContextMenu", methodName : "run"});
 		if(fields != null && fields.length > 0) {
 			var where = jQuery.FormData.where(form,fields);
-			haxe.Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 100, className : "view.ContextMenu", methodName : "run"});
+			haxe.Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 106, className : "view.ContextMenu", methodName : "run"});
 			Reflect.callMethod(this.parentView,Reflect.field(this.parentView,this.action),[where]);
 		} else {
 			this.action = jQuery.JHelper.J(js.Boot.__cast(evt.target , Element)).data("action");
-			haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 106, className : "view.ContextMenu", methodName : "run"});
+			haxe.Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 112, className : "view.ContextMenu", methodName : "run"});
 		}
 	}
 	,showResult: function(data,_) {
-		haxe.Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 113, className : "view.ContextMenu", methodName : "showResult"});
+		haxe.Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 119, className : "view.ContextMenu", methodName : "showResult"});
 	}
 	,__class__: view.ContextMenu
 });
@@ -2138,6 +2261,16 @@ var Bool = Boolean;
 Bool.__ename__ = ["Bool"];
 var Class = $hxClasses.Class = { __name__ : ["Class"]};
 var Enum = { };
+if(Array.prototype.map == null) Array.prototype.map = function(f) {
+	var a = [];
+	var _g1 = 0;
+	var _g = this.length;
+	while(_g1 < _g) {
+		var i = _g1++;
+		a[i] = f(this[i]);
+	}
+	return a;
+};
 var __map_reserved = {}
 var q = window.jQuery;
 var js = js || {}

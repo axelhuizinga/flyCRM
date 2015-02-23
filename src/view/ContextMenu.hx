@@ -51,7 +51,13 @@ typedef ContextMenuData =
 			heightStyle:contextData.heightStyle
 		});
 		trace(J('#' + id).find('.datepicker').length );
-		J('#' + id).find('.datepicker').datepicker();		
+		J('#' + id).find('.datepicker').datepicker( { 
+			beforeShow: function(el, ui) {
+				var jq:JQuery = J(el);  
+				if(jq.val()=='')
+					jq.val(jq.attr('placeholder'));
+			}
+		});		
 		J('#' + id + ' button[data-action]').click(run);
 	}
 	
