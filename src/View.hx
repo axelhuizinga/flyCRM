@@ -10,6 +10,7 @@ import jQuery.*;
 import js.html.Node;
 import js.html.XMLHttpRequest;
 import view.Input;
+import view.TabBox;
 
 import me.cunity.debug.Out;
 
@@ -33,10 +34,19 @@ typedef   ViewData =
 	var action:String;
 	var attach2:String;
 	var id:String;
+	var dbLoaderIndex:Int;
 	@:optional var fields:Array<String>;
 	@:optional var parent: String;
+	@:optional var parentTab: Int;
 	@:optional var parentView: View;
 	@:optional var views:Array<ViewData>;
+}
+
+typedef DataLoader = 
+{
+	var callBack:Dynamic->Void;
+	var prepare:Void->Void;
+	var loaded:Bool;
 }
 
 class View
@@ -51,6 +61,8 @@ class View
 	
 	var views:StringMap<View>;
 	var parentView:View;
+	var dbLoaderIndex:Int;
+	var parentTab:Int;
 	var params:Dynamic;
 	
 	var loading:Int;
@@ -62,18 +74,25 @@ class View
 	public var interactionState(default, set):String;
 	public var inputs:StringMap<Input>;
 	
+	var dbLoader:Array<StringMap<DataLoader>>;// DATALOADER MAP
+		
 	public function new(?data:Dynamic ) 
 	{
-		views = new StringMap();
+		views = new StringMap();		
 		inputs = new StringMap();
 		vData = data;
 		var data:ViewData = cast data;
 		id = data.id;
+		parentTab = data.parentTab;
 		parentView = data.parentView;
+		dbLoader = new Array();
+		dbLoaderIndex = data.dbLoaderIndex;
+		if (Std.instance(this, TabBox) == null)
+			dbLoader.push(new StringMap());
 		attach2 = data.attach2 == null ? '#' + id : data.attach2;
 		name = Type.getClassName(Type.getClass(this)).split('.').pop();
 		root = J('#' + id).css({opacity:0});
-		trace(name + ':'  + id + ':' + root.length + ':' + attach2); 		
+		trace(name + ':'  + id + ':' + root.length + ':' + J(attach2).attr('id') + ':' + dbLoaderIndex); 		
 		interactionStates = new StringMap();
 		listening = new ObjectMap();
 		suspended = new StringMap();
@@ -195,20 +214,22 @@ class View
 		J('td').attr('tabindex', -1);
 		trace('initState complete :)');
 		//trace(J('#' + id).find('.datepicker').length);
-		J('#' + id).animate( { opacity:1 }, 300, 'linear', function() { 
+		J('#' + id).animate( { opacity:1 }, 300, 'linear', 
+			function() { 
 			//trace(untyped __js__("this"));
 			//trace(J(untyped __js__("this")).attr('id')); 			
-			} );
+			});
 	}
 	
 	function loadingComplete():Bool
 	{
 		if (loading > 0)
 			return false;
-		if (! inputs.foreach(function(i:Input) return i.loading == 0))
+		if (!inputs.empty() && !inputs.foreach(function(i:Input) return i.loading == 0))
 			return false;
 		else
-			return views.foreach(function(v:View) return v.loading==0);
+			return views.foreach(function(v:View) return v.loading == 0);
+		return true;
 	}
 	
 	function suspendAll()
@@ -216,12 +237,41 @@ class View
 		
 	}
 	
-	public function loadData(url:String,params:Dynamic, callBack:Dynamic->Void):Void
+	function addDataLoader(id:String, dL:DataLoader, loaderIndex:Int=0)
+	{
+		dbLoader[loaderIndex].set(id, dL);
+		trace(loaderIndex + ':' + id);
+	}
+	
+	public function loadAllData(?loaderIndex:Int = 0):Void
+	{// 	INITIAL LOAD DB DATA
+
+		var dLoader:StringMap<DataLoader> = dbLoader[loaderIndex];
+		var keys:Iterator<String> = dLoader.keys();
+		trace(dLoader.count() + ':' + loaderIndex);
+		for (k in keys)
+			load(k, loaderIndex);
+	}
+	
+	public function load(loaderId:String, loaderIndex:Int = 0):Void
+	{
+		//INITIAL LOAD DB DATA
+		var loader:DataLoader = dbLoader[loaderIndex].get(loaderId);
+		loader.prepare();
+		loadData('server.php', params, 
+			function(data:Dynamic)
+			{ 
+				data.loaderId = loaderId; 
+				loader.callBack(data); 
+			});		
+	}
+	
+	public function loadData(url:String, p:Dynamic, callBack:Dynamic->Void):Void
 	{
 		//Out.dumpObject(params);
-		trace(Std.string(params));
+		trace(Std.string(p));
 		loading++;
-		JQueryStatic.post(url, params , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
+		JQueryStatic.post(url, p , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
 		{
 			//trace(data);
 			callBack(data);
@@ -291,11 +341,11 @@ class View
 	{
 		data.fields = fields;
 		trace(data.fields + ':' + Type.typeof(data.fields));
-		//data.fields = 
+
 		if ( J('#' + id + '-list').length > 0)
 			J('#' + id + '-list').replaceWith(J('#t-' + id + '-list').tmpl(data));
 		else
-			J('#t-' + id + '-list').tmpl(data).appendTo(J(data.parentSelector).first());	
+			J('#t-' + id + '-list').tmpl(data).appendTo(J(data.loaderId).first());	
 		J('#' + id + '-list th').each(function(i, el) { J(el).click(function(_) { order(J(el)); } ); } );	
 		J('#' + id + '-list tr').first().siblings().click(select).find('td').off('click');
 		J('td').attr('tabindex', -1);

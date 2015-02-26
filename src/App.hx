@@ -57,7 +57,7 @@ class App
 		{
 			if(Reflect.field(config, f)!=null)
 			Reflect.setField(App, f, Reflect.field(config, f));
-			trace(Reflect.field(App, f));
+			//trace(Reflect.field(App, f));
 		}
 		basePath = Browser.location.pathname.split(config.appName)[0] + config.appName + '/';
 		trace(basePath);

@@ -97,8 +97,7 @@
 							<li >
 								<span class="pad" >${fieldNames[fv]}</span>
 								{{tmpl(fv) "#t-find-match"}}
-								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="app-right">
-
+								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="menu-input-right">
 							</li>
 							{{if rangeFields[fv]}}
 							<li>
@@ -122,7 +121,7 @@
 		</script>
 		
 		<script type="text/x-jquery-tmpl" id="t-find-match">
-			<select name="${$item.data}_match_option"  class="end-right">
+			<select name="${$item.data}_match_option"  class="menu-end-right">
 			{{each(i,v) matchOptions}}
 				<option value="${i}" title="${v}" >${v.substr(0,1)}</option>
 			{{/each}}

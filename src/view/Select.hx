@@ -12,8 +12,7 @@ using Lambda;
 class Select extends Input
 {
 
-	
-	
+		
 	public function new(data:Dynamic) 
 	{
 		super(data);

@@ -50,14 +50,14 @@ typedef TabBoxData =
 	var tabObj:Dynamic;
 	var tabLinks:Array<String>;
 	var tabLabel:Array<String>;
-	//static var stateChangeCount = 0;
-	
+		
 	public function new(?data:TabBoxData) 
 	{
 		super(data);
 
 		tabLabel = new Array();
 		tabLinks = new Array();
+
 		if (data != null )
 		{
 			tabBoxData = cast data;
@@ -66,8 +66,7 @@ typedef TabBoxData =
 			{
 				PushState.init();
 				PushState.addEventListener(go);
-			}			
-			
+			}						
 			active = 0;
 			for (tab in tabBoxData.tabs)
 			{
@@ -75,7 +74,10 @@ typedef TabBoxData =
 					active = tabLinks.length;
 				tabLabel.push(tab.label);
 				tabLinks.push(tab.link);
+				dbLoader.push(new StringMap<DataLoader>());
 			}
+			
+			trace(id + ':' + dbLoader.length);
 			
 			J('#t-' + id).tmpl(tabBoxData.tabs).appendTo(root.find('ul:first'));	
 			
@@ -86,11 +88,13 @@ typedef TabBoxData =
 				{
 					trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active);
 					PushState.replace(Std.string(ui.newTab.context).split(Browser.window.location.hostname).pop());
+					trace(tabObj.tabs);
 				},				
 				create: function( event:Event, ui ) 
 				{
 					tabsInstance =  J('#' + id).tabs("instance");		
-					trace('ready2load' + tabBoxData.tabs.length);
+					trace('ready2load content4tabs:' + tabBoxData.tabs.length);
+					//trace(tabObj.tabs);
 					//Out.dumpObject(tabsInstance.panels);
 					if (tabBoxData.append2header != null)
 					{
@@ -106,13 +110,14 @@ typedef TabBoxData =
 							for (v in t.views)
 							{
 								//trace(v);
+								v.parentTab = v.dbLoaderIndex = tabIndex;
 								v.attach2 =  tabsInstance.panels[tabIndex];
 								//trace('adding:' + v + ' to:' + v.parent);
 								addView(v);
 							}
 							tabIndex++;
 						}
-					//}
+					//APP UI CREATION DONE - LOAD DATA 4 ACTIVE TAB
 				},
 				beforeLoad: function( event:Event, ui ) 
 				{
@@ -122,9 +127,14 @@ typedef TabBoxData =
 				},
 				heightStyle: tabBoxData.heightStyle == null ? 'auto':tabBoxData.heightStyle				
 			});	
+			//trace(tabObj);
+			trace(tabsInstance.option('active'));
+			trace(dbLoader.length + ':'  + active );
+			loadAllData(active);
 		}
 		
 	}
+	
 	
 	public function drawPanels():Void
 	{

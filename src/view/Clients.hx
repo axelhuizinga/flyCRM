@@ -40,12 +40,17 @@ typedef ClientsData =
 		//trace(J('#t-' + id));
 		//trace(J('#t-' + id).tmpl(data));
 		J('#t-' + id).tmpl(data).appendTo(data.attach2);	
-		if (data.table != null) // 	LOAD TABLE DATA
+		if (data.table != null)
 		{
-			resetParams();
-			if(data.order != null)
-				params.order = data.order;
-			loadData('server.php', params, function(data:Dynamic) { data.parentSelector = listattach2; update(data); } );
+			parentView.addDataLoader(listattach2, {
+				callBack:update,
+				prepare:function() {
+					resetParams();
+					if(vData.order != null)
+						params.order = vData.order;	
+				},
+				loaded:false
+			},dbLoaderIndex);
 		}
 		if(data.views != null)
 			addViews(data.views);
@@ -53,12 +58,9 @@ typedef ClientsData =
 		addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
 		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit'] } );
 		addInteractionState('unselected', { disables:['edit', 'delete'], enables:['add'] } );
-		/*if (loadingComplete())
-			initState();
-		else
-			Timer.delay(initState, 1000);*/
 	}
 	
+
 
 	override public function select(evt:Event):Void
 	{

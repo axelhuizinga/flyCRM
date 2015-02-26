@@ -32,8 +32,8 @@ class Input
 	
 	public function init()
 	{
-		loadData( resetParams(), function(data:Dynamic) { //data.parentSelector = listattach2; 
-		update(data); });		
+		//loadData( resetParams(), function(data:Dynamic) { //data.parentSelector = listattach2; 
+		//update(data); });		
 	}
 	
 	function loadData(data:Dynamic, callBack:Dynamic->Void)
