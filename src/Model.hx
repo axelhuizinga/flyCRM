@@ -80,7 +80,7 @@ class Model
 		if (order != null)
 			buildOrder(order, sb);
 		var limit:String = q.get('limit');
-		buildLimit((limit == null?'15':limit), sb);	
+		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
 		return execute(sb.toString(), q, phValues);
 	}
 	

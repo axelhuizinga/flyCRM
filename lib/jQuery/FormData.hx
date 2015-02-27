@@ -115,7 +115,7 @@ class FormData
 						ret.push(name + '|BETWEEN|' + from + '|' + to);
 					else if (from.length > 0)
 						ret.push(name + '|BETWEEN|' + from + '|' + DateTools.format(Date.now(), '%Y-%m-%d'));
-					else if (to.length > 0)
+					else if (to.length > 0)//	TODO: CONFIG SYSTEM START DATE
 						ret.push(name + '|BETWEEN|2015-01-01|' + to);
 				}
 				else if (item.name.indexOf('range_to_') == 0)

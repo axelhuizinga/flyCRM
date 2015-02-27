@@ -35,7 +35,7 @@ typedef ClientsData =
 		listattach2 = data.listattach2;
 		if (!(data.limit > 0))
 			data.limit = 15;
-		trace('#t-' + id + ' attach2:' + data.attach2);
+		trace('#t-' + id + ' attach2:' + data.attach2 + ':' + dbLoaderIndex);
 		
 		//trace(J('#t-' + id));
 		//trace(J('#t-' + id).tmpl(data));
@@ -48,6 +48,7 @@ typedef ClientsData =
 					resetParams();
 					if(vData.order != null)
 						params.order = vData.order;	
+					return params;
 				},
 				loaded:false
 			},dbLoaderIndex);

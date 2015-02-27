@@ -50,14 +50,14 @@ class Input
 		}
 		trace(id);
 		trace(data);
-		
+		return;
 		loading++;
 		JQueryStatic.post('server.php', data , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
 		{
 			trace(data);
 			callBack(data);
 			loading--;
-		});		
+		});	
 	}
 
 	private function resetParams(?where:Dynamic):Dynamic

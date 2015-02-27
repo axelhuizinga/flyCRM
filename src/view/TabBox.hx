@@ -112,7 +112,7 @@ typedef TabBoxData =
 								//trace(v);
 								v.parentTab = v.dbLoaderIndex = tabIndex;
 								v.attach2 =  tabsInstance.panels[tabIndex];
-								//trace('adding:' + v + ' to:' + v.parent);
+								//trace('adding:' + untyped v.Clients.id + ' to:' + id);
 								addView(v);
 							}
 							tabIndex++;

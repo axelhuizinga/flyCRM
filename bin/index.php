@@ -55,7 +55,7 @@
 			</div>
 		</script>
 		
-		<!--  MEMBERS LIST -->
+		<!--  MEMBERS LIST data-direction="ASC"-->
 		
 		<script type="text/x-jquery-tmpl"  id="t-clients-list">
 		
@@ -64,7 +64,7 @@
 				<tr class="headrow" >
 				{{each(i,v) $data.fields}}
 					
-					<th data-order="${v}" data-direction="ASC">${fieldNames[v]}</th>
+					<th data-order="${v}" >${fieldNames[v]}</th>
 					
 				{{/each}}
 				</tr>

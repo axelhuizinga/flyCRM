@@ -36,6 +36,7 @@ class App
 	
 	var views:StringMap<View>; 
 	
+	
 	static function main() 
 	{
 		Log.trace = Out._trace;		
@@ -44,6 +45,7 @@ class App
 	public function new()
 	{		
 		views = new StringMap();
+		//dbLoader = new Array();
 	}
 	
 	@:expose("initApp") 

@@ -45,7 +45,7 @@ typedef   ViewData =
 typedef DataLoader = 
 {
 	var callBack:Dynamic->Void;
-	var prepare:Void->Void;
+	var prepare:Void->Dynamic;
 	var loaded:Bool;
 }
 
@@ -69,12 +69,13 @@ class View
 	var listening:ObjectMap<JQuery,String>;
 	var suspended:StringMap<JQuery>;
 	var interactionStates:StringMap<InteractionState>;
+	var dbLoader:Array<StringMap<DataLoader>>;// DATALOADER MAP
 	
 	public var id:String;	
 	public var interactionState(default, set):String;
 	public var inputs:StringMap<Input>;
 	
-	var dbLoader:Array<StringMap<DataLoader>>;// DATALOADER MAP
+	
 		
 	public function new(?data:Dynamic ) 
 	{
@@ -86,7 +87,7 @@ class View
 		parentTab = data.parentTab;
 		parentView = data.parentView;
 		dbLoader = new Array();
-		dbLoaderIndex = data.dbLoaderIndex;
+		dbLoaderIndex = (data.dbLoaderIndex == null ? 0:data.dbLoaderIndex);
 		if (Std.instance(this, TabBox) == null)
 			dbLoader.push(new StringMap());
 		attach2 = data.attach2 == null ? '#' + id : data.attach2;
@@ -131,7 +132,7 @@ class View
 	
 	function addInputs(v:Array<Dynamic>, className:String):Void
 	{
-		//trace(v);
+		trace(v.length);
 		for (aI in v)
 		{
 			aI.parentView = this;
@@ -175,6 +176,7 @@ class View
 		var av:View = null;
 		var className:String = Reflect.fields(v)[0];
 		var iParam:Dynamic = Reflect.field(v, className);
+		trace(name + ':' + className + ':' + dbLoader.length);
 		//trace(className + ':' + iParam);
 		var cl:Class<Dynamic> = Type.resolveClass('view.' + className);
 		if (cl != null)
@@ -237,10 +239,10 @@ class View
 		
 	}
 	
-	function addDataLoader(id:String, dL:DataLoader, loaderIndex:Int=0)
+	function addDataLoader(loaderId:String, dL:DataLoader, loaderIndex:Int=0)
 	{
-		dbLoader[loaderIndex].set(id, dL);
-		trace(loaderIndex + ':' + id);
+		dbLoader[loaderIndex].set(loaderId, dL);
+		trace(id + ':' + loaderIndex + ':' + loaderId);
 	}
 	
 	public function loadAllData(?loaderIndex:Int = 0):Void
@@ -250,15 +252,18 @@ class View
 		var keys:Iterator<String> = dLoader.keys();
 		trace(dLoader.count() + ':' + loaderIndex);
 		for (k in keys)
+		{
+			trace(k);
 			load(k, loaderIndex);
+		}
 	}
 	
 	public function load(loaderId:String, loaderIndex:Int = 0):Void
 	{
 		//INITIAL LOAD DB DATA
 		var loader:DataLoader = dbLoader[loaderIndex].get(loaderId);
-		loader.prepare();
-		loadData('server.php', params, 
+		
+		loadData('server.php', loader.prepare(), 
 			function(data:Dynamic)
 			{ 
 				data.loaderId = loaderId; 
@@ -305,8 +310,11 @@ class View
 	
 	public function order(j:JQuery):Void
 	{
-		params.order = (params.order == j.data('order') + '|DESC' ? j.data('order') + '|ASC' : j.data('order') + '|DESC');		
-		trace( params.order);
+		if (params.order.indexOf(j.data('order')) == 0)//	CHANGE DIRECTION OF CURRENT ORDER BY FIELD
+			params.order = j.data('order') + (params.order.indexOf( 'ASC') >0  ?  '|DESC' : '|ASC');
+		else
+			params.order = j.data('order') + '|ASC';		
+		//trace( params.order);
 		loadData('server.php', params, update);
 	}	
 	
@@ -323,7 +331,7 @@ class View
 		for (f in pkeys)
 		{
 			if (Reflect.field(aData, f) != null)
-			{trace(Reflect.field(aData, f));
+			{//trace(Reflect.field(aData, f));
 				switch(f)
 				{
 					//case 'fields':
@@ -339,6 +347,7 @@ class View
 	
 	public function update(data:Dynamic):Void
 	{
+		// UPDATE MAIN DATA TABLE
 		data.fields = fields;
 		trace(data.fields + ':' + Type.typeof(data.fields));
 
@@ -346,6 +355,7 @@ class View
 			J('#' + id + '-list').replaceWith(J('#t-' + id + '-list').tmpl(data));
 		else
 			J('#t-' + id + '-list').tmpl(data).appendTo(J(data.loaderId).first());	
+			
 		J('#' + id + '-list th').each(function(i, el) { J(el).click(function(_) { order(J(el)); } ); } );	
 		J('#' + id + '-list tr').first().siblings().click(select).find('td').off('click');
 		J('td').attr('tabindex', -1);
