@@ -50,7 +50,7 @@ typedef ClientsData =
 						params.order = vData.order;	
 					return params;
 				},
-				loaded:false
+				valid:false
 			},dbLoaderIndex);
 		}
 		if(data.views != null)

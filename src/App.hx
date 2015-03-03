@@ -4,6 +4,7 @@ import haxe.ds.StringMap;
 import haxe.Http;
 import haxe.Json;
 import haxe.Log;
+import haxe.Timer;
 import js.Browser;
 import jQuery.*;
 import jQuery.JHelper.J;
@@ -30,6 +31,8 @@ class App
 	public static var storeFormats:Dynamic;
 	public static var limit:Int;
 	
+	public  var hasTabs:Bool;
+	public  var rootViewId:String;
 	public var altPressed:Bool;
 	public var ctrlPressed:Bool;
 	public var shiftPressed:Bool;
@@ -53,7 +56,10 @@ class App
 	{
 		ist = new App();
 		storeFormats = config.storeFormats;
+		company = config.company;
 		limit = config.limit;
+		ist.hasTabs = config.hasTabs;
+		ist.rootViewId = config.rootViewId;
 		var fields:Array<String> = Type.getClassFields(App);
 		for (f in fields)
 		{
@@ -102,7 +108,11 @@ class App
 				case 18:
 					altPressed = false;
 			 }
-		});		
+		});	
+		Timer.delay(function() {
+			views.get(rootViewId).runLoaders();
+		},500);
+		
 	}
 	
 	public static function getViews(): StringMap<View>

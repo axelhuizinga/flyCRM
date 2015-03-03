@@ -90,6 +90,8 @@ var uiData = {
 	company:'X-Press Marketing GmbH',
 	storeFormats:storeFormats,
 	limit:15,
+	hasTabs:true,
+	rootViewId:'mtabs',
 	views:
 	[
 		{
@@ -108,7 +110,7 @@ var uiData = {
 				append2header:'datetime',
 				tabs:
 				[{				
-					link:'clients',
+					id:'clients',
 					label:'Mitglieder',
 					views:
 					[{	
@@ -161,7 +163,7 @@ var uiData = {
 					]									
 				},
 				{
-					link:'campaigns',
+					id:'campaigns',
 					label:'Kampagnen',
 					views:[{
 						Campaigns:
@@ -244,12 +246,12 @@ var uiData = {
 					}]									
 				},	
 				{
-					link:'stats',
+					id:'stats',
 					label:'Statistik',
 					views:[]									
 				},
 				{
-					link:'settings',
+					id:'settings',
 					label:'Einstellungen',
 					views:[]									
 				}],

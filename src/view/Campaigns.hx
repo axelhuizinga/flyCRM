@@ -33,8 +33,14 @@ typedef CampaignsData =
 		listattach2 = campaignData.listattach2;
 		if (!(data.limit > 0))
 			data.limit = 15;
-
-
+		trace('#t-' + id + ' attach2:' + data.attach2);
+		J('#t-' + id).tmpl(data).appendTo(data.attach2);
+		if(data.views != null)
+			addViews(data.views);
+		/*addInteractionState('init', { disables:['edit', 'delete'], enables:['add'] } );
+		addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
+		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit'] } );
+		addInteractionState('unselected', { disables:['edit', 'delete'], enables:['add'] } );*/
 	}
 	
 /*	public function load():Void

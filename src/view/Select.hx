@@ -16,7 +16,20 @@ class Select extends Input
 	public function new(data:Dynamic) 
 	{
 		super(data);
-		//trace(data);
+		trace(data);
+		if (data.db)
+		{
+			parentView.addDataLoader(id, {
+				callBack:update,
+				prepare:function() {
+					resetParams();
+					if(vData.order != null)
+						params.order = vData.order;	
+					return params;
+				},
+				valid:false
+			},parentView.dbLoaderIndex);
+		}
 	}
 	
 	override private function resetParams(?where:Dynamic):Dynamic

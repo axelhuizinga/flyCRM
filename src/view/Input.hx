@@ -26,7 +26,7 @@ class Input
 		vData = data;
 		parentView = data.parentView;
 		name = Type.getClassName(Type.getClass(this)).split('.').pop();
-		id = parentView.id + '_' + data.name ;
+		id = parentView.instancePath + '_' + data.name ;
 		loading = 0;	
 	}	
 	

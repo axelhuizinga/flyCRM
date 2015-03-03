@@ -37,7 +37,7 @@
 		<!-- MAIN TABS -->
 		
 		<script type="text/x-jquery-tmpl" id="t-mtabs">						
-			<li><a href="${link}" rel="pushstate">${label}</a></li>								
+			<li><a href="${id}" rel="pushstate">${label}</a></li>								
 		</script>
 		
 		<!-- DATETIME -->

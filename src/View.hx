@@ -46,7 +46,7 @@ typedef DataLoader =
 {
 	var callBack:Dynamic->Void;
 	var prepare:Void->Dynamic;
-	var loaded:Bool;
+	var valid:Bool;
 }
 
 class View
@@ -60,18 +60,18 @@ class View
 	var template:JQuery;
 	
 	var views:StringMap<View>;
-	var parentView:View;
-	var dbLoaderIndex:Int;
+	var parentView:View;	
 	var parentTab:Int;
-	var params:Dynamic;
-	
+	var params:Dynamic;	
 	var loading:Int;
 	var listening:ObjectMap<JQuery,String>;
 	var suspended:StringMap<JQuery>;
 	var interactionStates:StringMap<InteractionState>;
 	var dbLoader:Array<StringMap<DataLoader>>;// DATALOADER MAP
 	
+	public var dbLoaderIndex:Int;
 	public var id:String;	
+	public var instancePath:String;	
 	public var interactionState(default, set):String;
 	public var inputs:StringMap<Input>;
 	
@@ -84,8 +84,16 @@ class View
 		vData = data;
 		var data:ViewData = cast data;
 		id = data.id;
-		parentTab = data.parentTab;
+		//parentTab = data.parentTab;
 		parentView = data.parentView;
+		if (parentView == null)
+		{
+			instancePath = App.appName + '.' + id;
+		}
+		else
+		{
+			instancePath = parentView.instancePath + '.' + id;
+		}
 		dbLoader = new Array();
 		dbLoaderIndex = (data.dbLoaderIndex == null ? 0:data.dbLoaderIndex);
 		if (Std.instance(this, TabBox) == null)
@@ -239,7 +247,7 @@ class View
 		
 	}
 	
-	function addDataLoader(loaderId:String, dL:DataLoader, loaderIndex:Int=0)
+	public function addDataLoader(loaderId:String, dL:DataLoader, loaderIndex:Int=0)
 	{
 		dbLoader[loaderIndex].set(loaderId, dL);
 		trace(id + ':' + loaderIndex + ':' + loaderId);
@@ -262,13 +270,14 @@ class View
 	{
 		//INITIAL LOAD DB DATA
 		var loader:DataLoader = dbLoader[loaderIndex].get(loaderId);
-		
-		loadData('server.php', loader.prepare(), 
-			function(data:Dynamic)
-			{ 
-				data.loaderId = loaderId; 
-				loader.callBack(data); 
-			});		
+		if(!loader.valid)
+			loadData('server.php', loader.prepare(), 
+				function(data:Dynamic)
+				{ 
+					data.loaderId = loaderId; 
+					loader.callBack(data); 
+					loader.valid = true;
+				});		
 	}
 	
 	public function loadData(url:String, p:Dynamic, callBack:Dynamic->Void):Void
@@ -325,7 +334,8 @@ class View
 		fields = aData.fields.any2bool()?aData.fields.split(','):null;
 		params = {
 			action:'find',
-			className:name
+			className:name,
+			instancePath:instancePath
 		};
 
 		for (f in pkeys)
@@ -359,6 +369,13 @@ class View
 		J('#' + id + '-list th').each(function(i, el) { J(el).click(function(_) { order(J(el)); } ); } );	
 		J('#' + id + '-list tr').first().siblings().click(select).find('td').off('click');
 		J('td').attr('tabindex', -1);
+	}
+	
+
+	public function runLoaders():Void
+	{
+		trace(dbLoaderIndex);
+		loadAllData(dbLoaderIndex);
 	}
 	
 	public function select(evt:Event):Void

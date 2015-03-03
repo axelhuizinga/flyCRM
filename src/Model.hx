@@ -14,6 +14,13 @@ using Util;
  * ...
  * @author axel@cunity.me
  */
+
+typedef MConfig = 
+{
+	var table:String;
+	
+}
+ 
 typedef MData = 
 {
 	var rows:NativeArray;
@@ -346,6 +353,18 @@ class Model
 	public function json_encode():EitherType<String,Bool>
 	{
 		return untyped __call__("json_encode", data);
+	}
+	
+	function getConfig(param:StringMap<Dynamic>):MConfig
+	{
+		if (S.conf.exists('hasTabs') && S.conf.get('hasTabs'))
+		{
+			trace(param.get('instancePath'));
+			var tabBox:Dynamic = S.conf.get('views')[0].TabBox;
+			var iPath:String = S.conf.get('appName') + '.' + tabBox.id;
+			var tabs:Array<Dynamic> = tabBox.tabs;
+		}
+		return null;
 	}
 	
 }

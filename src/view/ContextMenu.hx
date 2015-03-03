@@ -74,7 +74,7 @@ typedef ContextMenuData =
 		var i:Int = 0;
 		for (aI in cData.items)
 		{
-			//trace(aI.Select);
+			trace(aI.Select);
 			if (aI.Select != null)
 			{
 				var aiS:Array<Dynamic> = aI.Select;

@@ -45,6 +45,7 @@ class S
 			Lib.println(params);
 		}
 		trace(params);		
+		trace(conf);		
 		//trace(untyped  __call__("print_r", __var__('_SERVER'), 1 ));		
 		//var p:Int = null;
 		//trace(p.any2bool() ?'Y':'N');

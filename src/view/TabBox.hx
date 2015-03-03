@@ -25,7 +25,7 @@ typedef Tabs = Dynamic;
 
 typedef TabData = 
 {>ViewData,
-	var link:String;
+	var id:String;
 	var label:String;
 	//@:optional var action:String;
 	
@@ -70,10 +70,10 @@ typedef TabBoxData =
 			active = 0;
 			for (tab in tabBoxData.tabs)
 			{
-				if (tab.link == tabBoxData.action)
+				if (tab.id == tabBoxData.action)
 					active = tabLinks.length;
 				tabLabel.push(tab.label);
-				tabLinks.push(tab.link);
+				tabLinks.push(tab.id);
 				dbLoader.push(new StringMap<DataLoader>());
 			}
 			
@@ -86,9 +86,11 @@ typedef TabBoxData =
 				active:active,
 				activate: function( event:Event, ui ) 
 				{
-					trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active);
+					trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active + ':' + active);
+					dbLoaderIndex = active = tabsInstance.options.active;
 					PushState.replace(Std.string(ui.newTab.context).split(Browser.window.location.hostname).pop());
-					trace(tabObj.tabs);
+					//trace(tabObj.tabs);
+					runLoaders();
 				},				
 				create: function( event:Event, ui ) 
 				{
@@ -110,7 +112,8 @@ typedef TabBoxData =
 							for (v in t.views)
 							{
 								//trace(v);
-								v.parentTab = v.dbLoaderIndex = tabIndex;
+								//v.parentTab = v.dbLoaderIndex = tabIndex;
+								v.dbLoaderIndex = tabIndex;
 								v.attach2 =  tabsInstance.panels[tabIndex];
 								//trace('adding:' + untyped v.Clients.id + ' to:' + id);
 								addView(v);
@@ -130,16 +133,17 @@ typedef TabBoxData =
 			//trace(tabObj);
 			trace(tabsInstance.option('active'));
 			trace(dbLoader.length + ':'  + active );
-			loadAllData(active);
+			//loadAllData(active);
 		}
 		
 	}
 	
-	
-	public function drawPanels():Void
+	/*
+	override public function runLoaders():Void
 	{
-		
-	}
+		trace(active);
+		loadAllData(active);
+	}*/
 	
 	//public function load(res:Dynamic, data:String, xhr:JqXHR):Void
 	
