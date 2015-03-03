@@ -72,6 +72,7 @@ class Model
 	public function doSelect(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		var fields:String = q.get('fields');		
+		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
 		sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
 		//TODO: JOINS
@@ -128,6 +129,7 @@ class Model
 	{	
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
+		trace(param);
 		data =  {
 			rows: doSelect(param, sb, phValues)
 		}
@@ -295,54 +297,6 @@ class Model
 		sb.add(' LIMIT ' + Std.parseInt(limitParam));
 		return true;
 	}
-	
-	/*public function whereParam2sql(whereParam:String, phValues:StringMap<Dynamic>):String
-	{
-		var where:Array<Dynamic> = whereParam.split(',');
-		trace(where);
-		if (where.length == 0)
-			return '';
-		var phString:String = '';
-		for (w in where)
-		{
-
-			var wData:Array<Dynamic> = w.split('|');
-			trace(wData);
-			if (phString == '')
-				phString += 'WHERE `' + 	wData[0] + '` ';	
-			else
-				phString += 'AND `' + 	wData[0] + '` ';
-			switch(wData[2])
-			{
-				case 'exact':
-					phString += '= ? ';
-					phValues.set(wData[0], wData[1]);
-				case 'any':
-					phString += 'LIKE ? ';
-					phValues.set(wData[0], '%' + wData[1] + '%');							
-				case 'end':
-					phString += 'LIKE ? ';
-					phValues.set(wData[0], '%' + wData[1]);		
-				case 'start':
-					phString += 'LIKE ? ';
-					phValues.set(wData[0],  wData[1] + '%');							
-			}
-			
-		}
-		return phString;
-	}
-	
-	public function whereString(matchType:String):String 
-	{
-		var wS:String = '';
-		return switch(matchType)
-		{
-			case 'exact':
-				'=';
-			default:
-				'oops';
-		}
-	}*/
 	
 	function quoteField(f : String) {
 		return KEYWORDS.exists(f.toLowerCase()) ? "`"+f+"`" : f;

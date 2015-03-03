@@ -74,7 +74,8 @@ typedef ContextMenuData =
 		var i:Int = 0;
 		for (aI in cData.items)
 		{
-			trace(aI.Select);
+			//trace(aI.Select);
+			//TODO: USE REFLECTION TO ITERATE ALL FIELDS AND CREATE MATCHING INPUT CLASS
 			if (aI.Select != null)
 			{
 				var aiS:Array<Dynamic> = aI.Select;

@@ -15,6 +15,7 @@ import php.NativeArray;
 import php.Web;
 import php.Services_JSON;
 
+using Lambda;
 using Util;
 /**
  * ...
@@ -32,8 +33,10 @@ class S
 	{		
 		haxe.Log.trace = Debug._trace;	
 		conf =  Config.load('appData.js');
+		trace('FILE_APPEND:' + untyped __php__('FILE_APPEND'));
 		
-		//var fieldNames:Dynamic = Lib.objectOfAssociativeArray(conf.get('fieldNames'));
+		//trace(conf.get('uiData')); 
+
 		var pd:Dynamic = Web.getPostData();
 		
 		var params:StringMap<String> = Web.getParams();
@@ -45,11 +48,8 @@ class S
 			Lib.println(params);
 		}
 		trace(params);		
-		trace(conf);		
-		//trace(untyped  __call__("print_r", __var__('_SERVER'), 1 ));		
-		//var p:Int = null;
-		//trace(p.any2bool() ?'Y':'N');
-		//trace(params.get('where'));
+		//trace(conf);		
+
 		var action:String = params.get('action');
 		if (action.length == 0 || params.get('className') == null)
 		{
@@ -94,8 +94,11 @@ class S
 		Lib.println(Json.stringify(d));
 	}
 	
+	
 	static function __init__() {
 		untyped __call__('require_once', '/srv/www/htdocs/flyCRM/php/functions.php');
+		Debug.logFile = untyped __var__("appLog");
+		//trace('...' + untyped __php__("$appLog"));
 	}
 
 }

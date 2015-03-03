@@ -9,6 +9,7 @@ class S {
 	static function main() {
 		haxe_Log::$trace = (isset(me_cunity_php_Debug::$_trace) ? me_cunity_php_Debug::$_trace: array("me_cunity_php_Debug", "_trace"));
 		S::$conf = Config::load("appData.js");
+		haxe_Log::trace("FILE_APPEND:" . _hx_string_or_null(FILE_APPEND), _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 36, "className" => "S", "methodName" => "main")));
 		$pd = php_Web::getPostData();
 		$params = php_Web::getParams();
 		if($params->get("debug") === "1") {
@@ -17,8 +18,7 @@ class S {
 			php_Lib::println("<div><pre>");
 			php_Lib::println($params);
 		}
-		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 47, "className" => "S", "methodName" => "main")));
-		haxe_Log::trace(S::$conf, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 48, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 50, "className" => "S", "methodName" => "main")));
 		$action = $params->get("action");
 		if(strlen($action) === 0 || $params->get("className") === null) {
 			S::dump(_hx_anonymous(array("error" => "required params missing")));
@@ -51,4 +51,7 @@ class S {
 	}
 	function __toString() { return 'S'; }
 }
-require_once("/srv/www/htdocs/flyCRM/php/functions.php");
+{
+	require_once("/srv/www/htdocs/flyCRM/php/functions.php");
+	me_cunity_php_Debug::$logFile = $appLog;
+}

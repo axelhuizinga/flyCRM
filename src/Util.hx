@@ -13,7 +13,7 @@ class Util
 		//trace(untyped __js__("v?true:false"));
 		return (untyped __js__("v?true:false"));
 		#elseif php
-		return untyped __physeq__(true,v);
+		return untyped __php__("true ==$v");
 		#end
 	}
 	

@@ -1,4 +1,7 @@
 <?php
+	 
+	$appLog = "/var/log/flyCRM.log";
+	error_log("syncLog:$appLog");
 	
 	function array2json($arr)
 	{
@@ -33,15 +36,17 @@
 	function edump($m, $stackPos=0)
 	{
 		#return;
-		global $syncLog;
+		#global $appLog;
+		global $appLog;
+		error_log("syncLog:$appLog");
 		if(!is_string($m))
 			$m = print_r($m,1);
 		$m = preg_replace("/\r\n|\n/", '', $m);
 		$dump = debug_backtrace();
 		$file = basename($dump[$stackPos]['file']);
 		$dumpBuf = "$file::{$dump[$stackPos]['line']}: $m";
-		if(isset($_SERVER['argc']))
-			file_put_contents($syncLog,"$dumpBuf\n",FILE_APPEND);
+		if($appLog)
+			file_put_contents($appLog,"$dumpBuf\n",FILE_APPEND);
 			#echo "$dumpBuf\n";
 		else
 			error_log($dumpBuf);

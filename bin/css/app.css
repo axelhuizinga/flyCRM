@@ -199,6 +199,13 @@ tr.selected
 	margin: 8px auto;
 }
 
+.menuTable2
+{
+	display: inline-block;
+	margin: 8px auto;
+	text-align: center;
+}
+
 #clients-menu li
 {
 	height: 2em;

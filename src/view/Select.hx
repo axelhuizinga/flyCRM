@@ -16,7 +16,7 @@ class Select extends Input
 	public function new(data:Dynamic) 
 	{
 		super(data);
-		trace(data);
+		//trace(data);
 		if (data.db)
 		{
 			parentView.addDataLoader(id, {
@@ -51,21 +51,23 @@ class Select extends Input
 				var checks:Array<{name:String, checked:Bool}> = vData.check;
 				for (c in checks)
 				{
-					if(c.checked && whereCheck.has(c.name))
-					whereParam.push(c.name);
+					if( whereCheck.has(c.name))
+						whereParam.push(c.name + "|" + (c.checked? "Y":"N" ));
+						//whereParam.push(c.name + "|" + (c.checked?"'\"Y\"'":"'N'" ));
 				}
 				if (whereParam.length > 0)
 				params.where = whereParam.join(',');
 			}			
 		}
-			
+		//trace(params);	
 		return params;
 	}
 	
 	override public function update(data:Dynamic)
 	{
-		trace(data);
-		J('#t-options').tmpl(data).appendTo(J('#'+id));
+		//trace(data);
+		trace('#t-'+vData.name + ' appending2:' +  id);
+		J('#t-'+vData.name).tmpl(data).appendTo(J('#'+id));
 	}
 	
 }

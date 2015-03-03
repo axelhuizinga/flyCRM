@@ -18,22 +18,28 @@ class Input
 	public var id:String;
 	public var loading:Int;
 	public var parentView:View;
+	public var hasData:Bool;
 	
 	public function new(data:Dynamic) 
 	{
 		if (!(data.limit > 0))
 			data.limit = 15;
 		vData = data;
+		hasData = data.db;
 		parentView = data.parentView;
 		name = Type.getClassName(Type.getClass(this)).split('.').pop();
-		id = parentView.instancePath + '_' + data.name ;
+		id = parentView.id + '_' + data.name ;
 		loading = 0;	
 	}	
 	
 	public function init()
 	{
-		//loadData( resetParams(), function(data:Dynamic) { //data.parentSelector = listattach2; 
-		//update(data); });		
+		if (hasData)
+		{
+			loadData( resetParams(), function(data:Dynamic) { 
+				//data.parentSelector = listattach2; 
+			update(data); } );		
+		}
 	}
 	
 	function loadData(data:Dynamic, callBack:Dynamic->Void)
@@ -49,12 +55,12 @@ class Input
 			}
 		}
 		trace(id);
-		trace(data);
-		return;
+		//trace(data);
+		//return;
 		loading++;
 		JQueryStatic.post('server.php', data , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
 		{
-			trace(data);
+			//trace(data);
 			callBack(data);
 			loading--;
 		});	

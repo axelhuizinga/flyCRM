@@ -1,6 +1,5 @@
 <?php
-	//echo(getcwd());
-	require("php/config/config.inc.php");
+
 	require("php/functions.php");
 	//edump($_SERVER);
 	$basePath = preg_replace("/index.php$/", "", $_SERVER['PHP_SELF']);
@@ -10,7 +9,7 @@
 	if ($actionPath)
 	{
 		$actionParam = preg_split("/\//", $actionPath);
-		edump($actionParam);
+		#edump($actionParam);
 		$action = array_pop($actionParam);
 		#exit(printf("<div><pre>%s</pre></div>",print_r($actionParam,1)));
 	}
@@ -166,6 +165,9 @@
 		</script>
 		
 		<!-- CAMPAIGNS MENU -->
+		<!-- CAMPAIGNS MENU {{each(oi,ov) sv.options}}
+							<option value="${ov.value}">${ov.label}</option>
+							{{/each}}size="${sv.options.length>0&&sv.options.length<15 ? sv.options.length :2}"-->
 		
 		<script type="text/x-jquery-tmpl" id="t-campaigns-menu">		
 			<div id="campaigns-menu" class="menu-right">
@@ -175,12 +177,11 @@
 					<form >
 						<input type="hidden" name="action" value="${action||''}">
 						{{each(si,sv) v.Select}}
-						<select class="menuTable" name="${sv.name}" ${sv.multi ? 'multiple':''} id="campaigns-menu_${sv.name}"
-							size="${sv.options.length>0&&sv.options.length<15 ? sv.options.length :1}">
-							{{each(oi,ov) sv.options}}
-							<option value="${ov.value}">${ov.label}</option>
-							{{/each}}
-						</select>
+						<div class="menuTable" >
+							<select name="${sv.name}" ${sv.multi ? 'multiple="multiple"':''} id="campaigns-menu_${sv.name}" >							
+							</select>						
+						</div>	
+
 						<div class="menuTable" >
 							{{each(ci,cv) sv.check}}
 							<span class="label">${cv.label?cv.label:appLabel[cv.name]}</span>
@@ -198,8 +199,10 @@
 		</script>
 		
 		<!-- SELECT  OPTIONS TEMPLATE ${trace($item)}-->
-		<script type="text/x-jquery-tmpl" id="t-options">			
-			<option value="${$item.value}">${$item.label}</option>
+		<script type="text/x-jquery-tmpl" id="t-vicidial_campaigns">
+			{{each(i,v) $data.rows}}
+			<option value="${v.campaign_id}">${v.campaign_name}</option>
+			{{/each}}
 		</script>
 		
 		<script src="js/jquery-2.1.3.js"></script>

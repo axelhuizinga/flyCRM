@@ -51,6 +51,7 @@ var matchKeywords =
 
 var dbFieldTypes =
 {
+	active:'s',
 	first_name:'s',
 	last_name:'s',
 	list_id:'s',
@@ -182,7 +183,7 @@ var uiData = {
 									heightStyle: 'content',
 									items:[
 										{
-											action:'selectCampaign',
+											action:'find',
 											label:'Kampagnen Auswahl',											
 											Select:[
 											{

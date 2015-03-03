@@ -2,7 +2,8 @@
 
 class me_cunity_php_Debug {
 	public function __construct(){}
-	static function edump($message, $stackPos = null) {
+	static $logFile;
+	static function dump($message, $stackPos = null) {
 		if($stackPos === null) {
 			$stackPos = 0;
 		}
@@ -15,7 +16,7 @@ class me_cunity_php_Debug {
 		} else {
 			$info = "";
 		}
-		error_log(_hx_string_or_null($info) . ":" . Std::string($v));
+		file_put_contents(me_cunity_php_Debug::$logFile, _hx_string_or_null($info) . ":" . Std::string($v) . "\x0A", FILE_APPEND);
 	}
 	function __toString() { return 'me.cunity.php.Debug'; }
 }
