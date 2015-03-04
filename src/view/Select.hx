@@ -40,7 +40,7 @@ class Select extends Input
 			dataType:'json',
 			fields:[vData.value, vData.label].join(','),
 			limit:vData.limit,
-			table:vData.name
+			table:vData.table
 		};
 		if (vData.where != null)
 		{
@@ -53,7 +53,6 @@ class Select extends Input
 				{
 					if( whereCheck.has(c.name))
 						whereParam.push(c.name + "|" + (c.checked? "Y":"N" ));
-						//whereParam.push(c.name + "|" + (c.checked?"'\"Y\"'":"'N'" ));
 				}
 				if (whereParam.length > 0)
 				params.where = whereParam.join(',');

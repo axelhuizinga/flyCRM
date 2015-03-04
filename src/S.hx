@@ -6,6 +6,7 @@ import haxe.Json;
 import me.cunity.php.db.MySQLi;
 import me.cunity.php.db.MySQLi_Result;
 import me.cunity.php.db.MySQLi_STMT;
+import model.Campaigns;
 import model.Clients;
 import model.Select;
 import php.DBConfig;

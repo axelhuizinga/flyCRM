@@ -1,4 +1,5 @@
 package jQuery;
+import haxe.ds.StringMap;
 
 /**
  * ...
@@ -61,12 +62,29 @@ class FormData
 	/*
 	 * Build WHERE data string based on match type options 4 LIKE: exact|start|end|any
 	 * and BETWEEN
+	 * Change array values to IN(...)
 	 */
 	
 	public static function where(jForm:JQuery, fields:Array<String>):String
 	{
 		var ret:Array<String> = new Array();
 		var fD:Array<FData> = cast jForm.serializeArray();
+		var aFields:StringMap<Array<String>> = new StringMap();
+		fD.iter(function(aFD:FData) {
+			 aFields.set(aFD.name, (aFields.exists(aFD.name) ? aFields.get(aFD.name).concat(aFD.value): [aFD.value]));
+		});
+		var it:Iterator<String> = aFields.keys();
+		var ret:Array<String> = new Array();
+		while (it.hasNext())
+		{
+			var k:String = it.next();
+			if (aFields.get(k).length > 1)
+			{
+				//FOUND ARRAY FIELD - REPLACE AT ORIGINAL
+				fD = fD.filter(function(aFD:FData):Bool return aFD.name != k );
+				ret.push( k + '|IN|' + aFields.get(k).join('|'));
+			}
+		}		
 		//trace(fD);
 		for (item in fD)
 		{

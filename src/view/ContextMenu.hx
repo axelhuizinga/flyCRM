@@ -78,8 +78,8 @@ typedef ContextMenuData =
 			//TODO: USE REFLECTION TO ITERATE ALL FIELDS AND CREATE MATCHING INPUT CLASS
 			if (aI.Select != null)
 			{
-				var aiS:Array<Dynamic> = aI.Select;
-				aiS.iter(function(sel:Dynamic) sel.action = aI.action);
+				/*var aiS:Array<Dynamic> = aI.Select;
+				aiS.iter(function(sel:Dynamic) sel.action = aI.action);*/
 				//trace(aI.Select);
 				addInputs(aI.Select, 'Select');
 			}
@@ -98,9 +98,10 @@ typedef ContextMenuData =
 		//evt.stopImmediatePropagation();
 		var form:JQuery = J(cast( evt.target, Element)).parent();
 		var options = cast root.accordion( "option");
-		trace(options.active); 
+		trace(Std.string(options.active) + ':' + vData.items[options.active].action); 
 		var fields:Array<String> = vData.items[options.active].fields;
-		trace(fields);
+		action = J(cast( evt.target, Element)).data('action');
+		trace(action + ':' + fields);
 		if (fields != null && fields.length > 0)/*FIND FORM*/
 		{
 			var where:String = FormData.where(form, fields);
@@ -111,6 +112,7 @@ typedef ContextMenuData =
 		{
 			action = J(cast( evt.target, Element)).data('action');
 			trace(action);
+			//var contextView:View = parentInstanceAtLevel(vData.items[options.active].contextLevel);
 		}
 
 	}

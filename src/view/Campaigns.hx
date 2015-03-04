@@ -11,6 +11,8 @@ import js.html.Element;
 import View;
 import view.Select;
 
+using Util;
+
 typedef CampaignsData =
 {>ViewData,	
 	@:optional var limit:Int;
@@ -41,6 +43,30 @@ typedef CampaignsData =
 		addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
 		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit'] } );
 		addInteractionState('unselected', { disables:['edit', 'delete'], enables:['add'] } );*/
+	}
+	
+	public function findLeads(where:String):Void
+	{
+		trace('|'+where+'|' + (where.any2bool() ? 'Y':'N'));
+		trace(vData.where);
+		var fData:Dynamic = { };
+		var pkeys:Array<String> = 'className,fields,limit,order,where'.split(',');
+		for (f in pkeys)
+		{
+			if (Reflect.field(vData, f) != null)		
+			{
+				if (f == 'where' && (where.any2bool() || 	vData.where.any2bool()))			
+				{
+					fData.where = (vData.where.any2bool() ? vData.where + (where.any2bool() ? ',' + where  : '') : where);
+				}
+				else
+					Reflect.setField(fData, f, Reflect.field(vData, f));
+			}
+		}
+		fData.action = 'findLeads';
+		//trace(vData);
+		resetParams(fData);
+		loadData('server.php', params, update);
 	}
 	
 /*	public function load():Void

@@ -29,6 +29,7 @@ class model_Select extends model_Input {
 				unset($w);
 			}
 		}
+		haxe_Log::trace($where, _hx_anonymous(array("fileName" => "Select.hx", "lineNumber" => 62, "className" => "model.Select", "methodName" => "prepare")));
 		return $where;
 	}
 	static function create($param) {

@@ -32,7 +32,7 @@ class App
 	public static var limit:Int;
 	
 	public  var hasTabs:Bool;
-	public  var rootViewId:String;
+	public  var rootViewPath:String;
 	public var altPressed:Bool;
 	public var ctrlPressed:Bool;
 	public var shiftPressed:Bool;
@@ -55,11 +55,12 @@ class App
 	public static function init(config:Dynamic):App
 	{
 		ist = new App();
+		appName = config.appName;
 		storeFormats = config.storeFormats;
 		company = config.company;
 		limit = config.limit;
 		ist.hasTabs = config.hasTabs;
-		ist.rootViewId = config.rootViewId;
+		ist.rootViewPath = appName + '.' + config.rootViewPath;
 		var fields:Array<String> = Type.getClassFields(App);
 		for (f in fields)
 		{
@@ -86,8 +87,10 @@ class App
 			{
 				//trace(cl);
 				var av:View = Type.createInstance(cl, [iParam]);
-				views.set(iParam.id, av);				
-				trace("views.set(" +iParam.id +")");
+				views.set(av.instancePath, av);				
+				trace("views.set(" +av.instancePath +")");				
+				//views.set(iParam.id, av);				
+				//trace("views.set(" +iParam.id +")");
 			}
 		}
 		J(Browser.window).keydown(function(evt) {
@@ -110,7 +113,8 @@ class App
 			 }
 		});	
 		Timer.delay(function() {
-			views.get(rootViewId).runLoaders();
+			//views.get(rootViewPath).runLoaders();
+			views.get(rootViewPath).runLoaders();
 		},500);
 		
 	}

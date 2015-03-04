@@ -73,7 +73,8 @@ class Model
 	{
 		var fields:String = q.get('fields');		
 		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
-		sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
+		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
+		sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
 		//TODO: JOINS
 		sb.add(' FROM ' + quoteField(qTable));		
@@ -132,7 +133,7 @@ class Model
 		trace(param);
 		data =  {
 			rows: doSelect(param, sb, phValues)
-		}
+		};
 		return json_encode();
 	}
 	
@@ -156,7 +157,8 @@ class Model
 		var i:Int = 0;
 		for (ph in phValues)
 		{
-			bindTypes += dbFieldTypes.get(ph[0]);
+			var type:String = dbFieldTypes.get(ph[0]);
+			bindTypes += (type.any2bool()  ?  type : 's');
 			values2bind[i++] = ph[1];
 		}
 
@@ -248,7 +250,10 @@ class Model
 				case 'IN':					
 					sb.add(quoteField(wData[0]));					
 					sb.add(' IN(');
-					sb.add( values.map(function(s:String) return '?').join(','));							
+					sb.add( values.map(function(s:String) { 
+						phValues.push([wData[0], values.shift()]);
+						return '?'; 
+						} ).join(','));							
 					sb.add(')');
 				case 'LIKE':					
 					sb.add(quoteField(wData[0]));

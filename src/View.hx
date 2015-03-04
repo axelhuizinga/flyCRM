@@ -79,7 +79,8 @@ class View
 		
 	public function new(?data:Dynamic ) 
 	{
-		views = new StringMap();		
+		//views = new StringMap();		
+		views = App.getViews();
 		inputs = new StringMap();
 		vData = data;
 		var data:ViewData = cast data;
@@ -195,8 +196,10 @@ class View
 			iParam.parentView = this;
 			//trace(Std.string(iParam));
 			av = Type.createInstance(cl, [iParam]);
-			views.set(iParam.id, av);				
-			trace("views.set(" +iParam.id +")");
+			views.set(av.instancePath, av);				
+			trace("views.set(" +av.instancePath +")");
+			//views.set(iParam.id, av);				
+			//trace("views.set(" +iParam.id +")");
 		}		
 		return av;
 	}
@@ -382,5 +385,13 @@ class View
 	{
 		trace('has to be implemented in subclass!');
 	}
+	
+	/*public function parentInstanceAtLevel(level:Int):View
+	{
+		var l:Int = instancePath.split('.').length;
+		if level > l return null ;
+		 if level == l return this;
+		return instancePath.split('.').splice(l - level, l - level);
+	}*/
 		
 }

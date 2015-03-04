@@ -92,7 +92,7 @@ var uiData = {
 	storeFormats:storeFormats,
 	limit:15,
 	hasTabs:true,
-	rootViewId:'mtabs',
+	rootViewPath:'mtabs',
 	views:
 	[
 		{
@@ -135,12 +135,11 @@ var uiData = {
 											action:'find',
 											label:'Finden',
 											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
-											//fields:'first_name,last_name,phone_number,address1,city,last_local_call_time',
 											ranges:['last_local_call_time'],
 											table:'vicidial_list',
 											buttons:
 											{
-												find:'Finden'
+												find:'Anzeigen'
 											}
 										},
 										{
@@ -183,11 +182,15 @@ var uiData = {
 									heightStyle: 'content',
 									items:[
 										{
-											action:'find',
+											action:'findLeads',
+											contextLevel:1,
+											fields:['campaign_id'],
 											label:'Kampagnen Auswahl',											
 											Select:[
 											{
-												name:'vicidial_campaigns',
+												action:'find',
+												name:'campaign_id',
+												table:'vicidial_campaigns',
 												default:'all',
 												dependsOn:[],
 												db:1,
@@ -206,7 +209,7 @@ var uiData = {
 											}],
 											buttons:
 											{
-												listLeads:'Anzeigen'
+												findLeads:'Anzeigen'
 											}
 										},
 										{

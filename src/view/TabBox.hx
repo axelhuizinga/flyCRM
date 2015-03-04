@@ -103,7 +103,7 @@ typedef TabBoxData =
 						var views:StringMap<View> = App.getViews();
 						//trace(views.toString());
 						//trace(views.get(tabBoxData.append2header));
-						views.get(tabBoxData.append2header).template.appendTo(J('#' + id + ' ul'));
+						views.get(App.appName + '.' + tabBoxData.append2header).template.appendTo(J('#' + id + ' ul'));
 					}
 						var tabIndex:Int = 0;
 						for (t in tabBoxData.tabs)

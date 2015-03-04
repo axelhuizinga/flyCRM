@@ -199,7 +199,7 @@
 		</script>
 		
 		<!-- SELECT  OPTIONS TEMPLATE ${trace($item)}-->
-		<script type="text/x-jquery-tmpl" id="t-vicidial_campaigns">
+		<script type="text/x-jquery-tmpl" id="t-campaign_id">
 			{{each(i,v) $data.rows}}
 			<option value="${v.campaign_id}">${v.campaign_name}</option>
 			{{/each}}

@@ -59,6 +59,7 @@ class Select extends Input
 			else
 				where = " AND " + w;
 		}
+		trace(where);
 		return where;
 	}
 	
