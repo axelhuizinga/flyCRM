@@ -90,26 +90,26 @@
 				<h3>${v.label}</h3>
 				<div>
 					<form >
-						<input type="hidden" name="action" value="${action}">						
-							{{each(fi,fv) v.fields}}					
+						<input type="hidden" name="action" value="${action}">
+						{{html v.fields ? '<ul >':''}}
+							{{each(fi,fv) v.fields}}
+							<li >
+								<span class="pad" >${fieldNames[fv]}</span>
+								{{tmpl(fv) "#t-find-match"}}
+								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="menu-input-right">
+							</li>
 							{{if rangeFields[fv]}}
-							<div class="lh32">
-								<div class="lpad" >${rangeLabels.from}</div>
-								<input type="text" size="11" name="range_from_${fv}" class="datepicker"  >							
-							</div>
-							<div class="lh32">
-								<div class="lpad" >${rangeLabels.to}</div>
-								<input type="text" size="11" name="range_to_${fv}" class="datepicker" >							
-							</div>							
-							{{else}}
-							<div class="lh32">
-								<div class="lpad" >${fieldNames[fv]}</div>
-								<div class="rpad" >{{tmpl(fv) "#t-find-match"}}</div>
-								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="menu-input-right">							
-							</div>							
+							<li>
+								<span class="pad" >${rangeLabels.from}</span>
+								<input type="text" size="11" name="range_from_${fv}" class="datepicker"  >
+							</li>
+							<li>
+								<span class="pad" >${rangeLabels.to}</span>
+								<input type="text" size="11" name="range_to_${fv}" class="datepicker" >								
+							</li>
 							{{/if}}							
 							{{/each}}
-							<div class="clear">.</div>			
+						{{html v.fields ? '</ul>':''}}						
 						{{each(bi,bv) v.buttons}}
 						<button data-action="${bi}">${bv}</button>
 						{{/each}}
@@ -165,25 +165,25 @@
 				<div>
 					<form >
 						<input type="hidden" name="action" value="${action}">
-						{{each(fi,fv) v.fields}}					
+						{{html v.fields ? '<ul >':''}}
+							{{each(fi,fv) v.fields}}
+							<li >
+								<span class="pad" >${fieldNames[fv]}</span>
+								{{tmpl(fv) "#t-find-match"}}
+								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="menu-input-right">
+							</li>
 							{{if rangeFields[fv]}}
-							<div class="lh32">
-								<div class="lpad" >${rangeLabels.from}</div>
-								<input type="text" size="11" name="range_from_${fv}" class="datepicker"  >							
-							</div>
-							<div class="lh32">
-								<div class="lpad" >${rangeLabels.to}</div>
-								<input type="text" size="11" name="range_to_${fv}" class="datepicker" >							
-							</div>							
-							{{else}}
-							<div class="lh32">
-								<div class="lpad" >${fieldNames[fv]}</div>
-								<div class="rpad" >{{tmpl(fv) "#t-find-match"}}</div>
-								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="menu-input-right">							
-							</div>							
+							<li>
+								<span class="pad" >${rangeLabels.from}</span>
+								<input type="text" size="11" name="range_from_${fv}" class="datepicker"  >
+							</li>
+							<li>
+								<span class="pad" >${rangeLabels.to}</span>
+								<input type="text" size="11" name="range_to_${fv}" class="datepicker" >								
+							</li>
 							{{/if}}							
 							{{/each}}
-							<div class="clear">.</div>						
+						{{html v.fields ? '</ul>':''}}						
 						{{each(bi,bv) v.buttons}}
 						<button data-action="${bi}">${bv}</button>
 						{{/each}}

@@ -8,6 +8,7 @@ import me.cunity.php.db.MySQLi_Result;
 import me.cunity.php.db.MySQLi_STMT;
 import model.Campaigns;
 import model.Clients;
+import model.QC;
 import model.Select;
 import php.DBConfig;
 import php.Lib;

@@ -26,11 +26,21 @@ li span.pad
 :focus{outline:0;}
 .app{display:none;}
 
+div.lpad
+{
+	float: left;
+	clear: left;
+}
+.lh32
+{
+	height: 1.9em;
+	position: relative;
+}
 .app-right{
 	float:right;
 }
 
-.clear{clear: both;}
+.clear{clear: both;visibility: hidden;}
 .menu-end-right{
 	float:right;
 	clear:right;

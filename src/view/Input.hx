@@ -50,6 +50,11 @@ class Input
 			if (! dependsOn.foreach(function(s:String) return parentView.inputs.exists(s) && parentView.inputs.get(s).loading == 0))
 			{
 				trace(id + ' still waiting on:' + dependsOn.toString());
+				var iK:Iterator<String> = parentView.inputs.keys();
+				var ki:String = '';
+				while (iK.hasNext())
+					ki += iK.next() + ',';
+				//trace('inputs:' + ki);
 				Timer.delay(function() loadData(data, callBack), 1000);
 				return;
 			}

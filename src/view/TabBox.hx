@@ -112,10 +112,9 @@ typedef TabBoxData =
 							for (v in t.views)
 							{
 								//trace(v);
-								//v.parentTab = v.dbLoaderIndex = tabIndex;
 								v.dbLoaderIndex = tabIndex;
 								v.attach2 =  tabsInstance.panels[tabIndex];
-								//trace('adding:' + untyped v.Clients.id + ' to:' + id);
+								trace('adding:' +t.id + ' to:' + id + ' @:'  + tabIndex );
 								addView(v);
 							}
 							tabIndex++;
@@ -133,17 +132,9 @@ typedef TabBoxData =
 			//trace(tabObj);
 			trace(tabsInstance.option('active'));
 			trace(dbLoader.length + ':'  + active );
-			//loadAllData(active);
 		}
 		
 	}
-	
-	/*
-	override public function runLoaders():Void
-	{
-		trace(active);
-		loadAllData(active);
-	}*/
 	
 	//public function load(res:Dynamic, data:String, xhr:JqXHR):Void
 	

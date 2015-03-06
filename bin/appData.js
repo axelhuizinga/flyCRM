@@ -7,6 +7,7 @@ var fieldNames =
 	postal_code:'PLZ',
 	city:'Ort',
 	last_local_call_time:'Anrufzeit',
+	lead_id:'LeadID',
 	vendor_lead_code:'Mitgliedsnr.',
 	vicidial_campaigns:'Kampagnen',
 	vicidial_lists:'Listen',
@@ -111,10 +112,61 @@ var uiData = {
 				append2header:'datetime',
 				tabs:
 				[{				
+					id:'qc',
+					label:'QualityControl',
+					views:
+					[{	
+						QC:{
+							action:'find',
+							//fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+							fields:'lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
+							id:'qc',
+							limit:15,
+							order:'last_local_call_time|DESC',
+							where:'list_id|1900',
+							table:'vicidial_list',
+							listattach2:'#qc-list-anchor',
+							views:[
+							{
+								ContextMenu:{
+									id:'qc-menu',
+									heightStyle: 'auto',
+									items:[
+										{
+											action:'find',
+											label:'Finden',
+											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+											ranges:['last_local_call_time'],
+											table:'vicidial_list',
+											buttons:
+											{
+												find:'Anzeigen'
+											}
+										},
+										{
+											action:'edit',
+											label:'Bearbeiten',
+											buttons:
+											{
+												edit:'Bearbeiten',
+												save:'Speichern',
+												add:'Hinzufügen',
+												delete:'Löschen'
+											}
+										}										
+									],
+									attach2:'#qc'
+								}
+							}
+							]
+						}
+					}]									
+				},
+				{				
 					id:'clients',
 					label:'Mitglieder',
 					views:
-					[{	
+					[{							
 						Clients:{
 							action:'find',
 							//fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
@@ -129,7 +181,7 @@ var uiData = {
 							{
 								ContextMenu:{
 									id:'clients-menu',
-									heightStyle: 'auto',
+									heightStyle: 'fill',
 									items:[
 										{
 											action:'find',
@@ -156,11 +208,9 @@ var uiData = {
 									],
 									attach2:'#clients'
 								}
-							}
-							]
+							}]
 						}
-					}
-					]									
+					}]									
 				},
 				{
 					id:'campaigns',
@@ -168,7 +218,7 @@ var uiData = {
 					views:[{
 						Campaigns:
 						{
-							fields:'vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
+							fields:'lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
 							id:'campaigns',
 							limit:15,
 							order:'vendor_lead_code|ASC',

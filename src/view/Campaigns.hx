@@ -66,7 +66,13 @@ typedef CampaignsData =
 		fData.action = 'findLeads';
 		//trace(vData);
 		resetParams(fData);
-		loadData('server.php', params, update);
+		//loadData('server.php', params, update);
+		loadData('server.php', params, 		function(data:Dynamic)
+				{ 
+					data.loaderId = vData.listattach2; 
+					update(data); 
+					//loader.valid = true;
+				});
 	}
 	
 /*	public function load():Void

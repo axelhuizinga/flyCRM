@@ -14,6 +14,7 @@ import view.Campaigns;
 import view.Clients;
 import view.ContextMenu;
 import view.DateTime;
+import view.QC;
 import view.TabBox;
 
 /**

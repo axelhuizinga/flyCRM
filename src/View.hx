@@ -79,8 +79,8 @@ class View
 		
 	public function new(?data:Dynamic ) 
 	{
-		//views = new StringMap();		
-		views = App.getViews();
+		views = new StringMap();		
+		//views = App.getViews();
 		inputs = new StringMap();
 		vData = data;
 		var data:ViewData = cast data;
@@ -145,6 +145,7 @@ class View
 		for (aI in v)
 		{
 			aI.parentView = this;
+			aI.id = id + '_' + aI.name;
 			addInput(aI, className);
 		}
 	}
@@ -154,7 +155,7 @@ class View
 		var aI:Input = null;
 		
 		var iParam:Dynamic = v;
-		//trace(className + ':' + iParam);
+		trace(className + ':' + iParam.id);
 		var cl:Class<Dynamic> = Type.resolveClass('view.' + className);
 		if (cl != null)
 		{
@@ -193,6 +194,8 @@ class View
 			//trace(cl);
 			if (Reflect.hasField(v, 'attach2'))
 				iParam.attach2 = v.attach2;
+			if (Reflect.hasField(v, 'dbLoaderIndex'))
+				iParam.dbLoaderIndex = v.dbLoaderIndex;				
 			iParam.parentView = this;
 			//trace(Std.string(iParam));
 			av = Type.createInstance(cl, [iParam]);
@@ -278,6 +281,7 @@ class View
 				function(data:Dynamic)
 				{ 
 					data.loaderId = loaderId; 
+					trace(id + ':' + data.fields + ':' + data.loaderId);
 					loader.callBack(data); 
 					loader.valid = true;
 				});		
@@ -362,8 +366,7 @@ class View
 	{
 		// UPDATE MAIN DATA TABLE
 		data.fields = fields;
-		trace(data.fields + ':' + Type.typeof(data.fields));
-
+		trace(id + ':' + data.fields + ':' + data.loaderId);
 		if ( J('#' + id + '-list').length > 0)
 			J('#' + id + '-list').replaceWith(J('#t-' + id + '-list').tmpl(data));
 		else
