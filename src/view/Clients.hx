@@ -60,8 +60,6 @@ typedef ClientsData =
 		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit'] } );
 		addInteractionState('unselected', { disables:['edit', 'delete'], enables:['add'] } );
 	}
-	
-
 
 	override public function select(evt:Event):Void
 	{

@@ -48,7 +48,7 @@
 		<!-- QC TAB -->
 	
 		<script type="text/x-jquery-tmpl"  id="t-qc">
-			<div id="qc">
+			<div id="qc"  class="tabContent" >
 				<form  id="qc-list-anchor" action="qc" class="main-left">
 				</form>
 			</div>
@@ -122,7 +122,7 @@
 		<!-- MEMBERS TAB -->
 	
 		<script type="text/x-jquery-tmpl"  id="t-clients">
-			<div id="clients">
+			<div id="clients" class="tabContent" >
 				<form  id="clients-list-anchor" action="clients" class="main-left">
 				</form>
 			</div>
@@ -204,7 +204,7 @@
 		<!-- CAMPAIGNS TAB -->
 	
 		<script type="text/x-jquery-tmpl"  id="t-campaigns">
-			<div id="campaigns">
+			<div id="campaigns"  class="tabContent" >
 				<form  id="campaigns-list-anchor" action="campaigns" class="main-left">
 				</form>
 			</div>
@@ -278,15 +278,16 @@
 			<option value="${v.campaign_id}">${v.campaign_name}</option>
 			{{/each}}
 		</script>
-		
+		<script src="js/stacktrace.js"></script>		
+		<script src="js/debugJq.js"></script>		
 		<script src="js/jquery-2.1.3.js"></script>
-		<script src="js/jquery-ui.min.js"></script>
+		<script src="js/jquery-ui.js"></script>
 		<script src="js/datepicker-de.js"></script>
 		<!--<script src="js/jquery.jeditable.js"></script>
 		<script src="js/jquery.jeditable.datepicker.js"></script>-->
 		<script src="js/jquery.tmpl.js"></script>
-		<script src="js/debugJq.js"></script>
-		<script src="js/stacktrace.js"></script>
+	
+
 		<script src="js/sprintf.min.js"></script>
 		<script src="flyCRM.js"></script>
 		<script src="appData.js"></script>			

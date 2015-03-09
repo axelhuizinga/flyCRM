@@ -38,10 +38,14 @@ typedef ContextMenuData =
 	{
 		super(data);
 		contextData = cast data;
-		trace(id);
+		trace(id+ ' heightStyle:' + contextData.heightStyle + ' attach2:' + data.attach2);
 		if (contextData.heightStyle == null)
 			contextData.heightStyle = 'auto';
-		J('#t-' + id).tmpl(data).appendTo(J(data.attach2));
+		//Out.dumpObjectTree(data);
+		var tmp = J('#t-' + id).tmpl(data);// .appendTo(J(data.attach2)) ;
+		//trace('OK:' + tmp.html());
+		tmp.appendTo(J(data.attach2)) ;
+		//J('#t-' + id).tmpl(data).appendTo(J(data.attach2)) ;
 		createInputs();
 		root = J('#' + id).accordion( 
 		{ 

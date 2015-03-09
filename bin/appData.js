@@ -181,7 +181,7 @@ var uiData = {
 							{
 								ContextMenu:{
 									id:'clients-menu',
-									heightStyle: 'fill',
+									heightStyle: 'auto',
 									items:[
 										{
 											action:'find',

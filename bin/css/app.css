@@ -221,11 +221,11 @@ tr.selected
 	height: 2em;
 }
 
-#clients-list tr{
+#clients-list tr, .tabContent tr{
 	cursor: pointer;
 }
 
-#clients-list td:focus{
+.tabContent td:focus, #clients-list td:focus{
 	outline: none!important;
 	border: none!important;
 }
@@ -235,7 +235,11 @@ tr.selected
     background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0, #dddddd),color-stop(1, #ffffff)); /* Safari & Chrome */
 }
 
-
+.tabContent
+{
+	height: 100%;
+	overflow: hidden;
+}
 /*	 FIELD CLASSES 
 .first_name, .last_name
 {

@@ -51,7 +51,7 @@ typedef DataLoader =
 
 class View
 {
-	var attach2:EitherType<String, Element>; // parentSelector
+	var attach2:String; // parentSelector
 	var fields:Array<String>;
 	var repaint:Bool;
 	var name:String;
@@ -108,6 +108,7 @@ class View
 		suspended = new StringMap();
 		loading = 0;
 		if (loadingComplete())
+			//Timer.delay(initState, 100);
 			initState();
 		else
 			Timer.delay(initState, 1000);
@@ -228,7 +229,8 @@ class View
 		addListener(J('button[data-action]'));
 		interactionState = 'init';
 		J('td').attr('tabindex', -1);
-		trace('initState complete :)');
+		var el:Element = cast J('#' + id).get()[0];
+		trace(id + ' initState complete - we can show up :)' + ':' + el);
 		//trace(J('#' + id).find('.datepicker').length);
 		J('#' + id).animate( { opacity:1 }, 300, 'linear', 
 			function() { 

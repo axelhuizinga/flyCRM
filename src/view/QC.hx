@@ -30,7 +30,7 @@ using jQuery.FormData;
 		trace('#t-' + id + ' attach2:' + data.attach2 + ':' + dbLoaderIndex);
 		
 		//trace(J('#t-' + id));
-		//trace(J('#t-' + id).tmpl(data));
+		//trace(J('#t-' + id).tmpl(data));	
 		J('#t-' + id).tmpl(data).appendTo(data.attach2);	
 		if (data.table != null)
 		{
