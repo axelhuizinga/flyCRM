@@ -94,11 +94,12 @@ var uiData = {
 	limit:15,
 	hasTabs:true,
 	rootViewPath:'mtabs',
-	waitTime:15000,
+	waitTime:8000,
 	uiMessage:
 	{
 		wait:'Bitte warten!',
-		retry:'Unbekannter Fehler - Bitte wiederholen oder mit F5 neu laden'
+		retry:'Unbekannter Fehler - Bitte wiederholen oder mit F5 neu laden',
+		timeout:'Zeitüberschreitung - Bitte wiederholen oder mit F5 neu laden'
 	},
 	views:
 	[

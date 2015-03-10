@@ -69,7 +69,7 @@
 				{{each(i,v) $data.rows}}
 					<tr id="${v[$data.primary_id]}" class="${((i+1) % 2 ? 'odd' : 'even')}">
 					{{each(ri,rv) v}}
-						{{if ri!=$data.primary}}
+						{{if ri!=$data.primary_id}}
 							{{if displayFormats[ri]}}
 						<td data-name="${ri}" >${sprintf(displayFormats[ri],rv)}</td>	
 							{{else}}

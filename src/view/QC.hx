@@ -19,6 +19,7 @@ using jQuery.FormData;
 {
 	
 	var listattach2:String;
+	var edit:Editor;
 	
 	public function new(?data:CampaignsData) 
 	{
@@ -50,6 +51,8 @@ using jQuery.FormData;
 		}
 		if(data.views != null)
 			addViews(data.views);
+		trace('looking for editor:' + instancePath + '.' +  id + '-editor');
+		edit = cast views.get(instancePath + '.' + id + '-editor');
 		addInteractionState('init', { disables:['edit', 'delete'], enables:['add'] } );
 		addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
 		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit'] } );
@@ -75,6 +78,7 @@ using jQuery.FormData;
 			jTarget.siblings().removeClass('selected');	
 			jTarget.addClass('selected');
 			wait();
+			edit.edit(jTarget.attr('id'), name);
 		}
 		
 		if (jTarget.hasClass('selected'))

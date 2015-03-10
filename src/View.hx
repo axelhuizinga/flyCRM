@@ -71,6 +71,7 @@ class View
 	var suspended:StringMap<JQuery>;
 	var interactionStates:StringMap<InteractionState>;
 	var dbLoader:Array<StringMap<DataLoader>>;// DATALOADER MAP
+	var templ:JQuery;
 	
 	public var dbLoaderIndex:Int;
 	public var id:String;	
@@ -379,8 +380,9 @@ class View
 			J('#t-' + id + '-list').tmpl(data).appendTo(J(data.loaderId).first());	
 			
 		J('#' + id + '-list th').each(function(i, el) { J(el).click(function(_) { order(J(el)); } ); } );	
+		//remove click handler from all main data list rows td cells after select - why???
 		J('#' + id + '-list tr').first().siblings().click(select).find('td').off('click');
-		J('td').attr('tabindex', -1);
+		//J('td').attr('tabindex', -1);
 	}
 	
 
@@ -416,14 +418,14 @@ class View
 		J('#t-wait' ).tmpl( { wait: message} ).appendTo('#' +id).css({width:J(Browser.window).width(), height:J(Browser.window).height()}).animate({opacity:0.8});
 
 		spinner = untyped  Browser.window.spin('wait');
-		if (message != App.uiMessage.retry)
-		{			
-			trace('set timeout:' + timeout + ':' + message);
-			waiting = Timer.delay(function() { wait(true, App.uiMessage.retry, 5000);} , timeout);
+		if (message == App.uiMessage.retry || message == App.uiMessage.timeout) 
+		{		
+			waiting = Timer.delay(function() { wait(false);} , timeout);
 		}
 		else
 		{
-			waiting = Timer.delay(function() { wait(false);} , timeout);
+			trace('set timeout:' + timeout + ':' + message);
+			waiting = Timer.delay(function() { wait(true, App.uiMessage.timeout, 3500); } , timeout);	
 		}
 	}
 }
