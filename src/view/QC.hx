@@ -35,11 +35,14 @@ using jQuery.FormData;
 		if (data.table != null)
 		{
 			parentView.addDataLoader(listattach2, {
-				callBack:update,
+				callBack:function(data:Dynamic) {
+					data.primary_id = primary_id;
+					update(data);
+				},
 				prepare:function() {
 					resetParams();
 					if(vData.order != null)
-						params.order = vData.order;	
+						params.order = vData.order;							
 					return params;
 				},
 				valid:false
@@ -63,11 +66,15 @@ using jQuery.FormData;
 			trace('ctrlPressed');
 		var jTarget = J(cast evt.target).parent();
 		if (jTarget.hasClass('selected'))
+		{
+			wait(false);
 			jTarget.removeClass('selected');
+		}
 		else
 		{
 			jTarget.siblings().removeClass('selected');	
 			jTarget.addClass('selected');
+			wait();
 		}
 		
 		if (jTarget.hasClass('selected'))

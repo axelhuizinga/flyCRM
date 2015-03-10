@@ -240,6 +240,26 @@ tr.selected
 	height: 100%;
 	overflow: hidden;
 }
+
+.overlay
+{
+	background-color: #eee;
+	opacity: 0.0;
+	display: table;
+	position: absolute;
+	top:0px;
+	left:0px;
+	z-index: 800;
+	margin: 0px;
+}
+
+.overlay .content
+{
+    display: table-cell;
+    vertical-align: middle;
+	text-align: center;
+	padding-bottom: 100px;
+}
 /*	 FIELD CLASSES 
 .first_name, .last_name
 {

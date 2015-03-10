@@ -37,6 +37,7 @@ typedef   ViewData =
 	var dbLoaderIndex:Int;
 	@:optional var fields:Array<String>;
 	@:optional var parent: String;
+	@:optional var primary_id: String;
 	@:optional var parentTab: Int;
 	@:optional var parentView: View;
 	@:optional var views:Array<ViewData>;
@@ -53,12 +54,14 @@ class View
 {
 	var attach2:String; // parentSelector
 	var fields:Array<String>;
+	var primary_id:String;
 	var repaint:Bool;
 	var name:String;
 	var root:JQuery;
 	var vData:Dynamic;
 	var template:JQuery;
-	
+	var spinner:Dynamic;
+	var waiting:Timer;
 	var views:StringMap<View>;
 	var parentView:View;	
 	var parentTab:Int;
@@ -87,6 +90,7 @@ class View
 		id = data.id;
 		//parentTab = data.parentTab;
 		parentView = data.parentView;
+		primary_id = data.primary_id;
 		if (parentView == null)
 		{
 			instancePath = App.appName + '.' + id;
@@ -391,12 +395,35 @@ class View
 		trace('has to be implemented in subclass!');
 	}
 	
-	/*public function parentInstanceAtLevel(level:Int):View
+	public function wait(start:Bool = true, ?message:String , ?timeout:Int=15000)
 	{
-		var l:Int = instancePath.split('.').length;
-		if level > l return null ;
-		 if level == l return this;
-		return instancePath.split('.').splice(l - level, l - level);
-	}*/
-		
+		if (!start || waiting != null)
+		{
+			waiting.stop();
+			trace(J('#wait' ).length); 			
+			J('#wait').animate( { opacity:0.0 }, 300, null, function() { J('#wait').detach();  trace(J('#wait' ).length); } );
+			spinner.stop();
+		}
+		if (!start)
+		{
+			return;
+		}
+		if (message == null)
+			message = App.uiMessage.wait;
+		if (timeout == null)
+			timeout = App.waitTime;
+			
+		J('#t-wait' ).tmpl( { wait: message} ).appendTo('#' +id).css({width:J(Browser.window).width(), height:J(Browser.window).height()}).animate({opacity:0.8});
+
+		spinner = untyped  Browser.window.spin('wait');
+		if (message != App.uiMessage.retry)
+		{			
+			trace('set timeout:' + timeout + ':' + message);
+			waiting = Timer.delay(function() { wait(true, App.uiMessage.retry, 5000);} , timeout);
+		}
+		else
+		{
+			waiting = Timer.delay(function() { wait(false);} , timeout);
+		}
+	}
 }

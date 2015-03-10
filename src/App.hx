@@ -9,6 +9,7 @@ import js.Browser;
 import jQuery.*;
 import jQuery.JHelper.J;
 import js.Lib;
+//import js.Spinner;
 import me.cunity.debug.Out;
 import view.Campaigns;
 import view.Clients;
@@ -30,6 +31,8 @@ class App
 	public static var appName:String;
 	public static var company:String;
 	public static var storeFormats:Dynamic;
+	public static var uiMessage:Dynamic;
+	public static var waitTime:Int;
 	public static var limit:Int;
 	
 	public  var hasTabs:Bool;
@@ -58,6 +61,8 @@ class App
 		ist = new App();
 		appName = config.appName;
 		storeFormats = config.storeFormats;
+		uiMessage = config.uiMessage;
+		waitTime = config.waitTime;
 		company = config.company;
 		limit = config.limit;
 		ist.hasTabs = config.hasTabs;

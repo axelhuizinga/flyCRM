@@ -94,6 +94,12 @@ var uiData = {
 	limit:15,
 	hasTabs:true,
 	rootViewPath:'mtabs',
+	waitTime:15000,
+	uiMessage:
+	{
+		wait:'Bitte warten!',
+		retry:'Unbekannter Fehler - Bitte wiederholen oder mit F5 neu laden'
+	},
 	views:
 	[
 		{
@@ -118,8 +124,8 @@ var uiData = {
 					[{	
 						QC:{
 							action:'find',
-							//fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
 							fields:'lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
+							primary_id:'lead_id',
 							id:'qc',
 							limit:15,
 							order:'last_local_call_time|DESC',
@@ -148,14 +154,22 @@ var uiData = {
 											label:'Bearbeiten',
 											buttons:
 											{
-												edit:'Bearbeiten',
+												close:'Abbrechen',
 												save:'Speichern',
-												add:'Hinzufügen',
-												delete:'Löschen'
+												add:'Hinzufügen'
 											}
 										}										
 									],
 									attach2:'#qc'
+								}
+							},
+							{
+								Editor:{
+									id:'qc-editor',
+									attach2:'#qc',
+									trigger:'qc-menu|edit',									
+									join_table:'custom_*list_id',
+									fields:'vendor_lead_code|r,first_name,last_name,phone_number,address1,city,last_local_call_time|r',
 								}
 							}
 							]

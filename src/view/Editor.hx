@@ -12,4 +12,9 @@ class Editor extends View
 		super(data);
 	}
 	
+	public function load(id:Dynamic)
+	{
+		
+	}
+	
 }

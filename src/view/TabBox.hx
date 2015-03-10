@@ -115,7 +115,7 @@ typedef TabBoxData =
 								v.dbLoaderIndex = tabIndex;
 								v.attach2 =  tabsInstance.panels[tabIndex];
 								var jP:JQuery = J(tabsInstance.panels[tabIndex]);
-								Out.dumpObjectTree(tabsInstance.panels[tabIndex]);
+								//Out.dumpObjectTree(tabsInstance.panels[tabIndex]);
 								if (tabIndex != active)
 									jP.css('visibility','hidden').show();
 								trace('adding:' +t.id + ' to:' + id + ' @:'  + tabIndex );

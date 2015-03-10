@@ -54,33 +54,44 @@
 			</div>
 		</script>
 		
-		<!--  QC LIST -->
+		<!--  QC LIST ${($data.oddi=0,'')}-->
 		
 		<script type="text/x-jquery-tmpl"  id="t-qc-list">
 		
 			<table id="qc-list">
-				${($data.oddi=0,'')}
 				<tr class="headrow" >
 				{{each(i,v) $data.fields}}
-					
+					{{if v!=$data.primary_id}}
 					<th data-order="${v}" >${fieldNames[v]}</th>
-					
+					{{/if}}
 				{{/each}}
 				</tr>
 				{{each(i,v) $data.rows}}
-					<tr id="${v.vendor_lead_code}" class="${((i+1) % 2 ? 'odd' : 'even')}">
+					<tr id="${v[$data.primary_id]}" class="${((i+1) % 2 ? 'odd' : 'even')}">
 					{{each(ri,rv) v}}
-						
+						{{if ri!=$data.primary}}
 							{{if displayFormats[ri]}}
 						<td data-name="${ri}" >${sprintf(displayFormats[ri],rv)}</td>	
 							{{else}}
 						<td data-name="${ri}" >${rv}</td>	
 							{{/if}}
+						{{/if}}
 					{{/each}}
 					</tr>
 				{{/each}}
 			</table>		
 		</script>
+		
+		<!-- QC EDITOR -->
+		
+		<script type="text/x-jquery-tmpl"  id="t-qc-editor">
+				<form  id="qc-edit-form" action="qc" class="main-left">
+				<table id="qc-edit-data">
+				{{each(i,v) $data.items}}
+				{{/each}}
+				</form>
+		</script>
+		
 		
 		<!-- QC MENU -->
 		
@@ -239,7 +250,7 @@
 		</script>
 		
 		<!-- CAMPAIGNS MENU -->
-		<!-- CAMPAIGNS MENU {{each(oi,ov) sv.options}}
+		<!--  {{each(oi,ov) sv.options}}
 							<option value="${ov.value}">${ov.label}</option>
 							{{/each}}size="${sv.options.length>0&&sv.options.length<15 ? sv.options.length :2}"-->
 		
@@ -278,16 +289,25 @@
 			<option value="${v.campaign_id}">${v.campaign_name}</option>
 			{{/each}}
 		</script>
+		
+		<!-- SELECT  WAIT SCREEN TEMPLATE -->
+		<script type="text/x-jquery-tmpl" id="t-wait">		
+			<div id="wait" class="overlay">
+			${trace($data)}
+				<div id="wait-content" class="content">
+					<h3>${$data.wait}</h3>
+					
+				</div>
+			</div>
+		</script>
+		
 		<script src="js/stacktrace.js"></script>		
 		<script src="js/debugJq.js"></script>		
 		<script src="js/jquery-2.1.3.js"></script>
 		<script src="js/jquery-ui.js"></script>
 		<script src="js/datepicker-de.js"></script>
-		<!--<script src="js/jquery.jeditable.js"></script>
-		<script src="js/jquery.jeditable.datepicker.js"></script>-->
 		<script src="js/jquery.tmpl.js"></script>
-	
-
+		<script src="js/spin.min.js"></script>
 		<script src="js/sprintf.min.js"></script>
 		<script src="flyCRM.js"></script>
 		<script src="appData.js"></script>			
@@ -308,7 +328,14 @@
 			return '';
 		}
 		
-		
+		function spin(id) {
+			trace(id);
+			return new Spinner(
+			{
+				direction:-1,
+				zIndex:0
+			}).spin(document.getElementById(id));
+		}
 		
 		</script>
 	</body>
