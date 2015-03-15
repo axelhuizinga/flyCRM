@@ -61,22 +61,17 @@
 			<table id="qc-list">
 				<tr class="headrow" >
 				{{each(i,v) $data.fields}}
-					{{if v!=$data.primary_id && $data.hidden !=v}}
-					 <th data-order="${v}">${fieldNames[v]}</th>
+					{{if v!=$data.primary_id}}
+					<th data-order="${v}" >${fieldNames[v]}</th>
 					{{/if}}
 				{{/each}}
 				</tr>
 				{{each(i,v) $data.rows}}
-					${trace($data.hidden +'==' + $data.fields.indexOf($data.hidden))}
-					{{if $data.hidden  && $data.fields.indexOf($data.hidden) >-1}}
-					<tr id="${v[$data.primary_id]}" class="${((i+1) % 2 ? 'odd' : 'even')}" data-${$data.hidden}="${v[$data.hidden]}" >
-					{{else}}
 					<tr id="${v[$data.primary_id]}" class="${((i+1) % 2 ? 'odd' : 'even')}">
-					{{/if}}
 					{{each(ri,rv) v}}
-						{{if ri!=$data.primary_id && $data.hidden!=ri}}
-							{{if displayFormats[ri] }}
-						<td data-name="${ri}" >${sprintf(displayFormats[ri],rv)}</td>												
+						{{if ri!=$data.primary_id}}
+							{{if displayFormats[ri]}}
+						<td data-name="${ri}" >${sprintf(displayFormats[ri],rv)}</td>	
 							{{else}}
 						<td data-name="${ri}" >${rv}</td>	
 							{{/if}}
@@ -90,36 +85,11 @@
 		<!-- QC EDITOR -->
 		
 		<script type="text/x-jquery-tmpl"  id="t-qc-editor">
-		<div id="overlay" class="overlay-left">
-			<form  id="qc-edit-form" action="qc" class="main-left">
-			{{each(i,v) $data.rows}}
-				<table id="qc-edit-data-${i}">
-				{{each(k,val) v}}
-				<tr>
-					<td>{{html $data.fieldNames[k]}}:</td>
-					<td>
-					{{if $data.typeMap[k] == 'TEXT' || $data.typeMap[k] == 'READONLY' }}
-					<input name="${k}" value="${val}" {{if $data.typeMap[k] == 'READONLY'}}readonly="readonly"{{/if}}>
-					{{else $data.typeMap[k] == 'AREA'}}
-					<textarea name="${k}">${val}</textarea>
-					{{else $data.typeMap[k] == 'SELECT'}}
-					<select name="${k}" >
-					{{each(oi, ov) $data.optionsMap[k]}}
-						<option value="${ov[0]}" {{if ov[0]==val}}selected="selected"{{/if}}>${ov[1]}</option>
-					{{/each}}
-					</select>
-					{{else $data.typeMap[k] == 'RADIO'}}
-					{{each(oi, ov) $data.optionsMap[k]}}
-						<input type="radio" name="${k}[]"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
-					{{/each}}
-					{{/if}}
-					</td>
-				</tr>
+				<form  id="qc-edit-form" action="qc" class="main-left">
+				<table id="qc-edit-data">
+				{{each(i,v) $data.items}}
 				{{/each}}
-				</table>
-			</form>
-			{{/each}}
-		</div>
+				</form>
 		</script>
 		
 		
@@ -152,23 +122,13 @@
 							{{/each}}
 							<div class="clear">.</div>			
 						{{each(bi,bv) v.buttons}}
-						<button data-endaction="${bi}">${bv}</button>
+						<button data-action="${bi}">${bv}</button>
 						{{/each}}
-						<br>
 					</form>
 				</div>
 			{{/each}}	
 			</div>	
-		</script>
-				
-		<!-- QC MENU RECORDINGS ${trace($data)} ${trace(v)}-->
-		<script type="text/x-jquery-tmpl"  id="t-qc-recordings">
-			<div class="recordings"  >			
-			{{each(i,v) $data.recordings}}			
-				<a href="/RECORDINGS/MP3/${v.filename}">${v.start_time + ' ' + sprintf("%03d Sek.", v.length_in_sec||0)} </a><br>
-			{{/each}}
-			</div>
-		</script>
+		</script>		
 		
 		<!-- MEMBERS TAB -->
 	
@@ -236,7 +196,7 @@
 							{{/each}}
 							<div class="clear">.</div>						
 						{{each(bi,bv) v.buttons}}
-						<button data-endaction="${bi}">${bv}</button>
+						<button data-action="${bi}">${bv}</button>
 						{{/each}}
 					</form>
 				</div>
@@ -315,7 +275,7 @@
 						</div>	
 						{{/each}}						
 						{{each(bi,bv) v.buttons}}
-						<button data-endaction="${bi}">${bv}</button>
+						<button data-action="${bi}">${bv}</button>
 						{{/each}}
 					</form>
 				</div>

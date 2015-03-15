@@ -2,6 +2,7 @@ package view;
 import jQuery.JHelper.J;
 import jQuery.*;
 import js.html.Element;
+import js.html.Node;
 import js.JqueryUI;
 
 import me.cunity.debug.Out;
@@ -10,7 +11,7 @@ import View;
 using js.JqueryUI;
 using Lambda;
 
-typedef Accordion = Dynamic;
+//typedef Accordion = Dynamic;
 
 typedef MenuItem =
 {
@@ -35,7 +36,7 @@ typedef ContextMenuData =
 	var accordion:Dynamic;
 	var contextData:ContextMenuData;
 	var action:String;
-	//var active(get, set):Int;
+	public var activePanel:JQuery;
 	
 	public function new(?data:Dynamic) 
 	{
@@ -51,10 +52,14 @@ typedef ContextMenuData =
 		//J('#t-' + id).tmpl(data).appendTo(J(data.attach2)) ;
 		createInputs();
 		//root =
-		accordion = cast  J('#' + id).accordion( 
+		root =  J('#' + id).accordion( 
 		{ 
 			active:0,
-			activate:activate,				
+			activate:activate,	
+			beforeActivate:function(event:Event, ui){if(root.data('disabled'))
+			{
+				event.preventDefault();
+			}},
 			create:create,
 			heightStyle:contextData.heightStyle
 		});
@@ -67,17 +72,18 @@ typedef ContextMenuData =
 					jq.val(jq.attr('placeholder'));
 			}
 		});		
-		J('#' + id + ' button[data-action]').click(run);
+		J('#' + id + ' button[data-endaction]').click(run);
 	}
 	
 	public function get_active():Int
 	{
-		return untyped accordion.option('active');
+		return  root.accordion('option', 'active');
 	}
 	
 	public function set_active(act:Int):Int
 	{
-		untyped accordion.option('active', act);
+		root.accordion('option','active', act);
+		root.data('disabled', 1);
 		return act;
 	}
 	
@@ -85,6 +91,7 @@ typedef ContextMenuData =
 	{
 		//trace(ui);
 		action = J(ui.newPanel[0]).find('input[name="action"]').first().val();
+		activePanel = J(ui.newPanel[0]);
 		trace(action);
 	}
 	
@@ -109,6 +116,8 @@ typedef ContextMenuData =
 	function create( event:Event, ui ) 
 	{ 	
 		action = J(ui.panel[0]).find('input[name="action"]').first().val();
+		if(ui.panel.length>0)
+		activePanel = J(ui.panel[0]);
 		trace(action);
 	}
 	
@@ -127,28 +136,45 @@ typedef ContextMenuData =
 	public function run(evt:Event)
 	{
 		evt.preventDefault();
-		//evt.stopImmediatePropagation();
-		var form:JQuery = J(cast( evt.target, Element)).parent();
-		var options = cast root.accordion( "option");
-		trace(Std.string(options.active) + ':' + vData.items[options.active].action); 
-		var fields:Array<String> = vData.items[options.active].fields;
-		action = J(cast( evt.target, Element)).data('action');
-		trace(action + ':' + fields);
-		if (fields != null && fields.length > 0)/*FIND FORM*/
+		
+		//var options =  cast root.accordion( "option");
+		var active:Int = get_active();
+		var jNode:JQuery = J(cast( evt.target, Node));
+		action = vData.items[active].action;
+		trace( action + ':' + active); 		
+		var endAction = jNode.data('endaction');
+		//action = J( evt.target).data('action');
+		trace(action + ':' + endAction);
+		switch(action)
 		{
-			var where:String = FormData.where(form, fields);
-			trace(where);
-			Reflect.callMethod(parentView, Reflect.field(parentView, action), [where]);			
+			case 'find':
+				var fields:Array<String> = vData.items[active].fields;
+				if (fields != null && fields.length > 0)/*READ FIND FORM*/
+				{
+					//var where:String = FormData.where(J(cast( evt.target, Element)).parent(), fields);
+					var where:String = FormData.where(jNode.parent(), fields);
+					trace(where);
+					Reflect.callMethod(parentView, Reflect.field(parentView, action), [where]);			
+				}	
+			case 'edit':
+				switch(endAction)
+				{
+					case 'close':
+						trace('going to close:' + J('#overlay').length);
+						root.find('.recordings').detach();
+						root.data('disabled', 0);
+						J(attach2).find('tr').removeClass('selected');
+						J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
+					case 'save':
+						var p:Dynamic = FormData.save(J('#' + parentView.id + '-edit-form'));
+						trace(p);
+						//parentView.loadData('server.php', p, update);
+				}
+			default:
+				trace(action + ':' + endAction);
 		}
-		else 
-		{
-			action = J(cast( evt.target, Element)).data('action');
-			trace(action);
-			//var contextView:View = parentInstanceAtLevel(vData.items[options.active].contextLevel);
-		}
-
 	}
-	
+
 	public function showResult(data:Dynamic, _):Void
 	{
 		trace(data);

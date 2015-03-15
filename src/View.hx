@@ -8,6 +8,7 @@ import js.html.Element;
 import jQuery.JHelper.J;
 import jQuery.*;
 import js.html.Node;
+import js.html.Rect;
 import js.html.XMLHttpRequest;
 import view.Input;
 import view.TabBox;
@@ -36,6 +37,7 @@ typedef   ViewData =
 	var id:String;
 	var dbLoaderIndex:Int;
 	@:optional var fields:Array<String>;
+	@:optional var hidden:String;
 	@:optional var parent: String;
 	@:optional var primary_id: String;
 	@:optional var parentTab: Int;
@@ -312,7 +314,7 @@ class View
 		trace('|'+where+'|' + (where.any2bool() ? 'Y':'N'));
 		trace(vData.where);
 		var fData:Dynamic = { };
-		var pkeys:Array<String> = 'action,className,fields,limit,order,table,where'.split(',');
+		var pkeys:Array<String> = 'action,className,fields,primary_id,hidden,limit,order,table,where'.split(',');
 		for (f in pkeys)
 		{
 			if (Reflect.field(vData, f) != null)		
@@ -373,6 +375,7 @@ class View
 	{
 		// UPDATE MAIN DATA TABLE
 		data.fields = fields;
+		data.hidden = vData.hidden;
 		trace(id + ':' + data.fields + ':' + data.loaderId);
 		if ( J('#' + id + '-list').length > 0)
 			J('#' + id + '-list').replaceWith(J('#t-' + id + '-list').tmpl(data));
@@ -428,4 +431,5 @@ class View
 			waiting = Timer.delay(function() { wait(true, App.uiMessage.timeout, 3500); } , timeout);	
 		}
 	}
+	
 }

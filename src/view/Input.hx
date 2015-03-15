@@ -55,7 +55,7 @@ class Input
 				while (iK.hasNext())
 					ki += iK.next() + ',';
 				//trace('inputs:' + ki);
-				Timer.delay(function() loadData(data, callBack), 1000);
+				//Timer.delay(function() loadData(data, callBack), 1000);
 				return;
 			}
 		}

@@ -26,7 +26,7 @@
     <option noInlineOnDebug="False" />
     <option mainClass="App" />
     <option enabledebug="False" />
-    <option additional="-dce std&#xA;--macro jQuery.haxe.Config.addPlugin('jQuery.Template')" />
+    <option additional="-dce std&#xA;--macro jQuery.haxe.Config.addPlugin('jQuery.Accordion')&#xA;--macro jQuery.haxe.Config.addPlugin('jQuery.Template')" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>

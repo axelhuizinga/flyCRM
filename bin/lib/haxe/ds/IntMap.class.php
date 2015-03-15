@@ -3,6 +3,13 @@
 class haxe_ds_IntMap implements haxe_IMap, IteratorAggregate{
 	public function __construct(){}
 	public $h;
+	public function get($key) {
+		if(array_key_exists($key, $this->h)) {
+			return $this->h[$key];
+		} else {
+			return null;
+		}
+	}
 	public function iterator() {
 		return new _hx_array_iterator(array_values($this->h));
 	}

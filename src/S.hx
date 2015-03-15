@@ -14,6 +14,7 @@ import php.DBConfig;
 import php.Lib;
 import me.cunity.php.Debug;
 import php.NativeArray;
+import php.Session;
 import php.Web;
 import php.Services_JSON;
 
@@ -35,7 +36,9 @@ class S
 	{		
 		haxe.Log.trace = Debug._trace;	
 		conf =  Config.load('appData.js');
-		trace('FILE_APPEND:' + untyped __php__('FILE_APPEND'));
+		Session.start();
+		trace(untyped __call__("dumpSession"));
+		//trace('FILE_APPEND:' + untyped __php__('FILE_APPEND'));
 		
 		//trace(conf.get('uiData')); 
 
@@ -59,9 +62,16 @@ class S
 			return;
 		}
 			
-		my = new MySQLi('localhost', DBConfig.user, DBConfig.pass,DBConfig.db);
-
-		trace (action);
+		my = new MySQLi('localhost', DBConfig.user, DBConfig.pass, DBConfig.db);
+		
+		var auth:Bool = checkAuth();
+		
+		trace (action + ':' + auth);
+		if (!auth)
+		{
+			exit('AUTH FAILURE');
+			return;
+		}
 		var result:EitherType<String,Bool> = Model.dispatch(params);
 		
 		trace(result);
@@ -72,6 +82,35 @@ class S
 		}		
 		Lib.println( result);
 
+	}
+	
+	static function checkAuth():Bool
+	{
+		var user:String = Session.get('PHP_AUTH_USER');
+		if (user == null)
+			return false;
+		trace(user);
+		var pass:String = Session.get('PHP_AUTH_PW');
+		if (pass == null)
+			return false;
+		trace(pass);
+		var res:StringMap<String> = Lib.hashOfAssociativeArray(
+			new Model().query("SELECT use_non_latin,webroot_writable,pass_hash_enabled,pass_key,pass_cost,hosted_settings FROM system_settings")
+			);
+		//trace(res + ':' + res.get('pass_hash_enabled'));	
+		if (Lib.hashOfAssociativeArray(cast res.get('0')).get('pass_hash_enabled') == '1')
+		{
+			//TODO: IMPLEMENT ENCRYPTED PASSWORDS;
+			exit('ENCRYPTED PASSWORDS NOT IMPLEMENTED');
+		}
+		
+		//var re
+		res = Lib.hashOfAssociativeArray(
+			new Model().query('SELECT count(*) AS cnt FROM vicidial_users WHERE user="$user" and pass="$pass" and user_level > 7 and active="Y"')
+			);
+		//trace(res);
+		//trace(Lib.hashOfAssociativeArray(cast res.get('0')).get('cnt') );
+		return res.exists('0') &&  Lib.hashOfAssociativeArray(cast res.get('0')).get('cnt') == '1';
 	}
 	
 	public static function exit(d:Dynamic):EitherType<String,Bool>

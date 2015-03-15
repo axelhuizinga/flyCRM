@@ -17,7 +17,11 @@ class Select extends Input
 	{
 		super(data);
 		//trace(data);
-		if (data.db)
+	}
+	
+	function addDataLoader():Void
+	{
+		if (vData.db)
 		{
 			parentView.addDataLoader(id, {
 				callBack:update,
@@ -29,7 +33,7 @@ class Select extends Input
 				},
 				valid:false
 			},parentView.dbLoaderIndex);
-		}
+		}		
 	}
 	
 	override private function resetParams(?where:Dynamic):Dynamic

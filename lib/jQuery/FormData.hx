@@ -52,18 +52,25 @@ class FormData
 	 * Regex replace parameter order switched
 	 */
 	
-	public static function replace(e:String, by:String, source:String):String
+	/*public static function replace(e:String, by:String, source:String):String
 	{		
 		var eR:EReg =  new EReg(e, '');
 		trace(eR + ' replace:' + source + ' by:' + by);
 		return eR.replace(source, by);
-	}
+	}*/
 	
 	/*
 	 * Build WHERE data string based on match type options 4 LIKE: exact|start|end|any
 	 * and BETWEEN
 	 * Change array values to IN(...)
 	 */
+	
+	public static function save(jForm:JQuery):Array<FData>
+	{
+		//PREPARE EDITOR DATA FOR POSTING
+		var ret: Array<FData> = cast jForm.serializeArray();
+		return ret;
+	}
 	
 	public static function where(jForm:JQuery, fields:Array<String>):String
 	{

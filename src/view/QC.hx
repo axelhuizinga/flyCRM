@@ -78,7 +78,7 @@ using jQuery.FormData;
 			jTarget.siblings().removeClass('selected');	
 			jTarget.addClass('selected');
 			wait();
-			edit.edit(jTarget.attr('id'), name);
+			edit.edit(jTarget, name);
 		}
 		
 		if (jTarget.hasClass('selected'))

@@ -241,7 +241,7 @@ tr.selected
 	overflow: hidden;
 }
 
-.overlay
+.overlay, .overlay-left
 {
 	background-color: #eee;
 	opacity: 0.0;
@@ -252,7 +252,23 @@ tr.selected
 	z-index: 800;
 	margin: 0px;
 }
-
+.overlay-left
+{
+	display: block;
+	width:70%;
+	/*overflow-x: hidden;*/
+	overflow-y: scroll;
+	padding: 10px 15px;
+	border-radius: 4.5px;
+}
+.overlay-left table
+{
+	margin: 0px;
+}
+.overlay-left form
+{
+	width:100%;
+}
 .overlay .content
 {
     display: table-cell;
@@ -260,16 +276,17 @@ tr.selected
 	text-align: center;
 	padding-bottom: 100px;
 }
-/*	 FIELD CLASSES 
-.first_name, .last_name
+
+.recordings
 {
-	
+	text-align: center;
 }
-	:'Vorname',
-	:'Name',
-	phone_number:'Telefon',
-	address1:'Straße',
-	postal_code:'PLZ',
-	city:'Ort',
-	last_local_call_time:'Anrufdatum',
-	vendor_lead_code:'Mitgliedsnummer'*/
+
+.recordings a:link{
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.recordings a:hover{
+	color: #600000;
+}

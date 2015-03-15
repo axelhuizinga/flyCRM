@@ -68,7 +68,8 @@ var dbQueryFormats =
 {
 	last_local_call_time:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
 	entry_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
-	modify_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s']
+	modify_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
+	start_time:['DATE_FORMAT','%d.%m.%Y %H:%i:%s']
 }
 
 var displayFormats =
@@ -125,8 +126,9 @@ var uiData = {
 					[{	
 						QC:{
 							action:'find',
-							fields:'lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
+							fields:'lead_id,entry_list_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
 							primary_id:'lead_id',
+							hidden:'entry_list_id',
 							id:'qc',
 							limit:15,
 							order:'last_local_call_time|DESC',
@@ -156,8 +158,8 @@ var uiData = {
 											buttons:
 											{
 												close:'Abbrechen',
-												save:'Speichern',
-												add:'Hinzufügen'
+												call:'Anrufen',
+												save:'Speichern'
 											}
 										}										
 									],
@@ -166,11 +168,13 @@ var uiData = {
 							},
 							{
 								Editor:{
+									action:'edit',
 									id:'qc-editor',
 									attach2:'#qc',
 									trigger:'qc-menu|edit',									
 									join_table:'custom_*list_id',
-									fields:'vendor_lead_code|r,first_name,last_name,phone_number,address1,city,last_local_call_time|r',
+									read_only:'vendor_lead_code,last_local_call_time',
+									TODO:'PHONE-NUMBER READONLY?'
 								}
 							}
 							]

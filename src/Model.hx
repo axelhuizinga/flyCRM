@@ -24,6 +24,10 @@ typedef MConfig =
 typedef MData = 
 {
 	var rows:NativeArray;
+	@:optional var fieldNames:NativeArray;
+	@:optional var optionsMap:NativeArray;
+	@:optional var recordings:NativeArray;
+	@:optional var typeMap:NativeArray;
 };
 
 class Model
@@ -72,12 +76,12 @@ class Model
 	public function doSelect(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		var fields:String = q.get('fields');		
-		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
+		//trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
 		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
 		sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
 		//TODO: JOINS
-		sb.add(' FROM ' + quoteField(qTable));		
+		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
 		var where:String = q.get('where');
 		if (where != null)
 			buildCond(where, sb, phValues);
@@ -98,7 +102,7 @@ class Model
 		var fieldsWithFormat:Array<String> = new Array();
 		var sF:Array<String> = fields.split(',');
 		var dbQueryFormats:StringMap<Array<String>> = Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject((S.conf.get('dbQueryFormats'))));
-		trace(dbQueryFormats);
+		//trace(dbQueryFormats);
 		
 		var d:StringMap<Dynamic> = Lib.hashOfAssociativeArray(S.conf.get('dbQueryFormats'));
 		trace(d);
@@ -116,13 +120,13 @@ class Model
 			if (qKeys.has(f))
 			{
 				var format:Array<String> = dbQueryFormats.get(f);
-				trace(format);
+				//trace(format);
 				fieldsWithFormat.push(format[0] + '(`' + f + '`, "' + format[1] + '") AS `' + f + '`');
 			}
 			else
 				fieldsWithFormat.push( f );				
 		}
-		trace(fieldsWithFormat);
+		//trace(fieldsWithFormat);
 		return fieldsWithFormat.join(',');
 	}
 	
@@ -130,7 +134,7 @@ class Model
 	{	
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
-		trace(param);
+		//trace(param);
 		data =  {
 			rows: doSelect(param, sb, phValues)
 		};
@@ -153,7 +157,7 @@ class Model
 		var dbFieldTypes:StringMap<String> =  Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject(S.conf.get('dbFieldTypes')));
 		
 		var qObj:Dynamic = { };
-		var qVars:String = 'qVar_';
+		//var qVars:String = 'qVar_';
 		var i:Int = 0;
 		for (ph in phValues)
 		{
@@ -204,7 +208,7 @@ class Model
 		return untyped __call__("array", 'ERROR', stmt.error);
 	}
 	
-	public function query(sql:String):NativeArray
+	public  function query(sql:String):NativeArray
 	{
 		trace(sql);
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query(sql, MySQLi.MYSQLI_ASSOC);
@@ -261,6 +265,7 @@ class Model
 					phValues.push([wData[0], wData[2]]);
 				case _://PLAIN VALUE
 					sb.add(quoteField(wData[0]));
+					//if( wData[1] == 'NULL' )
 					if( wData[1] == 'NULL' )
 						sb.add(" IS NULL");
 					else {
@@ -311,7 +316,7 @@ class Model
 	
 	public function json_encode():EitherType<String,Bool>
 	{
-		return untyped __call__("json_encode", data);
+		return untyped __call__("json_encode", data, 64);//JSON_UNESCAPED_SLASHES
 	}
 	
 	function getConfig(param:StringMap<Dynamic>):MConfig

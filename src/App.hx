@@ -23,7 +23,13 @@ import view.TabBox;
  * ...
  * @author axel@cunity.me
  */
-
+typedef Rectangle =
+{
+	@:optional var width:Float;
+	@:optional var height:Float;
+	@:optional var left:Float;
+	@:optional var top:Float;
+}
 
 class App
 {
@@ -124,6 +130,18 @@ class App
 			views.get(rootViewPath).runLoaders();
 		},500);
 		
+	}
+	
+	public static function getMainSpace():Rectangle
+	{
+		var navH:Float = J('.ui-tabs-nav').outerHeight();
+		return 
+		{
+			top:navH + 5,
+			left:0,
+			height:J(Browser.window).height() -  Std.parseFloat(J('#mtabs').css('padding-top')) -  Std.parseFloat(J('#mtabs').css('padding-bottom') ) - navH,
+			width:J(Browser.window).width() * .7
+		};
 	}
 	
 	public static function getViews(): StringMap<View>

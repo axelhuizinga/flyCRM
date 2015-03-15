@@ -5,7 +5,7 @@ package view;
  * @author axel@cunity.me
  */
 
-import jQuery.*;
+//import jQuery.*;
 import jQuery.JHelper.J;
 import js.html.Element;
 import View;
