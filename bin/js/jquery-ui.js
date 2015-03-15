@@ -1764,7 +1764,7 @@ var accordion = $.widget( "ui.accordion", {
 	},
 
 	refresh: function() {
-		debug('ok');
+		//debug('ok');
 		var options = this.options;
 		this._processPanels();
 
@@ -1772,7 +1772,7 @@ var accordion = $.widget( "ui.accordion", {
 		if ( ( options.active === false && options.collapsible === true ) || !this.headers.length ) {
 			options.active = false;
 			this.active = $();
-			debug(this.active);
+			//debug(this.active);
 		// active false only when collapsible is true
 		} else if ( options.active === false ) {
 			this._activate( 0 );
@@ -1876,7 +1876,7 @@ var accordion = $.widget( "ui.accordion", {
 
 		if ( heightStyle === "fill" ) {
 			maxHeight = parent.height();
-			debug(parent.attr('id') + ':' + maxHeight);
+			//debug(parent.attr('id') + ':' + maxHeight);
 			this.element.siblings( ":visible" ).each(function() {
 				var elem = $( this ),
 					position = elem.css( "position" );
@@ -1902,7 +1902,7 @@ var accordion = $.widget( "ui.accordion", {
 			//debug($( this ).attr('id') + ':' + $( this ).height());
 			this.headers.next()
 				.each(function() {
-					debug($( this ).height() + '::' + $( this ).css( "height", "" ).height() +':' + $( this ).get()[0].nodeName);
+					//debug($( this ).height() + '::' + $( this ).css( "height", "" ).height() +':' + $( this ).get()[0].nodeName);
 					maxHeight = Math.max( maxHeight, $( this ).css( "height", "" ).height() );
 				})
 				.height( maxHeight );

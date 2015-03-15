@@ -49,7 +49,45 @@ class model_QC extends model_Clients {
 	}
 	public function save($q) {
 		haxe_Log::trace($q, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 87, "className" => "model.QC", "methodName" => "save")));
+		$lead_id = Std::parseInt($q->get("lead_id"));
+		$res = S::$my->query("INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id) AS ll JOIN (SELECT * FROM `vicidial_list`WHERE `lead_id`=" . _hx_string_rec($lead_id, "") . ")AS vl", null);
+		$log_id = S::$my->insert_id;
+		if($log_id > 0) {
+			$cTable = "custom_" . Std::string($q->get("entry_list_id"));
+			haxe_Log::trace(_hx_string_or_null($cTable) . " log_id:" . _hx_string_rec($log_id, ""), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 97, "className" => "model.QC", "methodName" => "save")));
+			if($this->checkOrCreateCustomTable($cTable, null)) {
+				$cLogTable = _hx_string_or_null($cTable) . "_log";
+				$res = S::$my->query("INSERT INTO " . _hx_string_or_null($cLogTable) . " SELECT * FROM (SELECT " . _hx_string_rec($log_id, "") . " AS log_id) AS ll JOIN (SELECT * FROM `" . _hx_string_or_null($cTable) . "`WHERE `lead_id`=" . _hx_string_rec($lead_id, "") . ")AS cl", null);
+				if(S::$my->error === null) {
+					return true;
+				}
+			} else {
+				haxe_Log::trace("oops", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 111, "className" => "model.QC", "methodName" => "save")));
+			}
+		}
 		return false;
+	}
+	public function checkOrCreateCustomTable($srcTable, $suffix = null) {
+		if($suffix === null) {
+			$suffix = "log";
+		}
+		$newTable = S::$my->real_escape_string(_hx_string_or_null($srcTable) . "_" . _hx_string_or_null($suffix));
+		haxe_Log::trace("SHOW TABLES LIKE  \"" . _hx_string_or_null($newTable) . "\"", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 120, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
+		$res = S::$my->query("SHOW TABLES LIKE  \"" . _hx_string_or_null($newTable) . "\"", null);
+		if(Util::any2bool($res) && $res->num_rows === 0) {
+			haxe_Log::trace("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 124, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
+			$res1 = S::$my->query("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", null);
+			if(S::$my->error === "") {
+				$res1 = S::$my->query("ALTER TABLE " . _hx_string_or_null($newTable) . " DROP PRIMARY KEY, ADD `log_id` INT(9) NOT NULL  FIRST,  ADD  PRIMARY KEY (`log_id`)", null);
+				if(S::$my->error !== "") {
+					S::hexit(S::$my->error);
+				}
+				return true;
+			} else {
+				S::hexit(S::$my->error);
+			}
+		}
+		return true;
 	}
 	static function create($param) {
 		$self = new model_QC();

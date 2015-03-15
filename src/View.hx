@@ -298,8 +298,7 @@ class View
 	
 	public function loadData(url:String, p:Dynamic, callBack:Dynamic->Void):Void
 	{
-		//Out.dumpObject(params);
-		trace(Std.string(p));
+		//trace(Std.string(p));
 		loading++;
 		JQueryStatic.post(url, p , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
 		{

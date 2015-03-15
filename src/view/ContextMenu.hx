@@ -1,5 +1,6 @@
 package view;
 import jQuery.JHelper.J;
+import jQuery.FormData.FData;
 import jQuery.*;
 import js.html.Element;
 import js.html.Node;
@@ -157,6 +158,7 @@ typedef ContextMenuData =
 					Reflect.callMethod(parentView, Reflect.field(parentView, action), [where]);			
 				}	
 			case 'edit':
+				var editor:Editor = cast(parentView.views.get(parentView.instancePath + '.' + parentView.id + '-editor'), Editor);
 				switch(endAction)
 				{
 					case 'close':
@@ -166,9 +168,14 @@ typedef ContextMenuData =
 						J(attach2).find('tr').removeClass('selected');
 						J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
 					case 'save':
-						var p:Dynamic = FormData.save(J('#' + parentView.id + '-edit-form'));
+						var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
+						p.push( { name:'className', value:parentView.name });
+						p.push( { name:'action', value:'save' });
+						p.push( { name:parentView.vData.primary_id, value: editor.eData.attr('id') } );
+						if (parentView.vData.hidden != null)
+							p.push( { name:parentView.vData.hidden, value:editor.eData.data(parentView.vData.hidden) } );
 						trace(p);
-						//parentView.loadData('server.php', p, update);
+						parentView.loadData('server.php', p, function(data:Dynamic) { trace(data);});
 				}
 			default:
 				trace(action + ':' + endAction);

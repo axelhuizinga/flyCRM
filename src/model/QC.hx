@@ -85,6 +85,53 @@ using Util;
 	public function save(q:StringMap<Dynamic>):Bool
 	{
 		trace(q);
+		var lead_id = Std.parseInt(q.get('lead_id'));
+		//TODO: COPY LEAD + CUSTOM FIELDS
+		var res:EitherType < MySQLi_Result, Bool > = S.my.query(
+			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id) AS ll JOIN (SELECT * FROM `vicidial_list`WHERE `lead_id`=$lead_id)AS vl'
+			);
+		var log_id:Int = S.my.insert_id;
+		if (log_id > 0)
+		{
+			var cTable:String = 'custom_' + q.get('entry_list_id');
+			trace(cTable + ' log_id:' + log_id);
+			if (checkOrCreateCustomTable(cTable))
+			{
+				var cLogTable =  cTable + '_log';
+				res = S.my.query(
+					'INSERT INTO $cLogTable SELECT * FROM (SELECT $log_id AS log_id) AS ll JOIN (SELECT * FROM `$cTable`WHERE `lead_id`=$lead_id)AS cl'
+				);
+				if (S.my.error == null)
+				{
+					return true;
+				}
+				
+			}
+			else
+				trace('oops');
+			
+		}
 		return false;
+	}
+	
+	function checkOrCreateCustomTable(srcTable:String, ?suffix:String='log'):Bool
+	{
+		var newTable:String = S.my.real_escape_string(srcTable + '_' + suffix);
+		trace('SHOW TABLES LIKE  "$newTable"');
+		var res:MySQLi_Result = S.my.query('SHOW TABLES LIKE  "$newTable"');
+		if (res.any2bool() && res.num_rows == 0)
+		{
+			trace('CREATE TABLE `$newTable` like `$srcTable`');
+			var res:EitherType < MySQLi_Result, Bool > = S.my.query('CREATE TABLE `$newTable` like `$srcTable`');
+			if (S.my.error == '')
+			{
+				res = S.my.query('ALTER TABLE $newTable DROP PRIMARY KEY, ADD `log_id` INT(9) NOT NULL  FIRST,  ADD  PRIMARY KEY (`log_id`)');
+				if (S.my.error != '')
+					S.exit(S.my.error);
+				return true;
+			}
+			else S.exit(S.my.error);
+		}
+		return true;
 	}
 }

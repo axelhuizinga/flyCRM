@@ -15,34 +15,36 @@ import App.Rectangle;
 class Editor extends View
 {
 	var cMenu:ContextMenu;
-	var active:Int;
+	public var eData(default, null):JQuery;
 	
 	public function new(?data:Dynamic)  
 	{
 		super(data);
-		cMenu =  cast (parentView.views.get(parentView.instancePath + '.' + data.trigger.split('|')[0]), ContextMenu);
-		name = parentView.name;	
+		cMenu =  cast (parentView.views.get(parentView.instancePath + '.' + parentView.id + '-menu'), ContextMenu);
+		name = parentView.name;	//ACCESS PARENT VIEW CLASS ON SERVER
 		//Out.dumpObject(data);
 		templ = J('#t-' + id);
 		trace(id);
 	}
 	
-	public function  edit(id:JQuery, className:String)
+	public function  edit(dataRow:JQuery, className:String)
 	{
 		var p:Dynamic = resetParams();
 		p.primary_id = parentView.primary_id;
-		Reflect.setField(p, p.primary_id, id.attr('id'));
+		eData = dataRow;
+		Reflect.setField(p, p.primary_id, eData.attr('id'));
 		trace(p);
 		if (parentView.vData.hidden != null)
 		{			
 			p.hidden = parentView.vData.hidden;
-			Reflect.setField(p, p.hidden, id.data(p.hidden));
+			Reflect.setField(p, p.hidden, eData.data(p.hidden));
 		}
 		p.action = 'edit';
 		p.fields = parentView.vData.fields;
 		loadData('server.php', p, update);		
-		active = cMenu.getIndexOf(vData.trigger.split('|')[1]);
-		cMenu.set_active(active);
+		//active = cMenu.getIndexOf(vData.trigger.split('|')[1]);
+		//cMenu.set_active(cMenu.getIndexOf(vData.trigger.split('|')[1]));
+		cMenu.set_active(cMenu.getIndexOf(vData.action));
 	}
 	
 	override public function update(data:Dynamic):Void
@@ -65,8 +67,8 @@ class Editor extends View
 		//trace(templ.tmpl(data));
 		var mSpace:Rectangle = App.getMainSpace();
 		templ.tmpl(data).appendTo('#' + parentView.id).css( {
-		marginTop:Std.string(mSpace.top) + 'px',
-		height:Std.string(mSpace.height - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px'		
+			marginTop:Std.string(mSpace.top) + 'px',
+			height:Std.string(mSpace.height - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px'		
 		}).animate( { opacity:1 } );
 		trace(data.recordings);
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;

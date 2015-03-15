@@ -36,6 +36,7 @@ class App
 	public static var ist:App;
 	public static var basePath:String;
 	public static var appName:String;
+	public static var user:String;
 	public static var company:String;
 	public static var storeFormats:Dynamic;
 	public static var uiMessage:Dynamic;
@@ -67,6 +68,7 @@ class App
 	{
 		ist = new App();
 		appName = config.appName;
+		user = config.user;
 		storeFormats = config.storeFormats;
 		uiMessage = config.uiMessage;
 		waitTime = config.waitTime;

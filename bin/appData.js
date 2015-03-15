@@ -170,8 +170,7 @@ var uiData = {
 								Editor:{
 									action:'edit',
 									id:'qc-editor',
-									attach2:'#qc',
-									trigger:'qc-menu|edit',									
+									attach2:'#qc',					
 									join_table:'custom_*list_id',
 									read_only:'vendor_lead_code,last_local_call_time',
 									TODO:'PHONE-NUMBER READONLY?'

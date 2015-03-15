@@ -2,6 +2,8 @@
 
 	require("php/functions.php");
 	//edump($_SERVER);
+	session_start();
+	$user = (isset($_SESSION['PHP_AUTH_USER']) ? $_SESSION['PHP_AUTH_USER'] : 'NONO');
 	$basePath = preg_replace("/index.php$/", "", $_SERVER['PHP_SELF']);
 	$base = "{$_SERVER['REQUEST_SCHEME']}://{$_SERVER['SERVER_NAME']}$basePath";
 	$actionPath = preg_replace("|^{$basePath}|", "", $_SERVER['REQUEST_URI']);
@@ -54,7 +56,7 @@
 			</div>
 		</script>
 		
-		<!--  QC LIST ${($data.oddi=0,'')}-->
+		<!--  QC LIST - TODO: DATA.HIDDEN ARRAY ? $data.fields.indexOf($data.hidden))}-->
 		
 		<script type="text/x-jquery-tmpl"  id="t-qc-list">
 		
@@ -66,8 +68,7 @@
 					{{/if}}
 				{{/each}}
 				</tr>
-				{{each(i,v) $data.rows}}
-					${trace($data.hidden +'==' + $data.fields.indexOf($data.hidden))}
+				{{each(i,v) $data.rows}}					
 					{{if $data.hidden  && $data.fields.indexOf($data.hidden) >-1}}
 					<tr id="${v[$data.primary_id]}" class="${((i+1) % 2 ? 'odd' : 'even')}" data-${$data.hidden}="${v[$data.hidden]}" >
 					{{else}}
@@ -357,6 +358,7 @@
 			uiData.basePath="<?php echo $basePath;?>";
 			uiData.action="<?php echo $action;?>";
 			uiData.params="<?php echo $params;?>";
+			uiData.user="<?php echo $user;?>";
 			initApp(uiData);
 		});
 		

@@ -31,16 +31,13 @@ class S
 	static  var headerSent:Bool = false;
 	public static var conf:StringMap<Dynamic>;
 	public static var my:MySQLi;
+	public static var user:String;
 	
 	static function main() 
 	{		
 		haxe.Log.trace = Debug._trace;	
 		conf =  Config.load('appData.js');
 		Session.start();
-		trace(untyped __call__("dumpSession"));
-		//trace('FILE_APPEND:' + untyped __php__('FILE_APPEND'));
-		
-		//trace(conf.get('uiData')); 
 
 		var pd:Dynamic = Web.getPostData();
 		
@@ -53,7 +50,6 @@ class S
 			Lib.println(params);
 		}
 		trace(params);		
-		//trace(conf);		
 
 		var action:String = params.get('action');
 		if (action.length == 0 || params.get('className') == null)
@@ -86,7 +82,7 @@ class S
 	
 	static function checkAuth():Bool
 	{
-		var user:String = Session.get('PHP_AUTH_USER');
+		user = Session.get('PHP_AUTH_USER');
 		if (user == null)
 			return false;
 		trace(user);
