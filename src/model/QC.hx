@@ -19,7 +19,9 @@ using Util;
 @:keep
  class QC extends Clients
 {
-		
+	 private static var vicdial_list_fields = 'lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id'.split(',');
+	 
+	 
 	public static function create(param:StringMap<String>):EitherType<String,Bool>
 	{
 		var self:QC = new QC();	
@@ -63,9 +65,21 @@ using Util;
 		return json_encode();		
 	}
 	
+	override public function find(param:StringMap<String>):EitherType<String,Bool>
+	{	
+		var sb:StringBuf = new StringBuf();
+		var phValues:Array<Array<Dynamic>> = new Array();
+		//trace(param);
+		data =  {
+			rows: doJoin(param, sb, phValues)
+		};
+		return json_encode();
+	}
+	
 	function getRecordings(lead_id:Int):NativeArray
 	{
-		return query("SELECT location , DATE_FORMAT(start_time, '%d.%m.%Y %H:%i:%s') AS start_time, length_in_sec FROM recording_log WHERE lead_id = " + Std.string(lead_id));
+		return query("SELECT location , DATE_FORMAT(start_time, '%d.%m.%Y %H:%i:%s') AS start_time, length_in_sec FROM recording_log WHERE lead_id = " 
+		+ Std.string(lead_id) + ' ORDER BY start_time DESC');
 	}
 	
 	public function doSelectCustom(q:StringMap<Dynamic>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
@@ -84,11 +98,10 @@ using Util;
 	
 	public function save(q:StringMap<Dynamic>):Bool
 	{
-		trace(q);
 		var lead_id = Std.parseInt(q.get('lead_id'));
-		//TODO: COPY LEAD + CUSTOM FIELDS
+		//COPY LEAD TO VICIDIAL_LEAD_LOG + CUSTOM_LOG
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query(
-			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id) AS ll JOIN (SELECT * FROM `vicidial_list`WHERE `lead_id`=$lead_id)AS vl'
+			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id,$lead_id AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id FROM `vicidial_list`WHERE `lead_id`=$lead_id)AS vl'
 			);
 		var log_id:Int = S.my.insert_id;
 		if (log_id > 0)
@@ -101,14 +114,129 @@ using Util;
 				res = S.my.query(
 					'INSERT INTO $cLogTable SELECT * FROM (SELECT $log_id AS log_id) AS ll JOIN (SELECT * FROM `$cTable`WHERE `lead_id`=$lead_id)AS cl'
 				);
-				if (S.my.error == null)
+				trace ('INSERT INTO $cLogTable ...' + S.my.error + '<');
+				if (S.my.error == '')
 				{
-					return true;
-				}
+					//SAVE QC DATA
+					var primary_id:String =  S.my.real_escape_string(q.get('primary_id'));
+					var sql:StringBuf  = new StringBuf();
+					sql.add('UPDATE $cTable SET ');
+					var cFields = S.tableFields('$cTable');
+					trace('$cTable fields:' + cFields.toString());
+					cFields.remove(primary_id);
+					var bindTypes:String = '';
+					var values2bind:NativeArray = null;
+					var i:Int = 0;
+					var dbFieldTypes:StringMap<String> =  Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject(S.conf.get('dbFieldTypes')));
+					var sets:Array<String> = new Array();
+					for (c in cFields)
+					{
+						var val:Dynamic = q.get(c);
+						if (val != null)
+						{
+							//TODO: MULTIVAL
+							values2bind[i++] = (Std.is(val,String) ? val: val[0] );
+							var type:String = dbFieldTypes.get(c);
+							bindTypes += (type.any2bool() ?  type : 's');	
+							sets.push(c + '=?');
+						}
+					}
+					sql.add(sets.join(','));
+					sql.add(' WHERE lead_id=$lead_id');
+					var stmt =  S.my.stmt_init();
+					trace(sql.toString());
+					var success:Bool = stmt.prepare(sql.toString());
+					if (!success)
+					{
+						trace(stmt.error);
+						return false;
+					}
+					success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+					trace ('success:' + success);
+					if (success)
+					{
+						success = stmt.execute();
+						if (!success)
+						{
+							trace(stmt.error);
+							return false;
+						}			
+						//CUSTOM SAVED 
+						sql = new StringBuf();
+						var uFields = vicdial_list_fields;
+						uFields.remove(primary_id);
+						bindTypes = '';
+						values2bind = null;
+						i = 0;						
+						sql.add('UPDATE vicidial_list SET ');
+						sets  = new Array();
+						for (c in uFields)
+						{
+							var val:Dynamic = q.get(c);
+							if (val != null)
+							{
+								//TODO: MULTIVAL
+								values2bind[i++] = (Std.is(val,String) ? val: val[0] );
+								var type:String = dbFieldTypes.get(c);
+								bindTypes += (type.any2bool() ?  type : 's');	
+								sets.push(c + '=?');
+							}
+						}
+						values2bind[i++] = S.user;
+						bindTypes += 's';
+						sets.push('security_phrase=?');
+						if (q.get('status') == 'MITGL')
+						{
+							var list_id:Int = 10000;
+							var mID:Int = Std.parseInt(q.get('vendor_lead_code'));
+							if (mID == null)
+								mID = S.newMemberID();
+							values2bind[i++] = mID;
+							bindTypes += 's';
+							sets.push('vendor_lead_code=?');
+							var entry_list_id:String = q.get('entry_list_id');
+							values2bind[i++] = q.get('status');
+							bindTypes += 's';
+							sets.push('`status`=?');
+							values2bind[i++] = list_id;
+							bindTypes += 's';
+							sets.push('list_id=?');	
+							values2bind[i++] = entry_list_id;
+							bindTypes += 's';
+							sets.push('entry_list_id=?');	
+							values2bind[i++] = q.get('user');
+							bindTypes += 's';
+							sets.push('owner=?');							
+						}
+						sql.add(sets.join(','));
+						sql.add(' WHERE lead_id=$lead_id');
+						var stmt =  S.my.stmt_init();
+						trace(sql.toString());
+						var success:Bool = stmt.prepare(sql.toString());
+						if (!success)
+						{
+							trace(stmt.error);
+							return false;
+						}
+						success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+						trace ('success:' + success);
+						if (success)
+						{
+							success = stmt.execute();
+							if (!success)
+							{
+								trace(stmt.error);
+								return false;
+							}		
+							return true;
+						}			
+						return false;
+					}
 				
+				}
+				else
+					trace('oops');
 			}
-			else
-				trace('oops');
 			
 		}
 		return false;
@@ -117,7 +245,7 @@ using Util;
 	function checkOrCreateCustomTable(srcTable:String, ?suffix:String='log'):Bool
 	{
 		var newTable:String = S.my.real_escape_string(srcTable + '_' + suffix);
-		trace('SHOW TABLES LIKE  "$newTable"');
+		//trace('SHOW TABLES LIKE  "$newTable"');
 		var res:MySQLi_Result = S.my.query('SHOW TABLES LIKE  "$newTable"');
 		if (res.any2bool() && res.num_rows == 0)
 		{
@@ -132,6 +260,7 @@ using Util;
 			}
 			else S.exit(S.my.error);
 		}
+		else trace('num_rows:' + res.num_rows);
 		return true;
 	}
 }

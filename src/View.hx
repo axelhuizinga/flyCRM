@@ -115,8 +115,8 @@ class View
 		suspended = new StringMap();
 		loading = 0;
 		if (loadingComplete())
-			//Timer.delay(initState, 100);
-			initState();
+			Timer.delay(initState, 1000);
+			//initState();
 		else
 			Timer.delay(initState, 1000);
 	}
@@ -125,7 +125,7 @@ class View
 	{
 		interactionState = iState;
 		var iS:InteractionState = interactionStates.get(iState);
-		trace(id + ':' + iState);
+		trace(id + ':' + iState + ':' + iS);
 		if (iS == null)
 			return iState;
 		var lIt:Iterator<JQuery> = listening.keys();
@@ -137,6 +137,7 @@ class View
 				aListener.prop('disabled', true);
 			if (iS.enables.has(aAction))
 				aListener.prop('disabled', false);
+			trace(aAction + ' disabled:' + (aListener.prop('disabled') ? 'Y':'N'));
 		}
 		trace(iState);
 		return iState;
@@ -144,6 +145,7 @@ class View
 	
 	function addInteractionState(name:String, iS:InteractionState):Void
 	{
+		trace(id + ':' + name + ':' + iS);
 		interactionStates.set(name, iS);
 	}
 	
@@ -185,7 +187,8 @@ class View
 	{
 		jListener.each(function(i, n)
 		{
-			listening.set(J(n), n.attributes.getNamedItem('data-action'	).nodeValue);
+			//trace(n + ':' + n.attributes.getNamedItem('data-endaction'	).nodeValue);
+			listening.set(J(n), n.attributes.getNamedItem('data-endaction'	).nodeValue);
 		});
 	}
 	
@@ -227,13 +230,13 @@ class View
 	
 	function initState():Void
 	{
-		trace (loadingComplete() ? 'Y':'N');	
+		trace ((loadingComplete() ? 'Y':'N') + ' :' + J('button[data-endaction]').length);	
 		if (!loadingComplete())
 		{			
 			Timer.delay(initState, 1000);
 			return;
 		}
-		addListener(J('button[data-action]'));
+		addListener(J('button[data-endaction]'));
 		interactionState = 'init';
 		J('td').attr('tabindex', -1);
 		var el:Element = cast J('#' + id).get()[0];
@@ -344,9 +347,10 @@ class View
 	
 	private function resetParams(?pData:Dynamic):Dynamic
 	{		
-		var pkeys:Array<String> = 'action,className,fields,limit,order,table,where'.split(',');
+		var pkeys:Array<String> = 'action,className,fields,limit,order,table,jointable,joincond,where'.split(',');
 		var aData:Dynamic = pData.any2bool() ? pData : vData;
 		fields = aData.fields.any2bool()?aData.fields.split(','):null;
+		trace(fields);
 		params = {
 			action:'find',
 			className:name,
@@ -375,14 +379,15 @@ class View
 		// UPDATE MAIN DATA TABLE
 		data.fields = fields;
 		data.hidden = vData.hidden;
-		trace(id + ':' + data.fields + ':' + data.loaderId);
+		data.primary_id = primary_id;
+		trace(id + ':' + data.fields + ':' + data.hidden + ':' + data.primary_id);
 		if ( J('#' + id + '-list').length > 0)
 			J('#' + id + '-list').replaceWith(J('#t-' + id + '-list').tmpl(data));
 		else
 			J('#t-' + id + '-list').tmpl(data).appendTo(J(data.loaderId).first());	
 			
 		J('#' + id + '-list th').each(function(i, el) { J(el).click(function(_) { order(J(el)); } ); } );	
-		//remove click handler from all main data list rows td cells after select - why???
+		//remove click handler from all main data list rows td cells  - why???
 		J('#' + id + '-list tr').first().siblings().click(select).find('td').off('click');
 		//J('td').attr('tabindex', -1);
 	}

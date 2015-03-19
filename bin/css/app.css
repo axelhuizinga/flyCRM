@@ -30,6 +30,7 @@ div.lpad
 {
 	float: left;
 	clear: left;
+	white-space: nowrap;
 }
 .lh32
 {
@@ -61,12 +62,12 @@ div.lpad
 .main-left
 {
 	float:left;
-	width:70%;
+	/*width:70%;*/
 	overflow: auto;
 }
 .menu-right{
 	float:right;
-	min-width:320px;
+	/*min-width:320px;*/
 	height:100%;
 }
 

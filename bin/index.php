@@ -22,6 +22,7 @@
 <html lang="de">
   	<head>
     	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=0">
 		<link rel="stylesheet" href="css/jquery-ui.css">
 		<link rel="stylesheet" href="css/app.css">
 		<base href="<?php echo $base;?>">
@@ -56,26 +57,22 @@
 			</div>
 		</script>
 		
-		<!--  QC LIST - TODO: DATA.HIDDEN ARRAY ? $data.fields.indexOf($data.hidden))}-->
+		<!--  QC LIST -  {{if $data.hidden  && $data.fields.indexOf($data.hidden) >-1}}-->
 		
 		<script type="text/x-jquery-tmpl"  id="t-qc-list">
 		
 			<table id="qc-list">
 				<tr class="headrow" >
 				{{each(i,v) $data.fields}}
-					{{if v!=$data.primary_id && $data.hidden !=v}}
+					{{if v!=$data.primary_id && !has($data.hidden,v)}}
 					 <th data-order="${v}">${fieldNames[v]}</th>
 					{{/if}}
 				{{/each}}
 				</tr>
 				{{each(i,v) $data.rows}}					
-					{{if $data.hidden  && $data.fields.indexOf($data.hidden) >-1}}
-					<tr id="${v[$data.primary_id]}" class="${((i+1) % 2 ? 'odd' : 'even')}" data-${$data.hidden}="${v[$data.hidden]}" >
-					{{else}}
-					<tr id="${v[$data.primary_id]}" class="${((i+1) % 2 ? 'odd' : 'even')}">
-					{{/if}}
+					<tr id="${v[$data.primary_id]}" class="${((i+1) % 2 ? 'odd' : 'even')}" ${data($data.hidden,v)} >
 					{{each(ri,rv) v}}
-						{{if ri!=$data.primary_id && $data.hidden!=ri}}
+						{{if ri!=$data.primary_id && !has($data.hidden,ri)}}
 							{{if displayFormats[ri] }}
 						<td data-name="${ri}" >${sprintf(displayFormats[ri],rv)}</td>												
 							{{else}}
@@ -151,7 +148,7 @@
 							</div>							
 							{{/if}}							
 							{{/each}}
-							<div class="clear">.</div>			
+							<div class="clear"> </div>			
 						{{each(bi,bv) v.buttons}}
 						<button data-endaction="${bi}">${bv}</button>
 						{{/each}}
@@ -165,12 +162,15 @@
 		<!-- QC MENU RECORDINGS ${trace($data)} ${trace(v)}-->
 		<script type="text/x-jquery-tmpl"  id="t-qc-recordings">
 			<div class="recordings"  >			
-			{{each(i,v) $data.recordings}}			
-				<a href="/RECORDINGS/MP3/${v.filename}">${v.start_time + ' ' + sprintf("%03d Sek.", v.length_in_sec||0)} </a><br>
+			{{each(i,v) $data.recordings}}
+			${trace(v)}
+				<span class="label">${v.start_time} </span><br>
+				<audio controls>
+					<source src="/RECORDINGS/MP3/${v.filename}" type="audio/mpeg">
+				</audio><br>
 			{{/each}}
 			</div>
 		</script>
-		
 		<!-- MEMBERS TAB -->
 	
 		<script type="text/x-jquery-tmpl"  id="t-clients">
@@ -341,26 +341,67 @@
 				</div>
 			</div>
 		</script>
-		
+		<script src="js/LAB.src.js"></script>
+		<!--<script src="js/jquery-2.1.3.min.js"></script>
 		<script src="js/stacktrace.js"></script>		
 		<script src="js/debugJq.js"></script>		
-		<script src="js/jquery-2.1.3.js"></script>
+		
 		<script src="js/jquery-ui.js"></script>
 		<script src="js/datepicker-de.js"></script>
 		<script src="js/jquery.tmpl.js"></script>
 		<script src="js/spin.min.js"></script>
 		<script src="js/sprintf.min.js"></script>
 		<script src="flyCRM.js"></script>
-		<script src="appData.js"></script>			
+		<script src="appData.js"></script>		-->	
 		<script 	>
-		$(document).ready(function()
+			$LAB.setGlobalDefaults({Debug:true})
+		//var loader;
+		//$(document).ready(function()
+		//{
+			/*if(1)loadScript([*/
+			//loader = spin('mtabs');
+			//loader = $('<table style="height:100%;width:100%;margin:auto;position:absolute;top:0px;"><tr><td style="text-align:center"><img style="margin:auto;" src="design/loading2.gif"></td><tr></table>').appendTo('body');
+			//$LAB
+			.script('js/jquery-2.1.3.js.gz').
+			script('js/stacktrace.js.gz').
+			script('js/debugJq.js.gz').
+			script('js/jquery-ui.min.js.gz').
+			script('flyCRM.js').
+			script('js/jquery.tmpl.js.gz').
+			script('js/sprintf.min.js.gz').
+			script('js/spin.min.js.gz').
+			script('appData.js').
+			script('js/run.js').wait();
+			/*script('js/datepicker-de.js.gz').
+			
+			script('flyCRM.js.gz').wait(function()
+			{
+				console.log('should be done...');
+				initApp(uiData);
+				$('#loader').remove();
+			});
+			*/
+			//])});
+			
+		
+		
+		function loadScript(urls)
 		{
-			uiData.basePath="<?php echo $basePath;?>";
-			uiData.action="<?php echo $action;?>";
-			uiData.params="<?php echo $params;?>";
-			uiData.user="<?php echo $user;?>";
-			initApp(uiData);
-		});
+			$.getScript(urls.shift(), function(data, textStatus, jqxhr)
+			{
+				if (urls.length>0) {
+					loadScript(urls);					
+				}
+				else{
+					uiData.basePath="<?php echo $basePath;?>";
+					uiData.action="<?php echo $action;?>";
+					uiData.params="<?php echo $params;?>";
+					uiData.user="<?php echo $user;?>";
+					initApp(uiData);
+					loader.remove();
+				}
+			});
+		}
 		
 		function trace(m) {
 			//console.log(el)
@@ -379,6 +420,36 @@
 			}).spin(document.getElementById(id));
 		}
 		
+		function data(keyNames,data) {
+			var keys = keyNames.split(',');
+			var ret = new Array();
+			for(k in keys)
+			{
+				if (data[keys[k]]) {
+					ret.push( 'data-' + keys[k] + '=' + data[keys[k]] );
+				}
+			}
+			return ret.join(' ');
+		}
+		
+		function has(keyNames,key) {
+		//trace(keyNames + ':' + key);
+			var keys = keyNames.split(',');
+			for(k in keys)
+			{
+				/*if (keys[k]==key) {
+					trace(k + '==' + key + ' TRUE ');
+				}*/
+				//trace(k + '==' + key + (keys[k]==key?'Y':'N'));
+				if (keys[k]==key) 
+					return true;
+			}
+			return false;
+		}
+		
 		</script>
+		<table style="height:100%;width:100%;margin:auto;position:absolute;top:0px;" id="loader">
+		<tr><td style="text-align:center"><img style="margin:auto;" src="design/loading2.gif"></td><tr>
+		</table>
 	</body>
 </html>

@@ -16,7 +16,7 @@ class me_cunity_php_Debug {
 		} else {
 			$info = "";
 		}
-		file_put_contents(me_cunity_php_Debug::$logFile, _hx_string_or_null($info) . ":" . Std::string($v) . "\x0A", FILE_APPEND);
+		file_put_contents(me_cunity_php_Debug::$logFile, _hx_string_or_null($info) . ":" . _hx_string_or_null((((Std::is($v, _hx_qtype("String")) || Std::is($v, _hx_qtype("Int")) || Std::is($v, _hx_qtype("Float"))) ? $v : print_r($v, 1)))) . "\x0A", FILE_APPEND);
 	}
 	function __toString() { return 'me.cunity.php.Debug'; }
 }

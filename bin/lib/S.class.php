@@ -19,7 +19,7 @@ class S {
 			php_Lib::println("<div><pre>");
 			php_Lib::println($params);
 		}
-		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 52, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 53, "className" => "S", "methodName" => "main")));
 		$action = $params->get("action");
 		if(strlen($action) === 0 || $params->get("className") === null) {
 			S::dump(_hx_anonymous(array("error" => "required params missing")));
@@ -27,13 +27,13 @@ class S {
 		}
 		S::$my = new MySQLi("localhost", php_DBConfig::$user, php_DBConfig::$pass, php_DBConfig::$db, null, null);
 		$auth = S::checkAuth();
-		haxe_Log::trace(_hx_string_or_null($action) . ":" . Std::string($auth), _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 65, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace(_hx_string_or_null($action) . ":" . Std::string($auth), _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 66, "className" => "S", "methodName" => "main")));
 		if(!$auth) {
 			S::hexit("AUTH FAILURE");
 			return;
 		}
 		$result = Model::dispatch($params);
-		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 73, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 74, "className" => "S", "methodName" => "main")));
 		if(!S::$headerSent) {
 			header("Content-Type" . ": " . "application/json");
 			S::$headerSent = true;
@@ -45,12 +45,11 @@ class S {
 		if(S::$user === null) {
 			return false;
 		}
-		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 88, "className" => "S", "methodName" => "checkAuth")));
+		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 89, "className" => "S", "methodName" => "checkAuth")));
 		$pass = php_Session::get("PHP_AUTH_PW");
 		if($pass === null) {
 			return false;
 		}
-		haxe_Log::trace($pass, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 92, "className" => "S", "methodName" => "checkAuth")));
 		$res = php_Lib::hashOfAssociativeArray(_hx_deref(new Model())->query("SELECT use_non_latin,webroot_writable,pass_hash_enabled,pass_key,pass_cost,hosted_settings FROM system_settings"));
 		if(S_0($pass, $res) === "1") {
 			S::hexit("ENCRYPTED PASSWORDS NOT IMPLEMENTED");
@@ -72,6 +71,27 @@ class S {
 			S::$headerSent = true;
 		}
 		php_Lib::println(haxe_Json::phpJsonEncode($d, null, null));
+	}
+	static function edump($d) {
+		edump($d);
+	}
+	static function newMemberID() {
+		$res = S::$my->query("SELECT  MAX(CAST(vendor_lead_code AS UNSIGNED)) FROM vicidial_list WHERE list_id=10000", null);
+		if($res->num_rows === 0) {
+			return 1;
+		} else {
+			return Std::parseInt(_hx_array_get($res->fetch_array(2), 0));
+		}
+	}
+	static function tableFields($table, $db = null) {
+		if($db === null) {
+			$db = "asterisk";
+		}
+		$res = S::$my->query("SELECT GROUP_CONCAT(COLUMN_NAME) FROM information_schema.columns WHERE table_schema = \"" . _hx_string_or_null($db) . "\" AND table_name = \"" . _hx_string_or_null($table) . "\";", null);
+		if(Util::any2bool($res) && $res->num_rows === 1) {
+			return _hx_string_call(_hx_array_get($res->fetch_array(2), 0), "split", array(","));
+		}
+		return null;
 	}
 	function __toString() { return 'S'; }
 }

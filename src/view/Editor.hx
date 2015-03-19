@@ -33,12 +33,18 @@ class Editor extends View
 		p.primary_id = parentView.primary_id;
 		eData = dataRow;
 		Reflect.setField(p, p.primary_id, eData.attr('id'));
-		trace(p);
+	
 		if (parentView.vData.hidden != null)
 		{			
-			p.hidden = parentView.vData.hidden;
-			Reflect.setField(p, p.hidden, eData.data(p.hidden));
+			//p.hidden = parentView.vData.hidden;
+			//Reflect.setField(p, p.hidden, eData.data(p.hidden));
+			var hKeys:Array<String> = parentView.vData.hidden.split(',');
+			for (k in hKeys)
+			{
+				Reflect.setField(p, k, eData.data(k));
+			}
 		}
+		trace(p);	
 		p.action = 'edit';
 		p.fields = parentView.vData.fields;
 		loadData('server.php', p, update);		

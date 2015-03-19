@@ -72,6 +72,35 @@ class Model
 			return false;
 		}
 	}
+	public function doJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
+	{
+		var fields:String = q.get('fields');		
+		//trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
+		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
+		sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
+		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
+		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
+		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
+		
+		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		if (joinTable != null)
+			sb.add(' INNER JOIN ' + joinTable + ' ');
+		if (joinCond != null)
+			sb.add(joinCond);
+		var where:String = q.get('where');
+		if (where != null)
+			buildCond(where, sb, phValues);
+		var groupParam:String = q.get('group');
+		if (groupParam != null)
+			buildGroup(groupParam, sb);
+		//TODO:HAVING
+		var order:String = q.get('order');
+		if (order != null)
+			buildOrder(order, sb);
+		var limit:String = q.get('limit');
+		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
+		return execute(sb.toString(), q, phValues);
+	}
 	
 	public function doSelect(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
@@ -211,7 +240,7 @@ class Model
 	public  function query(sql:String):NativeArray
 	{
 		trace(sql);
-		var res:EitherType < MySQLi_Result, Bool > = S.my.query(sql, MySQLi.MYSQLI_ASSOC);
+		var res:EitherType < MySQLi_Result, Bool > = S.my.query(sql, MySQLi.MYSQLI_USE_RESULT);
 		if (res)
 		{
 			var data:NativeArray = cast(res, MySQLi_Result).fetch_all(MySQLi.MYSQLI_ASSOC);

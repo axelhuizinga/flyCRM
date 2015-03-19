@@ -6,10 +6,54 @@ class Model {
 	public $db;
 	public $table;
 	public $primary;
-	public function doSelect($q, $sb, $phValues) {
+	public function doJoin($q, $sb, $phValues) {
 		if(!php_Boot::$skip_constructor) {
 		$fields = $q->get("fields");
 		$sb->add("SELECT " . _hx_string_or_null(((($fields !== null) ? $this->fieldFormat(_hx_explode(",", $fields)->map(array(new _hx_lambda(array(&$fields, &$phValues, &$q, &$sb), "Model_0"), 'execute'))->join(",")) : "*"))));
+		$qTable = null;
+		if(Util::any2bool($q->get("table"))) {
+			$qTable = $q->get("table");
+		} else {
+			$qTable = $this->table;
+		}
+		$joinCond = null;
+		if(Util::any2bool($q->get("joincond"))) {
+			$joinCond = $q->get("joincond");
+		} else {
+			$joinCond = null;
+		}
+		$joinTable = null;
+		if(Util::any2bool($q->get("jointable"))) {
+			$joinTable = $q->get("jointable");
+		} else {
+			$joinTable = null;
+		}
+		$sb->add(" FROM " . _hx_string_or_null(S::$my->real_escape_string($qTable)));
+		if($joinTable !== null) {
+			$sb->add(" INNER JOIN " . _hx_string_or_null($joinTable) . " ");
+		}
+		if($joinCond !== null) {
+			$sb->add($joinCond);
+		}
+		$where = $q->get("where");
+		if($where !== null) {
+			$this->buildCond($where, $sb, $phValues);
+		}
+		$groupParam = $q->get("group");
+		if($groupParam !== null) {
+			$this->buildGroup($groupParam, $sb);
+		}
+		$order = $q->get("order");
+		if($order !== null) {
+			$this->buildOrder($order, $sb);
+		}
+		$limit = $q->get("limit");
+		$this->buildLimit((($limit === null) ? "15" : $limit), $sb);
+		return $this->execute($sb->b, $q, $phValues);
+	}}
+	public function doSelect($q, $sb, $phValues) {
+		$fields = $q->get("fields");
+		$sb->add("SELECT " . _hx_string_or_null(((($fields !== null) ? $this->fieldFormat(_hx_explode(",", $fields)->map(array(new _hx_lambda(array(&$fields, &$phValues, &$q, &$sb), "Model_1"), 'execute'))->join(",")) : "*"))));
 		$qTable = null;
 		if(Util::any2bool($q->get("table"))) {
 			$qTable = $q->get("table");
@@ -32,19 +76,19 @@ class Model {
 		$limit = $q->get("limit");
 		$this->buildLimit((($limit === null) ? "15" : $limit), $sb);
 		return $this->execute($sb->b, $q, $phValues);
-	}}
+	}
 	public function fieldFormat($fields) {
 		$fieldsWithFormat = new _hx_array(array());
 		$sF = _hx_explode(",", $fields);
 		$dbQueryFormats = php_Lib::hashOfAssociativeArray(php_Lib::associativeArrayOfObject(S::$conf->get("dbQueryFormats")));
 		$d = php_Lib::hashOfAssociativeArray(S::$conf->get("dbQueryFormats"));
-		haxe_Log::trace($d, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 108, "className" => "Model", "methodName" => "fieldFormat")));
+		haxe_Log::trace($d, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 137, "className" => "Model", "methodName" => "fieldFormat")));
 		$qKeys = new _hx_array(array());
 		$it = $dbQueryFormats->keys();
 		while($it->hasNext()) {
 			$qKeys->push($it->next());
 		}
-		haxe_Log::trace($qKeys, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 117, "className" => "Model", "methodName" => "fieldFormat")));
+		haxe_Log::trace($qKeys, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 146, "className" => "Model", "methodName" => "fieldFormat")));
 		{
 			$_g = 0;
 			while($_g < $sF->length) {
@@ -69,12 +113,12 @@ class Model {
 		return $this->json_encode();
 	}
 	public function execute($sql, $param, $phValues = null) {
-		haxe_Log::trace($sql, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 146, "className" => "Model", "methodName" => "execute")));
+		haxe_Log::trace($sql, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 175, "className" => "Model", "methodName" => "execute")));
 		$stmt = S::$my->stmt_init();
 		$success = $stmt->prepare($sql);
-		haxe_Log::trace($success, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 149, "className" => "Model", "methodName" => "execute")));
+		haxe_Log::trace($success, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 178, "className" => "Model", "methodName" => "execute")));
 		if(!$success) {
-			haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 152, "className" => "Model", "methodName" => "execute")));
+			haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 181, "className" => "Model", "methodName" => "execute")));
 			return null;
 		}
 		$bindTypes = "";
@@ -97,15 +141,15 @@ class Model {
 				unset($type,$ph);
 			}
 		}
-		haxe_Log::trace(Std::string($values2bind), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 169, "className" => "Model", "methodName" => "execute")));
+		haxe_Log::trace(Std::string($values2bind), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 198, "className" => "Model", "methodName" => "execute")));
 		if($phValues->length > 0) {
 			$success = myBindParam($stmt, $values2bind, $bindTypes);
-			haxe_Log::trace("success:" . Std::string($success), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 173, "className" => "Model", "methodName" => "execute")));
+			haxe_Log::trace("success:" . Std::string($success), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 202, "className" => "Model", "methodName" => "execute")));
 			if($success) {
 				$data = null;
 				$success = $stmt->execute();
 				if(!$success) {
-					haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 181, "className" => "Model", "methodName" => "execute")));
+					haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 210, "className" => "Model", "methodName" => "execute")));
 					return null;
 				}
 				$result = $stmt->get_result();
@@ -118,7 +162,7 @@ class Model {
 			$data1 = null;
 			$success = $stmt->execute();
 			if(!$success) {
-				haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 197, "className" => "Model", "methodName" => "execute")));
+				haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 226, "className" => "Model", "methodName" => "execute")));
 				return array("ERROR", $stmt->error);
 			}
 			$result1 = $stmt->get_result();
@@ -130,19 +174,19 @@ class Model {
 		return array("ERROR", $stmt->error);
 	}
 	public function query($sql) {
-		haxe_Log::trace($sql, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 213, "className" => "Model", "methodName" => "query")));
+		haxe_Log::trace($sql, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 242, "className" => "Model", "methodName" => "query")));
 		$res = S::$my->query($sql, 1);
 		if($res) {
 			$data = _hx_deref(($res))->fetch_all(1);
 			return $data;
 		} else {
-			haxe_Log::trace(Std::string($res) . ":" . _hx_string_or_null(S::$my->error), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 222, "className" => "Model", "methodName" => "query")));
+			haxe_Log::trace(Std::string($res) . ":" . _hx_string_or_null(S::$my->error), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 251, "className" => "Model", "methodName" => "query")));
 		}
 		return null;
 	}
 	public function buildCond($whereParam, $sb, $phValues) {
 		$where = _hx_explode(",", $whereParam);
-		haxe_Log::trace($where, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 229, "className" => "Model", "methodName" => "buildCond")));
+		haxe_Log::trace($where, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 258, "className" => "Model", "methodName" => "buildCond")));
 		if($where->length === 0) {
 			return false;
 		}
@@ -160,12 +204,12 @@ class Model {
 				$first = false;
 				$wData = _hx_string_call($w, "split", array("|"));
 				$values = $wData->slice(2, null);
-				haxe_Log::trace($wData, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 243, "className" => "Model", "methodName" => "buildCond")));
+				haxe_Log::trace($wData, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 272, "className" => "Model", "methodName" => "buildCond")));
 				{
 					$_g1 = strtoupper($wData[1]);
 					switch($_g1) {
 					case "BETWEEN":{
-						if(!($values->length === 2) && Lambda::hforeach($values, array(new _hx_lambda(array(&$_g, &$_g1, &$first, &$phValues, &$sb, &$values, &$w, &$wData, &$where, &$whereParam), "Model_1"), 'execute'))) {
+						if(!($values->length === 2) && Lambda::hforeach($values, array(new _hx_lambda(array(&$_g, &$_g1, &$first, &$phValues, &$sb, &$values, &$w, &$wData, &$where, &$whereParam), "Model_2"), 'execute'))) {
 							S::hexit("BETWEEN needs 2 values - got only:" . _hx_string_or_null($values->join(",")));
 						}
 						$sb->add($this->quoteField($wData[0]));
@@ -176,7 +220,7 @@ class Model {
 					case "IN":{
 						$sb->add($this->quoteField($wData[0]));
 						$sb->add(" IN(");
-						$sb->add($values->map(array(new _hx_lambda(array(&$_g, &$_g1, &$first, &$phValues, &$sb, &$values, &$w, &$wData, &$where, &$whereParam), "Model_2"), 'execute'))->join(","));
+						$sb->add($values->map(array(new _hx_lambda(array(&$_g, &$_g1, &$first, &$phValues, &$sb, &$values, &$w, &$wData, &$where, &$whereParam), "Model_3"), 'execute'))->join(","));
 						$sb->add(")");
 					}break;
 					case "LIKE":{
@@ -208,7 +252,7 @@ class Model {
 			return false;
 		}
 		$sb->add(" GROUP BY ");
-		$sb->add($fields->map(array(new _hx_lambda(array(&$_g, &$fields, &$groupParam, &$sb), "Model_3"), 'execute'))->join(","));
+		$sb->add($fields->map(array(new _hx_lambda(array(&$_g, &$fields, &$groupParam, &$sb), "Model_4"), 'execute'))->join(","));
 		return true;
 	}
 	public function buildOrder($orderParam, $sb) {
@@ -218,7 +262,7 @@ class Model {
 			return false;
 		}
 		$sb->add(" ORDER BY ");
-		$sb->add($fields->map(array(new _hx_lambda(array(&$_g, &$fields, &$orderParam, &$sb), "Model_4"), 'execute'))->join(","));
+		$sb->add($fields->map(array(new _hx_lambda(array(&$_g, &$fields, &$orderParam, &$sb), "Model_5"), 'execute'))->join(","));
 		return true;
 	}
 	public function buildLimit($limitParam, $sb) {
@@ -237,7 +281,7 @@ class Model {
 	}
 	public function getConfig($param) {
 		if(S::$conf->exists("hasTabs") && S::$conf->get("hasTabs")) {
-			haxe_Log::trace($param->get("instancePath"), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 326, "className" => "Model", "methodName" => "getConfig")));
+			haxe_Log::trace($param->get("instancePath"), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 355, "className" => "Model", "methodName" => "getConfig")));
 			$tabBox = _hx_array_get(S::$conf->get("views"), 0)->TabBox;
 			$iPath = Std::string(S::$conf->get("appName")) . "." . Std::string($tabBox->id);
 			$tabs = $tabBox->tabs;
@@ -278,35 +322,40 @@ class Model {
 	}
 	function __toString() { return 'Model'; }
 }
-Model::$KEYWORDS = Model_5();
+Model::$KEYWORDS = Model_6();
 function Model_0(&$fields, &$phValues, &$q, &$sb, $f) {
 	{
 		return S::$my->real_escape_string($f);
 	}
 }
-function Model_1(&$_g, &$_g1, &$first, &$phValues, &$sb, &$values, &$w, &$wData, &$where, &$whereParam, $s) {
+function Model_1(&$fields, &$phValues, &$q, &$sb, $f) {
+	{
+		return S::$my->real_escape_string($f);
+	}
+}
+function Model_2(&$_g, &$_g1, &$first, &$phValues, &$sb, &$values, &$w, &$wData, &$where, &$whereParam, $s) {
 	{
 		return Util::any2bool($s);
 	}
 }
-function Model_2(&$_g, &$_g1, &$first, &$phValues, &$sb, &$values, &$w, &$wData, &$where, &$whereParam, $s1) {
+function Model_3(&$_g, &$_g1, &$first, &$phValues, &$sb, &$values, &$w, &$wData, &$where, &$whereParam, $s1) {
 	{
 		$phValues->push((new _hx_array(array($wData[0], $values->shift()))));
 		return "?";
 	}
 }
-function Model_3(&$_g, &$fields, &$groupParam, &$sb, $g) {
+function Model_4(&$_g, &$fields, &$groupParam, &$sb, $g) {
 	{
 		return $_g->quoteField($g);
 	}
 }
-function Model_4(&$_g, &$fields, &$orderParam, &$sb, $f) {
+function Model_5(&$_g, &$fields, &$orderParam, &$sb, $f) {
 	{
 		$g = _hx_explode("|", $f);
 		return _hx_string_or_null($_g->quoteField($g[0])) . _hx_string_or_null(((($g->length === 2 && $g[1] === "DESC") ? " DESC" : "")));
 	}
 }
-function Model_5() {
+function Model_6() {
 	{
 		$h = new haxe_ds_StringMap();
 		{

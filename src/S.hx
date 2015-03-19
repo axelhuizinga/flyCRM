@@ -3,6 +3,7 @@ package;
 import haxe.ds.StringMap;
 import haxe.EitherType;
 import haxe.Json;
+import me.cunity.debug.Out;
 import me.cunity.php.db.MySQLi;
 import me.cunity.php.db.MySQLi_Result;
 import me.cunity.php.db.MySQLi_STMT;
@@ -59,7 +60,7 @@ class S
 		}
 			
 		my = new MySQLi('localhost', DBConfig.user, DBConfig.pass, DBConfig.db);
-		
+		//trace(my);
 		var auth:Bool = checkAuth();
 		
 		trace (action + ':' + auth);
@@ -89,7 +90,7 @@ class S
 		var pass:String = Session.get('PHP_AUTH_PW');
 		if (pass == null)
 			return false;
-		trace(pass);
+		//trace(pass);
 		var res:StringMap<String> = Lib.hashOfAssociativeArray(
 			new Model().query("SELECT use_non_latin,webroot_writable,pass_hash_enabled,pass_key,pass_cost,hosted_settings FROM system_settings")
 			);
@@ -131,11 +132,34 @@ class S
 		Lib.println(Json.stringify(d));
 	}
 	
+	public static function edump(d:Dynamic):Void
+	{
+		untyped __call__("edump", d);
+	}
+	
+	public static function newMemberID():Int {
+		var res:MySQLi_Result = S.my.query(
+			'SELECT  MAX(CAST(vendor_lead_code AS UNSIGNED)) FROM vicidial_list WHERE list_id=10000'
+			);
+		return (res.num_rows==0 ? 1:  Std.parseInt(res.fetch_array(MySQLi.MYSQLI_NUM)[0]));
+	}
+	
+	public static function tableFields(table:String, db:String = 'asterisk'): Array<String>
+	{		
+		var res:MySQLi_Result = S.my.query(
+			'SELECT GROUP_CONCAT(COLUMN_NAME) FROM information_schema.columns WHERE table_schema = "$db" AND table_name = "$table";');
+		if (res.any2bool() && res.num_rows == 1)
+		{
+			//trace(res.fetch_array(MySQLi.MYSQLI_NUM)[0]);
+			//return 'lead_id,anrede,co_field,geburts_datum,iban,blz,bank_name,spenden_hoehe,period,start_monat,buchungs_zeitpunkt,start_date'.split(',');
+			return res.fetch_array(MySQLi.MYSQLI_NUM)[0].split(',');
+		}
+		return null;
+	}
 	
 	static function __init__() {
 		untyped __call__('require_once', '/srv/www/htdocs/flyCRM/php/functions.php');
 		Debug.logFile = untyped __var__("appLog");
-		//trace('...' + untyped __php__("$appLog"));
 	}
 
 }

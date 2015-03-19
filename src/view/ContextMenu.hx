@@ -163,19 +163,38 @@ typedef ContextMenuData =
 				{
 					case 'close':
 						trace('going to close:' + J('#overlay').length);
-						root.find('.recordings').detach();
+						root.find('.recordings').remove();
 						root.data('disabled', 0);
 						J(attach2).find('tr').removeClass('selected');
 						J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
-					case 'save':
+					case 'save','qcok':
 						var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
 						p.push( { name:'className', value:parentView.name });
 						p.push( { name:'action', value:'save' });
+						p.push( { name:'primary_id', value: parentView.vData.primary_id} );
 						p.push( { name:parentView.vData.primary_id, value: editor.eData.attr('id') } );
+						if (endAction == 'qcok')
+							p.push( { name:'status', value:'MITGL' });
 						if (parentView.vData.hidden != null)
-							p.push( { name:parentView.vData.hidden, value:editor.eData.data(parentView.vData.hidden) } );
-						trace(p);
-						parentView.loadData('server.php', p, function(data:Dynamic) { trace(data);});
+						{							
+							var hKeys:Array<String> = parentView.vData.hidden.split(',');
+							for (k in hKeys)
+							{
+								//Reflect.setField(p, k, eData.data(k));
+								p.push( { name:k, value:editor.eData.data(k) } );
+							}													
+						}
+						//trace(p);
+						parentView.loadData('server.php', p, function(data:Dynamic) { 
+							trace(data);
+							if (data == 'true') {
+								trace(root.find('.recordings').length);
+								root.find('.recordings').remove();
+								root.data('disabled', 0);
+								J(attach2).find('tr').removeClass('selected');
+								J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );			
+							}
+						});
 				}
 			default:
 				trace(action + ':' + endAction);

@@ -55,10 +55,10 @@ typedef ClientsData =
 		}
 		if(data.views != null)
 			addViews(data.views);
-		addInteractionState('init', { disables:['edit', 'delete'], enables:['add'] } );
-		addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
+		//addInteractionState('init', { disables:['edit', 'delete'], enables:['add'] } );
+		//addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
 		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit'] } );
-		addInteractionState('unselected', { disables:['edit', 'delete'], enables:['add'] } );
+		addInteractionState('init', { disables:['edit', 'delete'], enables:['add'] } );
 	}
 
 	override public function select(evt:Event):Void
@@ -79,6 +79,6 @@ typedef ClientsData =
 		if (jTarget.hasClass('selected'))
 			interactionState = 'selected';
 		else
-			interactionState = 'unselected';
+			interactionState = 'init';
 	}
 }

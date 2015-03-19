@@ -24,6 +24,10 @@ using jQuery.FormData;
 	public function new(?data:CampaignsData) 
 	{
 		super(data);
+		addInteractionState('init', { disables:['call','close','save','qcok'], enables:['find'] } );
+		//addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
+		addInteractionState('selected', { disables:[], enables:['call','close','save','qcok'] } );
+		//addInteractionState('init', { disables:['call','close','save','qcok'], enables:['find'] } );		
 		//trace(data);
 		listattach2 = data.listattach2;
 		if (!(data.limit > 0))
@@ -36,10 +40,11 @@ using jQuery.FormData;
 		if (data.table != null)
 		{
 			parentView.addDataLoader(listattach2, {
-				callBack:function(data:Dynamic) {
+				callBack:update,
+				/*callBack:function(data:Dynamic) {
 					data.primary_id = primary_id;
 					update(data);
-				},
+				},*/
 				prepare:function() {
 					resetParams();
 					if(vData.order != null)
@@ -52,11 +57,7 @@ using jQuery.FormData;
 		if(data.views != null)
 			addViews(data.views);
 		trace('looking for editor:' + instancePath + '.' +  id + '-editor');
-		edit = cast views.get(instancePath + '.' + id + '-editor');
-		addInteractionState('init', { disables:['edit', 'delete'], enables:['add'] } );
-		addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
-		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit'] } );
-		addInteractionState('unselected', { disables:['edit', 'delete'], enables:['add'] } );
+		edit = cast views.get(instancePath + '.' + id + '-editor');		
 	}
 	
 
@@ -84,6 +85,6 @@ using jQuery.FormData;
 		if (jTarget.hasClass('selected'))
 			interactionState = 'selected';
 		else
-			interactionState = 'unselected';
+			interactionState = 'init';
 	}
 }
