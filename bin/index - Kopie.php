@@ -28,7 +28,7 @@
 		<base href="<?php echo $base;?>">
 	</head>
 	<body>
-
+		
 		<!-- MAIN APP SCREEN -->
 		<div  class="bgBox" id="bgBox">
 			<div  id="mtabs" >
@@ -74,7 +74,7 @@
 					{{each(ri,rv) v}}
 						{{if ri!=$data.primary_id && !has($data.hidden,ri)}}
 							{{if displayFormats[ri] }}
-						<td data-name="${ri}" >${display(displayFormats[ri],rv)}</td>												
+						<td data-name="${ri}" >${sprintf(displayFormats[ri],rv)}</td>												
 							{{else}}
 						<td data-name="${ri}" >${rv}</td>	
 							{{/if}}
@@ -129,47 +129,30 @@
 				<h3>${v.label}</h3>
 				<div>
 					<form >
-						<input type="hidden" name="action" value="${action}">
-						<table>
+						<input type="hidden" name="action" value="${action}">						
 							{{each(fi,fv) v.fields}}					
 							{{if rangeFields[fv]}}
-							<tr class="lh32">
-								<td><div class="lpad" >${rangeLabels.from}</div>
-								</td>
-								<td colspan="2">
-								<input type="text" size="11" name="range_from_${fv}" class="datepicker"  >
-								</td>
-							</tr>		
-							<tr class="lh32">
-								<td>
+							<div class="lh32">
+								<div class="lpad" >${rangeLabels.from}</div>
+								<input type="text" size="11" name="range_from_${fv}" class="datepicker"  >							
+							</div>
+							<div class="lh32">
 								<div class="lpad" >${rangeLabels.to}</div>
-								</td>
-								<td colspan="2">
-								<input type="text" size="11" name="range_to_${fv}" class="datepicker" >
-								</td>				
-							</tr>				
+								<input type="text" size="11" name="range_to_${fv}" class="datepicker" >							
+							</div>							
 							{{else}}
-							<tr class="lh32">
-								<td>
+							<div class="lh32">
 								<div class="lpad" >${fieldNames[fv]}</div>
-								</td>
-								<td >																
-								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="menu-input-right">
-								</td>
-								<td >
 								<div class="rpad" >{{tmpl(fv) "#t-find-match"}}</div>
-								</td>
-							</tr>							
+								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="menu-input-right">							
+							</div>							
 							{{/if}}							
-							{{/each}}		
+							{{/each}}
+							<div class="clear"> </div>			
 						{{each(bi,bv) v.buttons}}
-						<tr>
-							<td colspan="3">
-								<button data-endaction="${bi}">${bv}</button>							
-							</td>						
-						</tr>
+						<button data-endaction="${bi}">${bv}</button>
 						{{/each}}
-						</table>
+						<br>
 					</form>
 				</div>
 			{{/each}}	
@@ -180,8 +163,9 @@
 		<script type="text/x-jquery-tmpl"  id="t-qc-recordings">
 			<div class="recordings"  >			
 			{{each(i,v) $data.recordings}}
+			${trace(v)}
 				<span class="label">${v.start_time} </span><br>
-				<audio controls  >
+				<audio controls>
 					<source src="/RECORDINGS/MP3/${v.filename}" type="audio/mpeg">
 				</audio><br>
 			{{/each}}
@@ -232,47 +216,29 @@
 				<h3>${v.label}</h3>
 				<div>
 					<form >
-					<table>
 						<input type="hidden" name="action" value="${action}">
 						{{each(fi,fv) v.fields}}					
 							{{if rangeFields[fv]}}
-							<tr class="lh32">
-								<td><div class="lpad" >${rangeLabels.from}</div>
-								</td>
-								<td colspan="2">
-								<input type="text" size="11" name="range_from_${fv}" class="datepicker"  >
-								</td>
-							</tr>		
-							<tr class="lh32">
-								<td>
+							<div class="lh32">
+								<div class="lpad" >${rangeLabels.from}</div>
+								<input type="text" size="11" name="range_from_${fv}" class="datepicker"  >							
+							</div>
+							<div class="lh32">
 								<div class="lpad" >${rangeLabels.to}</div>
-								</td>
-								<td colspan="2">
-								<input type="text" size="11" name="range_to_${fv}" class="datepicker" >
-								</td>				
-							</tr>							
+								<input type="text" size="11" name="range_to_${fv}" class="datepicker" >							
+							</div>							
 							{{else}}
-							<tr class="lh32">
-								<td>
+							<div class="lh32">
 								<div class="lpad" >${fieldNames[fv]}</div>
-								</td>
-								<td >																
-								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="menu-input-right">
-								</td>
-								<td >
 								<div class="rpad" >{{tmpl(fv) "#t-find-match"}}</div>
-								</td>
-							</tr>														
+								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="menu-input-right">							
+							</div>							
 							{{/if}}							
-							{{/each}}						
+							{{/each}}
+							<div class="clear">.</div>						
 						{{each(bi,bv) v.buttons}}
-						<tr>
-							<td colspan="3">
-								<button data-endaction="${bi}">${bv}</button>							
-							</td>						
-						</tr>						
+						<button data-endaction="${bi}">${bv}</button>
 						{{/each}}
-						</table>
 					</form>
 				</div>
 			{{/each}}	
@@ -365,41 +331,18 @@
 			{{/each}}
 		</script>
 		
-		<!--  WAIT SCREEN TEMPLATE -->
+		<!-- SELECT  WAIT SCREEN TEMPLATE -->
 		<script type="text/x-jquery-tmpl" id="t-wait">		
 			<div id="wait" class="overlay">
 			${trace($data)}
 				<div id="wait-content" class="content">
-					<h3>${$data.wait}</h3>					
+					<h3>${$data.wait}</h3>
+					
 				</div>
 			</div>
 		</script>
-		
-		<!-- OVERLAY CHOICE TEMPLATE -->
-		<script type="text/x-jquery-tmpl" id="t-choice">		
-			<div id="choice" class="overlay">
-			${trace($data)}
-				<table id="choice-content" class="ccontent">
-					<caption>${$data.header}</caption>
-					{{each(i,v) $data.choice}}
-					${trace(i + ':' + v.status)}
-					<tr>
-						<td><button data-choice="${v.status}">${v.status + ' - ' + v.status_name}</button></td>
-					</tr>						
-					{{/each}}
-					<tr>
-						<td><button onclick="choice()">${appLabel.close}</button></td>
-					</tr>	
-				</table>
-			</div>
-		</script>
-		
 		<script src="js/LAB.src.js"></script>
-		<!--
-		<table style="height:100%;width:100%;margin:auto;position:absolute;top:0px;" id="loader">
-		<tr><td style="text-align:center;vertical-align: middle;"><img style="margin:auto;" src="design/loading2.gif"></td><tr>
-		</table>
-		<script src="js/jquery-2.1.3.min.js"></script>
+		<!--<script src="js/jquery-2.1.3.min.js"></script>
 		<script src="js/stacktrace.js"></script>		
 		<script src="js/debugJq.js"></script>		
 		
@@ -423,14 +366,14 @@
 			script('js/stacktrace.js.gz').
 			script('js/debugJq.js.gz').
 			script('js/jquery-ui.min.js.gz').
-			script('js/datepicker-de.js.gz').
 			script('flyCRM.js').
 			script('js/jquery.tmpl.js.gz').
 			script('js/sprintf.min.js.gz').
 			script('js/spin.min.js.gz').
 			script('appData.js').
 			script('js/run.js').wait();
-			/*
+			/*script('js/datepicker-de.js.gz').
+			
 			script('flyCRM.js.gz').wait(function()
 			{
 				console.log('should be done...');
@@ -489,16 +432,6 @@
 			return ret.join(' ');
 		}
 		
-		function display(format,value) {
-			if (format=='datetime') {
-				//datetime
-				var t = value.split(/[- :]/);
-				return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);
-			}
-			else
-				return sprintf(format, value);
-		}
-		
 		function has(keyNames,key) {
 		//trace(keyNames + ':' + key);
 			var keys = keyNames.split(',');
@@ -516,7 +449,7 @@
 		
 		</script>
 		<table style="height:100%;width:100%;margin:auto;position:absolute;top:0px;" id="loader">
-		<tr><td style="text-align:center;vertical-align: middle;"><img style="margin:auto;" src="design/loading2.gif"></td><tr>
+		<tr><td style="text-align:center"><img style="margin:auto;" src="design/loading2.gif"></td><tr>
 		</table>
 	</body>
 </html>

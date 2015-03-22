@@ -139,7 +139,7 @@ typedef TabBoxData =
 			trace(tabsInstance.option('active'));
 			trace(dbLoader.length + ':'  + active );
 		}
-		
+		init();
 	}
 	
 	//public function load(res:Dynamic, data:String, xhr:JqXHR):Void

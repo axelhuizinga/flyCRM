@@ -1,5 +1,6 @@
 package jQuery;
 import jQuery.haxe.Plugin;
+import js.html.HtmlElement;
 
 /**
  * ...
@@ -7,6 +8,7 @@ import jQuery.haxe.Plugin;
  */
 extern class Accordion implements Plugin
 {
+	public var panels:Array<js.html.HtmlElement>;
 	
 	@:overload
 	public function accordion( op:String, ?field:String, ?val:Dynamic):Dynamic
@@ -23,7 +25,7 @@ extern class Accordion implements Plugin
 	@:overload
 	public  function instance(?options:Dynamic):JQuery
 	{
-		return untyped this.accordion(options);
+		return untyped this.accordion("instance");
 	}	
 	
 }

@@ -27,7 +27,7 @@ using jQuery.FormData;
 		addInteractionState('init', { disables:['call','close','save','qcok'], enables:['find'] } );
 		//addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
 		addInteractionState('selected', { disables:[], enables:['call','close','save','qcok'] } );
-		//addInteractionState('init', { disables:['call','close','save','qcok'], enables:['find'] } );		
+		addInteractionState('call', { disables:['close','save' ], enables:['save','qcok'] } );		
 		//trace(data);
 		listattach2 = data.listattach2;
 		if (!(data.limit > 0))
@@ -58,6 +58,7 @@ using jQuery.FormData;
 			addViews(data.views);
 		trace('looking for editor:' + instancePath + '.' +  id + '-editor');
 		edit = cast views.get(instancePath + '.' + id + '-editor');		
+		init();
 	}
 	
 

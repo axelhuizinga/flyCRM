@@ -7,11 +7,11 @@ import me.cunity.debug.Out;
 import me.cunity.php.db.MySQLi;
 import me.cunity.php.db.MySQLi_Result;
 import me.cunity.php.db.MySQLi_STMT;
+import model.AgcApi;
 import model.Campaigns;
 import model.Clients;
 import model.QC;
 import model.Select;
-import php.DBConfig;
 import php.Lib;
 import me.cunity.php.Debug;
 import php.NativeArray;
@@ -33,6 +33,11 @@ class S
 	public static var conf:StringMap<Dynamic>;
 	public static var my:MySQLi;
 	public static var user:String;
+	public static  var db:String;
+	public static  var dbUser:String;
+	public static  var dbPass:String;	
+	public static var vicidialUser:String;
+	public static var vicidialPass:String;
 	
 	static function main() 
 	{		
@@ -59,7 +64,7 @@ class S
 			return;
 		}
 			
-		my = new MySQLi('localhost', DBConfig.user, DBConfig.pass, DBConfig.db);
+		my = new MySQLi('localhost',dbUser, dbPass, db);
 		//trace(my);
 		var auth:Bool = checkAuth();
 		
@@ -159,7 +164,13 @@ class S
 	
 	static function __init__() {
 		untyped __call__('require_once', '/srv/www/htdocs/flyCRM/php/functions.php');
+		untyped __call__('require_once', '../../config/flyCRM.db.php');
 		Debug.logFile = untyped __var__("appLog");
+		db = untyped __var__("VARDB");
+		dbUser = untyped __var__("VARDB_user");
+		dbPass = untyped __var__("VARDB_pass");				
+		vicidialUser = untyped __var__("user");
+		vicidialPass = untyped __var__("pass");
 	}
 
 }

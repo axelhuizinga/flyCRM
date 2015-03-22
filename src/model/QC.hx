@@ -78,7 +78,7 @@ using Util;
 	
 	function getRecordings(lead_id:Int):NativeArray
 	{
-		return query("SELECT location , DATE_FORMAT(start_time, '%d.%m.%Y %H:%i:%s') AS start_time, length_in_sec FROM recording_log WHERE lead_id = " 
+		return query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " 
 		+ Std.string(lead_id) + ' ORDER BY start_time DESC');
 	}
 	
@@ -134,7 +134,7 @@ using Util;
 						var val:Dynamic = q.get(c);
 						if (val != null)
 						{
-							//TODO: MULTIVAL
+							//TODO: MULTIVAL SELECT OR CHECKBOX
 							values2bind[i++] = (Std.is(val,String) ? val: val[0] );
 							var type:String = dbFieldTypes.get(c);
 							bindTypes += (type.any2bool() ?  type : 's');	
@@ -184,16 +184,18 @@ using Util;
 						}
 						values2bind[i++] = S.user;
 						bindTypes += 's';
-						sets.push('security_phrase=?');
+						sets.push('security_phrase=?');//STORE QC AGENT
 						if (q.get('status') == 'MITGL')
 						{
 							var list_id:Int = 10000;
 							var mID:Int = Std.parseInt(q.get('vendor_lead_code'));
-							if (mID == null)
+							if (mID == null)//	NEW MEMBER - CREATE ID
+							{								
 								mID = S.newMemberID();
-							values2bind[i++] = mID;
-							bindTypes += 's';
-							sets.push('vendor_lead_code=?');
+								values2bind[i++] = mID;
+								bindTypes += 's';
+								sets.push('vendor_lead_code=?');								
+							}
 							var entry_list_id:String = q.get('entry_list_id');
 							values2bind[i++] = q.get('status');
 							bindTypes += 's';

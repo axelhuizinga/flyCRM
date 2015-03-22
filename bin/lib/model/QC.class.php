@@ -39,7 +39,7 @@ class model_QC extends model_Clients {
 		return $this->json_encode();
 	}
 	public function getRecordings($lead_id) {
-		return $this->query("SELECT location , DATE_FORMAT(start_time, '%d.%m.%Y %H:%i:%s') AS start_time, length_in_sec FROM recording_log WHERE lead_id = " . Std::string($lead_id) . " ORDER BY start_time DESC");
+		return $this->query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " . Std::string($lead_id) . " ORDER BY start_time DESC");
 	}
 	public function doSelectCustom($q, $sb, $phValues) {
 		$fields = $q->get("fields");
@@ -157,10 +157,10 @@ class model_QC extends model_Clients {
 							$mID = Std::parseInt($q->get("vendor_lead_code"));
 							if($mID === null) {
 								$mID = S::newMemberID();
+								$values2bind[$i++] = $mID;
+								$bindTypes .= "s";
+								$sets->push("vendor_lead_code=?");
 							}
-							$values2bind[$i++] = $mID;
-							$bindTypes .= "s";
-							$sets->push("vendor_lead_code=?");
 							$entry_list_id = $q->get("entry_list_id");
 							$values2bind[$i++] = $q->get("status");
 							$bindTypes .= "s";
@@ -178,18 +178,18 @@ class model_QC extends model_Clients {
 						$sql->add($sets->join(","));
 						$sql->add(" WHERE lead_id=" . _hx_string_rec($lead_id, ""));
 						$stmt1 = S::$my->stmt_init();
-						haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 214, "className" => "model.QC", "methodName" => "save")));
+						haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 216, "className" => "model.QC", "methodName" => "save")));
 						$success1 = $stmt1->prepare($sql->b);
 						if(!$success1) {
-							haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 218, "className" => "model.QC", "methodName" => "save")));
+							haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 220, "className" => "model.QC", "methodName" => "save")));
 							return false;
 						}
 						$success1 = myBindParam($stmt1, $values2bind, $bindTypes);
-						haxe_Log::trace("success:" . Std::string($success1), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 222, "className" => "model.QC", "methodName" => "save")));
+						haxe_Log::trace("success:" . Std::string($success1), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 224, "className" => "model.QC", "methodName" => "save")));
 						if($success1) {
 							$success1 = $stmt1->execute();
 							if(!$success1) {
-								haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 228, "className" => "model.QC", "methodName" => "save")));
+								haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 230, "className" => "model.QC", "methodName" => "save")));
 								return false;
 							}
 							return true;
@@ -197,7 +197,7 @@ class model_QC extends model_Clients {
 						return false;
 					}
 				} else {
-					haxe_Log::trace("oops", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 238, "className" => "model.QC", "methodName" => "save")));
+					haxe_Log::trace("oops", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 240, "className" => "model.QC", "methodName" => "save")));
 				}
 			}
 		}
@@ -210,7 +210,7 @@ class model_QC extends model_Clients {
 		$newTable = S::$my->real_escape_string(_hx_string_or_null($srcTable) . "_" . _hx_string_or_null($suffix));
 		$res = S::$my->query("SHOW TABLES LIKE  \"" . _hx_string_or_null($newTable) . "\"", null);
 		if(Util::any2bool($res) && $res->num_rows === 0) {
-			haxe_Log::trace("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 252, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
+			haxe_Log::trace("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 254, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
 			$res1 = S::$my->query("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", null);
 			if(S::$my->error === "") {
 				$res1 = S::$my->query("ALTER TABLE " . _hx_string_or_null($newTable) . " DROP PRIMARY KEY, ADD `log_id` INT(9) NOT NULL  FIRST,  ADD  PRIMARY KEY (`log_id`)", null);
@@ -222,7 +222,7 @@ class model_QC extends model_Clients {
 				S::hexit(S::$my->error);
 			}
 		} else {
-			haxe_Log::trace("num_rows:" . _hx_string_rec($res->num_rows, ""), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 263, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
+			haxe_Log::trace("num_rows:" . _hx_string_rec($res->num_rows, ""), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 265, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
 		}
 		return true;
 	}

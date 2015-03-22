@@ -43,6 +43,7 @@ typedef CampaignsData =
 		addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
 		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit'] } );
 		addInteractionState('init', { disables:['edit', 'delete'], enables:['add'] } );*/
+		init();
 	}
 	
 	public function findLeads(where:String):Void

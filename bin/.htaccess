@@ -1,13 +1,11 @@
-
+AddEncoding gzip .gz
 RewriteEngine On
 
 <FilesMatch "\.js.gz$">
-        ForceType text/javascript
-        Header set Content-Encoding: gzip 
-	RewriteRule  (.*) $1 [L]
+	AddType "text/javascript" .gz
 </FilesMatch>
-<FilesMatch "\.js$">
 
+<FilesMatch "\.js$">
         RewriteCond %{HTTP:Accept-Encoding} gzip
         RewriteCond %{SCRIPT_FILENAME}.gz -f
         RewriteRule (.*).js$ $1.js.gz [L]
@@ -17,8 +15,8 @@ RewriteEngine On
         ForceType text/css
         Header set Content-Encoding: gzip
 </FilesMatch>
-<FilesMatch "\.css$">
 
+<FilesMatch "\.css$">
         RewriteCond %{HTTP:Accept-Encoding} gzip
         RewriteCond %{SCRIPT_FILENAME}.gz -f
         RewriteRule (.*).css$ $1.css.gz [L]

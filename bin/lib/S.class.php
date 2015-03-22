@@ -7,6 +7,11 @@ class S {
 	static $conf;
 	static $my;
 	static $user;
+	static $db;
+	static $dbUser;
+	static $dbPass;
+	static $vicidialUser;
+	static $vicidialPass;
 	static function main() {
 		haxe_Log::$trace = (isset(me_cunity_php_Debug::$_trace) ? me_cunity_php_Debug::$_trace: array("me_cunity_php_Debug", "_trace"));
 		S::$conf = Config::load("appData.js");
@@ -19,21 +24,21 @@ class S {
 			php_Lib::println("<div><pre>");
 			php_Lib::println($params);
 		}
-		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 53, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 58, "className" => "S", "methodName" => "main")));
 		$action = $params->get("action");
 		if(strlen($action) === 0 || $params->get("className") === null) {
 			S::dump(_hx_anonymous(array("error" => "required params missing")));
 			return;
 		}
-		S::$my = new MySQLi("localhost", php_DBConfig::$user, php_DBConfig::$pass, php_DBConfig::$db, null, null);
+		S::$my = new MySQLi("localhost", S::$dbUser, S::$dbPass, S::$db, null, null);
 		$auth = S::checkAuth();
-		haxe_Log::trace(_hx_string_or_null($action) . ":" . Std::string($auth), _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 66, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace(_hx_string_or_null($action) . ":" . Std::string($auth), _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 71, "className" => "S", "methodName" => "main")));
 		if(!$auth) {
 			S::hexit("AUTH FAILURE");
 			return;
 		}
 		$result = Model::dispatch($params);
-		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 74, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 79, "className" => "S", "methodName" => "main")));
 		if(!S::$headerSent) {
 			header("Content-Type" . ": " . "application/json");
 			S::$headerSent = true;
@@ -45,7 +50,7 @@ class S {
 		if(S::$user === null) {
 			return false;
 		}
-		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 89, "className" => "S", "methodName" => "checkAuth")));
+		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 94, "className" => "S", "methodName" => "checkAuth")));
 		$pass = php_Session::get("PHP_AUTH_PW");
 		if($pass === null) {
 			return false;
@@ -97,7 +102,13 @@ class S {
 }
 {
 	require_once("/srv/www/htdocs/flyCRM/php/functions.php");
+	require_once("../../config/flyCRM.db.php");
 	me_cunity_php_Debug::$logFile = $appLog;
+	S::$db = $VARDB;
+	S::$dbUser = $VARDB_user;
+	S::$dbPass = $VARDB_pass;
+	S::$vicidialUser = $user;
+	S::$vicidialPass = $pass;
 }
 function S_0(&$pass, &$res) {
 	{

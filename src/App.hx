@@ -38,6 +38,7 @@ class App
 	public static var appName:String;
 	public static var user:String;
 	public static var company:String;
+	public static var appLabel:Dynamic;
 	public static var storeFormats:Dynamic;
 	public static var uiMessage:Dynamic;
 	public static var waitTime:Int;
@@ -63,11 +64,23 @@ class App
 		//dbLoader = new Array();
 	}
 	
+	@:expose('choice')
+	public static function choice(data:Dynamic)
+	{
+		if (data != null && data.id != null)
+		{
+			J('#t-choice' ).tmpl(data).appendTo('#' +data.id).css({width:J(Browser.window).width(), height:J(Browser.window).height()}).animate({opacity:1});
+		}
+		else
+			J('#choice').hide(300, null, function() J('#choice').remove());
+	}	
+	
 	@:expose("initApp") 
 	public static function init(config:Dynamic):App
 	{
 		ist = new App();
 		appName = config.appName;
+		appLabel = config.appLabel;
 		user = config.user;
 		storeFormats = config.storeFormats;
 		uiMessage = config.uiMessage;

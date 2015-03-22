@@ -10,6 +10,8 @@ import jQuery.*;
 import jQuery.JHelper.J;
 import js.Browser;
 import App.Rectangle;
+import js.html.Audio;
+import me.cunity.debug.Out;
 
 
 class Editor extends View
@@ -25,6 +27,7 @@ class Editor extends View
 		//Out.dumpObject(data);
 		templ = J('#t-' + id);
 		trace(id);
+		init();
 	}
 	
 	public function  edit(dataRow:JQuery, className:String)
@@ -36,8 +39,7 @@ class Editor extends View
 	
 		if (parentView.vData.hidden != null)
 		{			
-			//p.hidden = parentView.vData.hidden;
-			//Reflect.setField(p, p.hidden, eData.data(p.hidden));
+			//copy all data fields from this dataRow to the load parameter
 			var hKeys:Array<String> = parentView.vData.hidden.split(',');
 			for (k in hKeys)
 			{
@@ -47,10 +49,10 @@ class Editor extends View
 		trace(p);	
 		p.action = 'edit';
 		p.fields = parentView.vData.fields;
+		cMenu.set_active(cMenu.getIndexOf(vData.action));
 		loadData('server.php', p, update);		
 		//active = cMenu.getIndexOf(vData.trigger.split('|')[1]);
 		//cMenu.set_active(cMenu.getIndexOf(vData.trigger.split('|')[1]));
-		cMenu.set_active(cMenu.getIndexOf(vData.action));
 	}
 	
 	override public function update(data:Dynamic):Void
@@ -69,22 +71,24 @@ class Editor extends View
 			Reflect.setField(dataOptions, k, opts);
 		}
 		data.optionsMap = dataOptions;
-		//trace(parentView.id);
+		//trace(parentView.id + ':' + J(Browser.window).width() + ' - ' + cMenu.root.outerWidth());
 		//trace(templ.tmpl(data));
 		var mSpace:Rectangle = App.getMainSpace();
 		templ.tmpl(data).appendTo('#' + parentView.id).css( {
 			marginTop:Std.string(mSpace.top) + 'px',
-			height:Std.string(mSpace.height - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px'		
+			height:Std.string(mSpace.height - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px'//,
+			//width:Std.string(J(Browser.window).width() - cMenu.root.outerWidth() - 300) + 'px'
 		}).animate( { opacity:1 } );
-		trace(data.recordings);
+		//trace(data.recordings);
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;
 		data = { recordings:data.recordings.map(function(rec) {
 				rec.filename = ( r.match(rec.location) ?  r.matched(1) : rec.location);
 				return rec;
 			})
 		};
-		cMenu.activePanel.find('form').append(J('#t-' + parentView.id + '-recordings').tmpl(data));
-		//J('#wait').animate( { opacity:0.0 }, 300, null, function() { J('#wait').detach();  trace(J('#wait' ).length); } );
+		var recordings:JQuery = J('#t-' + parentView.id + '-recordings').tmpl(data);
+		cMenu.activePanel.find('form').append(recordings);
+		cMenu.root.accordion("refresh");
 	}
 	
 }

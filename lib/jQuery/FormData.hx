@@ -76,6 +76,9 @@ class FormData
 	{
 		var ret:Array<String> = new Array();
 		var fD:Array<FData> = cast jForm.serializeArray();
+		trace(fields);
+		//trace(jForm.html());
+		//trace(fD);
 		var aFields:StringMap<Array<String>> = new StringMap();
 		fD.iter(function(aFD:FData) {
 			 aFields.set(aFD.name, (aFields.exists(aFD.name) ? aFields.get(aFD.name).concat(aFD.value): [aFD.value]));
@@ -95,6 +98,7 @@ class FormData
 		//trace(fD);
 		for (item in fD)
 		{
+			trace( item.name);
 			if (!(fields.has(item.name) || item.name.indexOf('range_from_') == 0))
 				continue;
 			if (item.value != null && item.value != '' || item.name.indexOf('range_from_') == 0)
@@ -132,16 +136,16 @@ class FormData
 					if (from.length > 0)
 						from = gDate2mysql(from);
 					var name:String = item.name.substr(11);
-					trace(name + ':' +  jForm.find('[name="' + name + '"]').val() );
+					trace(name + ':' +  jForm.find('[name="range_from_' + name + '"]').val() );
 					var to:String = jForm.find('[name="range_to_' + name + '"]').val();
 					if (to.length > 0)
-						to = gDate2mysql(to);
+						to = gDate2mysql(to, '23:59:59');
 					if (from.length > 0 && to.length > 0)
 						ret.push(name + '|BETWEEN|' + from + '|' + to);
 					else if (from.length > 0)
 						ret.push(name + '|BETWEEN|' + from + '|' + DateTools.format(Date.now(), '%Y-%m-%d'));
 					else if (to.length > 0)//	TODO: CONFIG SYSTEM START DATE
-						ret.push(name + '|BETWEEN|2015-01-01|' + to);
+						ret.push(name + '|BETWEEN|2015-01-01 00:00:00|' + to);
 				}
 				else if (item.name.indexOf('range_to_') == 0)
 					continue;
@@ -154,7 +158,7 @@ class FormData
 	}
 	
 	@:expose('gDate2mysql')
-	public static function gDate2mysql(gDate:String):String
+	public static function gDate2mysql(gDate:String, time:String = '00:00:00'):String
 	{
 		var d:Array<String> = gDate.split('.').map(function(s:String) return StringTools.trim(s));
 		if (d.length != 3)
@@ -162,7 +166,7 @@ class FormData
 			trace('Falsches Datumsformat');
 			return 'Falsches Datumsformat:' + gDate;
 		}
-		return d[2] + '-' + d[1] + '-' + d[0];
+		return d[2] + '-' + d[1] + '-' + d[0] + ' ' + time;
 	}
 	
 }

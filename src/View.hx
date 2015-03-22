@@ -10,6 +10,8 @@ import jQuery.*;
 import js.html.Node;
 import js.html.Rect;
 import js.html.XMLHttpRequest;
+import me.cunity.util.Data;
+import view.ContextMenu;
 import view.Input;
 import view.TabBox;
 
@@ -19,6 +21,8 @@ import me.cunity.debug.Out;
 using Lambda;
 using js.JqueryUI;
 using Util;
+using me.cunity.util.Data;
+
 /**
  * ...
  * @author axel@cunity.me
@@ -113,10 +117,13 @@ class View
 		interactionStates = new StringMap();
 		listening = new ObjectMap();
 		suspended = new StringMap();
+	}
+	
+	function init()
+	{
 		loading = 0;
 		if (loadingComplete())
-			Timer.delay(initState, 1000);
-			//initState();
+			initState();
 		else
 			Timer.delay(initState, 1000);
 	}
@@ -247,6 +254,8 @@ class View
 			//trace(untyped __js__("this"));
 			//trace(J(untyped __js__("this")).attr('id')); 			
 			});
+		if (name == 'ContextMenu')
+			cast(this, ContextMenu).layout();
 	}
 	
 	function loadingComplete():Bool
@@ -348,9 +357,20 @@ class View
 	private function resetParams(?pData:Dynamic):Dynamic
 	{		
 		var pkeys:Array<String> = 'action,className,fields,limit,order,table,jointable,joincond,where'.split(',');
-		var aData:Dynamic = pData.any2bool() ? pData : vData;
+		//var aData:Dynamic = pData.any2bool() ? pData : vData;
+		//MERGE pData into vData
+		trace(pData);
+		var aData:Dynamic = vData.copy();
+		if (pData != null)
+		{
+			var pFields:Array<String> = Reflect.fields(pData);
+			for (f in pFields)
+				Reflect.setField(aData, f, Reflect.field(pData, f));
+		}
 		fields = aData.fields.any2bool()?aData.fields.split(','):null;
 		trace(fields);
+		trace(aData.hidden);
+		trace(aData.joincond);
 		params = {
 			action:'find',
 			className:name,
@@ -435,5 +455,7 @@ class View
 			waiting = Timer.delay(function() { wait(true, App.uiMessage.timeout, 3500); } , timeout);	
 		}
 	}
+	
+
 	
 }

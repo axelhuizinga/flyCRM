@@ -3,6 +3,7 @@ import jQuery.JHelper.J;
 import jQuery.FormData.FData;
 import jQuery.*;
 import js.html.Element;
+import js.html.HtmlElement;
 import js.html.Node;
 import js.JqueryUI;
 
@@ -34,9 +35,10 @@ typedef ContextMenuData =
 
 @:keep class ContextMenu extends View
 {
-	var accordion:Dynamic;
+	var accordion:JQuery;
 	var contextData:ContextMenuData;
 	var action:String;
+	public var active:Int;
 	public var activePanel:JQuery;
 	
 	public function new(?data:Dynamic) 
@@ -52,18 +54,27 @@ typedef ContextMenuData =
 		tmp.appendTo(J(data.attach2)) ;
 		//J('#t-' + id).tmpl(data).appendTo(J(data.attach2)) ;
 		createInputs();
-		//root =
+		active = 0;
 		root =  J('#' + id).accordion( 
 		{ 
-			active:0,
+			active:1,
 			activate:activate,	
-			beforeActivate:function(event:Event, ui){if(root.data('disabled'))
-			{
-				event.preventDefault();
-			}},
+			beforeActivate:function(event:Event, ui) {
+				if(root.data('disabled'))
+				{
+					event.preventDefault();
+				}
+				else
+				{
+					
+					activePanel = J(ui.newPanel[0]);
+				}
+			},
 			create:create,
 			heightStyle:contextData.heightStyle
 		});
+		accordion = root.accordion('instance');
+		//trace(accordion);
 		//active = 0;
 		trace(J('#' + id).find('.datepicker').length );
 		J('#' + id).find('.datepicker').datepicker( { 
@@ -74,26 +85,31 @@ typedef ContextMenuData =
 			}
 		});		
 		J('#' + id + ' button[data-endaction]').click(run);
+		init();
 	}
 	
 	public function get_active():Int
 	{
-		return  root.accordion('option', 'active');
+		active = root.accordion('option', 'active');
+		return active;
 	}
 	
 	public function set_active(act:Int):Int
 	{
+		active = act;
+		trace(active);
 		root.accordion('option','active', act);
 		root.data('disabled', 1);
 		return act;
 	}
 	
-	public function activate( event:Event, ui ) 
+	function activate( event:Event, ui ) 
 	{
 		//trace(ui);
 		action = J(ui.newPanel[0]).find('input[name="action"]').first().val();
-		activePanel = J(ui.newPanel[0]);
-		trace(action);
+		//activePanel = parentView.root.find('.ui-accordion-content [style^="display: block"]');// J(ui.newPanel[0]);
+		//activePanel = J(ui.newPanel[0]);
+		trace(action + ':' + activePanel.attr('id') + ' == ' + J(ui.newPanel[0]).attr('id'));
 	}
 	
 	function createInputs():Void
@@ -134,6 +150,29 @@ typedef ContextMenuData =
 		return index;
 	}
 	
+	public function layout()
+	{
+		//trace(accordion);
+		var maxWidth:Float = 0;
+		var maxHeight:Float = 0;
+		var jP:Array<HtmlElement> = accordion.panels;
+		var p:Int = 0;
+		for (p in 0...jP.length)
+		{
+			var jEl:JQuery = J(jP[p]);
+			if (p != active)
+				jEl.css('visibility', 'hidden').show();
+			//if ( jEl.width() > maxWidth)
+			//maxWidth =   jEl.width();
+			maxWidth =   Math.max(jEl.width(), maxWidth);
+			maxHeight = Math.max(jEl.height(), maxHeight);
+			if (p != active)
+				jEl.hide(0).css('visibility','visible');
+		}
+		root.find('table').width(maxWidth);
+		root.accordion("option", "active", active);
+	}
+	
 	public function run(evt:Event)
 	{
 		evt.preventDefault();
@@ -153,7 +192,7 @@ typedef ContextMenuData =
 				if (fields != null && fields.length > 0)/*READ FIND FORM*/
 				{
 					//var where:String = FormData.where(J(cast( evt.target, Element)).parent(), fields);
-					var where:String = FormData.where(jNode.parent(), fields);
+					var where:String = FormData.where(jNode.closest('form'), fields);
 					trace(where);
 					Reflect.callMethod(parentView, Reflect.field(parentView, action), [where]);			
 				}	
@@ -195,6 +234,75 @@ typedef ContextMenuData =
 								J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );			
 							}
 						});
+					case 'call':
+						trace('parentView.interactionState:' + parentView.interactionState);
+						if (parentView.interactionState == 'call')
+						{// HANG UP
+							var p:Dynamic = 
+							{
+								className:'AgcApi',
+								action:'external_hangup',
+								campaign_id:parentView.vData.campaign_id,
+								lead_id:editor.eData.attr('id'),
+								agent_user:editor.eData.data('user')
+							};
+							
+							parentView.loadData('server.php', p, function(data:Dynamic) { 
+								trace(data);
+								if (data.response == 'OK') {//HUNG UP - CHOOSE DISPO STATUS
+									//trace('OK');		
+									//trace(data.choice);		
+									//parentView.vData.call = 0;
+									//wait(false);
+									App.choice( { header:App.appLabel.selectStatus, choice:data.choice, id:parentView.id } );
+									J('#choice  button[data-choice]').click(function(evt:Event)
+									{
+										trace(J(cast( evt.target, Node)).data('choice'));
+										p = {
+											className:'AgcApi',
+											action:'external_status',
+											dispo:J(cast( evt.target, Node)).data('choice'),
+											agent_user:editor.eData.data('user')
+										}
+										parentView.loadData('server.php', p, function(data:Dynamic) { 
+											trace(data);
+											if (data.response != 'OK')
+												App.choice( { header:data.response, id:parentView.id } );
+											else
+												App.choice(null);
+										});
+										
+									});
+									parentView.interactionState = 'selected';
+									trace(activePanel.find('button[data-endaction="call"]').length);
+									activePanel.find('button[data-endaction="call"]').html('Anrufen');
+								}
+								else
+								{
+									App.choice( { header:data.response, id:parentView.id } );
+								}
+							});		
+
+							return;
+						}
+						var p:Dynamic = 
+						{
+							className:'AgcApi',
+							action:'external_dial',
+							lead_id:editor.eData.attr('id'),
+							agent_user:editor.eData.data('user')
+						};
+						
+						parentView.loadData('server.php', p, function(data:Dynamic) { 
+							trace(data);
+							if (data.response == 'OK') {
+								trace('OK');// ACTIVE CALL
+								//parentView.vData.call = 1;
+								parentView.interactionState = 'call';
+								trace(activePanel.find('button[data-endaction="call"]').length);
+								activePanel.find('button[data-endaction="call"]').html('Auflegen');
+							}
+						});								
 				}
 			default:
 				trace(action + ':' + endAction);

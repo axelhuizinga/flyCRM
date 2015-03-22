@@ -21,7 +21,9 @@ var appLabel =
 	active:'Nur Aktive',
 	edit:'Bearbeiten',
 	filter:'Kontextfilter',
-	select:'Auswählen'
+	select:'Auswählen',
+	selectStatus:'Status Auswählen',
+	close:'Schließen'
 }
 
 var matchOptions =
@@ -67,21 +69,24 @@ var dbFieldTypes =
 
 var dbQueryFormats =
 {
-	last_local_call_time:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
-	entry_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
-	modify_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
-	start_time:['DATE_FORMAT','%d.%m.%Y %H:%i:%s']
+	hlast_local_call_time:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
+	hentry_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
+	hmodify_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
+	hstart_time:['DATE_FORMAT','%d.%m.%Y %H:%i:%s']
 }
 
 var displayFormats =
 {
-	phone_number:'0%d'
+	phone_number:'0%d',
+	last_local_call_time:'datetime',
+	start_time:'datetime'
 }
 
 var storeFormats =
 {
 	phone_number:['replace', '^0+',''],
-	last_local_call_time:['gDate2mysql']
+	last_local_call_time:['gDate2mysql'],
+	start_time:['gDate2mysql']
 }
 
 var fieldTypes =
@@ -91,6 +96,7 @@ var fieldTypes =
 
 var uiData = {
 	appName:'flyCRM',
+	appLabel:appLabel,
 	company:'X-Press Marketing GmbH',
 	storeFormats:storeFormats,
 	limit:15,
@@ -127,6 +133,7 @@ var uiData = {
 					[{	
 						QC:{
 							action:'find',
+							campaign_id:'QCKINDER',
 							fields:'lead_id,vicidial_list.user,entry_list_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time,full_name',
 							primary_id:'lead_id',
 							hidden:'entry_list_id,user,vicidial_list.user,address1,city,vendor_lead_code',

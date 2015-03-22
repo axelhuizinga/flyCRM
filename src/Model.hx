@@ -23,7 +23,9 @@ typedef MConfig =
  
 typedef MData = 
 {
-	var rows:NativeArray;
+	@:optional var rows:NativeArray;
+	@:optional var response:String;
+	@:optional var choice:NativeArray;
 	@:optional var fieldNames:NativeArray;
 	@:optional var optionsMap:NativeArray;
 	@:optional var recordings:NativeArray;
@@ -75,7 +77,7 @@ class Model
 	public function doJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		var fields:String = q.get('fields');		
-		//trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
+		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
 		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
 		sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
@@ -105,9 +107,10 @@ class Model
 	public function doSelect(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		var fields:String = q.get('fields');		
-		//trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
+		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
 		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
-		sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
+		//sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
+		sb.add('SELECT ' + (fields != null ? fieldFormat(fields): '*' ));
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
 		//TODO: JOINS
 		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
@@ -134,7 +137,7 @@ class Model
 		//trace(dbQueryFormats);
 		
 		var d:StringMap<Dynamic> = Lib.hashOfAssociativeArray(S.conf.get('dbQueryFormats'));
-		trace(d);
+		//trace(d);
 		//var qKeys:Array<String> = Reflect.fields(dbQueryFormats);
 		var qKeys:Array<String> = new Array();
 		var it:Iterator<String> = dbQueryFormats.keys(); 
@@ -143,17 +146,17 @@ class Model
 			qKeys.push(it.next());
 		}
 	
-		trace(qKeys);
+		//trace(qKeys);
 		for (f in sF)
 		{
 			if (qKeys.has(f))
 			{
 				var format:Array<String> = dbQueryFormats.get(f);
 				//trace(format);
-				fieldsWithFormat.push(format[0] + '(`' + f + '`, "' + format[1] + '") AS `' + f + '`');
+				fieldsWithFormat.push(format[0] + '(' + S.my.real_escape_string(f) + ', "' + format[1] + '") AS `' + f + '`');
 			}
 			else
-				fieldsWithFormat.push( f );				
+				fieldsWithFormat.push(S.my.real_escape_string( f ));				
 		}
 		//trace(fieldsWithFormat);
 		return fieldsWithFormat.join(',');
@@ -255,7 +258,7 @@ class Model
 	public function buildCond(whereParam:String, sb:StringBuf, phValues:Array<Array<Dynamic>>):Bool
 	{
 		var where:Array<Dynamic> = whereParam.split(',');
-		trace(where);
+		//trace(where);
 		if (where.length == 0)
 			return false;
 		var first:Bool = true;
@@ -269,7 +272,7 @@ class Model
 				
 			var wData:Array<String> = w.split('|');
 			var values:Array<String> = wData.slice(2);
-			trace(wData);
+			//trace(wData);
 			
 			switch(wData[1].toUpperCase())
 			{
@@ -346,6 +349,11 @@ class Model
 	public function json_encode():EitherType<String,Bool>
 	{
 		return untyped __call__("json_encode", data, 64);//JSON_UNESCAPED_SLASHES
+	}
+	
+	public function json_response(res:String):EitherType<String,Bool>
+	{
+		return untyped __call__("json_encode", {response:res}, 64);//JSON_UNESCAPED_SLASHES
 	}
 	
 	function getConfig(param:StringMap<Dynamic>):MConfig
