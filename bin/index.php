@@ -89,6 +89,7 @@
 		
 		<script type="text/x-jquery-tmpl"  id="t-qc-editor">
 		<div id="overlay" class="overlay-left">
+		<div  class="scrollbox">
 			<form  id="qc-edit-form" action="qc" class="main-left">
 			{{each(i,v) $data.rows}}
 				<table id="qc-edit-data-${i}">
@@ -117,6 +118,7 @@
 				</table>
 			</form>
 			{{/each}}
+		</div>
 		</div>
 		</script>
 		
@@ -365,24 +367,24 @@
 			{{/each}}
 		</script>
 		
-		<!--  WAIT SCREEN TEMPLATE -->
+		<!--  WAIT SCREEN TEMPLATE ${trace($data)}-->
 		<script type="text/x-jquery-tmpl" id="t-wait">		
 			<div id="wait" class="overlay">
-			${trace($data)}
+			<div  class="scrollbox">			
 				<div id="wait-content" class="content">
 					<h3>${$data.wait}</h3>					
 				</div>
 			</div>
+			</div>
 		</script>
 		
-		<!-- OVERLAY CHOICE TEMPLATE -->
+		<!-- OVERLAY CHOICE TEMPLATE ${trace($data)} ${trace(i + ':' + v.status)}-->
 		<script type="text/x-jquery-tmpl" id="t-choice">		
 			<div id="choice" class="overlay">
-			${trace($data)}
+			<div  class="scrollbox">			
 				<table id="choice-content" class="ccontent">
 					<caption>${$data.header}</caption>
-					{{each(i,v) $data.choice}}
-					${trace(i + ':' + v.status)}
+					{{each(i,v) $data.choice}}					
 					<tr>
 						<td><button data-choice="${v.status}">${v.status + ' - ' + v.status_name}</button></td>
 					</tr>						
@@ -391,6 +393,7 @@
 						<td><button onclick="choice()">${appLabel.close}</button></td>
 					</tr>	
 				</table>
+			</div>
 			</div>
 		</script>
 		
@@ -428,6 +431,7 @@
 			script('js/jquery.tmpl.js.gz').
 			script('js/sprintf.min.js.gz').
 			script('js/spin.min.js.gz').
+			script('js/iban.js.gz').
 			script('appData.js').
 			script('js/run.js').wait();
 			/*

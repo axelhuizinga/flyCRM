@@ -27,7 +27,7 @@ using jQuery.FormData;
 		addInteractionState('init', { disables:['call','close','save','qcok'], enables:['find'] } );
 		//addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
 		addInteractionState('selected', { disables:[], enables:['call','close','save','qcok'] } );
-		addInteractionState('call', { disables:['close','save' ], enables:['save','qcok'] } );		
+		addInteractionState('call', { disables:['close' ], enables:['call','save','qcok'] } );		
 		//trace(data);
 		listattach2 = data.listattach2;
 		if (!(data.limit > 0))
@@ -41,10 +41,6 @@ using jQuery.FormData;
 		{
 			parentView.addDataLoader(listattach2, {
 				callBack:update,
-				/*callBack:function(data:Dynamic) {
-					data.primary_id = primary_id;
-					update(data);
-				},*/
 				prepare:function() {
 					resetParams();
 					if(vData.order != null)

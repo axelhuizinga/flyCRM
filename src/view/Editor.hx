@@ -74,11 +74,15 @@ class Editor extends View
 		//trace(parentView.id + ':' + J(Browser.window).width() + ' - ' + cMenu.root.outerWidth());
 		//trace(templ.tmpl(data));
 		var mSpace:Rectangle = App.getMainSpace();
+		
 		templ.tmpl(data).appendTo('#' + parentView.id).css( {
 			marginTop:Std.string(mSpace.top) + 'px',
 			height:Std.string(mSpace.height - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px'//,
 			//width:Std.string(J(Browser.window).width() - cMenu.root.outerWidth() - 300) + 'px'
 		}).animate( { opacity:1 } );
+		 J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());
+		
+		trace(id + ':' + parentView.id + ':' + J('#' + parentView.id +' .scrollbox').length + ':' +   J('#' + parentView.id +' .scrollbox').height());
 		//trace(data.recordings);
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;
 		data = { recordings:data.recordings.map(function(rec) {

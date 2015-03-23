@@ -205,6 +205,7 @@ typedef ContextMenuData =
 						root.find('.recordings').remove();
 						root.data('disabled', 0);
 						J(attach2).find('tr').removeClass('selected');
+						parentView.interactionState = 'init';
 						J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
 					case 'save','qcok':
 						var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
@@ -248,12 +249,12 @@ typedef ContextMenuData =
 							};
 							
 							parentView.loadData('server.php', p, function(data:Dynamic) { 
-								trace(data);
+								//trace(data);
 								if (data.response == 'OK') {//HUNG UP - CHOOSE DISPO STATUS
 									//trace('OK');		
 									//trace(data.choice);		
-									//parentView.vData.call = 0;
-									//wait(false);
+									//SHOW DISPO CHOICE DIALOG
+									parentView.interactionState = 'init';
 									App.choice( { header:App.appLabel.selectStatus, choice:data.choice, id:parentView.id } );
 									J('#choice  button[data-choice]').click(function(evt:Event)
 									{

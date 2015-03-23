@@ -28,6 +28,11 @@ body ul
 	list-style:none;padding:0;
 }
 
+button:disabled
+{
+	 color: #888;
+}
+
 li span.pad
 {
 	padding: 2px 5px;
@@ -282,19 +287,20 @@ tr.selected
 {
 	background-color: #eee;
 	opacity: 0.0;
-	display: table;
+	/*display: table;*/
 	position: absolute;
 	top:0px;
 	left:0px;
 	z-index: 800;
-	margin: 0px;
+	margin: 15px;
+	overflow: hidden;
 }
 .overlay-left
 {
 	display: block;
 	
 	/*width:70%;overflow-x: hidden;*/
-	overflow-y: scroll;
+	
 	padding: 10px 15px;
 	border-radius: 4.5px;
 }
@@ -304,7 +310,8 @@ tr.selected
 }
 .overlay-left form
 {
-	width:100%;
+	display: block;
+	/*overflow-y: scroll;*/
 	padding: 0.88em;
 }
 .overlay .content
@@ -318,8 +325,10 @@ tr.selected
 #choice.overlay
 {
 	z-index: 1000;
-	overflow: auto;
-	
+}
+.scrollbox
+{
+	overflow: auto;	
 }
 
 .recordings

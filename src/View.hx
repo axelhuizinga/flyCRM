@@ -134,7 +134,7 @@ class View
 		var iS:InteractionState = interactionStates.get(iState);
 		trace(id + ':' + iState + ':' + iS);
 		if (iS == null)
-			return iState;
+			return null;
 		var lIt:Iterator<JQuery> = listening.keys();
 		while (lIt.hasNext())
 		{
@@ -144,7 +144,7 @@ class View
 				aListener.prop('disabled', true);
 			if (iS.enables.has(aAction))
 				aListener.prop('disabled', false);
-			trace(aAction + ' disabled:' + (aListener.prop('disabled') ? 'Y':'N'));
+			trace(aListener.closest('.tabContent').attr('id') + ':' + aAction + ' disabled:' + (aListener.prop('disabled') ? 'Y':'N'));
 		}
 		trace(iState);
 		return iState;
@@ -194,8 +194,9 @@ class View
 	{
 		jListener.each(function(i, n)
 		{
-			//trace(n + ':' + n.attributes.getNamedItem('data-endaction'	).nodeValue);
-			listening.set(J(n), n.attributes.getNamedItem('data-endaction'	).nodeValue);
+			trace(id + ':' + n + ':' + J(n).data('endaction'));
+			//listening.set(J(n), n.attributes.getNamedItem('data-endaction').nodeValue);
+			listening.set(J(n), J(n).data('endaction'));
 		});
 	}
 	
@@ -237,7 +238,7 @@ class View
 	
 	function initState():Void
 	{
-		trace ((loadingComplete() ? 'Y':'N') + ' :' + J('button[data-endaction]').length);	
+		trace (id +':' + (loadingComplete() ? 'Y':'N') + ' :' + J('button[data-endaction]').length);	
 		if (!loadingComplete())
 		{			
 			Timer.delay(initState, 1000);

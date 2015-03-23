@@ -69,7 +69,9 @@ class App
 	{
 		if (data != null && data.id != null)
 		{
-			J('#t-choice' ).tmpl(data).appendTo('#' +data.id).css({width:J(Browser.window).width(), height:J(Browser.window).height()}).animate({opacity:1});
+			J('#t-choice' ).tmpl(data).appendTo('#' +data.id).css( { width:J(Browser.window).width(), height:J(Browser.window).height() } ).animate( { opacity:1 } );
+			trace(data.id + ':' + J('#' +data.id + ' .overlay .scrollbox').length + ':' + J('#' +data.id + ' .overlay').height());
+			J('#' +data.id + ' .overlay .scrollbox').height(J('#' +data.id + ' .overlay').height());
 		}
 		else
 			J('#choice').hide(300, null, function() J('#choice').remove());
