@@ -431,7 +431,7 @@
 			script('js/jquery.tmpl.js.gz').
 			script('js/sprintf.min.js.gz').
 			script('js/spin.min.js.gz').
-			script('js/iban.js.gz').
+			script('js/iban-tool.js.gz').
 			script('appData.js').
 			script('js/run.js').wait();
 			/*
@@ -446,78 +446,107 @@
 			
 		
 		
-		function loadScript(urls)
-		{
-			$.getScript(urls.shift(), function(data, textStatus, jqxhr)
-			{
-				if (urls.length>0) {
-					loadScript(urls);					
+		  function loadScript(urls)
+		  {
+			  $.getScript(urls.shift(), function(data, textStatus, jqxhr)
+			  {
+				  if (urls.length>0) {
+					  loadScript(urls);					
+				  }
+				  else{
+					  uiData.basePath="<?php echo $basePath;?>";
+					  uiData.action="<?php echo $action;?>";
+					  uiData.params="<?php echo $params;?>";
+					  uiData.user="<?php echo $user;?>";
+					  initApp(uiData);
+					  loader.remove();
+				  }
+			  });
+		  }
+		  
+		  function trace(m) {
+			  //console.log(el)
+			  //dumpObject(el.nodes, 1)
+			  console.log(m);
+			  //console.log('rows:' + $(el).siblings().length);
+			  return '';
+		  }
+		  
+		  function spin(id) {
+			  trace(id);
+			  return new Spinner(
+			  {
+				  direction:-1,
+				  zIndex:0
+			  }).spin(document.getElementById(id));
+		  }
+		  
+		  function data(keyNames,data) {
+			  var keys = keyNames.split(',');
+			  var ret = new Array();
+			  for(k in keys)
+			  {
+				  if (data[keys[k]]) {
+					  ret.push( 'data-' + keys[k] + '=' + data[keys[k]] );
+				  }
+			  }
+			  return ret.join(' ');
+		  }
+		  
+		  function display(format,value) {
+			  if (format=='datetime') {
+				  //datetime
+				  var t = value.split(/[- :]/);
+				  return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);
+			  }
+			  else
+				  return sprintf(format, value);
+		  }
+		  
+		  function has(keyNames,key) {
+		  //trace(keyNames + ':' + key);
+			  var keys = keyNames.split(',');
+			  for(k in keys)
+			  {
+				  /*if (keys[k]==key) {
+					  trace(k + '==' + key + ' TRUE ');
+				  }*/
+				  //trace(k + '==' + key + (keys[k]==key?'Y':'N'));
+				  if (keys[k]==key) 
+					  return true;
+			  }
+			  return false;
+		  }
+		  
+		  /*IBAN GENERATE + CHECK FUNCTIONS*/
+		  var gIBAN;
+			
+		  function repeat(s, n){
+				var a = [];
+				while(a.length < n){
+					 a.push(s);
 				}
-				else{
-					uiData.basePath="<?php echo $basePath;?>";
-					uiData.action="<?php echo $action;?>";
-					uiData.params="<?php echo $params;?>";
-					uiData.user="<?php echo $user;?>";
-					initApp(uiData);
-					loader.remove();
+				return a.join('');
+		  }
+		  
+		  function buildIBAN(konto, blz, onsuccess, onerror)
+		  {
+				konto = new String(konto);
+				blz = new String(blz);
+				debug( konto + ' ' + blz);
+				if (konto.length<10) {
+					konto = repeat('0', 10-konto.length) + konto;
 				}
-			});
-		}
-		
-		function trace(m) {
-			//console.log(el)
-			//dumpObject(el.nodes, 1)
-			console.log(m);
-			//console.log('rows:' + $(el).siblings().length);
-			return '';
-		}
-		
-		function spin(id) {
-			trace(id);
-			return new Spinner(
-			{
-				direction:-1,
-				zIndex:0
-			}).spin(document.getElementById(id));
-		}
-		
-		function data(keyNames,data) {
-			var keys = keyNames.split(',');
-			var ret = new Array();
-			for(k in keys)
-			{
-				if (data[keys[k]]) {
-					ret.push( 'data-' + keys[k] + '=' + data[keys[k]] );
-				}
-			}
-			return ret.join(' ');
-		}
-		
-		function display(format,value) {
-			if (format=='datetime') {
-				//datetime
-				var t = value.split(/[- :]/);
-				return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);
-			}
-			else
-				return sprintf(format, value);
-		}
-		
-		function has(keyNames,key) {
-		//trace(keyNames + ':' + key);
-			var keys = keyNames.split(',');
-			for(k in keys)
-			{
-				/*if (keys[k]==key) {
-					trace(k + '==' + key + ' TRUE ');
-				}*/
-				//trace(k + '==' + key + (keys[k]==key?'Y':'N'));
-				if (keys[k]==key) 
-					return true;
-			}
-			return false;
-		}
-		
+				if (blz.length<8) {
+					blz = repeat('0', 8-blz.length) + blz;
+				}					
+				IBAN.generate('DE',blz, konto).success(onsuccess).error(onerror);
+		  }
+		  
+		  function checkIBAN(iban)
+		  {
+				return IBANCheck.isValid(iban) 
+		  }
 		</script>
 		<table style="height:100%;width:100%;margin:auto;position:absolute;top:0px;" id="loader">
 		<tr><td style="text-align:center;vertical-align: middle;"><img style="margin:auto;" src="design/loading2.gif"></td><tr>

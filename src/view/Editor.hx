@@ -12,6 +12,7 @@ import js.Browser;
 import App.Rectangle;
 import js.html.Audio;
 import me.cunity.debug.Out;
+import me.cunity.js.;
 
 
 class Editor extends View
@@ -29,6 +30,8 @@ class Editor extends View
 		trace(id);
 		init();
 	}
+	
+	public function check
 	
 	public function  edit(dataRow:JQuery, className:String)
 	{
