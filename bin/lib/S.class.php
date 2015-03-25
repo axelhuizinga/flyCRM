@@ -68,7 +68,8 @@ class S {
 			S::$headerSent = true;
 		}
 		$exitValue = json_encode(_hx_anonymous(array("ERROR" => $d)));
-		return exit($exitValue);
+		exit($exitValue);
+		return;
 	}
 	static function dump($d) {
 		if(!S::$headerSent) {

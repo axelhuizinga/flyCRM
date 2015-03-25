@@ -1,7 +1,7 @@
 package;
 import haxe.ds.ObjectMap;
 import haxe.ds.StringMap;
-import haxe.EitherType;
+
 import haxe.Timer;
 import js.Browser;
 import js.html.Element;
@@ -83,9 +83,7 @@ class View
 	public var id:String;	
 	public var instancePath:String;	
 	public var interactionState(default, set):String;
-	public var inputs:StringMap<Input>;
-	
-	
+	public var inputs:StringMap<Input>;	
 		
 	public function new(?data:Dynamic ) 
 	{
@@ -194,8 +192,7 @@ class View
 	{
 		jListener.each(function(i, n)
 		{
-			trace(id + ':' + n + ':' + J(n).data('endaction'));
-			//listening.set(J(n), n.attributes.getNamedItem('data-endaction').nodeValue);
+			//trace(id + ':' + n + ':' + J(n).data('endaction'));
 			listening.set(J(n), J(n).data('endaction'));
 		});
 	}
@@ -401,7 +398,7 @@ class View
 		data.fields = fields;
 		data.hidden = vData.hidden;
 		data.primary_id = primary_id;
-		trace(id + ':' + data.fields + ':' + data.hidden + ':' + data.primary_id);
+		trace(id + ':' + data.fields + ':' + data.hidden + ':' + data.primary_id + ':' +  root.length);
 		if ( J('#' + id + '-list').length > 0)
 			J('#' + id + '-list').replaceWith(J('#t-' + id + '-list').tmpl(data));
 		else

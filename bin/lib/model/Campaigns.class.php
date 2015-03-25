@@ -39,7 +39,7 @@ class model_Campaigns extends Model {
 	static function create($param) {
 		$self = new model_Campaigns();
 		$self->table = "vicidial_campaigns";
-		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Campaigns.hx", "lineNumber" => 21, "className" => "model.Campaigns", "methodName" => "create")));
+		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Campaigns.hx", "lineNumber" => 22, "className" => "model.Campaigns", "methodName" => "create")));
 		return Reflect::callMethod($self, Reflect::field($self, $param->get("action")), (new _hx_array(array($param))));
 	}
 	function __toString() { return 'model.Campaigns'; }

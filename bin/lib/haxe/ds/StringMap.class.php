@@ -20,7 +20,7 @@ class haxe_ds_StringMap implements haxe_IMap, IteratorAggregate{
 		return array_key_exists($key, $this->h);
 	}
 	public function keys() {
-		return new _hx_array_iterator(array_keys($this->h));
+		return new _hx_array_iterator(array_map("strval", array_keys($this->h)));
 	}
 	public function iterator() {
 		return new _hx_array_iterator(array_values($this->h));

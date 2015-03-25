@@ -193,7 +193,7 @@ div.lpad
 tr.even{ background-color: #aaa;}
 tr.odd{ background-color: #bbb;}
 
-input[namei="submit"]{margin: auto;}
+input[name="submit"]{margin: auto;}
 
 tr:first-line{background: none;}
 
@@ -321,11 +321,34 @@ tr.selected
 	text-align: center;
 	padding-bottom: 100px;
 }
-
+#overlay input:not([type])
+{
+	 width:20em;
+}
+form .error
+{
+	 color: #800000;
+	 /*font-weight: bold;
+	 position: absolute;
+	 height: 1em;
+	 width: 1em;*/
+}
 #choice.overlay
 {
 	z-index: 1000;
 }
+
+.pager table
+{
+	 width:100%;
+}
+
+.pager a:link, .pager a:visited
+{
+	 text-decoration: none;
+	 font-weight: bold;	 
+}
+
 .scrollbox
 {
 	overflow: auto;	
@@ -339,4 +362,9 @@ tr.selected
 .recordings .label
 {
 	font-size: 0.8em;
+}
+
+td.nowrap
+{
+	 white-space: nowrap;
 }

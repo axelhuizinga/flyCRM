@@ -1,6 +1,6 @@
 package model;
 import haxe.ds.StringMap;
-import haxe.EitherType;
+import haxe.extern.EitherType;
 import haxe.Json;
 import me.cunity.php.db.MySQLi;
 import me.cunity.php.db.MySQLi_Result;
@@ -69,8 +69,13 @@ using Util;
 	{	
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
-		//trace(param);
+		var count:Int = countJoin(param, sb, phValues);
+		
+		sb = new StringBuf();
+		phValues = new Array();
 		data =  {
+			count:count,
+			page:param.has('page') ? Std.parseInt( param.get('page') ) : 1,
 			rows: doJoin(param, sb, phValues)
 		};
 		return json_encode();

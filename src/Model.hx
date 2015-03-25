@@ -1,6 +1,6 @@
 package;
 import haxe.ds.StringMap;
-import haxe.EitherType;
+import haxe.extern.EitherType;
 import haxe.Json;
 import php.Lib;
 import php.NativeArray;
@@ -23,6 +23,8 @@ typedef MConfig =
  
 typedef MData = 
 {
+	@:optional var count:Int;
+	@:optional var page:Int;
 	@:optional var rows:NativeArray;
 	@:optional var response:String;
 	@:optional var choice:NativeArray;
@@ -74,6 +76,47 @@ class Model
 			return false;
 		}
 	}
+	
+	public function count(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):Int
+	{
+		var fields:String = q.get('fields');		
+		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
+		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
+		sb.add('SELECT COUNT(*) AS count');
+		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
+		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
+		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
+		
+		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		var where:String = q.get('where');
+		if (where != null)
+			buildCond(where, sb, phValues);
+		return Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]).get('count');
+	}
+	
+	public function countJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):Int
+	{
+		var fields:String = q.get('fields');		
+		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
+		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
+		sb.add('SELECT COUNT(*) AS count');
+		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
+		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
+		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
+		
+		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		if (joinTable != null)
+			sb.add(' INNER JOIN ' + joinTable + ' ');
+		if (joinCond != null)
+			sb.add(joinCond);
+		var where:String = q.get('where');
+		if (where != null)
+			buildCond(where, sb, phValues);
+		//var hash =  Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]);
+		//trace(hash + ': ' + (hash.exists('count') ? 'Y':'N') );
+		return Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]).get('count');
+	}
+	
 	public function doJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		var fields:String = q.get('fields');		
@@ -167,7 +210,14 @@ class Model
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
 		//trace(param);
+		var count:Int = countJoin(param, sb, phValues);
+		
+		sb = new StringBuf();
+		phValues = new Array();
+		//var page:Int = param.has('page') ? Std.parseInt( param.get('page') ) : 1;
 		data =  {
+			count:count,
+			page: param.has('page') ? Std.parseInt( param.get('page') ) : 1,
 			rows: doSelect(param, sb, phValues)
 		};
 		return json_encode();
@@ -336,7 +386,8 @@ class Model
 	
 	public function buildLimit(limitParam:String, sb:StringBuf):Bool
 	{
-		sb.add(' LIMIT ' + Std.parseInt(limitParam));
+		sb.add(' LIMIT ' + (limitParam.indexOf(',') > -1 ? limitParam.split(',').map(function(s:String):Int return Std.parseInt(s)).join(',') 
+			: Std.string(Std.parseInt(limitParam))));
 		return true;
 	}
 	

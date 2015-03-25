@@ -1,6 +1,7 @@
 package model;
-import haxe.EitherType;
+
 import haxe.ds.StringMap;
+import haxe.extern.EitherType;
 import haxe.Json;
 import me.cunity.php.db.MySQLi_Result;
 

@@ -57,8 +57,6 @@ using jQuery.FormData;
 		init();
 	}
 	
-
-
 	override public function select(evt:Event):Void
 	{
 		evt.preventDefault();
@@ -83,5 +81,19 @@ using jQuery.FormData;
 			interactionState = 'selected';
 		else
 			interactionState = 'init';
+	}
+	
+	override public function update(data:Dynamic):Void
+	{
+		super.update(data);
+		trace(data.count);
+		if (App.limit < data.count)
+		{
+			//CREATE PAGER
+			var pager:Pager = new Pager({
+				count:data.count,
+				id:vData.id
+			});
+		}
 	}
 }

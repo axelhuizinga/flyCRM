@@ -1,7 +1,7 @@
 package;
 
 import haxe.ds.StringMap;
-import haxe.EitherType;
+import haxe.extern.EitherType;
 import haxe.Json;
 import me.cunity.debug.Out;
 import me.cunity.php.db.MySQLi;
@@ -115,7 +115,7 @@ class S
 		return res.exists('0') &&  Lib.hashOfAssociativeArray(cast res.get('0')).get('cnt') == '1';
 	}
 	
-	public static function exit(d:Dynamic):EitherType<String,Bool>
+	public static function exit(d:Dynamic):Void
 	{
 		if (!headerSent)
 		{

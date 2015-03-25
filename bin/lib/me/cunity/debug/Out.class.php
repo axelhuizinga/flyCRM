@@ -52,8 +52,8 @@ class me_cunity_debug_Out {
 		}
 		if(me_cunity_debug_Out::$once) {
 			me_cunity_debug_Out::$once = false;
-			me_cunity_debug_Out::_trace("i:" . Std::string(Type::typeof($i)), _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 128, "className" => "me.cunity.debug.Out", "methodName" => "_trace")));
-			me_cunity_debug_Out::dumpObject($i, _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 129, "className" => "me.cunity.debug.Out", "methodName" => "_trace")));
+			me_cunity_debug_Out::_trace("i:" . Std::string(Type::typeof($i)), _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 127, "className" => "me.cunity.debug.Out", "methodName" => "_trace")));
+			me_cunity_debug_Out::dumpObject($i, _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 128, "className" => "me.cunity.debug.Out", "methodName" => "_trace")));
 		}
 	}
 	static function log2($v, $i = null) {
@@ -78,7 +78,7 @@ class me_cunity_debug_Out {
 			print_r($v);
 			$ret =  ob_get_clean();
 		;
-		me_cunity_debug_Out::_trace($ret, _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 305, "className" => "me.cunity.debug.Out", "methodName" => "dumpVar")));
+		me_cunity_debug_Out::_trace($ret, _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 304, "className" => "me.cunity.debug.Out", "methodName" => "dumpVar")));
 	}
 	static function dumpObject($ob, $i = null) {
 		$tClass = Type::getClass($ob);
@@ -200,7 +200,7 @@ me_cunity_debug_Out::$aStack = (isset(haxe_CallStack::$callStack) ? haxe_CallSta
 function me_cunity_debug_Out_0(&$http, &$i, &$msg, &$v, $data) {
 	{
 		if($data !== "OK") {
-			haxe_Log::trace($data, _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 190, "className" => "me.cunity.debug.Out", "methodName" => "log2")));
+			haxe_Log::trace($data, _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 189, "className" => "me.cunity.debug.Out", "methodName" => "log2")));
 		}
 	}
 }

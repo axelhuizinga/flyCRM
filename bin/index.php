@@ -96,7 +96,7 @@
 				{{each(k,val) v}}
 				<tr>
 					<td>{{html $data.fieldNames[k]}}:</td>
-					<td>
+					<td class="nowrap">
 					{{if $data.typeMap[k] == 'TEXT' || $data.typeMap[k] == 'READONLY' }}
 					<input name="${k}" value="${val}" {{if $data.typeMap[k] == 'READONLY'}}readonly="readonly"{{/if}}>
 					{{else $data.typeMap[k] == 'AREA'}}
@@ -360,12 +360,31 @@
 			</div>	
 		</script>
 		
+		<!-- PAGER TEMPLATE -->
+		<script type="text/x-jquery-tmpl" id="t-pager">
+		  <tr id="${$data.id}-pager" class="pager">
+				<td colspan="${$data.colspan}" style="text-align: center">
+					 <table >
+						  <tr>
+								<td><a href="#" data-action="first">&lt;&lt;</a></td>
+								<td><a href="#" data-action="previous">&lt;</a></td>
+								<td><button data-action="go2page">${appLabel.go2page}</button></td>
+								<td><input size="3" name="page"></td>
+								<td>${appLabel.of + ' ' +  Math.ceil($data.count/uiData.limit)}</td>
+								<td><a href="#" data-action="next">&gt;</a></td>
+								<td><a href="#" data-action="last">&gt;&gt;</a></td>
+						  </tr>
+					 </table>
+				</td>
+		  </tr>
+		</script>
+		
 		<!-- SELECT  OPTIONS TEMPLATE ${trace($item)}-->
 		<script type="text/x-jquery-tmpl" id="t-campaign_id">
 			{{each(i,v) $data.rows}}
 			<option value="${v.campaign_id}">${v.campaign_name}</option>
 			{{/each}}
-		</script>
+		</script>		
 		
 		<!--  WAIT SCREEN TEMPLATE ${trace($data)}-->
 		<script type="text/x-jquery-tmpl" id="t-wait">		
@@ -380,8 +399,8 @@
 		
 		<!-- OVERLAY CHOICE TEMPLATE ${trace($data)} ${trace(i + ':' + v.status)}-->
 		<script type="text/x-jquery-tmpl" id="t-choice">		
-			<div id="choice" class="overlay">
-			<div  class="scrollbox">			
+		  <div id="choice" class="overlay">
+		  <div  class="scrollbox">			
 				<table id="choice-content" class="ccontent">
 					<caption>${$data.header}</caption>
 					{{each(i,v) $data.choice}}					
@@ -393,8 +412,31 @@
 						<td><button onclick="choice()">${appLabel.close}</button></td>
 					</tr>	
 				</table>
-			</div>
-			</div>
+		  </div>
+		  </div>
+		</script>
+		
+		  <!-- OVERLAY CONFIRM TEMPLATE ${trace($data)} ${trace(i + ':' + v.status)}-->
+		  <script type="text/x-jquery-tmpl" id="t-confirm">		
+				<div id="confirm" class="overlay">
+				<div  class="scrollbox">			
+					 <table id="confirm-content" class="ccontent">
+						  <caption>${$data.header}</caption>
+						  <tr>
+							  <td>${$data.info}</td>
+						  </tr>							  
+						  {{each(i,v) $data.confirm}}					
+						  <tr>
+							  <td><button data-confirm="${v.command}">${v.label}</button></td>
+						  </tr>						
+						  {{/each}}
+						  <tr>
+							  <td>
+							  <button onclick="modal('${$data.mID}')" > ${appLabel.close}</button></td>
+						  </tr>	
+					 </table>
+				</div>
+				</div>
 		</script>
 		
 		<script src="js/LAB.src.js"></script>

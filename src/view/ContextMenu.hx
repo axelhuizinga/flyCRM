@@ -59,6 +59,7 @@ typedef ContextMenuData =
 		{ 
 			active:1,
 			activate:activate,	
+			"autoHeight": false,
 			beforeActivate:function(event:Event, ui) {
 				if(root.data('disabled'))
 				{
@@ -71,6 +72,7 @@ typedef ContextMenuData =
 				}
 			},
 			create:create,
+			fillSpace: true,
 			heightStyle:contextData.heightStyle
 		});
 		accordion = root.accordion('instance');
@@ -207,34 +209,30 @@ typedef ContextMenuData =
 						J(attach2).find('tr').removeClass('selected');
 						parentView.interactionState = 'init';
 						J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
-					case 'save','qcok':
-						var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
-						p.push( { name:'className', value:parentView.name });
-						p.push( { name:'action', value:'save' });
-						p.push( { name:'primary_id', value: parentView.vData.primary_id} );
-						p.push( { name:parentView.vData.primary_id, value: editor.eData.attr('id') } );
-						if (endAction == 'qcok')
-							p.push( { name:'status', value:'MITGL' });
-						if (parentView.vData.hidden != null)
-						{							
-							var hKeys:Array<String> = parentView.vData.hidden.split(',');
-							for (k in hKeys)
+					case 'save', 'qcok':
+						if (!editor.checkIban())
+						{
+							editor.checkAccountAndBLZ(function(ok:Bool)
 							{
-								//Reflect.setField(p, k, eData.data(k));
-								p.push( { name:k, value:editor.eData.data(k) } );
-							}													
+								trace (ok);
+								if (ok)
+								{
+									editor.save(action == 'qcok');
+								}
+								else
+								{//J('#' + parentView.id + '-edit-form')
+									App.inputError( J('#' + parentView.id + '-edit-form'), ['account','blz','iban'] );
+									/*App.modal('confirm', { 
+										header:'Bitte folgende Werte prüfen:',
+										id:parentView.id,
+										info:'IBAN, Kontonummer oder  BLZ sind nicht korrekt!',
+										mID:'confirm',
+										confirm:[]
+									} );*/
+								}
+							});
 						}
-						//trace(p);
-						parentView.loadData('server.php', p, function(data:Dynamic) { 
-							trace(data);
-							if (data == 'true') {
-								trace(root.find('.recordings').length);
-								root.find('.recordings').remove();
-								root.data('disabled', 0);
-								J(attach2).find('tr').removeClass('selected');
-								J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );			
-							}
-						});
+						
 					case 'call':
 						trace('parentView.interactionState:' + parentView.interactionState);
 						if (parentView.interactionState == 'call')
@@ -264,10 +262,10 @@ typedef ContextMenuData =
 											action:'external_status',
 											dispo:J(cast( evt.target, Node)).data('choice'),
 											agent_user:editor.eData.data('user')
-										}
+										};
 										parentView.loadData('server.php', p, function(data:Dynamic) { 
 											trace(data);
-											if (data.response != 'OK')
+											if (data.response != 'OK')												
 												App.choice( { header:data.response, id:parentView.id } );
 											else
 												App.choice(null);

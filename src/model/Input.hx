@@ -1,6 +1,6 @@
 package model;
 import haxe.ds.StringMap;
-import haxe.EitherType;
+
 
 import me.cunity.php.db.MySQLi;
 import me.cunity.php.db.MySQLi_Result;

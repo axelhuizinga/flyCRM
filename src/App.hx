@@ -8,6 +8,7 @@ import haxe.Timer;
 import js.Browser;
 import jQuery.*;
 import jQuery.JHelper.J;
+import js.html.Node;
 import js.Lib;
 //import js.Spinner;
 import me.cunity.debug.Out;
@@ -18,6 +19,8 @@ import view.DateTime;
 import view.Editor;
 import view.QC;
 import view.TabBox;
+
+using Lambda;
 
 /**
  * ...
@@ -64,6 +67,20 @@ class App
 		//dbLoader = new Array();
 	}
 	
+	public static function inputError(form:JQuery, inputs:Array<String>)
+	{
+		trace(form.attr('id') + ':' + inputs);
+		form.find('input').each(function(i:Int, n:Node)
+		{
+			//trace (J(n).attr('name') + ': ' + (inputs.has(J(n).attr('name')) ? 'Y' : 'N') );
+			if (inputs.has(J(n).attr('name')))
+			{
+				J(n).addClass('error');
+				//J(n).append(J('<span class="error">*</span>'));
+			}
+		});
+	}
+	
 	@:expose('choice')
 	public static function choice(data:Dynamic)
 	{
@@ -75,6 +92,20 @@ class App
 		}
 		else
 			J('#choice').hide(300, null, function() J('#choice').remove());
+	}	
+	
+	@:expose('modal')
+	public static function modal(mID:String, ?data:Dynamic)
+	{
+		trace(data);
+		if (data != null && data.mID != null)
+		{
+			J('#t-' + mID ).tmpl(data).appendTo('#' +data.id).css( { width:J(Browser.window).width(), height:J(Browser.window).height() } ).animate( { opacity:1 } );
+			trace(data.id + ':' + J('#' +data.id + ' .overlay .scrollbox').length + ':' + J('#' +data.id + ' .overlay').height());
+			J('#' +data.id + ' .overlay .scrollbox').height(J('#' +data.id + ' .overlay').height());
+		}
+		else
+			J('#' + mID).hide(300, null, function() J('#' + mID).remove());
 	}	
 	
 	@:expose("initApp") 

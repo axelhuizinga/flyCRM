@@ -1,6 +1,6 @@
 package model;
 import haxe.ds.StringMap;
-import haxe.EitherType;
+import haxe.extern.EitherType;
 import haxe.Http;
 import php.Lib;
 import php.Web;

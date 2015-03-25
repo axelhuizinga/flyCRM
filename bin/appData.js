@@ -21,9 +21,11 @@ var appLabel =
 	active:'Nur Aktive',
 	edit:'Bearbeiten',
 	filter:'Kontextfilter',
+	go2page:'Gehe zu Seite',
 	select:'Auswählen',
 	selectStatus:'Status Auswählen',
-	close:'Schließen'
+	close:'Schließen',
+	of:'von'
 }
 
 var matchOptions =
@@ -149,7 +151,7 @@ var uiData = {
 							{
 								ContextMenu:{
 									id:'qc-menu',
-									heightStyle: 'auto',
+									heightStyle: 'fill',
 									items:[
 										{
 											action:'find',
@@ -210,7 +212,7 @@ var uiData = {
 							{
 								ContextMenu:{
 									id:'clients-menu',
-									heightStyle: 'auto',
+									heightStyle: 'fill',
 									items:[
 										{
 											action:'find',
@@ -258,7 +260,7 @@ var uiData = {
 							{
 								ContextMenu:{
 									id:'campaigns-menu',
-									heightStyle: 'content',
+									heightStyle: 'fill',
 									items:[
 										{
 											action:'findLeads',

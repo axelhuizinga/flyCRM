@@ -8,11 +8,12 @@ package view;
 import haxe.ds.StringMap;
 import jQuery.*;
 import jQuery.JHelper.J;
+import jQuery.FormData.FData;
 import js.Browser;
 import App.Rectangle;
 import js.html.Audio;
 import me.cunity.debug.Out;
-import me.cunity.js.;
+import me.cunity.js.data.IBAN;
 
 
 class Editor extends View
@@ -31,7 +32,36 @@ class Editor extends View
 		init();
 	}
 	
-	public function check
+	public function checkIban():Bool
+	{
+		var iban:String = J('#' + parentView.id + '-edit-form  input[name="iban"]').val();
+		trace(iban);
+		return IBAN.checkIBAN(iban);
+	}
+	
+	public function checkAccountAndBLZ(ok2submit:Bool->Void):Void
+	{
+		var account:String = J('#' + parentView.id + '-edit-form input[name="account"]').val();
+		var blz:String = J('#' + parentView.id + '-edit-form input[name="blz"]').val();
+		trace(account + ':' + blz);
+		if (!(account.length > 0 && blz.length > 0))
+		{
+			ok2submit(false);
+			return;
+		}
+		IBAN.buildIBAN(account, blz, function(success:IbanSuccess) {
+			if (IBAN.checkIBAN(success.iban))
+			{
+				J('#' + parentView.id + '-edit-form input[name="iban"]').val(success.iban);
+				ok2submit(true);
+			}
+		},
+		function(error:IbanError)
+		{
+			trace(error.message);
+			ok2submit(false);
+		});
+	}
 	
 	public function  edit(dataRow:JQuery, className:String)
 	{
@@ -58,6 +88,37 @@ class Editor extends View
 		//cMenu.set_active(cMenu.getIndexOf(vData.trigger.split('|')[1]));
 	}
 	
+	public function save(qcok:Bool):Void
+	{
+		var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
+		p.push( { name:'className', value:parentView.name });
+		p.push( { name:'action', value:'save' });
+		p.push( { name:'primary_id', value: parentView.vData.primary_id} );
+		p.push( { name:parentView.vData.primary_id, value: eData.attr('id') } );
+		//if (endAction == 'qcok')
+		if (qcok)
+			p.push( { name:'status', value:'MITGL' });
+		if (parentView.vData.hidden != null)
+		{							
+			var hKeys:Array<String> = parentView.vData.hidden.split(',');
+			for (k in hKeys)
+			{
+				p.push( { name:k, value:eData.data(k) } );
+			}													
+		}
+		//trace(p);
+		parentView.loadData('server.php', p, function(data:Dynamic) { 
+			trace(data +': ' + (data == 'true' ? 'Y':'N'));
+			if (data == 'true') {
+				trace(root.find('.recordings').length);
+				root.find('.recordings').remove();
+				root.data('disabled', 0);
+				J(attach2).find('tr').removeClass('selected');
+				J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );			
+			}
+		});
+	}
+	
 	override public function update(data:Dynamic):Void
 	{
 		parentView.wait(false);
@@ -76,15 +137,16 @@ class Editor extends View
 		data.optionsMap = dataOptions;
 		//trace(parentView.id + ':' + J(Browser.window).width() + ' - ' + cMenu.root.outerWidth());
 		//trace(templ.tmpl(data));
+		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
-		
+		//FILL TEMPLATE AND SHOW EDITOR FORM OVERLAY
 		templ.tmpl(data).appendTo('#' + parentView.id).css( {
-			marginTop:Std.string(mSpace.top) + 'px',
-			height:Std.string(mSpace.height - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px'//,
-			//width:Std.string(J(Browser.window).width() - cMenu.root.outerWidth() - 300) + 'px'
+			marginTop:Std.string(mSpace.top + oMargin ) + 'px',
+			marginLeft:Std.string(oMargin ) + 'px',
+			height:Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px'
 		}).animate( { opacity:1 } );
-		 J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());
-		
+		trace(mSpace.height + ':' +  2 * oMargin + ':' + Std.parseFloat(J('#overlay').css('padding-top')) + ':' + Std.parseFloat(J('#overlay').css('padding-bottom')));
+		J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());
 		trace(id + ':' + parentView.id + ':' + J('#' + parentView.id +' .scrollbox').length + ':' +   J('#' + parentView.id +' .scrollbox').height());
 		//trace(data.recordings);
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;
