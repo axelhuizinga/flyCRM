@@ -318,12 +318,13 @@ class View
 		}, 'json');
 	}
 	
-	public function find(where:String):Void
+	public function find(p:StringMap<String>):Void
 	{
+		var where:String = p.get('where');
 		trace('|'+where+'|' + (where.any2bool() ? 'Y':'N'));
 		trace(vData.where);
 		var fData:Dynamic = { };
-		var pkeys:Array<String> = 'action,className,fields,primary_id,hidden,limit,order,table,where'.split(',');
+		var pkeys:Array<String> = 'action,className,fields,primary_id,hidden,limit,order,page,table,where'.split(',');
 		for (f in pkeys)
 		{
 			if (Reflect.field(vData, f) != null)		
@@ -333,8 +334,10 @@ class View
 					fData.where = (vData.where.any2bool() ? vData.where + (where.any2bool() ? ',' + where  : '') : where);
 				}
 				else
-					Reflect.setField(fData, f, Reflect.field(vData, f));
+					Reflect.setField(fData, f, p.exists(f) ? p.get(f) : Reflect.field(vData, f));
 			}
+			if (f != 'where' && p.exists(f))
+				Reflect.setField(fData, f, p.get(f));
 		}
 		
 		//trace(vData);
@@ -354,7 +357,7 @@ class View
 	
 	private function resetParams(?pData:Dynamic):Dynamic
 	{		
-		var pkeys:Array<String> = 'action,className,fields,limit,order,table,jointable,joincond,where'.split(',');
+		var pkeys:Array<String> = 'action,className,fields,limit,order,page,table,jointable,joincond,where'.split(',');
 		//var aData:Dynamic = pData.any2bool() ? pData : vData;
 		//MERGE pData into vData
 		trace(pData);

@@ -73,9 +73,10 @@ using Util;
 		
 		sb = new StringBuf();
 		phValues = new Array();
+		trace( param.get('page') + ':' + param.get('page')  + ': ' + (param.exists('page') ? 'Y':'N'));
 		data =  {
 			count:count,
-			page:param.has('page') ? Std.parseInt( param.get('page') ) : 1,
+			page:(param.exists('page') ? Std.parseInt( param.get('page') ) : 1),
 			rows: doJoin(param, sb, phValues)
 		};
 		return json_encode();

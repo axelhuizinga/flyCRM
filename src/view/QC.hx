@@ -92,7 +92,9 @@ using jQuery.FormData;
 			//CREATE PAGER
 			var pager:Pager = new Pager({
 				count:data.count,
-				id:vData.id
+				id:vData.id,
+				page:data.page,
+				parentView:this
 			});
 		}
 	}

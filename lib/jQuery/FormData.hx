@@ -73,6 +73,7 @@ class FormData
 	}
 	
 	public static function where(jForm:JQuery, fields:Array<String>):String
+	//public static function where(jForm:JQuery, fields:Array<String>):StringMap<String>
 	{
 		var ret:Array<String> = new Array();
 		var fD:Array<FData> = cast jForm.serializeArray();

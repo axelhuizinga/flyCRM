@@ -369,7 +369,7 @@
 								<td><a href="#" data-action="first">&lt;&lt;</a></td>
 								<td><a href="#" data-action="previous">&lt;</a></td>
 								<td><button data-action="go2page">${appLabel.go2page}</button></td>
-								<td><input size="3" name="page"></td>
+								<td><input size="3" name="page" value="${$data.page}"></td>
 								<td>${appLabel.of + ' ' +  Math.ceil($data.count/uiData.limit)}</td>
 								<td><a href="#" data-action="next">&gt;</a></td>
 								<td><a href="#" data-action="last">&gt;&gt;</a></td>

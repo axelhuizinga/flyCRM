@@ -196,7 +196,7 @@ typedef ContextMenuData =
 					//var where:String = FormData.where(J(cast( evt.target, Element)).parent(), fields);
 					var where:String = FormData.where(jNode.closest('form'), fields);
 					trace(where);
-					Reflect.callMethod(parentView, Reflect.field(parentView, action), [where]);			
+					//Reflect.callMethod(parentView, Reflect.field(parentView, action), [where]);			
 				}	
 			case 'edit':
 				var editor:Editor = cast(parentView.views.get(parentView.instancePath + '.' + parentView.id + '-editor'), Editor);
