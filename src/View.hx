@@ -1,6 +1,7 @@
 package;
 import haxe.ds.ObjectMap;
 import haxe.ds.StringMap;
+import view.Pager;
 
 import haxe.Timer;
 import js.Browser;
@@ -411,6 +412,18 @@ class View
 		//remove click handler from all main data list rows td cells  - why???
 		J('#' + id + '-list tr').first().siblings().click(select).find('td').off('click');
 		//J('td').attr('tabindex', -1);
+		var limit:Int = (vData.limit > 0? vData.limit : App.limit);
+		if (limit < data.count)
+		{
+			//CREATE PAGER
+			var pager:Pager = new Pager({
+				count:data.count,
+				id:vData.id,
+				limit:limit,
+				page:data.page,
+				parentView:this
+			});
+		}		
 	}
 	
 

@@ -83,7 +83,7 @@ using jQuery.FormData;
 			interactionState = 'init';
 	}
 	
-	override public function update(data:Dynamic):Void
+	/*override public function update(data:Dynamic):Void
 	{
 		super.update(data);
 		trace(data.count);
@@ -97,5 +97,5 @@ using jQuery.FormData;
 				parentView:this
 			});
 		}
-	}
+	}*/
 }

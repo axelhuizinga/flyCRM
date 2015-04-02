@@ -11,6 +11,7 @@ import jQuery.JHelper.J;
 class Pager// extends View
 {
 	var count:Int;
+	var limit:Int;
 	var page:Int;
 	var parentView:View;
 	
@@ -19,6 +20,7 @@ class Pager// extends View
 		var colspan:Int = J('#' + data.id + '-list tr').first().children().length;
 		data.colspan = colspan;
 		count = data.count;
+		limit = data.limit;
 		page = data.page;
 		parentView = data.parentView;
 		trace(data.id + ':' + page + ':' + count);
@@ -59,7 +61,7 @@ class Pager// extends View
 	{
 		var param:StringMap<String> = new StringMap();
 		param.set('page', Std.string(p));
-		param.set('limit', ((p - 1) * App.limit) + ',' + (p + App.limit <= count? App.limit:count - ((p - 1) * App.limit)));
+		param.set('limit', ((p - 1) * limit) + ',' + (p + limit <= count? limit:count - ((p - 1) * limit)));
 		parentView.find(param);
 	}
 	

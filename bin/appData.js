@@ -8,6 +8,7 @@ var fieldNames =
 	city:'Ort',
 	last_local_call_time:'Anrufzeit',
 	lead_id:'LeadID',
+	client_id:'Mitgliedsnr.',
 	vendor_lead_code:'Mitgliedsnr.',
 	vicidial_campaigns:'Kampagnen',
 	vicidial_lists:'Listen',
@@ -200,8 +201,9 @@ var uiData = {
 					[{							
 						Clients:{
 							action:'find',
-							//fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
-							fields:'vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
+							fields:'lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
+							primary_id:'vendor_lead_code',
+							hidden:'lead_id',							
 							id:'clients',
 							limit:15,
 							order:'vendor_lead_code|ASC',
@@ -214,6 +216,16 @@ var uiData = {
 									id:'clients-menu',
 									heightStyle: 'fill',
 									items:[
+										{
+											action:'mailings',
+											label:'Anschreiben',											
+											buttons:
+											{
+												previewOne:'Vorschau',
+												printOne:'Drucken',
+												printNewMembers:'Alle neuen Anschreiben Drucken'												
+											}
+										},										
 										{
 											action:'find',
 											label:'Finden',
@@ -230,10 +242,8 @@ var uiData = {
 											label:'Bearbeiten',
 											buttons:
 											{
-												edit:'Bearbeiten',
-												save:'Speichern',
-												add:'Hinzufügen',
-												delete:'Löschen'
+												close:'Abbrechen',
+												save:'Speichern'
 											}
 										}										
 									],

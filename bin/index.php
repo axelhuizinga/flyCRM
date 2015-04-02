@@ -206,20 +206,21 @@
 				${($data.oddi=0,'')}
 				<tr class="headrow" >
 				{{each(i,v) $data.fields}}
-					
+					{{if v!=$data.primary_id && !has($data.hidden,v)}}
 					<th data-order="${v}" >${fieldNames[v]}</th>
-					
+					{{/if}}
 				{{/each}}
 				</tr>
 				{{each(i,v) $data.rows}}
-					<tr id="${v.vendor_lead_code}" class="${((i+1) % 2 ? 'odd' : 'even')}">
+					<tr id="${v.vendor_lead_code}" class="${((i+1) % 2 ? 'odd' : 'even')}"  ${data($data.hidden,v)} >
 					{{each(ri,rv) v}}
-						
-							{{if displayFormats[ri]}}
-						<td data-name="${ri}" >${sprintf(displayFormats[ri],rv)}</td>	
+						{{if ri!=$data.primary_id && !has($data.hidden,ri)}}
+							{{if displayFormats[ri] }}
+						<td data-name="${ri}" >${display(displayFormats[ri],rv)}</td>												
 							{{else}}
 						<td data-name="${ri}" >${rv}</td>	
 							{{/if}}
+						{{/if}}
 					{{/each}}
 					</tr>
 				{{/each}}
@@ -273,7 +274,7 @@
 								<button data-endaction="${bi}">${bv}</button>							
 							</td>						
 						</tr>						
-						{{/each}}
+						{{/each}}						
 						</table>
 					</form>
 				</div>
@@ -474,21 +475,14 @@
 			script('js/sprintf.min.js.gz').
 			script('js/spin.min.js.gz').
 			script('js/iban-tool.js.gz').
-			script('appData.js').
-			script('js/run.js').wait();
-			/*
-			script('flyCRM.js.gz').wait(function()
+			script('appData.js').wait(function()
 			{
 				console.log('should be done...');
 				initApp(uiData);
 				$('#loader').remove();
-			});
-			*/
-			//])});
-			
+			});		
 		
-		
-		  function loadScript(urls)
+		  /*function loadScript(urls)
 		  {
 			  $.getScript(urls.shift(), function(data, textStatus, jqxhr)
 			  {
@@ -504,7 +498,7 @@
 					  loader.remove();
 				  }
 			  });
-		  }
+		  }*/
 		  
 		  function trace(m) {
 			  //console.log(el)
@@ -524,6 +518,9 @@
 		  }
 		  
 		  function data(keyNames,data) {
+				if (!keyNames) {
+					 return '';
+				}
 			  var keys = keyNames.split(',');
 			  var ret = new Array();
 			  for(k in keys)
@@ -536,28 +533,27 @@
 		  }
 		  
 		  function display(format,value) {
-			  if (format=='datetime') {
-				  //datetime
-				  var t = value.split(/[- :]/);
-				  return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);
-			  }
-			  else
-				  return sprintf(format, value);
+				if (format=='datetime') {
+					 var t = value.split(/[- :]/);
+					 return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);
+				}
+				else
+					 return sprintf(format, value);
 		  }
 		  
-		  function has(keyNames,key) {
+		  function has(keyNames,key)
+		  {
+				if (!keyNames) {
+					 return false;
+				}
 		  //trace(keyNames + ':' + key);
-			  var keys = keyNames.split(',');
-			  for(k in keys)
-			  {
-				  /*if (keys[k]==key) {
-					  trace(k + '==' + key + ' TRUE ');
-				  }*/
-				  //trace(k + '==' + key + (keys[k]==key?'Y':'N'));
-				  if (keys[k]==key) 
-					  return true;
-			  }
-			  return false;
+				var keys = keyNames.split(',');
+				for(k in keys)
+				{
+					 if (keys[k]==key) 
+						  return true;
+				}
+				return false;
 		  }
 		  
 		  /*IBAN GENERATE + CHECK FUNCTIONS*/

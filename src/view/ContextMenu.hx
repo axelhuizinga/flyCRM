@@ -154,7 +154,6 @@ typedef ContextMenuData =
 	
 	public function layout()
 	{
-		//trace(accordion);
 		var maxWidth:Float = 0;
 		var maxHeight:Float = 0;
 		var jP:Array<HtmlElement> = accordion.panels;
@@ -164,8 +163,6 @@ typedef ContextMenuData =
 			var jEl:JQuery = J(jP[p]);
 			if (p != active)
 				jEl.css('visibility', 'hidden').show();
-			//if ( jEl.width() > maxWidth)
-			//maxWidth =   jEl.width();
 			maxWidth =   Math.max(jEl.width(), maxWidth);
 			maxHeight = Math.max(jEl.height(), maxHeight);
 			if (p != active)

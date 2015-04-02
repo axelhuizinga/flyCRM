@@ -214,10 +214,10 @@ class Model
 		
 		sb = new StringBuf();
 		phValues = new Array();
-		//var page:Int = param.has('page') ? Std.parseInt( param.get('page') ) : 1;
+		trace( 'count:' + count + ' page:' + param.get('page') + ':' + param.get('page')  + ': ' + (param.exists('page') ? 'Y':'N'));
 		data =  {
 			count:count,
-			page: param.has('page') ? Std.parseInt( param.get('page') ) : 1,
+			page: param.exists('page') ? Std.parseInt( param.get('page') ) : 1,
 			rows: doSelect(param, sb, phValues)
 		};
 		return json_encode();

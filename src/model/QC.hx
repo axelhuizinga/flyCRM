@@ -73,7 +73,7 @@ using Util;
 		
 		sb = new StringBuf();
 		phValues = new Array();
-		trace( param.get('page') + ':' + param.get('page')  + ': ' + (param.exists('page') ? 'Y':'N'));
+		trace( 'count:' + count + ':' + param.get('page')  + ': ' + (param.exists('page') ? 'Y':'N'));
 		data =  {
 			count:count,
 			page:(param.exists('page') ? Std.parseInt( param.get('page') ) : 1),
