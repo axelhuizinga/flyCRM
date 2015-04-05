@@ -227,6 +227,43 @@
 			</table>		
 		</script>
 		
+	 <!-- CLIENTS EDITOR -->
+		
+		<script type="text/x-jquery-tmpl"  id="t-clients-editor">
+		<div id="overlay" class="overlay-left">
+		<div  class="scrollbox">
+			<form  id="qc-edit-form" action="qc" class="main-left">
+			{{each(i,v) $data.rows}}
+				<table id="qc-edit-data-${i}">
+				{{each(k,val) v}}
+				<tr>
+					<td>{{html $data.fieldNames[k]}}:</td>
+					<td class="nowrap">
+					{{if $data.typeMap[k] == 'TEXT' || $data.typeMap[k] == 'READONLY' }}
+					<input name="${k}" value="${val}" {{if $data.typeMap[k] == 'READONLY'}}readonly="readonly"{{/if}}>
+					{{else $data.typeMap[k] == 'AREA'}}
+					<textarea name="${k}">${val}</textarea>
+					{{else $data.typeMap[k] == 'SELECT'}}
+					<select name="${k}" >
+					{{each(oi, ov) $data.optionsMap[k]}}
+						<option value="${ov[0]}" {{if ov[0]==val}}selected="selected"{{/if}}>${ov[1]}</option>
+					{{/each}}
+					</select>
+					{{else $data.typeMap[k] == 'RADIO'}}
+					{{each(oi, ov) $data.optionsMap[k]}}
+						<input type="radio" name="${k}[]"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
+					{{/each}}
+					{{/if}}
+					</td>
+				</tr>
+				{{/each}}
+				</table>
+			</form>
+			{{/each}}
+		</div>
+		</div>
+		</script>
+		
 		<!-- MEMBERS MENU -->
 		
 		<script type="text/x-jquery-tmpl" id="t-clients-menu">		
@@ -457,15 +494,8 @@
 		<script src="flyCRM.js"></script>
 		<script src="appData.js"></script>		-->	
 		<script 	>
-			$LAB.setGlobalDefaults({Debug:true})
-		//var loader;
-		//$(document).ready(function()
-		//{
-			/*if(1)loadScript([*/
-			//loader = spin('mtabs');
-			//loader = $('<table style="height:100%;width:100%;margin:auto;position:absolute;top:0px;"><tr><td style="text-align:center"><img style="margin:auto;" src="design/loading2.gif"></td><tr></table>').appendTo('body');
-			//$LAB
-			.script('js/jquery-2.1.3.js.gz').
+			$LAB.setGlobalDefaults({Debug:true}).
+			script('js/jquery-2.1.3.js.gz').
 			script('js/stacktrace.js.gz').
 			script('js/debugJq.js.gz').
 			script('js/jquery-ui.min.js.gz').
@@ -476,35 +506,18 @@
 			script('js/spin.min.js.gz').
 			script('js/iban-tool.js.gz').
 			script('appData.js').wait(function()
-			{
+		  {
 				console.log('should be done...');
+				uiData.basePath="<?php echo $basePath;?>";
+				uiData.action="<?php echo $action;?>";
+				uiData.params="<?php echo $params;?>";
+				uiData.user="<?php echo $user;?>";				
 				initApp(uiData);
 				$('#loader').remove();
-			});		
-		
-		  /*function loadScript(urls)
-		  {
-			  $.getScript(urls.shift(), function(data, textStatus, jqxhr)
-			  {
-				  if (urls.length>0) {
-					  loadScript(urls);					
-				  }
-				  else{
-					  uiData.basePath="<?php echo $basePath;?>";
-					  uiData.action="<?php echo $action;?>";
-					  uiData.params="<?php echo $params;?>";
-					  uiData.user="<?php echo $user;?>";
-					  initApp(uiData);
-					  loader.remove();
-				  }
-			  });
-		  }*/
+		  });		
 		  
-		  function trace(m) {
-			  //console.log(el)
-			  //dumpObject(el.nodes, 1)
+		  function trace(m) {//debug from template
 			  console.log(m);
-			  //console.log('rows:' + $(el).siblings().length);
 			  return '';
 		  }
 		  
