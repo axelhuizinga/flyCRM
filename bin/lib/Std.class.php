@@ -32,6 +32,17 @@ class Std {
 			}
 		}
 	}
+	static function parseFloat($x) {
+		$v = floatval($x);
+		if($v === 0.0) {
+			$x = rtrim($x);
+			$v = floatval($x);
+			if($v === 0.0 && !is_numeric($x)) {
+				$v = acos(1.01);
+			}
+		}
+		return $v;
+	}
 	static function random($x) {
 		if($x <= 0) {
 			return 0;

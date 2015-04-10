@@ -30,7 +30,7 @@ using Util;
 		return Reflect.callMethod(self, Reflect.field(self,param.get('action')), [param]);
 	}
 		
-	public function edit(param:StringMap<Dynamic>):EitherType<String,Bool>
+	override public function edit(param:StringMap<Dynamic>):EitherType<String,Bool>
 	{
 		var entry_list_id:String = param.get('entry_list_id');
 		var cF:Array<StringMap<String>> = getCustomFields(entry_list_id);
@@ -80,13 +80,7 @@ using Util;
 			rows: doJoin(param, sb, phValues)
 		};
 		return json_encode();
-	}
-	
-	function getRecordings(lead_id:Int):NativeArray
-	{
-		return query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " 
-		+ Std.string(lead_id) + ' ORDER BY start_time DESC');
-	}
+	}	
 	
 	public function doSelectCustom(q:StringMap<Dynamic>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{

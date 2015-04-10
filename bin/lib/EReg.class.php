@@ -39,6 +39,13 @@ class EReg {
 		}
 		return $this->matches[$n][0];
 	}
+	public function matchedRight() {
+		if(count($this->matches) === 0) {
+			throw new HException("No string matched");
+		}
+		$x = $this->matches[0][1] + strlen($this->matches[0][0]);
+		return _hx_substr($this->last, $x, null);
+	}
 	public function matchedPos() {
 		return _hx_anonymous(array("pos" => $this->matches[0][1], "len" => strlen($this->matches[0][0])));
 	}

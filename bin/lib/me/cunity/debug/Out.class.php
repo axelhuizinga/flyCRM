@@ -79,7 +79,7 @@ class me_cunity_debug_Out {
 			print_r($v);
 			$ret =  ob_get_clean();
 		;
-		me_cunity_debug_Out::_trace($ret, _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 320, "className" => "me.cunity.debug.Out", "methodName" => "dumpVar")));
+		me_cunity_debug_Out::_trace($ret, _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 322, "className" => "me.cunity.debug.Out", "methodName" => "dumpVar")));
 	}
 	static function dumpObject($ob, $i = null) {
 		$tClass = Type::getClass($ob);

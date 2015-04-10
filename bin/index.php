@@ -227,15 +227,16 @@
 			</table>		
 		</script>
 		
-	 <!-- CLIENTS EDITOR -->
+	 <!-- MEMBERS EDITOR -->
 		
 		<script type="text/x-jquery-tmpl"  id="t-clients-editor">
 		<div id="overlay" class="overlay-left">
 		<div  class="scrollbox">
 			<form  id="qc-edit-form" action="qc" class="main-left">
-			{{each(i,v) $data.rows}}
-				<table id="qc-edit-data-${i}">
+			{{each(i,v) $data.editData.clients.h}}
+				<table id="qc-edit-client">
 				{{each(k,val) v}}
+				${trace(k)}
 				<tr>
 					<td>{{html $data.fieldNames[k]}}:</td>
 					<td class="nowrap">
@@ -303,7 +304,15 @@
 								<div class="rpad" >{{tmpl(fv) "#t-find-match"}}</div>
 								</td>
 							</tr>														
-							{{/if}}							
+							{{/if}}
+						  <tr>
+								<td colspan="2">
+									 <button data-endaction="${bi}">${bv}</button>							
+								</td>
+								<td colspan="2">
+									 <button data-endaction="${bi}">${bv}</button>							
+								</td>							
+						  </tr>									
 							{{/each}}						
 						{{each(bi,bv) v.buttons}}
 						<tr>
@@ -416,8 +425,15 @@
 				</td>
 		  </tr>
 		</script>
-		
-		<!-- SELECT  OPTIONS TEMPLATE ${trace($item)}-->
+
+	 <!-- SELECT  GENERIC OPTIONS TEMPLATE  -->
+		<script type="text/x-jquery-tmpl" id="t-options">
+			{{each(i,v) $data.rows}}
+			<option value="${v[$data.id]}">${v[$data.label]}</option>
+			{{/each}}
+		</script>		
+
+		<!-- SELECT  CAMPAIGN OPTIONS TEMPLATE  -->
 		<script type="text/x-jquery-tmpl" id="t-campaign_id">
 			{{each(i,v) $data.rows}}
 			<option value="${v.campaign_id}">${v.campaign_name}</option>
@@ -505,9 +521,11 @@
 			script('js/sprintf.min.js.gz').
 			script('js/spin.min.js.gz').
 			script('js/iban-tool.js.gz').
-			script('appData.js').wait(function()
+			script('appData.js').
+			script('uiData.js').wait(function()
 		  {
 				console.log('should be done...');
+				//trace('clientFields:' + getFields(clientFields));
 				uiData.basePath="<?php echo $basePath;?>";
 				uiData.action="<?php echo $action;?>";
 				uiData.params="<?php echo $params;?>";
@@ -515,6 +533,14 @@
 				initApp(uiData);
 				$('#loader').remove();
 		  });		
+		  
+		  function getFields(obj)
+		  {
+				var fields = [];
+				for(e in obj)
+					 fields.push(e);
+				return fields;
+		  }
 		  
 		  function trace(m) {//debug from template
 			  console.log(m);
@@ -546,6 +572,7 @@
 		  }
 		  
 		  function display(format,value) {
+				//debug(format + ':' + value);
 				if (format=='datetime') {
 					 var t = value.split(/[- :]/);
 					 return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);

@@ -52,8 +52,8 @@ using jQuery.FormData;
 		}
 		if(data.views != null)
 			addViews(data.views);
-		trace('looking for editor:' + instancePath + '.' +  id + '-editor');
 		edit = cast views.get(instancePath + '.' + id + '-editor');		
+		trace('found editor:' + instancePath + '.' +  id + '-editor :' + edit.vData.id);			
 		init();
 	}
 	
@@ -74,7 +74,7 @@ using jQuery.FormData;
 			jTarget.siblings().removeClass('selected');	
 			jTarget.addClass('selected');
 			wait();
-			edit.edit(jTarget, name);
+			edit.edit(jTarget);
 		}
 		
 		if (jTarget.hasClass('selected'))

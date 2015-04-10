@@ -25,6 +25,7 @@ typedef MData =
 {
 	@:optional var count:Int;
 	@:optional var page:Int;
+	@:optional var editData:NativeArray;
 	@:optional var rows:NativeArray;
 	@:optional var response:String;
 	@:optional var choice:NativeArray;
@@ -80,7 +81,7 @@ class Model
 	public function count(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):Int
 	{
 		var fields:String = q.get('fields');		
-		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
+		trace ('table:' + q.get('table') + ':' + (q.get('table').any2bool() ? q.get('table') : table));
 		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
 		sb.add('SELECT COUNT(*) AS count');
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
@@ -97,7 +98,7 @@ class Model
 	public function countJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):Int
 	{
 		var fields:String = q.get('fields');		
-		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
+		trace ('table:' + q.get('table') + ':' +  (q.get('table').any2bool() ? q.get('table') : table));
 		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
 		sb.add('SELECT COUNT(*) AS count');
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
@@ -120,7 +121,7 @@ class Model
 	public function doJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		var fields:String = q.get('fields');		
-		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
+		trace ('table:' + q.get('table') + ':' + (q.get('table').any2bool() ? q.get('table') : table));
 		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
 		sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
@@ -147,10 +148,10 @@ class Model
 		return execute(sb.toString(), q, phValues);
 	}
 	
-	public function doSelect(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
+	public function doSelect(q:StringMap<Dynamic>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		var fields:String = q.get('fields');		
-		trace ('table:' + q.get('table') + (q.get('table').any2bool() ? q.get('table') : table));
+		trace ('table:' + q.get('table') + ':' + (q.get('table').any2bool() ? q.get('table') : table));
 		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
 		//sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
 		sb.add('SELECT ' + (fields != null ? fieldFormat(fields): '*' ));
@@ -179,9 +180,6 @@ class Model
 		var dbQueryFormats:StringMap<Array<String>> = Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject((S.conf.get('dbQueryFormats'))));
 		//trace(dbQueryFormats);
 		
-		var d:StringMap<Dynamic> = Lib.hashOfAssociativeArray(S.conf.get('dbQueryFormats'));
-		//trace(d);
-		//var qKeys:Array<String> = Reflect.fields(dbQueryFormats);
 		var qKeys:Array<String> = new Array();
 		var it:Iterator<String> = dbQueryFormats.keys(); 
 		while (it.hasNext())
@@ -189,7 +187,6 @@ class Model
 			qKeys.push(it.next());
 		}
 	
-		//trace(qKeys);
 		for (f in sF)
 		{
 			if (qKeys.has(f))
@@ -345,9 +342,18 @@ class Model
 					sb.add(quoteField(wData[0]));
 					sb.add(' LIKE ?');
 					phValues.push([wData[0], wData[2]]);
-				case _://PLAIN VALUE
+				case _:
 					sb.add(quoteField(wData[0]));
-					//if( wData[1] == 'NULL' )
+					if (~/^(<|>)/.match(wData[1]))
+					{
+						var eR:EReg = ~/^(<|>)/;
+						eR.match(wData[1]);
+						var val = Std.parseFloat(eR.matchedRight());
+						sb.add(eR.matched(0) + '?');
+						phValues.push([wData[0],val]);
+						continue;
+					}
+					//PLAIN VALUE
 					if( wData[1] == 'NULL' )
 						sb.add(" IS NULL");
 					else {
@@ -399,7 +405,7 @@ class Model
 	
 	public function json_encode():EitherType<String,Bool>
 	{
-		return untyped __call__("json_encode", data, 64);//JSON_UNESCAPED_SLASHES
+		return untyped __call__("json_encode", data, 64|256);//JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
 	}
 	
 	public function json_response(res:String):EitherType<String,Bool>
@@ -407,16 +413,16 @@ class Model
 		return untyped __call__("json_encode", {response:res}, 64);//JSON_UNESCAPED_SLASHES
 	}
 	
-	function getConfig(param:StringMap<Dynamic>):MConfig
+	/*function getConfig(param:StringMap<Dynamic>):MConfig
 	{
 		if (S.conf.exists('hasTabs') && S.conf.get('hasTabs'))
 		{
 			trace(param.get('instancePath'));
 			var tabBox:Dynamic = S.conf.get('views')[0].TabBox;
 			var iPath:String = S.conf.get('appName') + '.' + tabBox.id;
-			var tabs:Array<Dynamic> = tabBox.tabs;
+			//var tabs:Array<Dynamic> = tabBox.tabs;
 		}
 		return null;
-	}
+	}*/
 	
 }

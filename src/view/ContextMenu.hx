@@ -280,7 +280,7 @@ typedef ContextMenuData =
 							});		
 
 							return;
-						}
+						}//DO CALL
 						var p:Dynamic = 
 						{
 							className:'AgcApi',
@@ -299,6 +299,20 @@ typedef ContextMenuData =
 								activePanel.find('button[data-endaction="call"]').html('Auflegen');
 							}
 						});								
+				}//END ACTION CASE EDIT
+			case 'mailings':
+				var mailing:Mailing = cast(parentView.views.get(parentView.instancePath + '.' + parentView.id + '-mailing'), Mailing);
+				trace(endAction);
+				switch(endAction)
+				{
+					case 'previewOne':
+						mailing.previewOne(parentView.selectedID);
+					case 'printOne':
+						mailing.printOne(parentView.selectedID);
+					case 'printNewMembers':
+						mailing.printNewMembers();
+					default:
+						trace(endAction);
 				}
 			default:
 				trace(action + ':' + endAction);

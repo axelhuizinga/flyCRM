@@ -63,10 +63,11 @@ class Editor extends View
 		});
 	}
 	
-	public function  edit(dataRow:JQuery, className:String)
+	//public function  edit(dataRow:JQuery, className:String)
+	public function  edit(dataRow:JQuery)
 	{
 		var p:Dynamic = resetParams();
-		p.primary_id = parentView.primary_id;
+		p.primary_id = (vData.primary_id == null ? parentView.primary_id : vData.primary_id);
 		eData = dataRow;
 		Reflect.setField(p, p.primary_id, eData.attr('id'));
 	

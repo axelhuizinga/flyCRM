@@ -16,10 +16,11 @@ import view.Campaigns;
 import view.Clients;
 import view.ContextMenu;
 import view.DateTime;
+import view.ClientEditor;
 import view.Editor;
 import view.QC;
 import view.TabBox;
-
+import me.cunity.debug.Out;
 using Lambda;
 
 /**

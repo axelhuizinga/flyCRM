@@ -85,7 +85,8 @@ class View
 	public var instancePath:String;	
 	public var interactionState(default, set):String;
 	public var inputs:StringMap<Input>;	
-		
+	public var selectedID:String;
+			
 	public function new(?data:Dynamic ) 
 	{
 		views = new StringMap();		
@@ -353,6 +354,7 @@ class View
 		else
 			params.order = j.data('order') + '|ASC';		
 		//trace( params.order);
+		wait();
 		loadData('server.php', params, update);
 	}	
 	
@@ -440,7 +442,7 @@ class View
 	
 	public function wait(start:Bool = true, ?message:String , ?timeout:Int=15000)
 	{
-		if (!start || waiting != null)
+		if (!start && waiting != null)
 		{
 			waiting.stop();
 			trace(J('#wait' ).length); 			

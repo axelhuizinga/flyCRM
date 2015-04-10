@@ -27,6 +27,7 @@ typedef ClientsData =
 {
 	
 	var listattach2:String;
+	var edit:Editor;
 	
 	public function new(?data:ClientsData) 
 	{
@@ -59,6 +60,8 @@ typedef ClientsData =
 		//addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
 		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit','previewOne','printOne'] } );
 		addInteractionState('init', { disables:['edit', 'delete','previewOne','printOne'], enables:['add'] } );
+		edit = cast views.get(instancePath + '.' + id + '-editor');		
+		trace('found editor:' + instancePath + '.' +  id + '-editor :' + edit.vData.id);
 		init();
 	}
 
@@ -75,6 +78,9 @@ typedef ClientsData =
 		{
 			jTarget.siblings().removeClass('selected');	
 			jTarget.addClass('selected');
+			selectedID = jTarget.attr('id');
+			trace(selectedID);
+			edit.edit(jTarget);
 		}
 		
 		if (jTarget.hasClass('selected'))
@@ -82,4 +88,10 @@ typedef ClientsData =
 		else
 			interactionState = 'init';
 	}
+	
+	/*override public function set_interactionState(iState:String):String
+	{
+		
+		return super.set_interactionState(iState);
+	}*/
 }

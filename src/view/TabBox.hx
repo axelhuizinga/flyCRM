@@ -163,6 +163,8 @@ typedef TabBoxData =
 			return;
 		if (tabLinks[tabsInstance.options.active] != p[1])
 		{
+			trace(id + ' root:' +  root.attr('id'));
+			if(tabObj!=null)
 			//trace('set { selected:' + tabLinks.indexOf(p[1]) + '}');
 			tabObj.tabs( "option", "active", tabLinks.indexOf(p[1]) );
 		}
