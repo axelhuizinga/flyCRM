@@ -10,6 +10,7 @@ import php.NativeArray;
 import php.Web;
 
 using Lambda;
+using Util;
 
 typedef CustomField = 
 {
@@ -19,7 +20,7 @@ typedef CustomField =
 	//var rank:String;
 	//var order:String;
 	@:optional var field_options:String;
-}
+} 
 /**
  * ...
  * @author axel@cunity.me
@@ -27,7 +28,36 @@ typedef CustomField =
 @:keep
  class Clients extends Model
 {
+	override public function doJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
+	{
+		var fields:String = q.get('fields');		
+		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
+		sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
+		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
+		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
+		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
+		trace ('table:' + q.get('table') + ':' + (q.get('table').any2bool() ? q.get('table') : table) + '' + joinCond );
 		
+		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		if (joinTable != null)
+			sb.add(' INNER JOIN $joinTable');
+		if (joinCond != null)
+			sb.add(' ON $joinCond');
+		var where:String = q.get('where');
+		if (where != null)
+			buildCond(where, sb, phValues);
+		var groupParam:String = q.get('group');
+		if (groupParam != null)
+			buildGroup(groupParam, sb);
+		//TODO:HAVING
+		var order:String = q.get('order');
+		if (order != null)
+			buildOrder(order, sb);
+		var limit:String = q.get('limit');
+		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
+		return execute(sb.toString(), q, phValues);
+	}
+	
 	public static function create(param:StringMap<String>):EitherType<String,Bool>
 	{
 		var self:Clients = new Clients();	
@@ -35,6 +65,23 @@ typedef CustomField =
 		//trace(param);
 		return Reflect.callMethod(self, Reflect.field(self,param.get('action')), [param]);
 	}
+	
+	override public function find(param:StringMap<String>):EitherType<String,Bool>
+	{	
+		var sb:StringBuf = new StringBuf();
+		var phValues:Array<Array<Dynamic>> = new Array();
+		var count:Int = countJoin(param, sb, phValues);
+		
+		sb = new StringBuf();
+		phValues = new Array();
+		trace( param.get('joincond')  +  ' count:' + count + ':' + param.get('page')  + ': ' + (param.exists('page') ? 'Y':'N'));
+		data =  {
+			count:count,
+			page:(param.exists('page') ? Std.parseInt( param.get('page') ) : 1),
+			rows: doJoin(param, sb, phValues)
+		};
+		return json_encode();
+	}	
 	
 	public function edit(param:StringMap<Dynamic>):EitherType<String,Bool>
 	{
@@ -49,6 +96,7 @@ typedef CustomField =
 		var tableNames:Array<String> = new Array();
 		var tableFields:StringMap<Array<String>> = new StringMap();
 		
+		trace(param);
 		while (keys.hasNext())
 		{
 			var k:String = keys.next();
@@ -68,13 +116,6 @@ typedef CustomField =
 			}			
 		}
 
-		//var param:StringMap<Dynamic> = new StringMap();
-		//param.set('fields', cFields);
-		//param.set('list_id', list_id);
-		//param.set('primary_id', param.get('primary_id'));
-		//param.set('table', 'vicidial_list');
-		//return false;
-		//var editData = cast(untyped __call__('array'), NativeArray);
 		var editTables:StringMap<StringMap<String>> = new StringMap();
 		var ti:Int = 0;
 		for (table in tableNames)
@@ -88,8 +129,8 @@ typedef CustomField =
 			{
 				p.set('table', 'vicidial_list');
 				p.set('jointable', 'fly_crm.' + table);
-				p.set('joincond', 'ON vicidial_list.lead_id=fly_crm.clients.lead_id');
-				p.set('fields', param.get('fields').split(',').map(function(f:String) return 'vicidial_list.' + f).join(',')
+				p.set('joincond', 'vicidial_list.lead_id=fly_crm.clients.lead_id');
+				p.set('fields', param.get('fields').split(',').map(function(f:String) return (f.indexOf('vicidial_list.') !=0 ? 'vicidial_list.' + f:f)).join(',')
 					+ ',' + tableFields.get(table).map(function(f:String) return table + '.' + f).join(','));
 				p.set('where', 'vicidial_list.lead_id|' + param.get('lead_id'));
 				editTables.set(table, Lib.hashOfAssociativeArray(doJoin(p, sb, phValues)));
@@ -97,7 +138,7 @@ typedef CustomField =
 			}
 			else
 			{
-				p.set('table', 'fly_crm.'+ table);
+				p.set('table', (table == 'vicidial_list'?table:'fly_crm.'+ table));
 				p.set('fields', tableFields.get(table).join(','));
 				p.set('where', 'client_id|' +  param.get('client_id'));
 				editTables.set(table, Lib.hashOfAssociativeArray(doSelect(p, sb, phValues)));

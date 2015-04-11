@@ -98,6 +98,7 @@ class Model
 	public function countJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):Int
 	{
 		var fields:String = q.get('fields');		
+		
 		trace ('table:' + q.get('table') + ':' +  (q.get('table').any2bool() ? q.get('table') : table));
 		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
 		sb.add('SELECT COUNT(*) AS count');
@@ -107,9 +108,9 @@ class Model
 		
 		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
 		if (joinTable != null)
-			sb.add(' INNER JOIN ' + joinTable + ' ');
+			sb.add(' INNER JOIN $joinTable');
 		if (joinCond != null)
-			sb.add(joinCond);
+			sb.add(' ON $joinCond');
 		var where:String = q.get('where');
 		if (where != null)
 			buildCond(where, sb, phValues);
@@ -130,9 +131,9 @@ class Model
 		
 		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
 		if (joinTable != null)
-			sb.add(' INNER JOIN ' + joinTable + ' ');
+			sb.add(' INNER JOIN $joinTable');
 		if (joinCond != null)
-			sb.add(joinCond);
+			sb.add(' ON $joinCond');
 		var where:String = q.get('where');
 		if (where != null)
 			buildCond(where, sb, phValues);

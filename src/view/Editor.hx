@@ -15,6 +15,7 @@ import js.html.Audio;
 import me.cunity.debug.Out;
 import me.cunity.js.data.IBAN;
 
+using Lambda;
 
 class Editor extends View
 {
@@ -82,7 +83,9 @@ class Editor extends View
 		}
 		trace(p);	
 		p.action = 'edit';
-		p.fields = parentView.vData.fields;
+		//var eFields:Array<String> = vData.fields;
+		//p.fields = parentView.vData.fields.split(',').filter(function(f:String) return (eFields.has(f) ? ;
+		p.fields = (vData.fields != null ? vData.fields : parentView.vData.fields);
 		cMenu.set_active(cMenu.getIndexOf(vData.action));
 		loadData('server.php', p, update);		
 		//active = cMenu.getIndexOf(vData.trigger.split('|')[1]);
@@ -158,7 +161,7 @@ class Editor extends View
 		};
 		var recordings:JQuery = J('#t-' + parentView.id + '-recordings').tmpl(data);
 		cMenu.activePanel.find('form').append(recordings);
-		cMenu.root.accordion("refresh");
+		//cMenu.root.accordion("refresh");
 	}
 	
 }

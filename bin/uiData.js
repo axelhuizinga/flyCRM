@@ -46,7 +46,7 @@ var uiData = {
 							order:'last_local_call_time|DESC',
 							where:'list_id|1900',
 							jointable:'vicidial_users',
-							joincond:'ON vicidial_users.user=vicidial_list.user',
+							joincond:'vicidial_users.user=vicidial_list.user',
 							table:'vicidial_list',
 							listattach2:'#qc-list-anchor',
 							views:[
@@ -102,13 +102,15 @@ var uiData = {
 					[{							
 						Clients:{
 							action:'find',
-							fields:'lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
+							fields:'vicidial_list.lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
 							primary_id:'vendor_lead_code',
 							hidden:'lead_id',							
 							id:'clients',
 							limit:15,
 							order:'vendor_lead_code|ASC',
-							where:'list_id|10000,active|1',
+							where:'list_id|10000,clients.status|active',
+							jointable:'fly_crm.clients AS clients',
+							joincond:'fly_crm.clients.client_id=vendor_lead_code ',
 							table:'vicidial_list',
 							listattach2:'#clients-list-anchor',
 							views:[
@@ -155,7 +157,11 @@ var uiData = {
 								ClientEditor:{
 									action:'edit',
 									id:'clients-editor',
-									attach2:'#clients',					
+									hidden:'lead_id',	
+									attach2:'#clients',
+									fields:'first_name,last_name,phone_number,address1,address2,postal_code,city',
+									jointable:'fly_crm.clients AS clients',
+									joincond:'fly_crm.clients.client_id=vendor_lead_code ',									
 									primary_id:'client_id',
 									read_only:'client_id,last_local_call_time',
 									TODO:'PHONE-NUMBER READONLY?'

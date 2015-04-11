@@ -360,7 +360,7 @@ class View
 	
 	private function resetParams(?pData:Dynamic):Dynamic
 	{		
-		var pkeys:Array<String> = 'action,className,fields,limit,order,page,table,jointable,joincond,where'.split(',');
+		var pkeys:Array<String> = 'action,className,fields,limit,order,page,table,jointable,joincond,joinfields,where'.split(',');
 		//var aData:Dynamic = pData.any2bool() ? pData : vData;
 		//MERGE pData into vData
 		trace(pData);

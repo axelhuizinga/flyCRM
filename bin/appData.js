@@ -81,6 +81,11 @@ var dbQueryFormats =
 var displayFormats =
 {
 	phone_number:'0%d',
+	register_on:'date',
+	register_off:'date',
+	register_off_to:'date',
+	teilnahme_beginn:'date',
+	creation_date:'datetime',
 	last_local_call_time:'datetime',
 	start_time:'datetime'
 }

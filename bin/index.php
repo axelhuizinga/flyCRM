@@ -227,21 +227,23 @@
 			</table>		
 		</script>
 		
-	 <!-- MEMBERS EDITOR -->
+	 <!-- MEMBERS EDITOR ${trace(v)}${trace(k + ':' + $data.typeMap[k])}-->
 		
 		<script type="text/x-jquery-tmpl"  id="t-clients-editor">
 		<div id="overlay" class="overlay-left">
 		<div  class="scrollbox">
 			<form  id="qc-edit-form" action="qc" class="main-left">
-			{{each(i,v) $data.editData.clients.h}}
+			{{each(i,v) $data.editData.clients.h}}				
 				<table id="qc-edit-client">
-				{{each(k,val) v}}
-				${trace(k)}
+				{{each(k,val) v}}				
+				{{if $data.typeMap[k] != 'HIDDEN'}}
+				
 				<tr>
 					<td>{{html $data.fieldNames[k]}}:</td>
 					<td class="nowrap">
 					{{if $data.typeMap[k] == 'TEXT' || $data.typeMap[k] == 'READONLY' }}
-					<input name="${k}" value="${val}" {{if $data.typeMap[k] == 'READONLY'}}readonly="readonly"{{/if}}>
+						<input name="${k}" value="${displayFormats[k]?display(displayFormats[k],val):val}"
+							{{if $data.typeMap[k] == 'READONLY'}}readonly="readonly"{{/if}}>
 					{{else $data.typeMap[k] == 'AREA'}}
 					<textarea name="${k}">${val}</textarea>
 					{{else $data.typeMap[k] == 'SELECT'}}
@@ -257,6 +259,7 @@
 					{{/if}}
 					</td>
 				</tr>
+				{{/if}}
 				{{/each}}
 				</table>
 			</form>
@@ -572,13 +575,21 @@
 		  }
 		  
 		  function display(format,value) {
-				//debug(format + ':' + value);
-				if (format=='datetime') {
+				//trace(format + ':' + value);
+				switch(format)
+				{
+					case 'datetime':
 					 var t = value.split(/[- :]/);
 					 return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);
+					 break;
+					 case 'date':
+					 var t = value.split(/-/);
+					 return sprintf('%s.%s.%s', t[2], t[1], t[0]);
+					 break;
+					 default:
+					return sprintf(format, value);
 				}
-				else
-					 return sprintf(format, value);
+				return value;
 		  }
 		  
 		  function has(keyNames,key)
@@ -586,15 +597,29 @@
 				if (!keyNames) {
 					 return false;
 				}
-		  //trace(keyNames + ':' + key);
+				//trace(keyNames + ':' + key);
 				var keys = keyNames.split(',');
 				for(k in keys)
 				{
-					 if (keys[k]==key) 
+					var re = new RegExp('.'+keys[k]+'$','');
+					if (keys[k]==key || key.match(re) ) 
 						  return true;
 				}
 				return false;
 		  }
+		  
+		  function kM(keyName,key)
+		  {
+				if (!keyName) {
+					 return false;
+				}
+				//trace(keyName + ':' + key);
+				var re = new RegExp('.'+keyName+'$','');
+				if (keyName==key || key.match(re)) 
+					 return true;
+
+				return false;
+		  }		  
 		  
 		  /*IBAN GENERATE + CHECK FUNCTIONS*/
 		  var gIBAN;

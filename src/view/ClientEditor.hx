@@ -62,6 +62,7 @@ class ClientEditor extends Editor
 		}
 		data.optionsMap = dataOptions;
 		//trace(parentView.id + ':' + J(Browser.window).width() + ' - ' + cMenu.root.outerWidth());
+		trace(data);
 		//trace(templ.tmpl(data));
 		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
@@ -69,11 +70,13 @@ class ClientEditor extends Editor
 		templ.tmpl(data).appendTo('#' + parentView.id).css( {
 			marginTop:Std.string(mSpace.top + oMargin ) + 'px',
 			marginLeft:Std.string(oMargin ) + 'px',
-			height:Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px'
+			height:Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px',
+			width:Std.string( J('#clients-menu').offset().left - 40 ) + 'px'
 		}).animate( { opacity:1 } );
-		trace(mSpace.height + ':' +  2 * oMargin + ':' + Std.parseFloat(J('#overlay').css('padding-top')) + ':' + Std.parseFloat(J('#overlay').css('padding-bottom')));
+		//trace(J(Browser.window).width() + '-' +   J('#clients-menu').offset().left);
+		//trace(mSpace.height + ':' +  2 * oMargin + ':' + Std.parseFloat(J('#overlay').css('padding-top')) + ':' + Std.parseFloat(J('#overlay').css('padding-bottom')));
 		J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());
-		trace(id + ':' + parentView.id + ':' + J('#' + parentView.id +' .scrollbox').length + ':' +   J('#' + parentView.id +' .scrollbox').height());
+		//trace(id + ':' + parentView.id + ':' + J('#' + parentView.id +' .scrollbox').length + ':' +   J('#' + parentView.id +' .scrollbox').height());
 		//trace(data.recordings);
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;
 		data = { recordings:data.recordings.map(function(rec) {
@@ -83,7 +86,7 @@ class ClientEditor extends Editor
 		};
 		var recordings:JQuery = J('#t-' + parentView.id + '-recordings').tmpl(data);
 		cMenu.activePanel.find('form').append(recordings);
-		cMenu.root.accordion("refresh");
+		//cMenu.root.accordion("refresh");
 	}
 	
 }

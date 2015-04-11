@@ -154,7 +154,10 @@ div.lpad
 {
 	height:100%;
 }
-
+.ui-tabs .ui-tabs-panel
+{
+	 padding: 0.88em!important;
+}
 .ui-helper-reset, .ui-widget,
 .ui-tabs-panel table{
 	font-size: 0.88em!important;
@@ -307,6 +310,10 @@ tr.selected
 .overlay-left table
 {
 	margin: 0 0 10px 0;
+}
+.overlay-left td textarea
+{
+	 width:100%;
 }
 .overlay-left form
 {
