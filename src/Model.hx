@@ -23,6 +23,7 @@ typedef MConfig =
  
 typedef MData = 
 {
+	@:optional var agent:String;
 	@:optional var count:Int;
 	@:optional var page:Int;
 	@:optional var editData:NativeArray;
@@ -33,6 +34,7 @@ typedef MData =
 	@:optional var optionsMap:NativeArray;
 	@:optional var recordings:NativeArray;
 	@:optional var typeMap:NativeArray;
+	@:optional var userMap:NativeArray;
 };
 
 class Model
@@ -212,7 +214,7 @@ class Model
 		
 		sb = new StringBuf();
 		phValues = new Array();
-		trace( 'count:' + count + ' page:' + param.get('page') + ':' + param.get('page')  + ': ' + (param.exists('page') ? 'Y':'N'));
+		trace( 'count:' + count + ' page:' + param.get('page')  + ': ' + (param.exists('page') ? 'Y':'N'));
 		data =  {
 			count:count,
 			page: param.exists('page') ? Std.parseInt( param.get('page') ) : 1,
@@ -405,7 +407,8 @@ class Model
 	public function new() {}
 	
 	public function json_encode():EitherType<String,Bool>
-	{
+	{	
+		data.agent = S.user;
 		return untyped __call__("json_encode", data, 64|256);//JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
 	}
 	

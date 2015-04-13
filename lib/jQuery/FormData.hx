@@ -1,5 +1,6 @@
 package jQuery;
 import haxe.ds.StringMap;
+import js.Browser;
 
 /**
  * ...
@@ -69,6 +70,20 @@ class FormData
 	{
 		//PREPARE EDITOR DATA FOR POSTING
 		var ret: Array<FData> = cast jForm.serializeArray();
+		
+		for (fd in ret)
+		{
+			if (Reflect.hasField(App.storeFormats, fd.name))
+				{
+					var sForm:Array<Dynamic> = Reflect.field(App.storeFormats, fd.name);
+					var callParam:Array<Dynamic> = sForm.length>1 ? sForm.slice(1) : [];
+					var method:String = sForm[0];
+					trace('call FormData' + method);
+					callParam.push(fd.value);
+					fd.value = Reflect.callMethod(Browser.window, Reflect.field(Browser.window, method), callParam);
+					//fd.value = Reflect.callMethod(FormData, Reflect.field(FormData, method), callParam);
+				}
+		}
 		return ret;
 	}
 	
@@ -111,7 +126,8 @@ class FormData
 					var method:String = sForm[0];
 					trace('call FormData' + method);
 					callParam.push(item.value);
-					item.value = Reflect.callMethod(FormData, Reflect.field(FormData, method), callParam);
+					//item.value = Reflect.callMethod(FormData, Reflect.field(FormData, method), callParam);
+					item.value = Reflect.callMethod(Browser.window, Reflect.field(Browser.window, method), callParam);
 				}
 				var matchTypeOption:JQuery =  jForm.find('[name="' + item.name + '_match_option"]');
 				if (matchTypeOption.length == 1)
@@ -135,12 +151,12 @@ class FormData
 				{
 					var from:String = item.value;
 					if (from.length > 0)
-						from = gDate2mysql(from);
+						from = gDateTime2mysql(from + '00:00:00');
 					var name:String = item.name.substr(11);
 					trace(name + ':' +  jForm.find('[name="range_from_' + name + '"]').val() );
 					var to:String = jForm.find('[name="range_to_' + name + '"]').val();
 					if (to.length > 0)
-						to = gDate2mysql(to, '23:59:59');
+						to = gDateTime2mysql(to + '23:59:59');
 					if (from.length > 0 && to.length > 0)
 						ret.push(name + '|BETWEEN|' + from + '|' + to);
 					else if (from.length > 0)
@@ -159,15 +175,29 @@ class FormData
 	}
 	
 	@:expose('gDate2mysql')
-	public static function gDate2mysql(gDate:String, time:String = '00:00:00'):String
+	public static function gDate2mysql(gDate:String):String
 	{
 		var d:Array<String> = gDate.split('.').map(function(s:String) return StringTools.trim(s));
 		if (d.length != 3)
 		{			
-			trace('Falsches Datumsformat');
+			trace('Falsches Datumsformat:$gDate');
 			return 'Falsches Datumsformat:' + gDate;
 		}
-		return d[2] + '-' + d[1] + '-' + d[0] + ' ' + time;
+		return d[2] + '-' + d[1] + '-' + d[0];
 	}
 	
+	@:expose('gDateTime2mysql')
+	public static function gDateTime2mysql(gDateTime:String):String
+	{
+		/*var t = value.split();
+					 return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);*/
+		var d:Array<String> = ~/[- :]/g.split(gDateTime).map(function(s:String) return StringTools.trim(s));
+		if (d.length != 6)
+		{			
+			trace('Falsches Datumsformat:$gDateTime');
+			return 'Falsches Datumsformat:' + gDateTime;
+		}
+		return '$d[2].$d[1].$d[0] $d[3]:$d[4]:$d[5]';
+		//return d[2] + '-' + d[1] + '-' + d[0] + ' ' + time;
+	}	
 }

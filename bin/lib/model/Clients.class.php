@@ -55,7 +55,7 @@ class model_Clients extends Model {
 		$count = $this->countJoin($param, $sb, $phValues);
 		$sb = new StringBuf();
 		$phValues = new _hx_array(array());
-		haxe_Log::trace(_hx_string_or_null($param->get("joincond")) . " count:" . _hx_string_rec($count, "") . ":" . _hx_string_or_null($param->get("page")) . ": " . _hx_string_or_null(((($param->exists("page")) ? "Y" : "N"))), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 77, "className" => "model.Clients", "methodName" => "find")));
+		haxe_Log::trace(_hx_string_or_null($param->get("joincond")) . " count:" . _hx_string_rec($count, "") . ":" . _hx_string_or_null($param->get("page")) . ": " . _hx_string_or_null(((($param->exists("page")) ? "Y" : "N"))), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 78, "className" => "model.Clients", "methodName" => "find")));
 		$this->data = _hx_anonymous(array("count" => $count, "page" => (($param->exists("page")) ? Std::parseInt($param->get("page")) : 1), "rows" => $this->doJoin($param, $sb, $phValues)));
 		return $this->json_encode();
 	}
@@ -64,13 +64,13 @@ class model_Clients extends Model {
 		$typeMap = new haxe_ds_StringMap();
 		$optionsMap = new haxe_ds_StringMap();
 		$eF = $this->getEditorFields(null);
+		haxe_Log::trace($eF, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 96, "className" => "model.Clients", "methodName" => "edit")));
 		$keys = $eF->keys();
 		$tableNames = new _hx_array(array());
 		$tableFields = new haxe_ds_StringMap();
-		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 99, "className" => "model.Clients", "methodName" => "edit")));
+		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 101, "className" => "model.Clients", "methodName" => "edit")));
 		while($keys->hasNext()) {
 			$k = $keys->next();
-			haxe_Log::trace($k, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 103, "className" => "model.Clients", "methodName" => "edit")));
 			$tableNames->push($k);
 			$aFields = $eF->get($k);
 			$cFields = $aFields->map(array(new _hx_lambda(array(&$aFields, &$eF, &$fieldNames, &$k, &$keys, &$optionsMap, &$param, &$tableFields, &$tableNames, &$typeMap), "model_Clients_2"), 'execute'));
@@ -105,17 +105,20 @@ class model_Clients extends Model {
 				if($table === "clients") {
 					$p->set("table", "vicidial_list");
 					$p->set("jointable", "fly_crm." . _hx_string_or_null($table));
-					$p->set("joincond", "vicidial_list.lead_id=fly_crm.clients.lead_id");
+					$p->set("joincond", $param->get("joincond"));
 					$p->set("fields", Std::string(_hx_string_call($param->get("fields"), "split", array(","))->map(array(new _hx_lambda(array(&$_g2, &$eF, &$editTables, &$fieldNames, &$keys, &$optionsMap, &$p, &$param, &$phValues, &$sb, &$table, &$tableFields, &$tableNames, &$ti, &$typeMap), "model_Clients_3"), 'execute'))->join(",")) . "," . _hx_string_or_null($tableFields->get($table)->map(array(new _hx_lambda(array(&$_g2, &$eF, &$editTables, &$fieldNames, &$keys, &$optionsMap, &$p, &$param, &$phValues, &$sb, &$table, &$tableFields, &$tableNames, &$ti, &$typeMap), "model_Clients_4"), 'execute'))->join(",")));
 					$p->set("where", "vicidial_list.lead_id|" . Std::string($param->get("lead_id")));
 					$editTables->set($table, php_Lib::hashOfAssociativeArray($this->doJoin($p, $sb, $phValues)));
 				} else {
 					$p->set("table", model_Clients_5($this, $_g2, $eF, $editTables, $fieldNames, $keys, $optionsMap, $p, $param, $phValues, $sb, $table, $tableFields, $tableNames, $ti, $typeMap));
 					$p->set("fields", $tableFields->get($table)->join(","));
-					$p->set("where", "client_id|" . Std::string($param->get("client_id")));
+					if($table === "vicidial_list") {
+						$p->set("where", "vendor_lead_code|" . Std::string($param->get("client_id")));
+					} else {
+						$p->set("where", "pay_client_id|" . Std::string($param->get("client_id")));
+					}
 					$editTables->set($table, php_Lib::hashOfAssociativeArray($this->doSelect($p, $sb, $phValues)));
 				}
-				haxe_Log::trace($p, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 146, "className" => "model.Clients", "methodName" => "edit")));
 				unset($table,$sb,$phValues,$p);
 			}
 		}
@@ -131,13 +134,12 @@ class model_Clients extends Model {
 		$param->set("fields", "field_name,field_label,field_type,field_options");
 		$param->set("order", "field_rank,field_order");
 		$param->set("limit", "100");
-		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 169, "className" => "model.Clients", "methodName" => "getCustomFields")));
 		$cFields = null;
 		{
 			$a = $this->doSelect($param, $sb, $phValues);
 			$cFields = new _hx_array($a);
 		}
-		haxe_Log::trace($cFields->length, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 171, "className" => "model.Clients", "methodName" => "getCustomFields")));
+		haxe_Log::trace($cFields->length, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 176, "className" => "model.Clients", "methodName" => "getCustomFields")));
 		$ret = new _hx_array(array());
 		{
 			$_g = 0;
@@ -160,7 +162,6 @@ class model_Clients extends Model {
 		$param->set("fields", "field_name,field_label,field_type,field_options,table_name");
 		$param->set("order", "table_name,field_rank,field_order");
 		$param->set("limit", "100");
-		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 196, "className" => "model.Clients", "methodName" => "getEditorFields")));
 		$eFields = null;
 		{
 			$a = $this->doSelect($param, $sb, $phValues);
@@ -186,6 +187,11 @@ class model_Clients extends Model {
 	}
 	public function getRecordings($lead_id) {
 		return $this->query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " . Std::string($lead_id) . " ORDER BY start_time DESC");
+	}
+	public function save($q) {
+		$lead_id = Std::parseInt($q->get("lead_id"));
+		haxe_Log::trace($q, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 236, "className" => "model.Clients", "methodName" => "save")));
+		return false;
 	}
 	static function create($param) {
 		$self = new model_Clients();

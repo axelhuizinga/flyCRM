@@ -17,9 +17,9 @@ using Util;
  * @author axel@cunity.me
  */
 @:keep
- class QC extends Clients
+class QC extends Clients
 {
-	 private static var vicdial_list_fields = 'lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id'.split(',');
+	private static var vicdial_list_fields = 'lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id'.split(',');
 	 
 	 
 	public static function create(param:StringMap<String>):EitherType<String,Bool>
@@ -62,6 +62,14 @@ using Util;
 			optionsMap:Lib.associativeArrayOfHash(optionsMap),
 			recordings:getRecordings(Std.parseInt(param.get('lead_id')))
 		};
+		var userMap:StringMap<String> = new StringMap();
+		sb = new StringBuf();
+		phValues = new Array();		
+		param = new StringMap();
+		param.set('table', 'vicidial_users');
+		param.set('fields', 'user,full_name');
+		param.set('where', 'active|Y');
+		data.userMap = doSelect(param, sb, phValues);
 		return json_encode();		
 	}
 	
@@ -96,7 +104,7 @@ using Util;
 		return null;
 	}	
 	
-	public function save(q:StringMap<Dynamic>):Bool
+	override public function save(q:StringMap<Dynamic>):Bool
 	{
 		var lead_id = Std.parseInt(q.get('lead_id'));
 		//COPY LEAD TO VICIDIAL_LEAD_LOG + CUSTOM_LOG

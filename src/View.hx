@@ -321,7 +321,9 @@ class View
 	}
 	
 	public function find(p:StringMap<String>):Void
+	//public function find(where:String):Void
 	{
+		trace(p);
 		var where:String = p.get('where');
 		trace('|'+where+'|' + (where.any2bool() ? 'Y':'N'));
 		trace(vData.where);
@@ -337,6 +339,7 @@ class View
 				}
 				else
 					Reflect.setField(fData, f, p.exists(f) ? p.get(f) : Reflect.field(vData, f));
+					//Reflect.setField(fData, f, Reflect.field(vData, f));
 			}
 			if (f != 'where' && p.exists(f))
 				Reflect.setField(fData, f, p.get(f));
@@ -375,6 +378,7 @@ class View
 		trace(fields);
 		trace(aData.hidden);
 		trace(aData.joincond);
+		var order:String = (params == null ? null : params.order);
 		params = {
 			action:'find',
 			className:name,
@@ -395,6 +399,8 @@ class View
 				
 			}
 		}
+		if (order != null)
+			params.order = order;		
 		return params;
 	}
 	
@@ -425,7 +431,8 @@ class View
 				page:data.page,
 				parentView:this
 			});
-		}		
+		}
+		wait(false);
 	}
 	
 
@@ -445,7 +452,7 @@ class View
 		if (!start && waiting != null)
 		{
 			waiting.stop();
-			trace(J('#wait' ).length); 			
+			trace(J('#wait').length); 			
 			J('#wait').animate( { opacity:0.0 }, 300, null, function() { J('#wait').detach();  trace(J('#wait' ).length); } );
 			spinner.stop();
 		}

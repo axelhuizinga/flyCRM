@@ -76,7 +76,7 @@ class S
 		}
 		var result:EitherType<String,Bool> = Model.dispatch(params);
 		
-		trace(result);
+		//trace(result);
 		if (!headerSent)
 		{
 			Web.setHeader('Content-Type', 'application/json');

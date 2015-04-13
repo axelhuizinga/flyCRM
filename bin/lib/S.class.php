@@ -38,7 +38,6 @@ class S {
 			return;
 		}
 		$result = Model::dispatch($params);
-		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 79, "className" => "S", "methodName" => "main")));
 		if(!S::$headerSent) {
 			header("Content-Type" . ": " . "application/json");
 			S::$headerSent = true;

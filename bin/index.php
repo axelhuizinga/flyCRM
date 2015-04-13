@@ -98,7 +98,8 @@
 					<td>{{html $data.fieldNames[k]}}:</td>
 					<td class="nowrap">
 					{{if $data.typeMap[k] == 'TEXT' || $data.typeMap[k] == 'READONLY' }}
-					<input name="${k}" value="${val}" {{if $data.typeMap[k] == 'READONLY'}}readonly="readonly"{{/if}}>
+					<input name="${k}" value="${displayFormats[k]?display(displayFormats[k],val):val}"
+						{{if $data.typeMap[k] == 'READONLY'}}readonly="readonly"{{/if}}>
 					{{else $data.typeMap[k] == 'AREA'}}
 					<textarea name="${k}">${val}</textarea>
 					{{else $data.typeMap[k] == 'SELECT'}}
@@ -109,12 +110,21 @@
 					</select>
 					{{else $data.typeMap[k] == 'RADIO'}}
 					{{each(oi, ov) $data.optionsMap[k]}}
-						<input type="radio" name="${k}[]"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
+						<input type="radio" name="${k}"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
 					{{/each}}
 					{{/if}}
 					</td>
 				</tr>
 				{{/each}}
+				<tr>
+				<td>Agent:</td><td>
+				<select name="user">
+				{{each(ui,uv) $data.userMap}}
+					<option value="${uv.user}" {{if uv.user==$data.user}}selected="selected"{{/if}}>${uv.full_name}</option>
+				{{/each}}
+				</select>
+				</td>
+				</tr>
 				</table>
 			</form>
 			{{/each}}
@@ -189,6 +199,19 @@
 			{{/each}}
 			</div>
 		</script>
+		
+		<!-- QC MENU RECORDINGS ${trace($data)} ${trace(v)}-->
+		<script type="text/x-jquery-tmpl"  id="t-clients-recordings">
+			<div class="recordings"  >			
+			{{each(i,v) $data.recordings}}
+				<span class="label">${v.start_time} </span><br>
+				<audio controls  >
+					<source src="/RECORDINGS/MP3/${v.filename}" type="audio/mpeg">
+				</audio><br>
+			{{/each}}
+			</div>
+		</script>
+		
 		<!-- MEMBERS TAB -->
 	
 		<script type="text/x-jquery-tmpl"  id="t-clients">
@@ -227,15 +250,16 @@
 			</table>		
 		</script>
 		
-	 <!-- MEMBERS EDITOR ${trace(v)}${trace(k + ':' + $data.typeMap[k])}-->
+	 <!-- MEMBERS EDITOR ${trace(v)}${trace(k + ':' + $data.typeMap[k])}${trace(k +':' + $data.typeMap[k] )}-->
 		
 		<script type="text/x-jquery-tmpl"  id="t-clients-editor">
 		<div id="overlay" class="overlay-left">
 		<div  class="scrollbox">
-			<form  id="qc-edit-form" action="qc" class="main-left">
+			<form  id="clients-edit-form" action="clients" class="main-left">
 			{{each(i,v) $data.editData.clients.h}}				
-				<table id="qc-edit-client">
-				{{each(k,val) v}}				
+				<table id="edit-client">
+				{{each(k,val) v}}
+				
 				{{if $data.typeMap[k] != 'HIDDEN'}}
 				
 				<tr>
@@ -254,8 +278,10 @@
 					</select>
 					{{else $data.typeMap[k] == 'RADIO'}}
 					{{each(oi, ov) $data.optionsMap[k]}}
-						<input type="radio" name="${k}[]"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
+						<input type="radio" name="${k}"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
 					{{/each}}
+					{{else $data.typeMap[k] == 'CHECKBOX'}}					
+						<input type="checkbox" name="${k}" {{if val==1}}checked="checked"{{/if}}>	
 					{{/if}}
 					</td>
 				</tr>
@@ -264,6 +290,51 @@
 				</table>
 			</form>
 			{{/each}}
+		</div>
+		</div>
+		</script>
+		
+		<!-- MEMBERS  PAY_<SOMETHING> EDITOR  -->
+		
+		<script type="text/x-jquery-tmpl"  id="t-pay-editor">
+		<div id="overlay" class="overlay-left">
+		<div  class="scrollbox">
+			<form  id="${$data.table}-form" action="clients" class="main-left">
+			${trace($data.h)}
+			{{each(i,v) $data.h}}				
+				<table  >
+				{{each(k,val) v}}
+				
+				{{if $data.typeMap[k] != 'HIDDEN'}}
+				
+				<tr>
+					<td>{{html $data.fieldNames[k]}}:</td>
+					<td class="nowrap">
+					{{if $data.typeMap[k] == 'TEXT' || $data.typeMap[k] == 'READONLY' }}
+						<input name="${k}[]" value="${displayFormats[k]?display(displayFormats[k],val):val}"
+							{{if $data.typeMap[k] == 'READONLY'}}readonly="readonly"{{/if}}>
+					{{else $data.typeMap[k] == 'AREA'}}
+					<textarea name="${k}[]">${val}</textarea>
+					{{else $data.typeMap[k] == 'SELECT'}}
+					<select name="${k}[]" >
+					{{each(oi, ov) $data.optionsMap[k]}}
+						<option value="${ov[0]}" {{if ov[0]==val}}selected="selected"{{/if}}>${ov[1]}</option>
+					{{/each}}
+					</select>
+					{{else $data.typeMap[k] == 'RADIO'}}
+					{{each(oi, ov) $data.optionsMap[k]}}
+						<input type="radio" name="${k}[]"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
+					{{/each}}
+					{{else $data.typeMap[k] == 'CHECKBOX'}}					
+						<input type="checkbox" name="${k}[]" {{if val==1}}checked="checked"{{/if}}>	
+					{{/if}}
+					</td>
+				</tr>
+				{{/if}}
+				{{/each}}
+				</table>
+			{{/each}}
+			</form>
 		</div>
 		</div>
 		</script>
@@ -307,15 +378,7 @@
 								<div class="rpad" >{{tmpl(fv) "#t-find-match"}}</div>
 								</td>
 							</tr>														
-							{{/if}}
-						  <tr>
-								<td colspan="2">
-									 <button data-endaction="${bi}">${bv}</button>							
-								</td>
-								<td colspan="2">
-									 <button data-endaction="${bi}">${bv}</button>							
-								</td>							
-						  </tr>									
+							{{/if}}								
 							{{/each}}						
 						{{each(bi,bv) v.buttons}}
 						<tr>
@@ -550,6 +613,12 @@
 			  return '';
 		  }
 		  
+		  function replace(r,b,s)
+		  {
+				//var re = new RegExp(r, "g");
+				return s.replace(r, b);
+		  }
+		  
 		  function spin(id) {
 			  trace(id);
 			  return new Spinner(
@@ -583,9 +652,14 @@
 					 return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);
 					 break;
 					 case 'date':
+					 if (!value) {
+						return '';
+					 }
 					 var t = value.split(/-/);
 					 return sprintf('%s.%s.%s', t[2], t[1], t[0]);
 					 break;
+					case 'gFloat':
+						return value.replace('.', ',');
 					 default:
 					return sprintf(format, value);
 				}

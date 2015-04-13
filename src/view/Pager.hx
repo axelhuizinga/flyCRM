@@ -13,6 +13,7 @@ class Pager// extends View
 	var count:Int;
 	var limit:Int;
 	var page:Int;
+	var last:Int;
 	var parentView:View;
 	
 	public function new(?data:Dynamic) 
@@ -22,6 +23,7 @@ class Pager// extends View
 		count = data.count;
 		limit = data.limit;
 		page = data.page;
+		last = Math.ceil(count / limit);
 		parentView = data.parentView;
 		trace(data.id + ':' + page + ':' + count);
 
@@ -35,13 +37,20 @@ class Pager// extends View
 	public function go(evt:Event)
 	{
 		evt.preventDefault();
-		trace(J(cast evt.target).data('action'));
 		var action:String = J(cast evt.target).data('action');
+		trace(action + ':' + page + ':' + count +':' + last);
 		switch(action)
 		{
 			case 'go2page':
-				if(Std.parseInt(J('#' + parentView.id + '-pager input[name="page"]').val()) != page)
-					loadPage(Std.parseInt(J('#' + parentView.id + '-pager input[name="page"]').val()));
+				var iVal = Std.parseInt(J('#' + parentView.id + '-pager input[name="page"]').val());
+				if (iVal > last)
+				{
+					iVal = last;
+					J('#' + parentView.id + '-pager input[name="page"]').val(Std.string(last));
+				}
+				if(iVal != page)
+					loadPage(iVal);
+					
 			case 'previous':
 				if(page > 1)
 					loadPage(--page);
@@ -49,11 +58,11 @@ class Pager// extends View
 				if(page > 1)
 					loadPage(1);
 			case 'next':
-				if(page < count)
+				if(page < last)
 					loadPage(++page);			
 			case 'last':
-				if(page < count)
-					loadPage(count);							
+				if(page < last)
+					loadPage(last);							
 		}
 	}
 	

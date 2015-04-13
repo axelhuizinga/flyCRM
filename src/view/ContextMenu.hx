@@ -1,4 +1,5 @@
 package view;
+import haxe.ds.StringMap;
 import jQuery.JHelper.J;
 import jQuery.FormData.FData;
 import jQuery.*;
@@ -114,6 +115,79 @@ typedef ContextMenuData =
 		trace(action + ':' + activePanel.attr('id') + ' == ' + J(ui.newPanel[0]).attr('id'));
 	}
 	
+
+	public function call(editor:Editor)
+	{
+		trace('parentView.interactionState:' + parentView.interactionState + ' agent:' + editor.agent + ' editor.leadID:' + editor.leadID);
+		if (parentView.interactionState == 'call')
+		{// HANG UP
+			var p:Dynamic = 
+			{
+				className:'AgcApi',
+				action:'external_hangup',
+				campaign_id:parentView.vData.campaign_id,
+				lead_id:editor.leadID,
+				agent_user:editor.agent
+			};
+			
+			parentView.loadData('server.php', p, function(data:Dynamic) { 
+				//trace(data);
+				if (data.response == 'OK') {//HUNG UP - CHOOSE DISPO STATUS
+					//trace('OK');		
+					//trace(data.choice);		
+					//SHOW DISPO CHOICE DIALOG
+					parentView.interactionState = 'init';
+					App.choice( { header:App.appLabel.selectStatus, choice:data.choice, id:parentView.id } );
+					J('#choice  button[data-choice]').click(function(evt:Event)
+					{
+						trace(J(cast( evt.target, Node)).data('choice'));
+						p = {
+							className:'AgcApi',
+							action:'external_status',
+							dispo:J(cast( evt.target, Node)).data('choice'),
+							agent_user:editor.agent
+						};
+						parentView.loadData('server.php', p, function(data:Dynamic) { 
+							trace(data);
+							if (data.response != 'OK')												
+								App.choice( { header:data.response, id:parentView.id } );
+							else
+								App.choice(null);
+						});
+						
+					});
+					parentView.interactionState = 'selected';
+					trace(activePanel.find('button[data-endaction="call"]').length);
+					activePanel.find('button[data-endaction="call"]').html('Anrufen');
+				}
+				else
+				{
+					App.choice( { header:data.response, id:parentView.id } );
+				}
+			});		
+
+			return;
+		}//DO CALL
+		var p:Dynamic = 
+		{
+			className:'AgcApi',
+			action:'external_dial',
+			lead_id:editor.leadID,
+			agent_user:editor.agent
+		};
+		
+		parentView.loadData('server.php', p, function(data:Dynamic) { 
+			trace(data);
+			if (data.response == 'OK') {
+				trace('OK');// ACTIVE CALL
+				//parentView.vData.call = 1;
+				parentView.interactionState = 'call';
+				trace(activePanel.find('button[data-endaction="call"]').length);
+				activePanel.find('button[data-endaction="call"]').html('Auflegen');
+			}
+		});										
+	}	
+	
 	function createInputs():Void
 	{
 		var cData:ContextMenuData = cast vData;
@@ -130,7 +204,7 @@ typedef ContextMenuData =
 				addInputs(aI.Select, 'Select');
 			}
 		}
-	}
+	}	
 	
 	function create( event:Event, ui ) 
 	{ 	
@@ -193,11 +267,14 @@ typedef ContextMenuData =
 					//var where:String = FormData.where(J(cast( evt.target, Element)).parent(), fields);
 					var where:String = FormData.where(jNode.closest('form'), fields);
 					trace(where);
-					//Reflect.callMethod(parentView, Reflect.field(parentView, action), [where]);			
+					var wM:StringMap<String> = new StringMap();
+					wM.set('where', where);
+					Reflect.callMethod(parentView, Reflect.field(parentView, action), [wM]);			
 				}	
 			case 'edit':
 				var editor:Editor = cast(parentView.views.get(parentView.instancePath + '.' + parentView.id + '-editor'), Editor);
-				switch(endAction)
+				editor.endAction(endAction);
+				/*switch(endAction)
 				{
 					case 'close':
 						trace('going to close:' + J('#overlay').length);
@@ -219,13 +296,6 @@ typedef ContextMenuData =
 								else
 								{//J('#' + parentView.id + '-edit-form')
 									App.inputError( J('#' + parentView.id + '-edit-form'), ['account','blz','iban'] );
-									/*App.modal('confirm', { 
-										header:'Bitte folgende Werte prüfen:',
-										id:parentView.id,
-										info:'IBAN, Kontonummer oder  BLZ sind nicht korrekt!',
-										mID:'confirm',
-										confirm:[]
-									} );*/
 								}
 							});
 						}
@@ -299,7 +369,8 @@ typedef ContextMenuData =
 								activePanel.find('button[data-endaction="call"]').html('Auflegen');
 							}
 						});								
-				}//END ACTION CASE EDIT
+				}//DONE END ACTION CASE EDIT
+				*/
 			case 'mailings':
 				var mailing:Mailing = cast(parentView.views.get(parentView.instancePath + '.' + parentView.id + '-mailing'), Mailing);
 				trace(endAction);

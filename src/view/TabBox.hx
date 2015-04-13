@@ -160,7 +160,10 @@ typedef TabBoxData =
 		else if (p.length == 1)
 			p[1] = url;
 		if (tabsInstance.options.active == tabLinks.indexOf(p[1]))
+		{
+			//Browser.window.location.reload();
 			return;
+		}
 		if (tabLinks[tabsInstance.options.active] != p[1])
 		{
 			trace(id + ' root:' +  root.attr('id'));

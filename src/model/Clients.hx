@@ -70,6 +70,7 @@ typedef CustomField =
 	{	
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
+		//trace(param);
 		var count:Int = countJoin(param, sb, phValues);
 		
 		sb = new StringBuf();
@@ -92,6 +93,7 @@ typedef CustomField =
 		var optionsMap:StringMap<String> = new StringMap();		
 		
 		var eF:StringMap<Array<StringMap<String>>> = getEditorFields();
+		trace(eF);
 		var keys:Iterator<String> = eF.keys();		
 		var tableNames:Array<String> = new Array();
 		var tableFields:StringMap<Array<String>> = new StringMap();
@@ -100,7 +102,7 @@ typedef CustomField =
 		while (keys.hasNext())
 		{
 			var k:String = keys.next();
-			trace(k);
+			//trace(k);
 			tableNames.push(k);
 			var aFields:Array<StringMap<String>> = eF.get(k);
 			//trace(aFields);
@@ -124,26 +126,29 @@ typedef CustomField =
 			var sb:StringBuf = new StringBuf();
 			var phValues:Array<Array<Dynamic>> = new Array();
 			p.set('primary_id', param.get('primary_id'));
-			
+			//TODO: FETCH VICIDIAL LIST ONLY ONCE 
 			if (table == 'clients')
 			{
 				p.set('table', 'vicidial_list');
 				p.set('jointable', 'fly_crm.' + table);
-				p.set('joincond', 'vicidial_list.lead_id=fly_crm.clients.lead_id');
+				//p.set('joincond', 'vicidial_list.lead_id=fly_crm.clients.lead_id');
+				p.set('joincond', param.get('joincond'));
 				p.set('fields', param.get('fields').split(',').map(function(f:String) return (f.indexOf('vicidial_list.') !=0 ? 'vicidial_list.' + f:f)).join(',')
 					+ ',' + tableFields.get(table).map(function(f:String) return table + '.' + f).join(','));
 				p.set('where', 'vicidial_list.lead_id|' + param.get('lead_id'));
 				editTables.set(table, Lib.hashOfAssociativeArray(doJoin(p, sb, phValues)));
-				//rows[ti++] = doJoin(p, sb, phValues);
 			}
 			else
 			{
 				p.set('table', (table == 'vicidial_list'?table:'fly_crm.'+ table));
 				p.set('fields', tableFields.get(table).join(','));
-				p.set('where', 'client_id|' +  param.get('client_id'));
+				if (table == 'vicidial_list')
+				p.set('where', 'vendor_lead_code|' +  param.get('client_id'));
+				else
+				p.set('where', 'pay_client_id|' +  param.get('client_id'));
 				editTables.set(table, Lib.hashOfAssociativeArray(doSelect(p, sb, phValues)));
 			}
-			trace(p);			
+			//trace(p);			
 		}
 
 		data =  {
@@ -166,7 +171,7 @@ typedef CustomField =
 		param.set('fields', 'field_name,field_label,field_type,field_options');
 		param.set('order', 'field_rank,field_order');
 		param.set('limit', '100');
-		trace(param);
+		//trace(param);
 		var cFields:Array<Dynamic> = Lib.toHaxeArray( doSelect(param, sb, phValues));
 		trace(cFields.length);
 		var ret:Array<StringMap<String>> = new Array();
@@ -193,7 +198,7 @@ typedef CustomField =
 		param.set('fields', 'field_name,field_label,field_type,field_options,table_name');
 		param.set('order', 'table_name,field_rank,field_order');
 		param.set('limit', '100');
-		trace(param);
+		//trace(param);
 		var eFields:Array<Dynamic> = Lib.toHaxeArray( doSelect(param, sb, phValues));
 		//var eFields:NativeArray = doSelect(param, sb, phValues);
 		//var eFields:Dynamic = doSelect(param, sb, phValues);
@@ -223,5 +228,12 @@ typedef CustomField =
 	{
 		return query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " 
 		+ Std.string(lead_id) + ' ORDER BY start_time DESC');
+	}
+	
+	public function save(q:StringMap<Dynamic>):Bool
+	{
+		var lead_id = Std.parseInt(q.get('lead_id'));
+		trace(q);
+		return false;
 	}
 }

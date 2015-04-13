@@ -71,7 +71,7 @@ var uiData = {
 											label:'Bearbeiten',
 											buttons:
 											{
-												close:'Abbrechen',
+												close:'Schließen',
 												call:'Anrufen',
 												save:'Speichern',
 												qcok:'QC OK'
@@ -107,8 +107,8 @@ var uiData = {
 							hidden:'lead_id',							
 							id:'clients',
 							limit:15,
-							order:'vendor_lead_code|ASC',
-							where:'list_id|10000,clients.status|active',
+							order:'vendor_lead_code|DESC',
+							where:'list_id|10000,clients.state|active',
 							jointable:'fly_crm.clients AS clients',
 							joincond:'fly_crm.clients.client_id=vendor_lead_code ',
 							table:'vicidial_list',
@@ -140,12 +140,17 @@ var uiData = {
 												find:'Anzeigen'
 											}
 										},
-										{
+										{ 
 											action:'edit',
 											label:'Bearbeiten',
 											buttons:
 											{
-												close:'Abbrechen',
+												pay_plan:'Produkte',
+												pay_source:'Konten',
+												pay_history:'Zahlungen',
+												client_history:'Verlauf',
+												call:'Anrufen',
+												close:'Schließen',
 												save:'Speichern'
 											}
 										}										

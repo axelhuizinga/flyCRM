@@ -80,10 +80,13 @@ var dbQueryFormats =
 
 var displayFormats =
 {
+	amount:'gFloat',
 	phone_number:'0%d',
 	register_on:'date',
 	register_off:'date',
 	register_off_to:'date',
+	sign_date:'date',
+	start_date:'date',
 	teilnahme_beginn:'date',
 	creation_date:'datetime',
 	last_local_call_time:'datetime',
@@ -92,9 +95,17 @@ var displayFormats =
 
 var storeFormats =
 {
-	phone_number:['replace', '^0+',''],
-	last_local_call_time:['gDate2mysql'],
-	start_time:['gDate2mysql']
+	amount:['replace', /,/,'.'],
+	phone_number:['replace', /^0+/,''],
+	creation_date:['gDateTime2mysql'],
+	last_local_call_time:['gDateTime2mysql'],
+	start_time:['gDateTime2mysql'],
+	register_on:['gDate2mysql'],
+	register_off:['gDate2mysql'],
+	register_off_to:['gDate2mysql'],
+	sign_date:['gDate2mysql'],
+	start_date:['gDate2mysql'],
+	teilnahme_beginn:['gDate2mysql'],
 }
 
 var fieldTypes =

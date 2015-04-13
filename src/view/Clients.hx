@@ -37,9 +37,7 @@ typedef ClientsData =
 		if (!(data.limit > 0))
 			data.limit = 15;
 		trace('#t-' + id + ' attach2:' + data.attach2 + ':' + dbLoaderIndex);
-		
-		//trace(J('#t-' + id));
-		//trace(J('#t-' + id).tmpl(data));
+
 		J('#t-' + id).tmpl(data).appendTo(data.attach2);	
 		if (data.table != null)
 		{
@@ -56,10 +54,9 @@ typedef ClientsData =
 		}
 		if(data.views != null)
 			addViews(data.views);
-		//addInteractionState('init', { disables:['edit', 'delete'], enables:['add'] } );
-		//addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
-		addInteractionState('selected', { disables:[], enables:['add', 'delete','edit','previewOne','printOne'] } );
-		addInteractionState('init', { disables:['edit', 'delete','previewOne','printOne'], enables:['add'] } );
+			
+		addInteractionState('selected', { disables:[], enables:['call','pay_plan', 'pay_source','pay_history','client_history','close','save'] } );
+		addInteractionState('init', { disables:['call','pay_plan', 'pay_source','pay_history','client_history','close','save'], enables:[] } );
 		edit = cast views.get(instancePath + '.' + id + '-editor');		
 		trace('found editor:' + instancePath + '.' +  id + '-editor :' + edit.vData.id);
 		init();
