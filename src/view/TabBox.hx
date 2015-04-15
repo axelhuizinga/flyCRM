@@ -147,7 +147,14 @@ typedef TabBoxData =
 	public function go(url:String, p:Dynamic):Void
 	{
 		trace(url);
+		trace(tabsInstance.options.active + ' : ' + tabLinks.indexOf(url));
 		//Out.dumpObject(p);
+		if (tabsInstance.options.active == tabLinks.indexOf(url))
+		{
+			trace('full reload');
+			//Browser.window.location.reload();
+		}
+		
 		if (!Std.is(url, String))
 		{
 			Out.dumpStack(CallStack.callStack());
@@ -160,8 +167,7 @@ typedef TabBoxData =
 		else if (p.length == 1)
 			p[1] = url;
 		if (tabsInstance.options.active == tabLinks.indexOf(p[1]))
-		{
-			//Browser.window.location.reload();
+		{			
 			return;
 		}
 		if (tabLinks[tabsInstance.options.active] != p[1])

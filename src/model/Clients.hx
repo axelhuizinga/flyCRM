@@ -87,13 +87,13 @@ typedef CustomField =
 	public function edit(param:StringMap<Dynamic>):EitherType<String,Bool>
 	{
 		//var entry_list_id:String = param.get('entry_list_id');
-		//TODO PRODUCTS,PAY_SOURCES,PAY_HISTORY
+
 		var fieldNames:StringMap<String> = new StringMap();
 		var typeMap:StringMap<String> = new StringMap();
 		var optionsMap:StringMap<String> = new StringMap();		
 		
 		var eF:StringMap<Array<StringMap<String>>> = getEditorFields();
-		trace(eF);
+		//trace(eF);
 		var keys:Iterator<String> = eF.keys();		
 		var tableNames:Array<String> = new Array();
 		var tableFields:StringMap<Array<String>> = new StringMap();
@@ -117,16 +117,17 @@ typedef CustomField =
 				typeMap.set(cFields[f], aFields[f].get('field_type'));
 			}			
 		}
-
+		trace(tableNames);
 		var editTables:StringMap<StringMap<String>> = new StringMap();
 		var ti:Int = 0;
+		tableNames.remove('vicidial_list');
 		for (table in tableNames)
 		{
 			var p:StringMap<String> = new StringMap();
 			var sb:StringBuf = new StringBuf();
 			var phValues:Array<Array<Dynamic>> = new Array();
 			p.set('primary_id', param.get('primary_id'));
-			//TODO: FETCH VICIDIAL LIST ONLY ONCE 
+			//FETCH VICIDIAL DATA ALONG WITH MEMBER DATA
 			if (table == 'clients')
 			{
 				p.set('table', 'vicidial_list');

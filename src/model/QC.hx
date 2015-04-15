@@ -26,7 +26,7 @@ class QC extends Clients
 	{
 		var self:QC = new QC();	
 		self.table = 'vicidial_list';
-		trace(param);
+		//trace(param);
 		return Reflect.callMethod(self, Reflect.field(self,param.get('action')), [param]);
 	}
 		
@@ -78,7 +78,7 @@ class QC extends Clients
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
 		var count:Int = countJoin(param, sb, phValues);
-		
+		trace(param);
 		sb = new StringBuf();
 		phValues = new Array();
 		trace( 'count:' + count + ':' + param.get('page')  + ': ' + (param.exists('page') ? 'Y':'N'));
@@ -108,6 +108,7 @@ class QC extends Clients
 	{
 		var lead_id = Std.parseInt(q.get('lead_id'));
 		//COPY LEAD TO VICIDIAL_LEAD_LOG + CUSTOM_LOG
+		//return false;
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query(
 			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id,$lead_id AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id FROM `vicidial_list`WHERE `lead_id`=$lead_id)AS vl'
 			);
@@ -193,8 +194,8 @@ class QC extends Clients
 						values2bind[i++] = S.user;
 						bindTypes += 's';
 						sets.push('security_phrase=?');//STORE QC AGENT
-						if (q.get('status') == 'MITGL')
-						{
+						if (q.get('status') == 'QCOK')
+						{//	MOVE INTO MITGLIEDER LISTE (10000)
 							var list_id:Int = 10000;
 							var mID:Int = Std.parseInt(q.get('vendor_lead_code'));
 							if (mID == null)//	NEW MEMBER - CREATE ID

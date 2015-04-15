@@ -32,7 +32,7 @@
 		<!-- MAIN APP SCREEN -->
 		<div  class="bgBox" id="bgBox">
 			<div  id="mtabs" >
-				<ul ></ul>
+				<ul id="mainmenu"></ul>
 			</div>
 		</div>
 		

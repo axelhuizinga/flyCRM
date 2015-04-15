@@ -43,7 +43,7 @@ var uiData = {
 							hidden:'entry_list_id,user,vicidial_list.user,address1,city,vendor_lead_code',
 							id:'qc',
 							limit:15,
-							order:'last_local_call_time|DESC',
+							order:'last_local_call_time|ASC',
 							where:'list_id|1900',
 							jointable:'vicidial_users',
 							joincond:'vicidial_users.user=vicidial_list.user',
@@ -102,7 +102,7 @@ var uiData = {
 					[{							
 						Clients:{
 							action:'find',
-							fields:'vicidial_list.lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
+							fields:'vicidial_list.lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,register_on',
 							primary_id:'vendor_lead_code',
 							hidden:'lead_id',							
 							id:'clients',

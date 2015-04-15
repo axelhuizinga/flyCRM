@@ -144,7 +144,7 @@ class View
 				aListener.prop('disabled', true);
 			if (iS.enables.has(aAction))
 				aListener.prop('disabled', false);
-			trace(aListener.closest('.tabContent').attr('id') + ':' + aAction + ' disabled:' + (aListener.prop('disabled') ? 'Y':'N'));
+			//trace(aListener.closest('.tabContent').attr('id') + ':' + aAction + ' disabled:' + (aListener.prop('disabled') ? 'Y':'N'));
 		}
 		trace(iState);
 		return iState;

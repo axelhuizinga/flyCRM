@@ -154,7 +154,7 @@ class Editor extends View
 		p.push( { name:'primary_id', value: parentView.vData.primary_id} );
 		p.push( { name:parentView.vData.primary_id, value: eData.attr('id') } );
 		if (qcok)
-			p.push( { name:'status', value:'MITGL' });
+			p.push( { name:'status', value:'QCOK' });
 		if (parentView.vData.hidden != null)
 		{							
 			var hKeys:Array<String> = parentView.vData.hidden.split(',');
@@ -166,8 +166,8 @@ class Editor extends View
 		}
 		trace(p);
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
-			trace(data +': ' + (data == 'true' ? 'Y':'N'));
-			if (data == 'true') {
+			trace(data +': ' + (data ? 'Y':'N'));
+			if (data) {
 				trace(root.find('.recordings').length);
 				root.find('.recordings').remove();
 				root.data('disabled', 0);

@@ -118,7 +118,7 @@ class ClientEditor extends Editor
 		}
 		var dRows:Array<Dynamic> = Reflect.field(editData, name).h;
 		var sData:Dynamic = Reflect.field(editData, name);// { h:[] };
-		trace(dRows);
+		//trace(dRows);
 		/*for (r in dRows)
 		{
 			var aRow:Dynamic = { };
@@ -133,7 +133,7 @@ class ClientEditor extends Editor
 		sData.typeMap = typeMap;
 		sData.fieldNames = fieldNames;
 		
-		trace(sData);
+		//trace(sData);
 		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
 		screens.set(name, J('#t-pay-editor').tmpl(sData).appendTo('#' + parentView.id).css( {

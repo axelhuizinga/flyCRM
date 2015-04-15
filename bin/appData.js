@@ -14,7 +14,8 @@ var fieldNames =
 	vicidial_lists:'Listen',
 	order_date:'Auftragsdatum',
 	join_date:'Auftragsdatum',
-	full_name:'Agent'
+	full_name:'Agent',
+	register_on:'Beitrittsdatum'
 }
 
 var appLabel =

@@ -64,7 +64,6 @@ class model_Clients extends Model {
 		$typeMap = new haxe_ds_StringMap();
 		$optionsMap = new haxe_ds_StringMap();
 		$eF = $this->getEditorFields(null);
-		haxe_Log::trace($eF, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 96, "className" => "model.Clients", "methodName" => "edit")));
 		$keys = $eF->keys();
 		$tableNames = new _hx_array(array());
 		$tableFields = new haxe_ds_StringMap();
@@ -91,8 +90,10 @@ class model_Clients extends Model {
 			}
 			unset($k,$cFields,$aFields);
 		}
+		haxe_Log::trace($tableNames, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 120, "className" => "model.Clients", "methodName" => "edit")));
 		$editTables = new haxe_ds_StringMap();
 		$ti = 0;
+		$tableNames->remove("vicidial_list");
 		{
 			$_g2 = 0;
 			while($_g2 < $tableNames->length) {
@@ -139,7 +140,7 @@ class model_Clients extends Model {
 			$a = $this->doSelect($param, $sb, $phValues);
 			$cFields = new _hx_array($a);
 		}
-		haxe_Log::trace($cFields->length, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 176, "className" => "model.Clients", "methodName" => "getCustomFields")));
+		haxe_Log::trace($cFields->length, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 177, "className" => "model.Clients", "methodName" => "getCustomFields")));
 		$ret = new _hx_array(array());
 		{
 			$_g = 0;
@@ -190,7 +191,7 @@ class model_Clients extends Model {
 	}
 	public function save($q) {
 		$lead_id = Std::parseInt($q->get("lead_id"));
-		haxe_Log::trace($q, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 236, "className" => "model.Clients", "methodName" => "save")));
+		haxe_Log::trace($q, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 237, "className" => "model.Clients", "methodName" => "save")));
 		return false;
 	}
 	static function create($param) {

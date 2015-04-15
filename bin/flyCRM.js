@@ -715,7 +715,6 @@ View.prototype = {
 			var aAction = this.listening.h[aListener.__id__];
 			if(Lambda.has(iS.disables,aAction)) aListener.prop("disabled",true);
 			if(Lambda.has(iS.enables,aAction)) aListener.prop("disabled",false);
-			haxe_Log.trace(aListener.closest(".tabContent").attr("id") + ":" + aAction + " disabled:" + (aListener.prop("disabled")?"Y":"N"),{ fileName : "View.hx", lineNumber : 147, className : "View", methodName : "set_interactionState"});
 		}
 		haxe_Log.trace(iState,{ fileName : "View.hx", lineNumber : 149, className : "View", methodName : "set_interactionState"});
 		return iState;
@@ -2349,8 +2348,8 @@ view_Editor.prototype = $extend(View.prototype,{
 		}
 		haxe_Log.trace(p,{ fileName : "Editor.hx", lineNumber : 167, className : "view.Editor", methodName : "save"});
 		this.parentView.loadData("server.php",p,function(data) {
-			haxe_Log.trace(Std.string(data) + ": " + (data == "true"?"Y":"N"),{ fileName : "Editor.hx", lineNumber : 169, className : "view.Editor", methodName : "save"});
-			if(data == "true") {
+			haxe_Log.trace(Std.string(data) + ": " + (data?"Y":"N"),{ fileName : "Editor.hx", lineNumber : 169, className : "view.Editor", methodName : "save"});
+			if(data) {
 				haxe_Log.trace(_g.root.find(".recordings").length,{ fileName : "Editor.hx", lineNumber : 171, className : "view.Editor", methodName : "save"});
 				_g.root.find(".recordings").remove();
 				_g.root.data("disabled",0);
@@ -2503,12 +2502,10 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		}
 		var dRows = Reflect.field(this.editData,name).h;
 		var sData = Reflect.field(this.editData,name);
-		haxe_Log.trace(dRows,{ fileName : "ClientEditor.hx", lineNumber : 121, className : "view.ClientEditor", methodName : "showScreen"});
 		sData.table = name;
 		sData.optionsMap = this.optionsMap;
 		sData.typeMap = this.typeMap;
 		sData.fieldNames = this.fieldNames;
-		haxe_Log.trace(sData,{ fileName : "ClientEditor.hx", lineNumber : 136, className : "view.ClientEditor", methodName : "showScreen"});
 		var oMargin = 8;
 		var mSpace = App.getMainSpace();
 		this.screens.set(name,new $("#t-pay-editor").tmpl(sData).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1}));
@@ -3126,15 +3123,17 @@ view_TabBox.prototype = $extend(View.prototype,{
 	,tabLabel: null
 	,go: function(url,p) {
 		haxe_Log.trace(url,{ fileName : "TabBox.hx", lineNumber : 149, className : "view.TabBox", methodName : "go"});
+		haxe_Log.trace(Std.string(this.tabsInstance.options.active) + " : " + HxOverrides.indexOf(this.tabLinks,url,0),{ fileName : "TabBox.hx", lineNumber : 150, className : "view.TabBox", methodName : "go"});
+		if(this.tabsInstance.options.active == HxOverrides.indexOf(this.tabLinks,url,0)) haxe_Log.trace("full reload",{ fileName : "TabBox.hx", lineNumber : 154, className : "view.TabBox", methodName : "go"});
 		if(!(typeof(url) == "string")) {
-			me_cunity_debug_Out.dumpStack(haxe_CallStack.callStack(),{ fileName : "TabBox.hx", lineNumber : 153, className : "view.TabBox", methodName : "go"});
+			me_cunity_debug_Out.dumpStack(haxe_CallStack.callStack(),{ fileName : "TabBox.hx", lineNumber : 160, className : "view.TabBox", methodName : "go"});
 			return;
 		}
 		var p1 = url.split(App.basePath);
 		if(p1.length == 2 && p1[1] == "") p1[1] = this.tabLinks[0]; else if(p1.length == 1) p1[1] = url;
 		if(this.tabsInstance.options.active == HxOverrides.indexOf(this.tabLinks,p1[1],0)) return;
 		if(this.tabLinks[this.tabsInstance.options.active] != p1[1]) {
-			haxe_Log.trace(this.id + " root:" + this.root.attr("id"),{ fileName : "TabBox.hx", lineNumber : 169, className : "view.TabBox", methodName : "go"});
+			haxe_Log.trace(this.id + " root:" + this.root.attr("id"),{ fileName : "TabBox.hx", lineNumber : 175, className : "view.TabBox", methodName : "go"});
 			if(this.tabObj != null) this.tabObj.tabs("option","active",HxOverrides.indexOf(this.tabLinks,p1[1],0));
 		}
 		window.document.title = App.company + " " + App.appName + "  " + this.tabLabel[this.tabsInstance.options.active];
