@@ -24,10 +24,10 @@ using jQuery.FormData;
 	public function new(?data:CampaignsData) 
 	{
 		super(data);
-		addInteractionState('init', { disables:['call','close','save','qcok'], enables:['find'] } );
+		addInteractionState('init', { disables:['call','close','save','qcok','qcbad'], enables:['find'] } );
 		//addInteractionState('edit', { disables:['add', 'delete'], enables:['save'] } );
-		addInteractionState('selected', { disables:[], enables:['call','close','save','qcok'] } );
-		addInteractionState('call', { disables:['close' ], enables:['call','save','qcok'] } );		
+		addInteractionState('selected', { disables:[], enables:['call','close','save','qcok','qcbad'] } );
+		addInteractionState('call', { disables:['close' ], enables:['call','save','qcok','qcbad'] } );		
 		//trace(data);
 		listattach2 = data.listattach2;
 		if (!(data.limit > 0))

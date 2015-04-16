@@ -135,6 +135,7 @@ class model_Clients extends Model {
 		$param->set("fields", "field_name,field_label,field_type,field_options");
 		$param->set("order", "field_rank,field_order");
 		$param->set("limit", "100");
+		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 175, "className" => "model.Clients", "methodName" => "getCustomFields")));
 		$cFields = null;
 		{
 			$a = $this->doSelect($param, $sb, $phValues);

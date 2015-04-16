@@ -12,6 +12,7 @@ var fieldNames =
 	vendor_lead_code:'Mitgliedsnr.',
 	vicidial_campaigns:'Kampagnen',
 	vicidial_lists:'Listen',
+	entry_date:'Auftragsdatum',
 	order_date:'Auftragsdatum',
 	join_date:'Auftragsdatum',
 	full_name:'Agent',
@@ -88,6 +89,7 @@ var displayFormats =
 	register_off_to:'date',
 	sign_date:'date',
 	start_date:'date',
+	entry_date:'date',
 	teilnahme_beginn:'date',
 	creation_date:'datetime',
 	last_local_call_time:'datetime',
@@ -105,6 +107,7 @@ var storeFormats =
 	register_off:['gDate2mysql'],
 	register_off_to:['gDate2mysql'],
 	sign_date:['gDate2mysql'],
+	entry_date:['gDate2mysql'],
 	start_date:['gDate2mysql'],
 	teilnahme_beginn:['gDate2mysql'],
 }

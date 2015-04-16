@@ -6,7 +6,7 @@ import php.Lib;
 import php.NativeArray;
 import model.*;
 import me.cunity.php.db.*;
-
+import model.Users;
 
 using Lambda;
 using Util;
@@ -34,7 +34,7 @@ typedef MData =
 	@:optional var optionsMap:NativeArray;
 	@:optional var recordings:NativeArray;
 	@:optional var typeMap:NativeArray;
-	@:optional var userMap:NativeArray;
+	@:optional var userMap:Array<UserInfo>;
 };
 
 class Model
@@ -49,6 +49,7 @@ class Model
 	public var db:String;
 	public var table:String;
 	public var primary:String;
+	public var num_rows(default, null):Int;
 	
 	public static function dispatch(param:StringMap<Dynamic>):EitherType<String,Bool>
 	{
@@ -227,7 +228,8 @@ class Model
 	{
 		trace(sql);	
 		var stmt =  S.my.stmt_init();
-		var success:Bool = stmt.prepare(sql);
+		//var success:Bool = stmt.prepare(sql);
+		var success:EitherType<MySQLi_STMT,Bool> = stmt.prepare(sql);
 		trace (success);
 		if (!success)
 		{
@@ -263,9 +265,11 @@ class Model
 					trace(stmt.error);
 					return null;
 				}
+				
 				var result:EitherType<MySQLi_Result,Bool> = stmt.get_result();
 				if (result)
 				{
+					num_rows = cast (result, MySQLi_Result).num_rows;
 					data = cast(result, MySQLi_Result).fetch_all(MySQLi.MYSQLI_ASSOC);
 				}			
 				return(data);		
@@ -282,7 +286,9 @@ class Model
 			var result:EitherType<MySQLi_Result,Bool> = stmt.get_result();
 			if (result)
 			{
-				data = cast(result, MySQLi_Result).fetch_all(MySQLi.MYSQLI_ASSOC);
+				var res:MySQLi_Result = cast(result, MySQLi_Result);
+				num_rows = res.num_rows;
+				data = res.fetch_all(MySQLi.MYSQLI_ASSOC);				
 			}			
 			return(data);	
 		}

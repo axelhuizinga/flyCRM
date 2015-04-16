@@ -38,15 +38,16 @@ var uiData = {
 						QC:{
 							action:'find',
 							campaign_id:'QCKINDER',
-							fields:'lead_id,vicidial_list.user,entry_list_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time,full_name',
+							fields:'lead_id,owner,entry_list_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,entry_date,full_name',
 							primary_id:'lead_id',
-							hidden:'entry_list_id,user,vicidial_list.user,address1,city,vendor_lead_code',
+							hidden:'entry_list_id,owner,vicidial_list.user,address1,city,vendor_lead_code',
 							id:'qc',
 							limit:15,
-							order:'last_local_call_time|ASC',
+							order:'entry_date|ASC',
+							whereNot:'status|DC',
 							where:'list_id|1900',
 							jointable:'vicidial_users',
-							joincond:'vicidial_users.user=vicidial_list.user',
+							joincond:'vicidial_users.user=vicidial_list.owner',
 							table:'vicidial_list',
 							listattach2:'#qc-list-anchor',
 							views:[
@@ -74,7 +75,8 @@ var uiData = {
 												close:'Schließen',
 												call:'Anrufen',
 												save:'Speichern',
-												qcok:'QC OK'
+												qcok:'QC OK',
+												qcbad:'QC NEGATIV'
 											}
 										}										
 									],

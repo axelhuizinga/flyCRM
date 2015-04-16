@@ -25,9 +25,9 @@ class ClientEditor extends Editor
 		super(data);
 	}
 	
-	override public function endAction(endAction:String)
+	override public function contextAction(contextAction:String)
 	{
-		switch(endAction)
+		switch(contextAction)
 		{
 			case 'close':
 				trace('going to close:' + J('#overlay').length);
@@ -67,16 +67,16 @@ class ClientEditor extends Editor
 					case 'pay_plan', 'pay_history', 'client_history':
 						save_pay_screen();
 					default:// SAVE CLIENT DATA
-						save(false);
+						save();
 				}
 
 				
 			case 'call':
 				cMenu.call(this);
 			case 'pay_plan','pay_source','pay_history','client_history':
-				showScreen(endAction);
+				showScreen(contextAction);
 			default:
-				trace(endAction);
+				trace(contextAction);
 		}//DONE END ACTION CASE EDIT
 	}
 	
@@ -145,7 +145,7 @@ class ClientEditor extends Editor
 		activeScreen = name;
 	}
 	
-	override public function save(_):Void
+	override public function save(?status:String):Void
 	{
 		var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
 		p.push( { name:'className', value:parentView.name });
@@ -166,9 +166,9 @@ class ClientEditor extends Editor
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			trace(data +': ' + (data == 'true' ? 'Y':'N'));
 			if (data == 'true') {
-				trace(root.find('.recordings').length);
-				root.find('.recordings').remove();
-				root.data('disabled', 0);
+				trace(cMenu.root.attr('id') +':'+ cMenu.root.find('.recordings').length);
+				cMenu.root.find('.recordings').remove();
+				cMenu.root.data('disabled', 0);
 				J(attach2).find('tr').removeClass('selected');
 				overlay.animate( { opacity:0.0 }, 300, null, function() { overlay.detach(); } );			
 			}

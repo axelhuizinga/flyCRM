@@ -172,7 +172,7 @@ typedef CustomField =
 		param.set('fields', 'field_name,field_label,field_type,field_options');
 		param.set('order', 'field_rank,field_order');
 		param.set('limit', '100');
-		//trace(param);
+		trace(param);
 		var cFields:Array<Dynamic> = Lib.toHaxeArray( doSelect(param, sb, phValues));
 		trace(cFields.length);
 		var ret:Array<StringMap<String>> = new Array();

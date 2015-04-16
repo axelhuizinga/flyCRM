@@ -26,6 +26,7 @@ class Editor extends View
 	var optionsMap:Dynamic;
 	var typeMap:Dynamic;
 	public var eData(default, null):JQuery;
+	public var action:String;
 	public var agent:String;
 	public var leadID:String;
 	public function new(?data:Dynamic)  
@@ -100,8 +101,9 @@ class Editor extends View
 		//cMenu.set_active(cMenu.getIndexOf(vData.trigger.split('|')[1]));
 	}
 	
-	public function endAction(action:String)
+	public function contextAction(action:String)
 	{
+		this.action = action;
 		switch(action)
 		{
 			case 'close':
@@ -121,7 +123,7 @@ class Editor extends View
 						if (ok)
 						{
 							//TODO: TEST THE CHANGE FROM ACTION TO ENDACTION
-							save(action == 'qcok');
+							save(action);
 						}
 						else
 						{//J('#' + parentView.id + '-edit-form')
@@ -137,8 +139,9 @@ class Editor extends View
 					});
 				}
 				else
-					save(action == 'qcok');
-				
+					save(action);
+			case 'qcbad':
+				save(action);
 			case 'call':
 				cMenu.call(this);
 			default:
@@ -146,15 +149,18 @@ class Editor extends View
 		}//DONE END ACTION CASE EDIT
 	}
 	
-	public function save(qcok:Bool):Void
+	public function save(?status:String):Void
 	{
 		var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
 		p.push( { name:'className', value:parentView.name });
 		p.push( { name:'action', value:'save' });
 		p.push( { name:'primary_id', value: parentView.vData.primary_id} );
 		p.push( { name:parentView.vData.primary_id, value: eData.attr('id') } );
-		if (qcok)
-			p.push( { name:'status', value:'QCOK' });
+		switch (status)
+		{
+			case 'qcok','qcbad':
+			p.push( { name:'status', value: status.toUpperCase() });
+		}
 		if (parentView.vData.hidden != null)
 		{							
 			var hKeys:Array<String> = parentView.vData.hidden.split(',');
@@ -168,9 +174,11 @@ class Editor extends View
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			trace(data +': ' + (data ? 'Y':'N'));
 			if (data) {
-				trace(root.find('.recordings').length);
-				root.find('.recordings').remove();
-				root.data('disabled', 0);
+				if (parentView.interactionState == 'call')
+					cMenu.hangup(this);
+				trace(cMenu.root.attr('id') +':'+cMenu.root.find('.recordings').length);
+				cMenu.root.find('.recordings').remove();
+				cMenu.root.data('disabled', 0);
 				J(attach2).find('tr').removeClass('selected');
 				J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );			
 			}
@@ -194,7 +202,7 @@ class Editor extends View
 				opts.push(r.split(','));
 			Reflect.setField(dataOptions, k, opts);
 		}
-		data.user = eData.data('user');
+		data.user = eData.data('owner');
 		optionsMap = data.optionsMap = dataOptions;
 		typeMap = data.typeMap;
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;

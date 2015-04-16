@@ -140,8 +140,12 @@ class View
 		{
 			var aListener:JQuery = lIt.next();
 			var aAction:String = listening.get(aListener);
+			//trace(aAction + ':' + aListener.data());
 			if (iS.disables.has(aAction))
+			{				
 				aListener.prop('disabled', true);
+				//trace(aListener.data());
+			}
 			if (iS.enables.has(aAction))
 				aListener.prop('disabled', false);
 			//trace(aListener.closest('.tabContent').attr('id') + ':' + aAction + ' disabled:' + (aListener.prop('disabled') ? 'Y':'N'));
@@ -194,8 +198,8 @@ class View
 	{
 		jListener.each(function(i, n)
 		{
-			//trace(id + ':' + n + ':' + J(n).data('endaction'));
-			listening.set(J(n), J(n).data('endaction'));
+			//trace(id + ':' + n + ':' + J(n).data('contextaction'));
+			listening.set(J(n), J(n).data('contextaction'));
 		});
 	}
 	
@@ -237,13 +241,13 @@ class View
 	
 	function initState():Void
 	{
-		trace (id +':' + (loadingComplete() ? 'Y':'N') + ' :' + J('button[data-endaction]').length);	
+		trace (id +':' + (loadingComplete() ? 'Y':'N') + ' :' + J('button[data-contextaction]').length);	
 		if (!loadingComplete())
 		{			
 			Timer.delay(initState, 1000);
 			return;
 		}
-		addListener(J('button[data-endaction]'));
+		addListener(J('button[data-contextaction]'));
 		interactionState = 'init';
 		J('td').attr('tabindex', -1);
 		var el:Element = cast J('#' + id).get()[0];

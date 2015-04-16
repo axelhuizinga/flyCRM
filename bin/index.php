@@ -118,8 +118,8 @@
 				{{/each}}
 				<tr>
 				<td>Agent:</td><td>
-				<select name="user">
-				{{each(ui,uv) $data.userMap}}
+				<select name="owner">
+				{{each(ui,uv) $data.userMap.a}}
 					<option value="${uv.user}" {{if uv.user==$data.user}}selected="selected"{{/if}}>${uv.full_name}</option>
 				{{/each}}
 				</select>
@@ -177,7 +177,7 @@
 						{{each(bi,bv) v.buttons}}
 						<tr>
 							<td colspan="3">
-								<button data-endaction="${bi}">${bv}</button>							
+								<button data-contextaction="${bi}">${bv}</button>							
 							</td>						
 						</tr>
 						{{/each}}
@@ -301,6 +301,7 @@
 		<div  class="scrollbox">
 			<form  id="${$data.table}-form" action="clients" class="main-left">
 			${trace($data.h)}
+			${primary_id=$data.table+'_id'}
 			{{each(i,v) $data.h}}				
 				<table  >
 				{{each(k,val) v}}
@@ -383,7 +384,7 @@
 						{{each(bi,bv) v.buttons}}
 						<tr>
 							<td colspan="3">
-								<button data-endaction="${bi}">${bv}</button>							
+								<button data-contextaction="${bi}">${bv}</button>							
 							</td>						
 						</tr>						
 						{{/each}}						
@@ -465,7 +466,7 @@
 						</div>	
 						{{/each}}						
 						{{each(bi,bv) v.buttons}}
-						<button data-endaction="${bi}">${bv}</button>
+						<button data-contextaction="${bi}">${bv}</button>
 						{{/each}}
 					</form>
 				</div>
@@ -655,7 +656,9 @@
 					 if (!value) {
 						return '';
 					 }
-					 var t = value.split(/-/);
+					 var t = value.split(/\s/);
+					 var t = t[0].split(/-/);
+					 trace(t.join('_'));
 					 return sprintf('%s.%s.%s', t[2], t[1], t[0]);
 					 break;
 					case 'gFloat':

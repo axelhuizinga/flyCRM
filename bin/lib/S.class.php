@@ -46,10 +46,11 @@ class S {
 	}
 	static function checkAuth() {
 		S::$user = php_Session::get("PHP_AUTH_USER");
+		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 92, "className" => "S", "methodName" => "checkAuth")));
 		if(S::$user === null) {
 			return false;
 		}
-		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 94, "className" => "S", "methodName" => "checkAuth")));
+		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 95, "className" => "S", "methodName" => "checkAuth")));
 		$pass = php_Session::get("PHP_AUTH_PW");
 		if($pass === null) {
 			return false;
@@ -85,7 +86,7 @@ class S {
 		if($res->num_rows === 0) {
 			return 1;
 		} else {
-			return Std::parseInt(_hx_array_get($res->fetch_array(2), 0));
+			return Std::parseInt(_hx_array_get($res->fetch_array(2), 0)) + 1;
 		}
 	}
 	static function tableFields($table, $db = null) {

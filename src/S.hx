@@ -89,6 +89,7 @@ class S
 	static function checkAuth():Bool
 	{
 		user = Session.get('PHP_AUTH_USER');
+		trace(user);
 		if (user == null)
 			return false;
 		trace(user);
@@ -146,7 +147,7 @@ class S
 		var res:MySQLi_Result = S.my.query(
 			'SELECT  MAX(CAST(vendor_lead_code AS UNSIGNED)) FROM vicidial_list WHERE list_id=10000'
 			);
-		return (res.num_rows==0 ? 1:  Std.parseInt(res.fetch_array(MySQLi.MYSQLI_NUM)[0]));
+		return (res.num_rows==0 ? 1:  Std.parseInt(res.fetch_array(MySQLi.MYSQLI_NUM)[0])+1);
 	}
 	
 	public static function tableFields(table:String, db:String = 'asterisk'): Array<String>

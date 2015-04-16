@@ -1,5 +1,6 @@
 package view;
 import haxe.ds.StringMap;
+import haxe.Timer;
 import jQuery.JHelper.J;
 import jQuery.FormData.FData;
 import jQuery.*;
@@ -87,7 +88,7 @@ typedef ContextMenuData =
 					jq.val(jq.attr('placeholder'));
 			}
 		});		
-		J('#' + id + ' button[data-endaction]').click(run);
+		J('#' + id + ' button[data-contextaction]').click(run);
 		init();
 	}
 	
@@ -121,7 +122,7 @@ typedef ContextMenuData =
 		trace('parentView.interactionState:' + parentView.interactionState + ' agent:' + editor.agent + ' editor.leadID:' + editor.leadID);
 		if (parentView.interactionState == 'call')
 		{// HANG UP
-			var p:Dynamic = 
+			/*var p:Dynamic = 
 			{
 				className:'AgcApi',
 				action:'external_hangup',
@@ -133,38 +134,18 @@ typedef ContextMenuData =
 			parentView.loadData('server.php', p, function(data:Dynamic) { 
 				//trace(data);
 				if (data.response == 'OK') {//HUNG UP - CHOOSE DISPO STATUS
-					//trace('OK');		
+					trace('OK');		
 					//trace(data.choice);		
 					//SHOW DISPO CHOICE DIALOG
-					parentView.interactionState = 'init';
-					App.choice( { header:App.appLabel.selectStatus, choice:data.choice, id:parentView.id } );
-					J('#choice  button[data-choice]').click(function(evt:Event)
-					{
-						trace(J(cast( evt.target, Node)).data('choice'));
-						p = {
-							className:'AgcApi',
-							action:'external_status',
-							dispo:J(cast( evt.target, Node)).data('choice'),
-							agent_user:editor.agent
-						};
-						parentView.loadData('server.php', p, function(data:Dynamic) { 
-							trace(data);
-							if (data.response != 'OK')												
-								App.choice( { header:data.response, id:parentView.id } );
-							else
-								App.choice(null);
-						});
-						
-					});
-					parentView.interactionState = 'selected';
-					trace(activePanel.find('button[data-endaction="call"]').length);
-					activePanel.find('button[data-endaction="call"]').html('Anrufen');
+					setCallStatus(editor);
 				}
 				else
 				{
 					App.choice( { header:data.response, id:parentView.id } );
+					Timer.delay(function() App.choice(null), 3900);
 				}
-			});		
+			});		*/
+			hangup(editor);
 
 			return;
 		}//DO CALL
@@ -175,15 +156,15 @@ typedef ContextMenuData =
 			lead_id:editor.leadID,
 			agent_user:editor.agent
 		};
-		
+		//parentView.interactionState = 'call'; activePanel.find('button[data-contextaction="call"]').html('Auflegen');return;
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			trace(data);
 			if (data.response == 'OK') {
 				trace('OK');// ACTIVE CALL
 				//parentView.vData.call = 1;
 				parentView.interactionState = 'call';
-				trace(activePanel.find('button[data-endaction="call"]').length);
-				activePanel.find('button[data-endaction="call"]').html('Auflegen');
+				trace(activePanel.find('button[data-contextaction="call"]').length);
+				activePanel.find('button[data-contextaction="call"]').html('Auflegen');
 			}
 		});										
 	}	
@@ -226,6 +207,33 @@ typedef ContextMenuData =
 		return index;
 	}
 	
+	public function hangup(editor:Editor)
+	{	
+		var p:Dynamic = 
+		{
+			className:'AgcApi',
+			action:'external_hangup',
+			campaign_id:parentView.vData.campaign_id,
+			lead_id:editor.leadID,
+			agent_user:editor.agent
+		};
+		
+		parentView.loadData('server.php', p, function(data:Dynamic) { 
+			//trace(data);
+			if (data.response == 'OK') {//HUNG UP - CHOOSE DISPO STATUS
+				trace('OK');		
+				//trace(data.choice);	
+				setCallStatus(editor);
+				//SHOW DISPO CHOICE DIALOG
+				parentView.interactionState = 'init';
+			}
+			else
+			{
+				App.choice( { header:data.response, id:parentView.id } );
+			}
+		});
+	}
+	
 	public function layout()
 	{
 		var maxWidth:Float = 0;
@@ -255,9 +263,9 @@ typedef ContextMenuData =
 		var jNode:JQuery = J(cast( evt.target, Node));
 		action = vData.items[active].action;
 		trace( action + ':' + active); 		
-		var endAction = jNode.data('endaction');
+		var contextAction = jNode.data('contextaction');
 		//action = J( evt.target).data('action');
-		trace(action + ':' + endAction);
+		trace(action + ':' + contextAction);
 		switch(action)
 		{
 			case 'find':
@@ -273,108 +281,11 @@ typedef ContextMenuData =
 				}	
 			case 'edit':
 				var editor:Editor = cast(parentView.views.get(parentView.instancePath + '.' + parentView.id + '-editor'), Editor);
-				editor.endAction(endAction);
-				/*switch(endAction)
-				{
-					case 'close':
-						trace('going to close:' + J('#overlay').length);
-						root.find('.recordings').remove();
-						root.data('disabled', 0);
-						J(attach2).find('tr').removeClass('selected');
-						parentView.interactionState = 'init';
-						J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
-					case 'save', 'qcok':
-						if (!editor.checkIban())
-						{
-							editor.checkAccountAndBLZ(function(ok:Bool)
-							{
-								trace (ok);
-								if (ok)
-								{
-									editor.save(action == 'qcok');
-								}
-								else
-								{//J('#' + parentView.id + '-edit-form')
-									App.inputError( J('#' + parentView.id + '-edit-form'), ['account','blz','iban'] );
-								}
-							});
-						}
-						
-					case 'call':
-						trace('parentView.interactionState:' + parentView.interactionState);
-						if (parentView.interactionState == 'call')
-						{// HANG UP
-							var p:Dynamic = 
-							{
-								className:'AgcApi',
-								action:'external_hangup',
-								campaign_id:parentView.vData.campaign_id,
-								lead_id:editor.eData.attr('id'),
-								agent_user:editor.eData.data('user')
-							};
-							
-							parentView.loadData('server.php', p, function(data:Dynamic) { 
-								//trace(data);
-								if (data.response == 'OK') {//HUNG UP - CHOOSE DISPO STATUS
-									//trace('OK');		
-									//trace(data.choice);		
-									//SHOW DISPO CHOICE DIALOG
-									parentView.interactionState = 'init';
-									App.choice( { header:App.appLabel.selectStatus, choice:data.choice, id:parentView.id } );
-									J('#choice  button[data-choice]').click(function(evt:Event)
-									{
-										trace(J(cast( evt.target, Node)).data('choice'));
-										p = {
-											className:'AgcApi',
-											action:'external_status',
-											dispo:J(cast( evt.target, Node)).data('choice'),
-											agent_user:editor.eData.data('user')
-										};
-										parentView.loadData('server.php', p, function(data:Dynamic) { 
-											trace(data);
-											if (data.response != 'OK')												
-												App.choice( { header:data.response, id:parentView.id } );
-											else
-												App.choice(null);
-										});
-										
-									});
-									parentView.interactionState = 'selected';
-									trace(activePanel.find('button[data-endaction="call"]').length);
-									activePanel.find('button[data-endaction="call"]').html('Anrufen');
-								}
-								else
-								{
-									App.choice( { header:data.response, id:parentView.id } );
-								}
-							});		
-
-							return;
-						}//DO CALL
-						var p:Dynamic = 
-						{
-							className:'AgcApi',
-							action:'external_dial',
-							lead_id:editor.eData.attr('id'),
-							agent_user:editor.eData.data('user')
-						};
-						
-						parentView.loadData('server.php', p, function(data:Dynamic) { 
-							trace(data);
-							if (data.response == 'OK') {
-								trace('OK');// ACTIVE CALL
-								//parentView.vData.call = 1;
-								parentView.interactionState = 'call';
-								trace(activePanel.find('button[data-endaction="call"]').length);
-								activePanel.find('button[data-endaction="call"]').html('Auflegen');
-							}
-						});								
-				}//DONE END ACTION CASE EDIT
-				*/
+				editor.contextAction(contextAction);				
 			case 'mailings':
 				var mailing:Mailing = cast(parentView.views.get(parentView.instancePath + '.' + parentView.id + '-mailing'), Mailing);
-				trace(endAction);
-				switch(endAction)
+				trace(contextAction);
+				switch(contextAction)
 				{
 					case 'previewOne':
 						mailing.previewOne(parentView.selectedID);
@@ -383,11 +294,40 @@ typedef ContextMenuData =
 					case 'printNewMembers':
 						mailing.printNewMembers();
 					default:
-						trace(endAction);
+						trace(contextAction);
 				}
 			default:
-				trace(action + ':' + endAction);
+				trace(action + ':' + contextAction);
 		}
+	}
+	
+	public function setCallStatus(editor:Editor)
+	{
+		trace(editor.action);
+		var p:Dynamic = {
+			className:'AgcApi',
+			action:'external_status',
+			dispo:switch(editor.action)
+			{
+				case 'call', 'save':
+				'QCOPEN';
+				default:
+				editor.action.toUpperCase();
+			},
+			agent_user:editor.agent
+		};
+		parentView.loadData('server.php', p, function(data:Dynamic) { 
+			trace(data);
+			if (data.response == 'OK')		
+			{
+				parentView.interactionState = 'init';
+				
+				activePanel.find('button[data-contextaction="call"]').html('Anrufen');
+			}
+			else
+				App.choice( { header:data.response, id:parentView.id } );
+		});
+				
 	}
 
 	public function showResult(data:Dynamic, _):Void

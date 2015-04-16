@@ -35,7 +35,8 @@ class QC extends Clients
 		var entry_list_id:String = param.get('entry_list_id');
 		var cF:Array<StringMap<String>> = getCustomFields(entry_list_id);
 		var cFields:Array<String> = cF.map(function(field:StringMap<String>):String return field.get('field_label'));
-		trace(cFields);
+		//trace(cFields);
+		//trace(param);
 		var fieldNames:StringMap<String> = new StringMap();
 		var typeMap:StringMap<String> = new StringMap();
 		var optionsMap:StringMap<String> = new StringMap();
@@ -54,7 +55,7 @@ class QC extends Clients
 		//return false;
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
-		trace(param);
+		//trace(param);
 		data =  {
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),
 			rows: doSelectCustom(param, sb, phValues),
@@ -65,11 +66,14 @@ class QC extends Clients
 		var userMap:StringMap<String> = new StringMap();
 		sb = new StringBuf();
 		phValues = new Array();		
-		param = new StringMap();
-		param.set('table', 'vicidial_users');
-		param.set('fields', 'user,full_name');
-		param.set('where', 'active|Y');
-		data.userMap = doSelect(param, sb, phValues);
+		var p:StringMap<String> = new StringMap();
+		p.set('table', 'vicidial_users');
+		p.set('fields', 'user,full_name');
+		p.set('where', 'active|Y');
+		//data.userMap = doSelect(p, sb, phValues);
+		trace(num_rows + ':' + param.get('owner'));
+		data.userMap = new Users().get_info();
+		trace(new Users().get_info(param.get('owner')));
 		return json_encode();		
 	}
 	
@@ -92,14 +96,15 @@ class QC extends Clients
 	
 	public function doSelectCustom(q:StringMap<Dynamic>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
-		var fields:Array<String>= q.get('fields');		
+		var fields:Array<String> = q.get('fields');	
+		//trace(fields);
 		sb.add('SELECT ' + (fields != null ? fieldFormat( fields.map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
 		var entry_list_id:String = q.get('entry_list_id');
 		var primary_id:String = S.my.real_escape_string(q.get('primary_id'));
 		sb.add(' FROM ' + S.my.real_escape_string(table) + ' AS vl INNER JOIN ' + S.my.real_escape_string('custom_' + entry_list_id) + ' AS cu ON vl.' + primary_id + '=cu.' +  primary_id);		
 		buildCond('vl.' + primary_id + '|' + S.my.real_escape_string(q.get(q.get('primary_id'))) , sb, phValues);
-		trace(phValues);		
-		trace(sb.toString());		
+		//trace(phValues);		
+		//trace(sb.toString());		
 		return execute(sb.toString(), q, phValues);
 		return null;
 	}	
@@ -194,17 +199,23 @@ class QC extends Clients
 						values2bind[i++] = S.user;
 						bindTypes += 's';
 						sets.push('security_phrase=?');//STORE QC AGENT
-						if (q.get('status') == 'QCOK')
-						{//	MOVE INTO MITGLIEDER LISTE (10000)
+						if (q.get('status') == 'QCOK' || q.get('status') == 'QCBAD')
+						{//	MOVE INTO MITGLIEDER LISTE (10000) OR QCBAD (1800)
 							var list_id:Int = 10000;
-							var mID:Int = Std.parseInt(q.get('vendor_lead_code'));
-							if (mID == null)//	NEW MEMBER - CREATE ID
-							{								
-								mID = S.newMemberID();
-								values2bind[i++] = mID;
-								bindTypes += 's';
-								sets.push('vendor_lead_code=?');								
+							if (q.get('status') == 'QCOK') 
+							{
+								var mID:Int = Std.parseInt(q.get('vendor_lead_code'));
+								if (mID == null)//	NEW MEMBER - CREATE ID
+								{								
+									mID = S.newMemberID();
+									values2bind[i++] = mID;
+									bindTypes += 's';
+									sets.push('vendor_lead_code=?');								
+								}								
 							}
+							else
+								list_id = 1800;
+
 							var entry_list_id:String = q.get('entry_list_id');
 							values2bind[i++] = q.get('status');
 							bindTypes += 's';
@@ -215,7 +226,7 @@ class QC extends Clients
 							values2bind[i++] = entry_list_id;
 							bindTypes += 's';
 							sets.push('entry_list_id=?');	
-							values2bind[i++] = q.get('user');
+							values2bind[i++] = q.get('owner');
 							bindTypes += 's';
 							sets.push('owner=?');							
 						}
