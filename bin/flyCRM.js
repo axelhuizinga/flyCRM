@@ -2238,7 +2238,7 @@ var view_Editor = function(data) {
 	this.cMenu = js_Boot.__cast(this.parentView.views.get(this.parentView.instancePath + "." + this.parentView.id + "-menu") , view_ContextMenu);
 	this.name = this.parentView.name;
 	this.templ = new $("#t-" + this.id);
-	haxe_Log.trace(this.id,{ fileName : "Editor.hx", lineNumber : 39, className : "view.Editor", methodName : "new"});
+	haxe_Log.trace(this.id,{ fileName : "Editor.hx", lineNumber : 40, className : "view.Editor", methodName : "new"});
 	this.init();
 };
 $hxClasses["view.Editor"] = view_Editor;
@@ -2256,14 +2256,14 @@ view_Editor.prototype = $extend(View.prototype,{
 	,leadID: null
 	,checkIban: function() {
 		var iban = new $("#" + this.parentView.id + "-edit-form  input[name=\"iban\"]").val();
-		haxe_Log.trace(iban,{ fileName : "Editor.hx", lineNumber : 46, className : "view.Editor", methodName : "checkIban"});
+		haxe_Log.trace(iban,{ fileName : "Editor.hx", lineNumber : 47, className : "view.Editor", methodName : "checkIban"});
 		return me_cunity_js_data_IBAN.checkIBAN(iban);
 	}
 	,checkAccountAndBLZ: function(ok2submit) {
 		var _g = this;
 		var account = new $("#" + this.parentView.id + "-edit-form input[name=\"account\"]").val();
 		var blz = new $("#" + this.parentView.id + "-edit-form input[name=\"blz\"]").val();
-		haxe_Log.trace(account + ":" + blz,{ fileName : "Editor.hx", lineNumber : 54, className : "view.Editor", methodName : "checkAccountAndBLZ"});
+		haxe_Log.trace(account + ":" + blz,{ fileName : "Editor.hx", lineNumber : 55, className : "view.Editor", methodName : "checkAccountAndBLZ"});
 		if(!(account.length > 0 && blz.length > 0)) {
 			ok2submit(false);
 			return;
@@ -2274,9 +2274,66 @@ view_Editor.prototype = $extend(View.prototype,{
 				ok2submit(true);
 			}
 		},function(error) {
-			haxe_Log.trace(error.message,{ fileName : "Editor.hx", lineNumber : 69, className : "view.Editor", methodName : "checkAccountAndBLZ"});
+			haxe_Log.trace(error.message,{ fileName : "Editor.hx", lineNumber : 70, className : "view.Editor", methodName : "checkAccountAndBLZ"});
 			ok2submit(false);
 		});
+	}
+	,editCheck: function(dataRow) {
+		var p = this.resetParams();
+		if(this.vData.primary_id == null) p.primary_id = this.parentView.primary_id; else p.primary_id = this.vData.primary_id;
+		Reflect.setField(p,p.primary_id,this.eData.attr("id"));
+		if(this.parentView.vData.hidden != null) {
+			var hKeys = this.parentView.vData.hidden.split(",");
+			var _g = 0;
+			while(_g < hKeys.length) {
+				var k = hKeys[_g];
+				++_g;
+				Reflect.setField(p,k,this.eData.data(k));
+			}
+		}
+		haxe_Log.trace(p,{ fileName : "Editor.hx", lineNumber : 89, className : "view.Editor", methodName : "editCheck"});
+		haxe_Log.trace(this.leadID,{ fileName : "Editor.hx", lineNumber : 90, className : "view.Editor", methodName : "editCheck"});
+		p.action = "edit";
+		if(this.vData.fields != null) p.fields = this.vData.fields; else p.fields = this.parentView.vData.fields;
+		this.loadData("server.php",p,$bind(this,this.compareEdit));
+	}
+	,compareEdit: function(data) {
+		var displayFormats = window.displayFormats;
+		haxe_Log.trace(data.rows[0],{ fileName : "Editor.hx", lineNumber : 99, className : "view.Editor", methodName : "compareEdit"});
+		var cData = data.rows[0];
+		var cOK = true;
+		var _g = 0;
+		var _g1 = Reflect.fields(cData);
+		while(_g < _g1.length) {
+			var f = _g1[_g];
+			++_g;
+			var val = "";
+			if(Object.prototype.hasOwnProperty.call(displayFormats,f)) {
+				if(typeof(Reflect.field(window,Reflect.field(displayFormats,f))) == "function") val = (Reflect.field(window,Reflect.field(displayFormats,f)))(f,Reflect.field(cData,f)); else val = window.sprintf(Reflect.field(displayFormats,f),Reflect.field(cData,f));
+			} else val = Reflect.field(cData,f);
+			var _g2 = Reflect.field(data.typeMap,f);
+			switch(_g2) {
+			case "RADIO":case "CHECKBOX":
+				cOK = val == this.overlay.find("[name=\"" + f + "\"]:checked").val();
+				break;
+			default:
+				cOK = val == this.overlay.find("[name=\"" + f + "\"]").val();
+			}
+			if(!cOK) {
+				haxe_Log.trace("oops - " + f + ": " + Std.string(val) + " not = " + Std.string(this.overlay.find("[name=\"" + f + "\"]").val()),{ fileName : "Editor.hx", lineNumber : 125, className : "view.Editor", methodName : "compareEdit"});
+				break;
+			}
+		}
+		if(!cOK) haxe_Log.trace("edit check failed :(",{ fileName : "Editor.hx", lineNumber : 131, className : "view.Editor", methodName : "compareEdit"}); else {
+			this.cMenu.root.find(".recordings").remove();
+			this.cMenu.root.data("disabled",0);
+			new $(this.attach2).find("tr").removeClass("selected");
+			new $("#overlay").animate({ opacity : 0.0},300,null,function() {
+				new $("#overlay").detach();
+			});
+			if(this.parentView.interactionState == "call") this.cMenu.activePanel.find("button[data-contextaction=\"call\"]").html("Anrufen");
+			this.parentView.set_interactionState("init");
+		}
 	}
 	,edit: function(dataRow) {
 		var p = this.resetParams();
@@ -2292,9 +2349,9 @@ view_Editor.prototype = $extend(View.prototype,{
 				Reflect.setField(p,k,this.eData.data(k));
 			}
 		}
-		haxe_Log.trace(p,{ fileName : "Editor.hx", lineNumber : 91, className : "view.Editor", methodName : "edit"});
+		haxe_Log.trace(p,{ fileName : "Editor.hx", lineNumber : 163, className : "view.Editor", methodName : "edit"});
 		this.leadID = p.lead_id;
-		haxe_Log.trace(this.leadID,{ fileName : "Editor.hx", lineNumber : 93, className : "view.Editor", methodName : "edit"});
+		haxe_Log.trace(this.leadID,{ fileName : "Editor.hx", lineNumber : 165, className : "view.Editor", methodName : "edit"});
 		p.action = "edit";
 		if(this.vData.fields != null) p.fields = this.vData.fields; else p.fields = this.parentView.vData.fields;
 		this.cMenu.set_active(this.cMenu.getIndexOf(this.vData.action));
@@ -2305,7 +2362,7 @@ view_Editor.prototype = $extend(View.prototype,{
 		this.action = action;
 		switch(action) {
 		case "close":
-			haxe_Log.trace("going to close:" + new $("#overlay").length,{ fileName : "Editor.hx", lineNumber : 110, className : "view.Editor", methodName : "contextAction"});
+			haxe_Log.trace("going to close:" + new $("#overlay").length,{ fileName : "Editor.hx", lineNumber : 182, className : "view.Editor", methodName : "contextAction"});
 			this.cMenu.root.find(".recordings").remove();
 			this.cMenu.root.data("disabled",0);
 			new $(this.cMenu.attach2).find("tr").removeClass("selected");
@@ -2316,18 +2373,28 @@ view_Editor.prototype = $extend(View.prototype,{
 			break;
 		case "save":case "qcok":
 			if(!this.checkIban()) this.checkAccountAndBLZ(function(ok) {
-				haxe_Log.trace(ok,{ fileName : "Editor.hx", lineNumber : 122, className : "view.Editor", methodName : "contextAction"});
-				if(ok) _g.save(action); else App.inputError(new $("#" + _g.parentView.id + "-edit-form"),["account","blz","iban"]);
+				haxe_Log.trace(ok,{ fileName : "Editor.hx", lineNumber : 194, className : "view.Editor", methodName : "contextAction"});
+				if(ok) {
+					if(_g.parentView.interactionState == "call") _g.cMenu.hangup(_g,function() {
+						_g.save(action);
+					});
+				} else App.inputError(new $("#" + _g.parentView.id + "-edit-form"),["account","blz","iban"]);
+			}); else if(this.parentView.interactionState == "call") this.cMenu.hangup(this,function() {
+				_g.save(action);
 			}); else this.save(action);
 			break;
 		case "qcbad":
-			this.save(action);
+			if(this.parentView.interactionState == "call") this.cMenu.hangup(this,function() {
+				_g.save(action);
+			}); else this.save(action);
 			break;
 		case "call":
-			this.cMenu.call(this);
+			if(this.parentView.interactionState == "call") this.cMenu.call(this,function() {
+				_g.save(action);
+			}); else this.cMenu.call(this);
 			break;
 		default:
-			haxe_Log.trace(action,{ fileName : "Editor.hx", lineNumber : 148, className : "view.Editor", methodName : "contextAction"});
+			haxe_Log.trace(action,{ fileName : "Editor.hx", lineNumber : 231, className : "view.Editor", methodName : "contextAction"});
 		}
 	}
 	,save: function(status) {
@@ -2337,6 +2404,7 @@ view_Editor.prototype = $extend(View.prototype,{
 		p.push({ name : "action", value : "save"});
 		p.push({ name : "primary_id", value : this.parentView.vData.primary_id});
 		p.push({ name : this.parentView.vData.primary_id, value : this.eData.attr("id")});
+		haxe_Log.trace(status,{ fileName : "Editor.hx", lineNumber : 242, className : "view.Editor", methodName : "save"});
 		if(status != null) switch(status) {
 		case "qcok":case "qcbad":
 			p.push({ name : "status", value : status.toUpperCase()});
@@ -2355,25 +2423,19 @@ view_Editor.prototype = $extend(View.prototype,{
 				})(k))) p.push({ name : k[0], value : this.eData.data(k[0])});
 			}
 		}
-		haxe_Log.trace(p,{ fileName : "Editor.hx", lineNumber : 173, className : "view.Editor", methodName : "save"});
+		haxe_Log.trace(p,{ fileName : "Editor.hx", lineNumber : 257, className : "view.Editor", methodName : "save"});
 		this.parentView.loadData("server.php",p,function(data) {
-			haxe_Log.trace(Std.string(data) + ": " + (data?"Y":"N"),{ fileName : "Editor.hx", lineNumber : 175, className : "view.Editor", methodName : "save"});
+			haxe_Log.trace(Std.string(data) + ": " + (data?"Y":"N"),{ fileName : "Editor.hx", lineNumber : 259, className : "view.Editor", methodName : "save"});
 			if(data) {
-				if(_g.parentView.interactionState == "call") _g.cMenu.hangup(_g);
-				haxe_Log.trace(_g.cMenu.root.attr("id") + ":" + _g.cMenu.root.find(".recordings").length,{ fileName : "Editor.hx", lineNumber : 179, className : "view.Editor", methodName : "save"});
-				_g.cMenu.root.find(".recordings").remove();
-				_g.cMenu.root.data("disabled",0);
-				new $(_g.attach2).find("tr").removeClass("selected");
-				new $("#overlay").animate({ opacity : 0.0},300,null,function() {
-					new $("#overlay").detach();
-				});
+				haxe_Log.trace(_g.cMenu.root.attr("id") + ":" + _g.cMenu.root.find(".recordings").length,{ fileName : "Editor.hx", lineNumber : 262, className : "view.Editor", methodName : "save"});
+				_g.editCheck(_g.eData);
 			}
 		});
 	}
 	,update: function(data) {
 		this.parentView.wait(false);
 		this.agent = data.agent;
-		haxe_Log.trace(data.agent,{ fileName : "Editor.hx", lineNumber : 193, className : "view.Editor", methodName : "update"});
+		haxe_Log.trace(data.agent,{ fileName : "Editor.hx", lineNumber : 279, className : "view.Editor", methodName : "update"});
 		var dataOptions = { };
 		var keys = Reflect.fields(data.optionsMap);
 		var _g = 0;
@@ -2393,6 +2455,20 @@ view_Editor.prototype = $extend(View.prototype,{
 		data.user = this.eData.data("owner");
 		this.optionsMap = data.optionsMap = dataOptions;
 		this.typeMap = data.typeMap;
+		var dRows = data.rows;
+		var fieldDefault = data.fieldDefault;
+		var _g2 = 0;
+		while(_g2 < dRows.length) {
+			var row = dRows[_g2];
+			++_g2;
+			var _g11 = 0;
+			var _g21 = Reflect.fields(row);
+			while(_g11 < _g21.length) {
+				var f = _g21[_g11];
+				++_g11;
+				if(Reflect.field(row,f) == "" && Object.prototype.hasOwnProperty.call(fieldDefault,f)) Reflect.setField(row,f,Reflect.field(fieldDefault,f));
+			}
+		}
 		var r = new EReg("([a-z0-9_-]+.mp3)$","");
 		var rData = { recordings : data.recordings.map(function(rec) {
 			if(r.match(rec.location)) rec.filename = r.matched(1); else rec.filename = rec.location;
@@ -2403,9 +2479,9 @@ view_Editor.prototype = $extend(View.prototype,{
 		var oMargin = 8;
 		var mSpace = App.getMainSpace();
 		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#" + Std.string(this.parentView.vData.id) + "-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
-		haxe_Log.trace(mSpace.height + ":" + 2 * oMargin + ":" + Std.parseFloat(new $("#overlay").css("padding-top")) + ":" + Std.parseFloat(new $("#overlay").css("padding-bottom")),{ fileName : "Editor.hx", lineNumber : 226, className : "view.Editor", methodName : "update"});
+		haxe_Log.trace(mSpace.height + ":" + 2 * oMargin + ":" + Std.parseFloat(new $("#overlay").css("padding-top")) + ":" + Std.parseFloat(new $("#overlay").css("padding-bottom")),{ fileName : "Editor.hx", lineNumber : 324, className : "view.Editor", methodName : "update"});
 		new $("#" + this.parentView.id + " .scrollbox").height(new $("#" + this.parentView.id + " #overlay").height());
-		haxe_Log.trace(this.id + ":" + this.parentView.id + ":" + new $("#" + this.parentView.id + " .scrollbox").length + ":" + new $("#" + this.parentView.id + " .scrollbox").height(),{ fileName : "Editor.hx", lineNumber : 228, className : "view.Editor", methodName : "update"});
+		haxe_Log.trace(this.id + ":" + this.parentView.id + ":" + new $("#" + this.parentView.id + " .scrollbox").length + ":" + new $("#" + this.parentView.id + " .scrollbox").height(),{ fileName : "Editor.hx", lineNumber : 326, className : "view.Editor", methodName : "update"});
 	}
 	,__class__: view_Editor
 });
@@ -2681,20 +2757,20 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		this.action = new $(ui.newPanel[0]).find("input[name=\"action\"]").first().val();
 		haxe_Log.trace(this.action + ":" + this.activePanel.attr("id") + " == " + new $(ui.newPanel[0]).attr("id"),{ fileName : "ContextMenu.hx", lineNumber : 116, className : "view.ContextMenu", methodName : "activate"});
 	}
-	,call: function(editor) {
+	,call: function(editor,onComplete) {
 		var _g = this;
 		haxe_Log.trace("parentView.interactionState:" + this.parentView.interactionState + " agent:" + editor.agent + " editor.leadID:" + editor.leadID,{ fileName : "ContextMenu.hx", lineNumber : 122, className : "view.ContextMenu", methodName : "call"});
 		if(this.parentView.interactionState == "call") {
-			this.hangup(editor);
+			this.hangup(editor,onComplete);
 			return;
 		}
 		var p = { className : "AgcApi", action : "external_dial", lead_id : editor.leadID, agent_user : editor.agent};
 		this.parentView.loadData("server.php",p,function(data) {
-			haxe_Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 161, className : "view.ContextMenu", methodName : "call"});
+			haxe_Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 137, className : "view.ContextMenu", methodName : "call"});
 			if(data.response == "OK") {
-				haxe_Log.trace("OK",{ fileName : "ContextMenu.hx", lineNumber : 163, className : "view.ContextMenu", methodName : "call"});
+				haxe_Log.trace("OK",{ fileName : "ContextMenu.hx", lineNumber : 139, className : "view.ContextMenu", methodName : "call"});
 				_g.parentView.set_interactionState("call");
-				haxe_Log.trace(_g.activePanel.find("button[data-contextaction=\"call\"]").length,{ fileName : "ContextMenu.hx", lineNumber : 166, className : "view.ContextMenu", methodName : "call"});
+				haxe_Log.trace(_g.activePanel.find("button[data-contextaction=\"call\"]").length,{ fileName : "ContextMenu.hx", lineNumber : 142, className : "view.ContextMenu", methodName : "call"});
 				_g.activePanel.find("button[data-contextaction=\"call\"]").html("Auflegen");
 			}
 		});
@@ -2713,7 +2789,7 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 	,create: function(event,ui) {
 		this.action = new $(ui.panel[0]).find("input[name=\"action\"]").first().val();
 		if(ui.panel.length > 0) this.activePanel = new $(ui.panel[0]);
-		haxe_Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 195, className : "view.ContextMenu", methodName : "create"});
+		haxe_Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 171, className : "view.ContextMenu", methodName : "create"});
 	}
 	,getIndexOf: function(act) {
 		var index = null;
@@ -2723,13 +2799,13 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		});
 		return index;
 	}
-	,hangup: function(editor) {
+	,hangup: function(editor,onCompletion) {
 		var _g = this;
 		var p = { className : "AgcApi", action : "external_hangup", campaign_id : this.parentView.vData.campaign_id, lead_id : editor.leadID, agent_user : editor.agent};
 		this.parentView.loadData("server.php",p,function(data) {
 			if(data.response == "OK") {
-				haxe_Log.trace("OK",{ fileName : "ContextMenu.hx", lineNumber : 224, className : "view.ContextMenu", methodName : "hangup"});
-				_g.setCallStatus(editor);
+				haxe_Log.trace("OK",{ fileName : "ContextMenu.hx", lineNumber : 200, className : "view.ContextMenu", methodName : "hangup"});
+				_g.setCallStatus(editor,onCompletion);
 				_g.parentView.set_interactionState("init");
 			} else App.choice({ header : data.response, id : _g.parentView.id});
 		});
@@ -2757,16 +2833,16 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		var active = this.get_active();
 		var jNode = jQuery_JHelper.J(js_Boot.__cast(evt.target , Node));
 		this.action = this.vData.items[active].action;
-		haxe_Log.trace(this.action + ":" + active,{ fileName : "ContextMenu.hx", lineNumber : 265, className : "view.ContextMenu", methodName : "run"});
+		haxe_Log.trace(this.action + ":" + active,{ fileName : "ContextMenu.hx", lineNumber : 241, className : "view.ContextMenu", methodName : "run"});
 		var contextAction = jNode.data("contextaction");
-		haxe_Log.trace(this.action + ":" + contextAction,{ fileName : "ContextMenu.hx", lineNumber : 268, className : "view.ContextMenu", methodName : "run"});
+		haxe_Log.trace(this.action + ":" + contextAction,{ fileName : "ContextMenu.hx", lineNumber : 244, className : "view.ContextMenu", methodName : "run"});
 		var _g = this.action;
 		switch(_g) {
 		case "find":
 			var fields = this.vData.items[active].fields;
 			if(fields != null && fields.length > 0) {
 				var where = jQuery_FormData.where(jNode.closest("form"),fields);
-				haxe_Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 277, className : "view.ContextMenu", methodName : "run"});
+				haxe_Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 253, className : "view.ContextMenu", methodName : "run"});
 				var wM = new haxe_ds_StringMap();
 				if(__map_reserved.where != null) wM.setReserved("where",where); else wM.h["where"] = where;
 				Reflect.callMethod(this.parentView,Reflect.field(this.parentView,this.action),[wM]);
@@ -2780,7 +2856,7 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		case "mailings":
 			var mailing;
 			mailing = js_Boot.__cast(this.parentView.views.get(this.parentView.instancePath + "." + this.parentView.id + "-mailing") , view_Mailing);
-			haxe_Log.trace(contextAction,{ fileName : "ContextMenu.hx", lineNumber : 287, className : "view.ContextMenu", methodName : "run"});
+			haxe_Log.trace(contextAction,{ fileName : "ContextMenu.hx", lineNumber : 263, className : "view.ContextMenu", methodName : "run"});
 			switch(contextAction) {
 			case "previewOne":
 				mailing.previewOne(this.parentView.selectedID);
@@ -2792,16 +2868,16 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 				mailing.printNewMembers();
 				break;
 			default:
-				haxe_Log.trace(contextAction,{ fileName : "ContextMenu.hx", lineNumber : 297, className : "view.ContextMenu", methodName : "run"});
+				haxe_Log.trace(contextAction,{ fileName : "ContextMenu.hx", lineNumber : 273, className : "view.ContextMenu", methodName : "run"});
 			}
 			break;
 		default:
-			haxe_Log.trace(this.action + ":" + contextAction,{ fileName : "ContextMenu.hx", lineNumber : 300, className : "view.ContextMenu", methodName : "run"});
+			haxe_Log.trace(this.action + ":" + contextAction,{ fileName : "ContextMenu.hx", lineNumber : 276, className : "view.ContextMenu", methodName : "run"});
 		}
 	}
-	,setCallStatus: function(editor) {
+	,setCallStatus: function(editor,onCompletion) {
 		var _g = this;
-		haxe_Log.trace(editor.action,{ fileName : "ContextMenu.hx", lineNumber : 306, className : "view.ContextMenu", methodName : "setCallStatus"});
+		haxe_Log.trace(editor.action + ":" + Std.string(onCompletion),{ fileName : "ContextMenu.hx", lineNumber : 282, className : "view.ContextMenu", methodName : "setCallStatus"});
 		var p = { className : "AgcApi", action : "external_status", dispo : (function($this) {
 			var $r;
 			var _g1 = editor.action;
@@ -2819,15 +2895,15 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 			return $r;
 		}(this)), agent_user : editor.agent};
 		this.parentView.loadData("server.php",p,function(data) {
-			haxe_Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 320, className : "view.ContextMenu", methodName : "setCallStatus"});
+			haxe_Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 296, className : "view.ContextMenu", methodName : "setCallStatus"});
 			if(data.response == "OK") {
 				_g.parentView.set_interactionState("init");
-				_g.activePanel.find("button[data-contextaction=\"call\"]").html("Anrufen");
+				if(onCompletion != null) onCompletion();
 			} else App.choice({ header : data.response, id : _g.parentView.id});
 		});
 	}
 	,showResult: function(data,_) {
-		haxe_Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 335, className : "view.ContextMenu", methodName : "showResult"});
+		haxe_Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 311, className : "view.ContextMenu", methodName : "showResult"});
 	}
 	,__class__: view_ContextMenu
 });

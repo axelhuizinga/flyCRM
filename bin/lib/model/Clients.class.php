@@ -132,10 +132,9 @@ class model_Clients extends Model {
 		$param = new haxe_ds_StringMap();
 		$param->set("table", "vicidial_lists_fields");
 		$param->set("where", "list_id|" . _hx_string_or_null(S::$my->real_escape_string($list_id)));
-		$param->set("fields", "field_name,field_label,field_type,field_options");
+		$param->set("fields", "field_name,field_label,field_type,field_options,field_required,field_default");
 		$param->set("order", "field_rank,field_order");
 		$param->set("limit", "100");
-		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 175, "className" => "model.Clients", "methodName" => "getCustomFields")));
 		$cFields = null;
 		{
 			$a = $this->doSelect($param, $sb, $phValues);

@@ -117,36 +117,12 @@ typedef ContextMenuData =
 	}
 	
 
-	public function call(editor:Editor)
+	public function call(editor:Editor, ?onComplete:Void->Void)
 	{
 		trace('parentView.interactionState:' + parentView.interactionState + ' agent:' + editor.agent + ' editor.leadID:' + editor.leadID);
 		if (parentView.interactionState == 'call')
 		{// HANG UP
-			/*var p:Dynamic = 
-			{
-				className:'AgcApi',
-				action:'external_hangup',
-				campaign_id:parentView.vData.campaign_id,
-				lead_id:editor.leadID,
-				agent_user:editor.agent
-			};
-			
-			parentView.loadData('server.php', p, function(data:Dynamic) { 
-				//trace(data);
-				if (data.response == 'OK') {//HUNG UP - CHOOSE DISPO STATUS
-					trace('OK');		
-					//trace(data.choice);		
-					//SHOW DISPO CHOICE DIALOG
-					setCallStatus(editor);
-				}
-				else
-				{
-					App.choice( { header:data.response, id:parentView.id } );
-					Timer.delay(function() App.choice(null), 3900);
-				}
-			});		*/
-			hangup(editor);
-
+			hangup(editor, onComplete);
 			return;
 		}//DO CALL
 		var p:Dynamic = 
@@ -207,7 +183,7 @@ typedef ContextMenuData =
 		return index;
 	}
 	
-	public function hangup(editor:Editor)
+	public function hangup(editor:Editor, ?onCompletion:Void->Void )
 	{	
 		var p:Dynamic = 
 		{
@@ -223,7 +199,7 @@ typedef ContextMenuData =
 			if (data.response == 'OK') {//HUNG UP - CHOOSE DISPO STATUS
 				trace('OK');		
 				//trace(data.choice);	
-				setCallStatus(editor);
+				setCallStatus(editor, onCompletion);
 				//SHOW DISPO CHOICE DIALOG
 				parentView.interactionState = 'init';
 			}
@@ -301,9 +277,9 @@ typedef ContextMenuData =
 		}
 	}
 	
-	public function setCallStatus(editor:Editor)
+	public function setCallStatus(editor:Editor, ?onCompletion:Void->Void )
 	{
-		trace(editor.action);
+		trace(editor.action + ':' + onCompletion);
 		var p:Dynamic = {
 			className:'AgcApi',
 			action:'external_status',
@@ -321,8 +297,8 @@ typedef ContextMenuData =
 			if (data.response == 'OK')		
 			{
 				parentView.interactionState = 'init';
-				
-				activePanel.find('button[data-contextaction="call"]').html('Anrufen');
+				if (onCompletion != null)
+					onCompletion();
 			}
 			else
 				App.choice( { header:data.response, id:parentView.id } );

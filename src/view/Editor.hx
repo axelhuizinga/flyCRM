@@ -6,6 +6,7 @@ package view;
  */
 
 import haxe.ds.StringMap;
+import haxe.Json;
 import jQuery.*;
 import jQuery.JHelper.J;
 import jQuery.FormData.FData;
@@ -71,7 +72,78 @@ class Editor extends View
 		});
 	}
 	
-	//public function  edit(dataRow:JQuery, className:String)
+	public function  editCheck(dataRow:JQuery)
+	{
+		var p:Dynamic = resetParams();
+		p.primary_id = (vData.primary_id == null ? parentView.primary_id : vData.primary_id);
+		Reflect.setField(p, p.primary_id, eData.attr('id'));	
+		if (parentView.vData.hidden != null)
+		{			
+			//copy all data fields from this dataRow to the load parameter
+			var hKeys:Array<String> = parentView.vData.hidden.split(',');
+			for (k in hKeys)
+			{
+				Reflect.setField(p, k, eData.data(k));
+			}
+		}
+		trace(p);	
+		trace(leadID);
+		p.action = 'edit';
+		p.fields = (vData.fields != null ? vData.fields : parentView.vData.fields);
+		loadData('server.php', p, compareEdit);		
+	}
+	
+	function compareEdit(data:Dynamic):Void
+	{
+		var displayFormats:Dynamic = untyped window.displayFormats;
+		trace(data.rows[0]);
+		var cData:Dynamic = data.rows[0];
+		var cOK:Bool = true;
+		
+		for (f in Reflect.fields(cData))
+		{
+			var val:Dynamic = '';
+			if (Reflect.hasField(displayFormats, f))
+			{
+				if (untyped __typeof__(Reflect.field(Browser.window, Reflect.field(displayFormats, f))) == 'function')
+					val = Reflect.field(Browser.window, Reflect.field(displayFormats, f))(f, Reflect.field(cData, f));
+				else
+					val = untyped window.sprintf(Reflect.field(displayFormats, f), Reflect.field(cData, f));				
+			}
+			else
+				val = Reflect.field(cData, f);
+			cOK = switch(Reflect.field(data.typeMap, f))
+			{
+				case 'RADIO','CHECKBOX':
+					val == overlay.find('[name="$f"]:checked').val();
+				default:
+					val == overlay.find('[name="$f"]').val();
+			}
+			
+			if (!cOK)
+			{
+				trace('oops - $f: $val not = ' + overlay.find('[name="$f"]').val());
+				break;
+			}			
+		}
+		if (!cOK)
+		{
+			trace('edit check failed :(');
+		}
+		else
+		{
+			cMenu.root.find('.recordings').remove();
+			cMenu.root.data('disabled', 0);
+			J(attach2).find('tr').removeClass('selected');
+			J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
+			if (parentView.interactionState == 'call')
+				cMenu.activePanel.find('button[data-contextaction="call"]').html('Anrufen');
+			parentView.interactionState = 'init';
+		}
+		//function display(format,value)
+		//overlay
+	}
+	
 	public function  edit(dataRow:JQuery)
 	{
 		var p:Dynamic = resetParams();
@@ -123,7 +195,8 @@ class Editor extends View
 						if (ok)
 						{
 							//TODO: TEST THE CHANGE FROM ACTION TO ENDACTION
-							save(action);
+							if (parentView.interactionState == 'call')
+								cMenu.hangup(this, function() save(action));
 						}
 						else
 						{//J('#' + parentView.id + '-edit-form')
@@ -138,12 +211,22 @@ class Editor extends View
 						}
 					});
 				}
-				else
-					save(action);
+				else {
+					if (parentView.interactionState == 'call')
+						cMenu.hangup(this, function() save(action));
+					else
+						save(action);
+				}
 			case 'qcbad':
-				save(action);
+				if (parentView.interactionState == 'call')
+					cMenu.hangup(this, function() save(action));
+				else				
+					save(action);
 			case 'call':
-				cMenu.call(this);
+				if (parentView.interactionState == 'call')					
+					cMenu.call(this, function() save(action));
+				else
+					cMenu.call(this);
 			default:
 				trace(action);
 		}//DONE END ACTION CASE EDIT
@@ -156,6 +239,7 @@ class Editor extends View
 		p.push( { name:'action', value:'save' });
 		p.push( { name:'primary_id', value: parentView.vData.primary_id} );
 		p.push( { name:parentView.vData.primary_id, value: eData.attr('id') } );
+		trace (status);
 		switch (status)
 		{
 			case 'qcok','qcbad':
@@ -174,13 +258,15 @@ class Editor extends View
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			trace(data +': ' + (data ? 'Y':'N'));
 			if (data) {
-				if (parentView.interactionState == 'call')
-					cMenu.hangup(this);
+				///TODO: ADD FEEDBACK TO CHECK CORRECTLY SAVED VALUES AND UPDATE VIEW
 				trace(cMenu.root.attr('id') +':'+cMenu.root.find('.recordings').length);
-				cMenu.root.find('.recordings').remove();
+				/*cMenu.root.find('.recordings').remove();
 				cMenu.root.data('disabled', 0);
 				J(attach2).find('tr').removeClass('selected');
-				J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );			
+				J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
+				if (parentView.interactionState == 'call')
+					cMenu.activePanel.find('button[data-contextaction="call"]').html('Anrufen');*/
+				editCheck(eData);
 			}
 		});
 	}
@@ -205,6 +291,18 @@ class Editor extends View
 		data.user = eData.data('owner');
 		optionsMap = data.optionsMap = dataOptions;
 		typeMap = data.typeMap;
+		var dRows:Array<Dynamic> = data.rows;
+		var fieldDefault:Dynamic = data.fieldDefault;
+		for (row in dRows)
+		{
+			for (f in Reflect.fields(row))
+			{
+				if (Reflect.field(row,f)=='' && Reflect.hasField(fieldDefault, f))
+					Reflect.setField(row, f, Reflect.field(fieldDefault, f));
+			}
+			
+		}
+		//trace(data);
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;
 		var rData = { recordings:data.recordings.map(function(rec) {
 				rec.filename = ( r.match(rec.location) ?  r.matched(1) : rec.location);

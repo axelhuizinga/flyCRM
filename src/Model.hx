@@ -30,7 +30,9 @@ typedef MData =
 	@:optional var rows:NativeArray;
 	@:optional var response:String;
 	@:optional var choice:NativeArray;
+	@:optional var fieldDefault:NativeArray;
 	@:optional var fieldNames:NativeArray;
+	@:optional var fieldRequired:NativeArray;
 	@:optional var optionsMap:NativeArray;
 	@:optional var recordings:NativeArray;
 	@:optional var typeMap:NativeArray;
@@ -54,7 +56,7 @@ class Model
 	public static function dispatch(param:StringMap<Dynamic>):EitherType<String,Bool>
 	{
 		var cl:Class<Dynamic> = Type.resolveClass('model.' + param.get('className'));
-		trace(cl);
+		//trace(cl);
 		if (cl == null)
 		{
 			trace('model.'+param.get('className') + ' ???');

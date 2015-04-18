@@ -37,7 +37,9 @@ class QC extends Clients
 		var cFields:Array<String> = cF.map(function(field:StringMap<String>):String return field.get('field_label'));
 		//trace(cFields);
 		//trace(param);
+		var fieldDefault:StringMap<String> = new StringMap();
 		var fieldNames:StringMap<String> = new StringMap();
+		var fieldRequired:StringMap<Bool> = new StringMap();
 		var typeMap:StringMap<String> = new StringMap();
 		var optionsMap:StringMap<String> = new StringMap();
 		for (f in 0...cFields.length)
@@ -45,19 +47,26 @@ class QC extends Clients
 			fieldNames.set(cFields[f], cF[f].get('field_name'));
 			if (cF[f].get('field_options') != null)
 				optionsMap.set(cFields[f], cF[f].get('field_options'));
+			var def:Dynamic = cF[f].get('field_default');
+			switch (def)
+			{
+				case null, 'NULL', '':
+					//DO NOTHING
+				default:
+				fieldDefault.set(cFields[f], cF[f].get('field_default'));				
+			}
+			if(cF[f].get('field_required')=='Y')
+				fieldRequired.set(cFields[f], true);					
 			typeMap.set(cFields[f], cF[f].get('field_type'));
 		}
-		//var param:StringMap<Dynamic> = new StringMap();
-		param.set('fields', cFields);
-		//param.set('list_id', list_id);
-		//param.set('primary_id', param.get('primary_id'));
-		//param.set('table', 'vicidial_list');
-		//return false;
+		param.set('fields', cFields);		
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
 		//trace(param);
 		data =  {
+			fieldDefault:Lib.associativeArrayOfHash(fieldDefault),
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),
+			fieldRequired:Lib.associativeArrayOfHash(fieldRequired),
 			rows: doSelectCustom(param, sb, phValues),
 			typeMap:Lib.associativeArrayOfHash(typeMap),
 			optionsMap:Lib.associativeArrayOfHash(optionsMap),
@@ -73,7 +82,7 @@ class QC extends Clients
 		//data.userMap = doSelect(p, sb, phValues);
 		trace(num_rows + ':' + param.get('owner'));
 		data.userMap = new Users().get_info();
-		trace(new Users().get_info(param.get('owner')));
+		//trace(new Users().get_info(param.get('owner')));
 		return json_encode();		
 	}
 	
@@ -141,7 +150,7 @@ class QC extends Clients
 					var bindTypes:String = '';
 					var values2bind:NativeArray = null;
 					var i:Int = 0;
-					var dbFieldTypes:StringMap<String> =  Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject(S.conf.get('dbFieldTypes')));
+					var dbFieldTypes:StringMap<String> = Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject(S.conf.get('dbFieldTypes')));
 					var sets:Array<String> = new Array();
 					for (c in cFields)
 					{
@@ -240,6 +249,8 @@ class QC extends Clients
 							trace(stmt.error);
 							return false;
 						}
+						//trace(' values:' );
+						//trace(values2bind);
 						success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
 						trace ('success:' + success);
 						if (success)

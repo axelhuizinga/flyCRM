@@ -29,9 +29,9 @@ class Users extends Model
 		param.set('where', (user == null?'active|Y':'user|$user'));
 		param.set('limit', '50');
 		var userMap:NativeArray = doSelect(param, sb, phValues);		
-		trace(param);
+		//trace(param);
 		//trace(userMap);
-		trace(num_rows);
+		//trace(num_rows);
 		for (n in 0...num_rows)
 		{
 			result.push(

@@ -111,7 +111,7 @@ typedef CustomField =
 			tableFields.set(k, cFields);
 			for (f in 0...cFields.length)
 			{
-				fieldNames.set(cFields[f], aFields[f].get('field_name'));
+				fieldNames.set(cFields[f], aFields[f].get('field_name'));					
 				if (aFields[f].get('field_options') != null)
 					optionsMap.set(cFields[f], aFields[f].get('field_options'));
 				typeMap.set(cFields[f], aFields[f].get('field_type'));
@@ -169,10 +169,10 @@ typedef CustomField =
 		var param:StringMap<String> = new StringMap();
 		param.set('table', 'vicidial_lists_fields');
 		param.set('where', 'list_id|' + S.my.real_escape_string(list_id));
-		param.set('fields', 'field_name,field_label,field_type,field_options');
+		param.set('fields', 'field_name,field_label,field_type,field_options,field_required,field_default');
 		param.set('order', 'field_rank,field_order');
 		param.set('limit', '100');
-		trace(param);
+		//trace(param);
 		var cFields:Array<Dynamic> = Lib.toHaxeArray( doSelect(param, sb, phValues));
 		trace(cFields.length);
 		var ret:Array<StringMap<String>> = new Array();

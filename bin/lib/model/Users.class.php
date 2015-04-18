@@ -14,8 +14,6 @@ class model_Users extends Model {
 		$param->set("where", model_Users_0($this, $param, $phValues, $result, $sb, $user));
 		$param->set("limit", "50");
 		$userMap = $this->doSelect($param, $sb, $phValues);
-		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Users.hx", "lineNumber" => 32, "className" => "model.Users", "methodName" => "get_info")));
-		haxe_Log::trace($this->num_rows, _hx_anonymous(array("fileName" => "Users.hx", "lineNumber" => 34, "className" => "model.Users", "methodName" => "get_info")));
 		{
 			$_g1 = 0;
 			$_g = $this->num_rows;

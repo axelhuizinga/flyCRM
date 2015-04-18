@@ -658,7 +658,7 @@
 					 }
 					 var t = value.split(/\s/);
 					 var t = t[0].split(/-/);
-					 trace(t.join('_'));
+					 //trace(t.join('_'));
 					 return sprintf('%s.%s.%s', t[2], t[1], t[0]);
 					 break;
 					case 'gFloat':
