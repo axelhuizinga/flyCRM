@@ -86,6 +86,8 @@ class View
 	public var interactionState(default, set):String;
 	public var inputs:StringMap<Input>;	
 	public var selectedID:String;
+	public var lastFindParam:StringMap<String>;
+	
 			
 	public function new(?data:Dynamic ) 
 	{
@@ -264,6 +266,7 @@ class View
 	
 	function loadingComplete():Bool
 	{
+		//trace (loading);return true;
 		if (loading > 0)
 			return false;
 		if (!inputs.empty() && !inputs.foreach(function(i:Input) return i.loading == 0))
@@ -327,7 +330,8 @@ class View
 	public function find(p:StringMap<String>):Void
 	//public function find(where:String):Void
 	{
-		trace(p);
+		lastFindParam = p.copy();
+		trace(lastFindParam);
 		var where:String = p.get('where');
 		trace('|'+where+'|' + (where.any2bool() ? 'Y':'N'));
 		trace(vData.where);

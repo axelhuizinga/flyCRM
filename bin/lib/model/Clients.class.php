@@ -187,11 +187,18 @@ class model_Clients extends Model {
 		return $ret;
 	}
 	public function getRecordings($lead_id) {
-		return $this->query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " . Std::string($lead_id) . " ORDER BY start_time DESC");
+		$records = null;
+		{
+			$a = $this->query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " . Std::string($lead_id) . " ORDER BY start_time DESC");
+			$records = new _hx_array($a);
+		}
+		$rc = $this->num_rows;
+		haxe_Log::trace("" . _hx_string_rec($rc, "") . " == " . _hx_string_rec($records->length, ""), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 233, "className" => "model.Clients", "methodName" => "getRecordings")));
+		return php_Lib::toPhpArray($records->filter(array(new _hx_lambda(array(&$lead_id, &$rc, &$records), "model_Clients_7"), 'execute')));
 	}
 	public function save($q) {
 		$lead_id = Std::parseInt($q->get("lead_id"));
-		haxe_Log::trace($q, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 237, "className" => "model.Clients", "methodName" => "save")));
+		haxe_Log::trace($q, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 242, "className" => "model.Clients", "methodName" => "save")));
 		return false;
 	}
 	static function create($param) {
@@ -244,5 +251,10 @@ function model_Clients_6(&$__hx__this, &$param, &$phValues, &$sb, &$table_name) 
 		return ",table_name|" . _hx_string_or_null(S::$my->real_escape_string($table_name));
 	} else {
 		return "";
+	}
+}
+function model_Clients_7(&$lead_id, &$rc, &$records, $r) {
+	{
+		return php_Lib::objectOfAssociativeArray($r)->length_in_sec > 20;
 	}
 }

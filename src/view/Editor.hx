@@ -7,6 +7,7 @@ package view;
 
 import haxe.ds.StringMap;
 import haxe.Json;
+import haxe.Timer;
 import jQuery.*;
 import jQuery.JHelper.J;
 import jQuery.FormData.FData;
@@ -30,6 +31,7 @@ class Editor extends View
 	public var action:String;
 	public var agent:String;
 	public var leadID:String;
+	var savingFlagSet:Bool;
 	public function new(?data:Dynamic)  
 	{
 		super(data);
@@ -131,14 +133,27 @@ class Editor extends View
 			trace('edit check failed :(');
 		}
 		else
-		{
-			cMenu.root.find('.recordings').remove();
+		{//DATA SAVED IS VALIDATED AGAINST FORM CONTENT - OK TO CLOSE FORM
+			close();
+			/*cMenu.root.find('.recordings').remove();
 			cMenu.root.data('disabled', 0);
 			J(attach2).find('tr').removeClass('selected');
 			J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
 			if (parentView.interactionState == 'call')
 				cMenu.activePanel.find('button[data-contextaction="call"]').html('Anrufen');
-			parentView.interactionState = 'init';
+			parentView.interactionState = 'init';*/
+			if(lastFindParam != null)
+				parentView.find(parentView.lastFindParam);
+			else
+			{
+				trace({
+					var p:Dynamic = parentView.resetParams();
+					if(parentView.vData.order != null)
+						p.order = parentView.vData.order;							
+					p;
+				});
+				parentView.find( new StringMap<String>());
+			}
 		}
 		//function display(format,value)
 		//overlay
@@ -146,6 +161,7 @@ class Editor extends View
 	
 	public function  edit(dataRow:JQuery)
 	{
+		savingFlagSet = false;
 		var p:Dynamic = resetParams();
 		p.primary_id = (vData.primary_id == null ? parentView.primary_id : vData.primary_id);
 		eData = dataRow;
@@ -173,19 +189,26 @@ class Editor extends View
 		//cMenu.set_active(cMenu.getIndexOf(vData.trigger.split('|')[1]));
 	}
 	
+	function close()
+	{
+		trace('going to close:' + J('#overlay').length);
+		cMenu.root.find('.recordings').remove();
+		cMenu.root.data('disabled', 0);
+		J(cMenu.attach2).find('tr').removeClass('selected');
+		if (parentView.interactionState == 'call')
+			cMenu.activePanel.find('button[data-contextaction="call"]').html('Anrufen');
+		parentView.interactionState = 'init';
+		//J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
+		overlay.animate( { opacity:0.0 }, 300, null, function() { overlay.detach(); } );		
+	}
+	
 	public function contextAction(action:String)
 	{
 		this.action = action;
 		switch(action)
 		{
 			case 'close':
-				trace('going to close:' + J('#overlay').length);
-				cMenu.root.find('.recordings').remove();
-				cMenu.root.data('disabled', 0);
-				J(cMenu.attach2).find('tr').removeClass('selected');
-				parentView.interactionState = 'init';
-				//J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
-				overlay.animate( { opacity:0.0 }, 300, null, function() { overlay.detach(); } );
+				close();
 			case 'save', 'qcok':
 				if (!checkIban())
 				{
@@ -232,9 +255,55 @@ class Editor extends View
 		}//DONE END ACTION CASE EDIT
 	}
 	
+	function ready4save():Bool
+	{
+		var p:Array<FData> = new Array();
+		p.push( { name:'className', value:'AgcApi' } );
+		p.push( { name:'action', value:'check4Update' });
+		p.push( { name:'lead_id', value:leadID } );
+		var amReady:Bool = false;
+		JQueryStatic.ajax({
+			type: 'POST',
+			url: 'server.php',
+			data: p,
+			success: function(result) 
+			{
+				trace(result);
+				try
+				{
+					if (result.response.security_phrase == 'XXX')
+					{
+						trace('OK - XXX HAS BEEN RESTORED');
+						amReady = true;
+					}				
+				}
+				catch (ex:Dynamic)
+				{
+					trace(ex);
+				}
+
+			},
+			dataType: 'json',
+			async:false
+		});
+		trace('returning $amReady');
+		return amReady;
+	}
+	
 	public function save(?status:String):Void
 	{
+		trace(parentView.interactionState);
+		if (parentView.interactionState == 'call')
+		{
+			if (!ready4save())
+			{//	SET WAIT TIMEOUT
+				trace ("have to wait...");
+				Timer.delay(function() save(status), 500);
+				return;				
+			}
+		}
 		var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
+		//trace(p);
 		p.push( { name:'className', value:parentView.name });
 		p.push( { name:'action', value:'save' });
 		p.push( { name:'primary_id', value: parentView.vData.primary_id} );
@@ -242,8 +311,8 @@ class Editor extends View
 		trace (status);
 		switch (status)
 		{
-			case 'qcok','qcbad':
-			p.push( { name:'status', value: status.toUpperCase() });
+			case 'qcok','qcbad','call':
+			p.push( { name:'status', value: (status=='call' ? 'QCOPEN': status.toUpperCase()) });
 		}
 		if (parentView.vData.hidden != null)
 		{							
@@ -258,14 +327,6 @@ class Editor extends View
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			trace(data +': ' + (data ? 'Y':'N'));
 			if (data) {
-				///TODO: ADD FEEDBACK TO CHECK CORRECTLY SAVED VALUES AND UPDATE VIEW
-				trace(cMenu.root.attr('id') +':'+cMenu.root.find('.recordings').length);
-				/*cMenu.root.find('.recordings').remove();
-				cMenu.root.data('disabled', 0);
-				J(attach2).find('tr').removeClass('selected');
-				J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
-				if (parentView.interactionState == 'call')
-					cMenu.activePanel.find('button[data-contextaction="call"]').html('Anrufen');*/
 				editCheck(eData);
 			}
 		});

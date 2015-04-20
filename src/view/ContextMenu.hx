@@ -185,28 +185,48 @@ typedef ContextMenuData =
 	
 	public function hangup(editor:Editor, ?onCompletion:Void->Void )
 	{	
+		trace('OK');
 		var p:Dynamic = 
 		{
 			className:'AgcApi',
-			action:'external_hangup',
-			campaign_id:parentView.vData.campaign_id,
+			action:'update_fields_x',
 			lead_id:editor.leadID,
-			agent_user:editor.agent
+			//agent_user:editor.agent,
+			security_phrase:''
 		};
 		
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			//trace(data);
-			if (data.response == 'OK') {//HUNG UP - CHOOSE DISPO STATUS
+			if (data.response == 'OK') 
+			{//security_phrase CLEARED
 				trace('OK');		
-				//trace(data.choice);	
-				setCallStatus(editor, onCompletion);
-				//SHOW DISPO CHOICE DIALOG
-				parentView.interactionState = 'init';
+				p = {
+					className:'AgcApi',
+					action:'external_hangup',
+					lead_id:editor.leadID,
+					agent_user:editor.agent
+				};		
+				
+				parentView.loadData('server.php', p, function(data:Dynamic) { 
+					//trace(data);
+					if (data.response == 'OK') 
+					{//HUNG UP - SET DISPO STATUS
+						trace('OK');		
+						//trace(data.choice);	
+						setCallStatus(editor, onCompletion);
+						//SHOW DISPO CHOICE DIALOG
+						//parentView.interactionState = 'init';
+					}
+					else
+					{
+						App.choice( { header:data.response, id:parentView.id } );
+					}
+				});
 			}
 			else
 			{
 				App.choice( { header:data.response, id:parentView.id } );
-			}
+			}	
 		});
 	}
 	
@@ -285,7 +305,7 @@ typedef ContextMenuData =
 			action:'external_status',
 			dispo:switch(editor.action)
 			{
-				case 'call', 'save':
+				case 'call', 'save'://HANGUP OR SAVE => QCOPEN
 				'QCOPEN';
 				default:
 				editor.action.toUpperCase();
@@ -296,9 +316,11 @@ typedef ContextMenuData =
 			trace(data);
 			if (data.response == 'OK')		
 			{
-				parentView.interactionState = 'init';
+				
 				if (onCompletion != null)
 					onCompletion();
+				else
+					parentView.interactionState = 'init';
 			}
 			else
 				App.choice( { header:data.response, id:parentView.id } );

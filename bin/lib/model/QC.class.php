@@ -172,7 +172,7 @@ class model_QC extends model_Clients {
 						}
 						$values2bind[$i++] = S::$user;
 						$bindTypes .= "s";
-						$sets->push("security_phrase=?");
+						$sets->push("province=?");
 						if(_hx_equal($q->get("status"), "QCOK") || _hx_equal($q->get("status"), "QCBAD")) {
 							$list_id = 10000;
 							if(_hx_equal($q->get("status"), "QCOK")) {
@@ -203,18 +203,18 @@ class model_QC extends model_Clients {
 						$sql->add($sets->join(","));
 						$sql->add(" WHERE lead_id=" . _hx_string_rec($lead_id, ""));
 						$stmt1 = S::$my->stmt_init();
-						haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 245, "className" => "model.QC", "methodName" => "save")));
+						haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 248, "className" => "model.QC", "methodName" => "save")));
 						$success1 = $stmt1->prepare($sql->b);
 						if(!$success1) {
-							haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 249, "className" => "model.QC", "methodName" => "save")));
+							haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 252, "className" => "model.QC", "methodName" => "save")));
 							return false;
 						}
 						$success1 = myBindParam($stmt1, $values2bind, $bindTypes);
-						haxe_Log::trace("success:" . Std::string($success1), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 255, "className" => "model.QC", "methodName" => "save")));
+						haxe_Log::trace("success:" . Std::string($success1), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 258, "className" => "model.QC", "methodName" => "save")));
 						if($success1) {
 							$success1 = $stmt1->execute();
 							if(!$success1) {
-								haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 261, "className" => "model.QC", "methodName" => "save")));
+								haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 264, "className" => "model.QC", "methodName" => "save")));
 								return false;
 							}
 							return true;
@@ -222,7 +222,7 @@ class model_QC extends model_Clients {
 						return false;
 					}
 				} else {
-					haxe_Log::trace("oops", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 271, "className" => "model.QC", "methodName" => "save")));
+					haxe_Log::trace("oops", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 274, "className" => "model.QC", "methodName" => "save")));
 				}
 			}
 		}
@@ -235,7 +235,7 @@ class model_QC extends model_Clients {
 		$newTable = S::$my->real_escape_string(_hx_string_or_null($srcTable) . "_" . _hx_string_or_null($suffix));
 		$res = S::$my->query("SHOW TABLES LIKE  \"" . _hx_string_or_null($newTable) . "\"", null);
 		if(Util::any2bool($res) && $res->num_rows === 0) {
-			haxe_Log::trace("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 285, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
+			haxe_Log::trace("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 288, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
 			$res1 = S::$my->query("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", null);
 			if(S::$my->error === "") {
 				$res1 = S::$my->query("ALTER TABLE " . _hx_string_or_null($newTable) . " DROP PRIMARY KEY, ADD `log_id` INT(9) NOT NULL  FIRST,  ADD  PRIMARY KEY (`log_id`)", null);
@@ -247,7 +247,7 @@ class model_QC extends model_Clients {
 				S::hexit(S::$my->error);
 			}
 		} else {
-			haxe_Log::trace("num_rows:" . _hx_string_rec($res->num_rows, ""), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 296, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
+			haxe_Log::trace("num_rows:" . _hx_string_rec($res->num_rows, ""), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 299, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
 		}
 		return true;
 	}

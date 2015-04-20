@@ -23,6 +23,12 @@ class php_Lib {
 	static function associativeArrayOfHash($hash) {
 		return $hash->h;
 	}
+	static function objectOfAssociativeArray($arr) {
+		foreach($arr as $key => $value){
+			if(is_array($value)) $arr[$key] = php_Lib::objectOfAssociativeArray($value);
+		}
+		return _hx_anonymous($arr);
+	}
 	static function associativeArrayOfObject($ob) {
 		return (array) $ob;
 	}

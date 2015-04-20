@@ -227,8 +227,13 @@ typedef CustomField =
 	
 	function getRecordings(lead_id:Int):NativeArray
 	{
-		return query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " 
-		+ Std.string(lead_id) + ' ORDER BY start_time DESC');
+		var records:Array<Dynamic> = Lib.toHaxeArray(query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " 
+		+ Std.string(lead_id) + ' ORDER BY start_time DESC'));
+		var rc:Int = num_rows;
+		trace ('$rc == ' + records.length);
+		//TODO: CONFIG FOR MIN LENGTH_IN_SEC FOR RECORDINGS
+		//return Lib.toPhpArray(records.filter(function(r:Dynamic) { trace(Lib.objectOfAssociativeArray(r)); return false; } ));		
+		return Lib.toPhpArray(records.filter(function(r:Dynamic) return untyped Lib.objectOfAssociativeArray(r).length_in_sec > 20));		
 	}
 	
 	public function save(q:StringMap<Dynamic>):Bool

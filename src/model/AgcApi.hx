@@ -24,9 +24,16 @@ class AgcApi extends Model
 		return Reflect.callMethod(self, Reflect.field(self,param.get('action')), [param]);
 	}
 	
+	public function check4Update(param:StringMap<String>):EitherType<String,Bool>
+	{
+		var lead_id:Dynamic = Std.parseInt(param.get('lead_id'));
+		trace(S.host + ':' + lead_id);
+		return json_response(query('SELECT security_phrase FROM vicidial_list WHERE lead_id=$lead_id')[0]);
+	}
+	
 	public function external_dial(param:StringMap<String>):EitherType<String,Bool>
 	{
-		//var url:String = 'http://localhost/agc/api.php?source=flyCRM&user=6666&pass=dial4XPRESS&function=external_dial&search=NO&preview=NO&focus=NO&lead_id='
+		//TODO: GET HOST FROM CONFIG OR SYSTEM
 		var url:String = 'http://xpress.mein-dialer.com/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_dial&search=NO&preview=NO&focus=NO&lead_id='
 		+ param.get('lead_id') + '&agent_user=' + param.get('agent_user');
 		trace(url);
@@ -72,5 +79,21 @@ class AgcApi extends Model
 		var agcResponse:String = Http.requestUrl(url);
 		return json_response(agcResponse.indexOf('SUCCESS') == 0 ? 'OK' : agcResponse);
 	}
+	
+	public function update_fields_x(param:StringMap<String>):EitherType<String,Bool>
+	{
+		var security_phrase:String = param.get('security_phrase');
+		/*var user = param.get('agent_user');
+		var url = 'http://xpress.mein-dialer.com/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=update_fields&agent_user=$user&security_phrase=$security_phrase' ;
+		trace(url);
+		var agcResponse:String = Http.requestUrl(url);*/
+		var lead_id:Dynamic = Std.parseInt(param.get('lead_id'));
+		var agcResponse = S.my.query('UPDATE vicidial_list SET security_phrase="$security_phrase" WHERE lead_id=$lead_id');
+		
+		return json_response(agcResponse ? 'OK' : S.my.error);
+		//return json_response(agcResponse.indexOf('SUCCESS') == 0 ? 'OK' : agcResponse);
+	}
+	
+	
 	
 }

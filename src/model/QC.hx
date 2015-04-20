@@ -207,7 +207,10 @@ class QC extends Clients
 						}
 						values2bind[i++] = S.user;
 						bindTypes += 's';
-						sets.push('security_phrase=?');//STORE QC AGENT
+						sets.push('province=?');//STORE QC AGENT
+						/*values2bind[i++] = 'XXX';
+						bindTypes += 's';						
+						sets.push('security_phrase=?');//RESTORE SAVING FLAG*/
 						if (q.get('status') == 'QCOK' || q.get('status') == 'QCBAD')
 						{//	MOVE INTO MITGLIEDER LISTE (10000) OR QCBAD (1800)
 							var list_id:Int = 10000;

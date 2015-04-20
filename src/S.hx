@@ -32,6 +32,7 @@ class S
 	static  var headerSent:Bool = false;
 	public static var conf:StringMap<Dynamic>;
 	public static var my:MySQLi;
+	public static var host:String;
 	public static var user:String;
 	public static  var db:String;
 	public static  var dbUser:String;
@@ -169,7 +170,9 @@ class S
 		Debug.logFile = untyped __var__("appLog");
 		db = untyped __var__("VARDB");
 		dbUser = untyped __var__("VARDB_user");
-		dbPass = untyped __var__("VARDB_pass");				
+		dbPass = untyped __var__("VARDB_pass");		
+		host = Web.getHostName();
+		//trace(host);
 		vicidialUser = untyped __var__("user");
 		vicidialPass = untyped __var__("pass");
 	}
