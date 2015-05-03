@@ -2,7 +2,6 @@ var uiData = {
 	appName:'flyCRM',
 	appLabel:appLabel,
 	storeFormats:storeFormats,
-	cssStyles:cssStyles,
 	limit:15,
 	hasTabs:true,
 	rootViewPath:'mtabs',
@@ -104,9 +103,9 @@ var uiData = {
 					[{							
 						Clients:{
 							action:'find',
-							fields:'status,vicidial_list.lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,register_on',
+							fields:'entry_list_id,status,vicidial_list.lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,register_on',
 							primary_id:'vendor_lead_code',
-							hidden:'lead_id,status',							
+							hidden:'lead_id,entry_list_id,status',							
 							id:'clients',
 							limit:15,
 							order:'vendor_lead_code|DESC',
@@ -166,7 +165,7 @@ var uiData = {
 									id:'clients-editor',
 									hidden:'lead_id',	
 									attach2:'#clients',
-									fields:'first_name,last_name,phone_number,address1,address2,postal_code,city',
+									fields:'first_name,last_name,phone_number,address1,address2,postal_code,city,owner,comments',
 									jointable:'fly_crm.clients AS clients',
 									joincond:'fly_crm.clients.client_id=vendor_lead_code ',									
 									primary_id:'client_id',

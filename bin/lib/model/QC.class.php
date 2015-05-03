@@ -228,29 +228,6 @@ class model_QC extends model_Clients {
 		}
 		return false;
 	}
-	public function checkOrCreateCustomTable($srcTable, $suffix = null) {
-		if($suffix === null) {
-			$suffix = "log";
-		}
-		$newTable = S::$my->real_escape_string(_hx_string_or_null($srcTable) . "_" . _hx_string_or_null($suffix));
-		$res = S::$my->query("SHOW TABLES LIKE  \"" . _hx_string_or_null($newTable) . "\"", null);
-		if(Util::any2bool($res) && $res->num_rows === 0) {
-			haxe_Log::trace("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 288, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
-			$res1 = S::$my->query("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", null);
-			if(S::$my->error === "") {
-				$res1 = S::$my->query("ALTER TABLE " . _hx_string_or_null($newTable) . " DROP PRIMARY KEY, ADD `log_id` INT(9) NOT NULL  FIRST,  ADD  PRIMARY KEY (`log_id`)", null);
-				if(S::$my->error !== "") {
-					S::hexit(S::$my->error);
-				}
-				return true;
-			} else {
-				S::hexit(S::$my->error);
-			}
-		} else {
-			haxe_Log::trace("num_rows:" . _hx_string_rec($res->num_rows, ""), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 299, "className" => "model.QC", "methodName" => "checkOrCreateCustomTable")));
-		}
-		return true;
-	}
 	static $vicdial_list_fields;
 	static function create($param) {
 		$self = new model_QC();

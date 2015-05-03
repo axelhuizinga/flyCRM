@@ -68,6 +68,7 @@ var dbFieldTypes =
 	address1:'s',
 	postal_code:'s',
 	city:'s',
+	comments:'s',
 	last_local_call_time:'s',
 	vendor_lead_code:'s'
 }
@@ -117,10 +118,3 @@ var fieldTypes =
 	title:'select'
 }
 
-var cssStyles =
-{
-	MNEW:'#217e01',
-	MDUP:'#3c4802',
-	MPRINT:'#a86602',
-	QCOK:'#750075'
-}

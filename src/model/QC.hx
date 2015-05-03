@@ -278,7 +278,7 @@ class QC extends Clients
 		return false;
 	}
 	
-	function checkOrCreateCustomTable(srcTable:String, ?suffix:String='log'):Bool
+	/*function checkOrCreateCustomTable(srcTable:String, ?suffix:String='log'):Bool
 	{
 		var newTable:String = S.my.real_escape_string(srcTable + '_' + suffix);
 		//trace('SHOW TABLES LIKE  "$newTable"');
@@ -298,5 +298,5 @@ class QC extends Clients
 		}
 		else trace('num_rows:' + res.num_rows);
 		return true;
-	}
+	}*/
 }

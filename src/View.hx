@@ -333,7 +333,7 @@ class View
 		lastFindParam = p.copy();
 		trace(lastFindParam);
 		var where:String = p.get('where');
-		trace('|'+where+'|' + (where.any2bool() ? 'Y':'N'));
+		trace(id + '|'+where+'|' + (where.any2bool() ? 'Y':'N'));
 		trace(vData.where);
 		var fData:Dynamic = { };
 		var pkeys:Array<String> = 'action,className,fields,primary_id,hidden,limit,order,page,table,where'.split(',');

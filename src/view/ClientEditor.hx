@@ -164,13 +164,28 @@ class ClientEditor extends Editor
 		trace(p);
 		//return;
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
-			trace(data +': ' + (data == 'true' ? 'Y':'N'));
-			if (data == 'true') {
+			trace('>' + data + ':' + Type.typeof(data) + ': ' + (data ? 'Y':'N'));
+			if (data) 
+			{
+				close();
+				if(lastFindParam != null)
+					parentView.find(parentView.lastFindParam);
+				else
+				{
+					trace({
+						var p:Dynamic = parentView.resetParams();
+						if(parentView.vData.order != null)
+							p.order = parentView.vData.order;							
+						p;
+					});
+					parentView.find( (parentView.lastFindParam == null ? new StringMap<String>(): parentView.lastFindParam));
+				}
+				/*
 				trace(cMenu.root.attr('id') +':'+ cMenu.root.find('.recordings').length);
 				cMenu.root.find('.recordings').remove();
 				cMenu.root.data('disabled', 0);
 				J(attach2).find('tr').removeClass('selected');
-				overlay.animate( { opacity:0.0 }, 300, null, function() { overlay.detach(); } );			
+				overlay.animate( { opacity:0.0 }, 300, null, function() { overlay.detach(); } );		*/	
 			}
 		});
 	}

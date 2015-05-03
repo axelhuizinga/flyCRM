@@ -855,7 +855,7 @@ View.prototype = {
 		haxe_Log.trace(this.lastFindParam,{ fileName : "View.hx", lineNumber : 334, className : "View", methodName : "find"});
 		var where;
 		where = __map_reserved.where != null?p.getReserved("where"):p.h["where"];
-		haxe_Log.trace("|" + where + "|" + (Util.any2bool(where)?"Y":"N"),{ fileName : "View.hx", lineNumber : 336, className : "View", methodName : "find"});
+		haxe_Log.trace(this.id + "|" + where + "|" + (Util.any2bool(where)?"Y":"N"),{ fileName : "View.hx", lineNumber : 336, className : "View", methodName : "find"});
 		haxe_Log.trace(this.vData.where,{ fileName : "View.hx", lineNumber : 337, className : "View", methodName : "find"});
 		var fData = { };
 		var pkeys = "action,className,fields,primary_id,hidden,limit,order,page,table,where".split(",");
@@ -2672,15 +2672,19 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		}
 		haxe_Log.trace(p,{ fileName : "ClientEditor.hx", lineNumber : 164, className : "view.ClientEditor", methodName : "save"});
 		this.parentView.loadData("server.php",p,function(data) {
-			haxe_Log.trace(Std.string(data) + ": " + (data == "true"?"Y":"N"),{ fileName : "ClientEditor.hx", lineNumber : 167, className : "view.ClientEditor", methodName : "save"});
-			if(data == "true") {
-				haxe_Log.trace(_g.cMenu.root.attr("id") + ":" + _g.cMenu.root.find(".recordings").length,{ fileName : "ClientEditor.hx", lineNumber : 169, className : "view.ClientEditor", methodName : "save"});
-				_g.cMenu.root.find(".recordings").remove();
-				_g.cMenu.root.data("disabled",0);
-				new $(_g.attach2).find("tr").removeClass("selected");
-				_g.overlay.animate({ opacity : 0.0},300,null,function() {
-					_g.overlay.detach();
-				});
+			haxe_Log.trace(">" + Std.string(data) + ":" + Std.string(Type["typeof"](data)) + ": " + (data?"Y":"N"),{ fileName : "ClientEditor.hx", lineNumber : 167, className : "view.ClientEditor", methodName : "save"});
+			if(data) {
+				_g.close();
+				if(_g.lastFindParam != null) _g.parentView.find(_g.parentView.lastFindParam); else {
+					haxe_Log.trace((function($this) {
+						var $r;
+						var p1 = _g.parentView.resetParams();
+						if(_g.parentView.vData.order != null) p1.order = _g.parentView.vData.order;
+						$r = p1;
+						return $r;
+					}(this)),{ fileName : "ClientEditor.hx", lineNumber : 175, className : "view.ClientEditor", methodName : "save"});
+					_g.parentView.find(_g.parentView.lastFindParam == null?new haxe_ds_StringMap():_g.parentView.lastFindParam);
+				}
 			}
 		});
 	}
@@ -2719,7 +2723,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		var mSpace = App.getMainSpace();
 		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
 		new $("#" + this.parentView.id + " .scrollbox").height(new $("#" + this.parentView.id + " #overlay").height());
-		haxe_Log.trace(this.leadID,{ fileName : "ClientEditor.hx", lineNumber : 219, className : "view.ClientEditor", methodName : "update"});
+		haxe_Log.trace(this.leadID,{ fileName : "ClientEditor.hx", lineNumber : 234, className : "view.ClientEditor", methodName : "update"});
 	}
 	,__class__: view_ClientEditor
 });
