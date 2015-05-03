@@ -146,7 +146,7 @@ typedef TabBoxData =
 	
 	public function go(url:String, p:Dynamic):Void
 	{
-		trace(url);
+		trace(url + ':' + tabLinks.join(','));
 		trace(tabsInstance.options.active + ' : ' + tabLinks.indexOf(url));
 		//Out.dumpObject(p);
 		if (tabsInstance.options.active == tabLinks.indexOf(url))
@@ -168,14 +168,14 @@ typedef TabBoxData =
 			p[1] = url;
 		if (tabsInstance.options.active == tabLinks.indexOf(p[1]))
 		{			
+			trace(tabsInstance.options.active + ' == ' + tabLinks.indexOf(p[1]));
 			return;
 		}
 		if (tabLinks[tabsInstance.options.active] != p[1])
 		{
 			trace(id + ' root:' +  root.attr('id'));
 			if(tabObj!=null)
-			//trace('set { selected:' + tabLinks.indexOf(p[1]) + '}');
-			tabObj.tabs( "option", "active", tabLinks.indexOf(p[1]) );
+				tabObj.tabs( "option", "active", tabLinks.indexOf(p[1]) );
 		}
 		//trace(p.toString() + ':' + tabsInstance.options.active + ':' + tabLinks.indexOf(p[1]));
 		Browser.document.title = App.company + " " + App.appName + '  ' + tabLabel[tabsInstance.options.active];

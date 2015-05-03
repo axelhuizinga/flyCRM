@@ -1,6 +1,7 @@
 <?php
 
 	require("php/functions.php");
+	require("/srv/www/config/flyCRM.db.php");
 	//edump($_SERVER);
 	session_start();
 	$user = (isset($_SESSION['PHP_AUTH_USER']) ? $_SESSION['PHP_AUTH_USER'] : 'NONO');
@@ -577,7 +578,7 @@
 		<script src="flyCRM.js"></script>
 		<script src="appData.js"></script>		-->	
 		<script 	>
-			$LAB.setGlobalDefaults({Debug:true}).
+			$LAB.setGlobalDefaults({Debug:false}).
 			script('js/jquery-2.1.3.js.gz').
 			script('js/stacktrace.js.gz').
 			script('js/debugJq.js.gz').
@@ -593,12 +594,15 @@
 		  {
 				console.log('should be done...');
 				//trace('clientFields:' + getFields(clientFields));
-				uiData.basePath="<?php echo $basePath;?>";
 				uiData.action="<?php echo $action;?>";
+				uiData.basePath="<?php echo $basePath;?>";
+				uiData.company="<?php echo $company;?>";
 				uiData.params="<?php echo $params;?>";
-				uiData.user="<?php echo $user;?>";				
+				uiData.user="<?php echo $user;?>";
+				//console.log('uiData.company:' + uiData.company);
 				initApp(uiData);
 				$('#loader').remove();
+				//setTimeout(function(){trace('title:' + document.title)},1500);
 		  });		
 		  
 		  function getFields(obj)

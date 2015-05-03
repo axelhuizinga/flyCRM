@@ -43,6 +43,7 @@ class App
 	public static var user:String;
 	public static var company:String;
 	public static var appLabel:Dynamic;
+	//public static var cssStyles:Dynamic;
 	public static var storeFormats:Dynamic;
 	public static var uiMessage:Dynamic;
 	public static var waitTime:Int;
@@ -117,6 +118,7 @@ class App
 		appLabel = config.appLabel;
 		user = config.user;
 		storeFormats = config.storeFormats;
+		//cssStyles = config.cssStyles;
 		uiMessage = config.uiMessage;
 		waitTime = config.waitTime;
 		company = config.company;
@@ -131,7 +133,7 @@ class App
 			//trace(Reflect.field(App, f));
 		}
 		basePath = Browser.location.pathname.split(config.appName)[0] + config.appName + '/';
-		trace(basePath);
+		//trace(cssStyles);
 		ist.initUI(config.views);		
 
 		return ist;

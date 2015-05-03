@@ -8,6 +8,7 @@ import haxe.Timer;
 import jQuery.*;
 import jQuery.JHelper.J;
 import js.html.Element;
+import js.html.Node;
 import View;
 
 using jQuery.FormData;
@@ -86,9 +87,14 @@ typedef ClientsData =
 			interactionState = 'init';
 	}
 	
-	/*override public function set_interactionState(iState:String):String
+	override public function update(data:Dynamic)
 	{
-		
-		return super.set_interactionState(iState);
-	}*/
+		super.update(data);
+		trace('#' + id + '-list tr[data-status]' + J('#' + id + '-list data-status').length);
+		J('#' + id + '-list tr[data-status]').each(function(i:Int, n:Node)
+		{
+			//trace(i + ':' + J(n).data('status'));
+			J(n).addClass(J(n).data('status')) ;
+		});
+	}
 }

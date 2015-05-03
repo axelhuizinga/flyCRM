@@ -89,7 +89,7 @@ div.lpad
 .ui-accordion .ui-accordion-content
 {
 	padding: 0;
-	overflow-x:hidden;
+	overflow-x:hidden!important;
 }
 .ui-tabs-nav .tabs-header{
 	float:right!important;
@@ -375,4 +375,21 @@ form .error
 td.nowrap
 {
 	 white-space: nowrap;
+}
+
+tr.MNEW td
+{
+	 color: #217e01!important;
+}
+tr.MDUP td
+{
+	 color: #3c4802!important;
+}
+tr.MPRINT td
+{
+	 color: #a86602!important;
+}
+tr.QCOK td
+{
+	 color: #750075!important;
 }

@@ -1,8 +1,8 @@
 var uiData = {
 	appName:'flyCRM',
 	appLabel:appLabel,
-	company:'X-Press Marketing GmbH',
 	storeFormats:storeFormats,
+	cssStyles:cssStyles,
 	limit:15,
 	hasTabs:true,
 	rootViewPath:'mtabs',
@@ -104,9 +104,9 @@ var uiData = {
 					[{							
 						Clients:{
 							action:'find',
-							fields:'vicidial_list.lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,register_on',
+							fields:'status,vicidial_list.lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,register_on',
 							primary_id:'vendor_lead_code',
-							hidden:'lead_id',							
+							hidden:'lead_id,status',							
 							id:'clients',
 							limit:15,
 							order:'vendor_lead_code|DESC',

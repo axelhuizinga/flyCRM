@@ -101,9 +101,12 @@ class Editor extends View
 		trace(data.rows[0]);
 		var cData:Dynamic = data.rows[0];
 		var cOK:Bool = true;
+		var errors:StringBuf = new StringBuf();
 		
 		for (f in Reflect.fields(cData))
 		{
+			if (f == 'vendor_lead_code' && overlay.find('[name="vendor_lead_code"]').val()=='')
+				continue;
 			var val:Dynamic = '';
 			if (Reflect.hasField(displayFormats, f))
 			{
@@ -125,23 +128,18 @@ class Editor extends View
 			if (!cOK)
 			{
 				trace('oops - $f: $val not = ' + overlay.find('[name="$f"]').val());
-				break;
+				errors.add('oops - $f: $val not = ' + overlay.find('[name="$f"]').val() + '\r\n');
+				//break;
 			}			
 		}
-		if (!cOK)
+		if (errors.length > 0)
 		{
 			trace('edit check failed :(');
+			Browser.window.alert(errors.toString());
 		}
 		else
 		{//DATA SAVED IS VALIDATED AGAINST FORM CONTENT - OK TO CLOSE FORM
 			close();
-			/*cMenu.root.find('.recordings').remove();
-			cMenu.root.data('disabled', 0);
-			J(attach2).find('tr').removeClass('selected');
-			J('#overlay').animate( { opacity:0.0 }, 300, null, function() { J('#overlay').detach(); } );
-			if (parentView.interactionState == 'call')
-				cMenu.activePanel.find('button[data-contextaction="call"]').html('Anrufen');
-			parentView.interactionState = 'init';*/
 			if(lastFindParam != null)
 				parentView.find(parentView.lastFindParam);
 			else
@@ -152,11 +150,9 @@ class Editor extends View
 						p.order = parentView.vData.order;							
 					p;
 				});
-				parentView.find( new StringMap<String>());
+				parentView.find( (parentView.lastFindParam == null ? new StringMap<String>(): parentView.lastFindParam));
 			}
 		}
-		//function display(format,value)
-		//overlay
 	}
 	
 	public function  edit(dataRow:JQuery)
@@ -220,6 +216,8 @@ class Editor extends View
 							//TODO: TEST THE CHANGE FROM ACTION TO ENDACTION
 							if (parentView.interactionState == 'call')
 								cMenu.hangup(this, function() save(action));
+							else
+								save(action);
 						}
 						else
 						{//J('#' + parentView.id + '-edit-form')
