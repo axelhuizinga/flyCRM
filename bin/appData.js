@@ -111,6 +111,8 @@ var storeFormats =
 	entry_date:['gDate2mysql'],
 	start_date:['gDate2mysql'],
 	teilnahme_beginn:['gDate2mysql'],
+	pay_obligation:['check2tinyint'],
+	use_email:['check2tinyint']
 }
 
 var fieldTypes =

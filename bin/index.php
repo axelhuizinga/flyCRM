@@ -295,20 +295,16 @@
 		</div>
 		</script>
 		
-		<!-- MEMBERS  PAY_<SOMETHING> EDITOR  -->
+		<!-- MEMBERS  PAY_<SOMETHING> EDITOR  ${primary_id=$data.table+'_id'}-->
 		
 		<script type="text/x-jquery-tmpl"  id="t-pay-editor">
 		<div id="overlay" class="overlay-left">
 		<div  class="scrollbox">
 			<form  id="${$data.table}-form" action="clients" class="main-left">
-			${trace($data.h)}
-			${primary_id=$data.table+'_id'}
 			{{each(i,v) $data.h}}				
 				<table  >
 				{{each(k,val) v}}
-				
 				{{if $data.typeMap[k] != 'HIDDEN'}}
-				
 				<tr>
 					<td>{{html $data.fieldNames[k]}}:</td>
 					<td class="nowrap">
@@ -603,7 +599,11 @@
 				initApp(uiData);
 				$('#loader').remove();
 				//setTimeout(function(){trace('title:' + document.title)},1500);
-		  });		
+		  });
+			
+			function check2tinyint (checkVal) {
+				return checkVal ^= 1;
+			}
 		  
 		  function getFields(obj)
 		  {

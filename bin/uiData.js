@@ -103,13 +103,13 @@ var uiData = {
 					[{							
 						Clients:{
 							action:'find',
-							fields:'entry_list_id,status,vicidial_list.lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,register_on',
+							fields:'entry_list_id,status,vicidial_list.lead_id,vendor_lead_code,first_name,last_name,phone_number,vendor_lead_code,city,register_on',
 							primary_id:'vendor_lead_code',
 							hidden:'lead_id,entry_list_id,status',							
 							id:'clients',
 							limit:15,
 							order:'vendor_lead_code|DESC',
-							where:'list_id|10000,clients.state|active',
+							where:'list_id|10000',
 							jointable:'fly_crm.clients AS clients',
 							joincond:'fly_crm.clients.client_id=vendor_lead_code ',
 							table:'vicidial_list',

@@ -56,7 +56,7 @@ class ClientEditor extends Editor
 							trace (ok);
 							if (ok)
 							{
-								save_pay_screen();
+								save_sub_screen();
 							}
 							else
 							{//J('#' + parentView.id + '-edit-form')
@@ -65,7 +65,7 @@ class ClientEditor extends Editor
 						});
 					}
 					case 'pay_plan', 'pay_history', 'client_history':
-						save_pay_screen();
+						save_sub_screen();
 					default:// SAVE CLIENT DATA
 						save();
 				}
@@ -80,11 +80,18 @@ class ClientEditor extends Editor
 		}//DONE END ACTION CASE EDIT
 	}
 	
-	function save_pay_screen()
+	function reload()
+	{
+		close();
+		trace(cMenu.parentView.id +':' + J('#' + cMenu.parentView.id + 'tr[class~="selected"]').length);
+		edit(J('#' + cMenu.parentView.id + 'tr[class~="selected"]'));
+	}
+	
+	function save_sub_screen()
 	{
 		var p:Array<FData> = FormData.save(J('#' + activeScreen + '-form'));
 		p.push( { name:'className', value:parentView.name });
-		p.push( { name:'action', value:'save' });
+		p.push( { name:'action', value:'save_' + activeScreen});
 		p.push( { name:'primary_id', value:vData.primary_id} );
 		p.push( { name: vData.primary_id, value: eData.attr('id') } );
 		if (parentView.vData.hidden != null)
@@ -98,7 +105,7 @@ class ClientEditor extends Editor
 			p.push( { name:'table', value:activeScreen } );
 		}
 		trace(p);
-		return;
+		//return;
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			trace(data +': ' + (data == 'true' ? 'Y':'N'));
 			if (data == 'true') {

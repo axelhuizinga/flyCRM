@@ -2578,11 +2578,11 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 			case "pay_source":
 				if(!this.checkIban()) this.checkAccountAndBLZ(function(ok) {
 					haxe_Log.trace(ok,{ fileName : "ClientEditor.hx", lineNumber : 56, className : "view.ClientEditor", methodName : "contextAction"});
-					if(ok) _g1.save_pay_screen(); else App.inputError(new $("#" + _g1.parentView.id + "-edit-form"),["account","blz","iban"]);
+					if(ok) _g1.save_sub_screen(); else App.inputError(new $("#" + _g1.parentView.id + "-edit-form"),["account","blz","iban"]);
 				});
 				break;
 			case "pay_plan":case "pay_history":case "client_history":
-				this.save_pay_screen();
+				this.save_sub_screen();
 				break;
 			default:
 				this.save();
@@ -2598,11 +2598,16 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 			haxe_Log.trace(contextAction,{ fileName : "ClientEditor.hx", lineNumber : 79, className : "view.ClientEditor", methodName : "contextAction"});
 		}
 	}
-	,save_pay_screen: function() {
+	,reload: function() {
+		this.close();
+		haxe_Log.trace(this.cMenu.parentView.id + ":" + new $("#" + this.cMenu.parentView.id + "tr[class~=\"selected\"]").length,{ fileName : "ClientEditor.hx", lineNumber : 86, className : "view.ClientEditor", methodName : "reload"});
+		this.edit(new $("#" + this.cMenu.parentView.id + "tr[class~=\"selected\"]"));
+	}
+	,save_sub_screen: function() {
 		var _g = this;
 		var p = jQuery_FormData.save(new $("#" + this.activeScreen + "-form"));
 		p.push({ name : "className", value : this.parentView.name});
-		p.push({ name : "action", value : "save"});
+		p.push({ name : "action", value : "save_" + this.activeScreen});
 		p.push({ name : "primary_id", value : this.vData.primary_id});
 		p.push({ name : this.vData.primary_id, value : this.eData.attr("id")});
 		if(this.parentView.vData.hidden != null) {
@@ -2619,10 +2624,9 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 			}
 			p.push({ name : "table", value : this.activeScreen});
 		}
-		haxe_Log.trace(p,{ fileName : "ClientEditor.hx", lineNumber : 100, className : "view.ClientEditor", methodName : "save_pay_screen"});
-		return;
+		haxe_Log.trace(p,{ fileName : "ClientEditor.hx", lineNumber : 107, className : "view.ClientEditor", methodName : "save_sub_screen"});
 		this.parentView.loadData("server.php",p,function(data) {
-			haxe_Log.trace(Std.string(data) + ": " + (data == "true"?"Y":"N"),{ fileName : "ClientEditor.hx", lineNumber : 103, className : "view.ClientEditor", methodName : "save_pay_screen"});
+			haxe_Log.trace(Std.string(data) + ": " + (data == "true"?"Y":"N"),{ fileName : "ClientEditor.hx", lineNumber : 110, className : "view.ClientEditor", methodName : "save_sub_screen"});
 			if(data == "true") {
 				var s = _g.screens.get(_g.activeScreen);
 				s.animate({ opacity : 0.0},300,null,function() {
@@ -2670,9 +2674,9 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 				})(k))) p.push({ name : k[0], value : this.eData.data(k[0])});
 			}
 		}
-		haxe_Log.trace(p,{ fileName : "ClientEditor.hx", lineNumber : 164, className : "view.ClientEditor", methodName : "save"});
+		haxe_Log.trace(p,{ fileName : "ClientEditor.hx", lineNumber : 171, className : "view.ClientEditor", methodName : "save"});
 		this.parentView.loadData("server.php",p,function(data) {
-			haxe_Log.trace(">" + Std.string(data) + ":" + Std.string(Type["typeof"](data)) + ": " + (data?"Y":"N"),{ fileName : "ClientEditor.hx", lineNumber : 167, className : "view.ClientEditor", methodName : "save"});
+			haxe_Log.trace(">" + Std.string(data) + ":" + Std.string(Type["typeof"](data)) + ": " + (data?"Y":"N"),{ fileName : "ClientEditor.hx", lineNumber : 174, className : "view.ClientEditor", methodName : "save"});
 			if(data) {
 				_g.close();
 				if(_g.lastFindParam != null) _g.parentView.find(_g.parentView.lastFindParam); else {
@@ -2682,7 +2686,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 						if(_g.parentView.vData.order != null) p1.order = _g.parentView.vData.order;
 						$r = p1;
 						return $r;
-					}(this)),{ fileName : "ClientEditor.hx", lineNumber : 175, className : "view.ClientEditor", methodName : "save"});
+					}(this)),{ fileName : "ClientEditor.hx", lineNumber : 182, className : "view.ClientEditor", methodName : "save"});
 					_g.parentView.find(_g.parentView.lastFindParam == null?new haxe_ds_StringMap():_g.parentView.lastFindParam);
 				}
 			}
@@ -2723,7 +2727,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		var mSpace = App.getMainSpace();
 		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
 		new $("#" + this.parentView.id + " .scrollbox").height(new $("#" + this.parentView.id + " #overlay").height());
-		haxe_Log.trace(this.leadID,{ fileName : "ClientEditor.hx", lineNumber : 234, className : "view.ClientEditor", methodName : "update"});
+		haxe_Log.trace(this.leadID,{ fileName : "ClientEditor.hx", lineNumber : 241, className : "view.ClientEditor", methodName : "update"});
 	}
 	,__class__: view_ClientEditor
 });
@@ -2768,7 +2772,8 @@ view_Clients.prototype = $extend(View.prototype,{
 	}
 	,update: function(data) {
 		View.prototype.update.call(this,data);
-		haxe_Log.trace("#" + this.id + "-list tr[data-status]" + new $("#" + this.id + "-list data-status").length,{ fileName : "Clients.hx", lineNumber : 93, className : "view.Clients", methodName : "update"});
+		haxe_Log.trace(data,{ fileName : "Clients.hx", lineNumber : 93, className : "view.Clients", methodName : "update"});
+		haxe_Log.trace("#" + this.id + "-list tr[data-status]" + new $("#" + this.id + "-list data-status").length,{ fileName : "Clients.hx", lineNumber : 94, className : "view.Clients", methodName : "update"});
 		new $("#" + this.id + "-list tr[data-status]").each(function(i,n) {
 			new $(n).addClass(new $(n).data("status"));
 		});

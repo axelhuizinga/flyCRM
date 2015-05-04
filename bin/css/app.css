@@ -393,3 +393,7 @@ tr.QCOK td
 {
 	 color: #750075!important;
 }
+tr.MPASS td
+{
+	 color: #800000!important;
+}

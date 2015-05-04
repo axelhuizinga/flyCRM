@@ -453,6 +453,63 @@ typedef CustomField =
 		return false;
 	}
 	
+	function save_pay_plan(q:StringMap<Dynamic>):Bool
+	{
+		var pay_plan_id = q.get('pay_plan_id');
+		if (pay_plan_id == null)
+			return true;
+		var sql:StringBuf = new StringBuf();
+		var uFields:Array<String> = pay_plan_fields;
+		uFields.remove('pay_plan_id');
+		var bindTypes:String = '';
+		var values2bind:NativeArray = null;
+		var i:Int = 0;
+		var dbFieldTypes:StringMap<String> = Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject(S.conf.get('dbFieldTypes')));
+		var sets:Array<String> = new Array();				
+		sql.add('UPDATE fly_crm.pay_plan SET ');
+		for (c in uFields)
+		{
+			var val:Dynamic = q.get(c);
+			if (val != null)
+			{
+				//TODO: MULTIVAL
+				values2bind[i++] = (Std.is(val,String) ? val: val[0] );
+				var type:String = dbFieldTypes.get(c);
+				bindTypes += (type.any2bool() ?  type : 's');	
+				sets.push(c + '=?');
+			}
+		}
+		if (sets.length == 0)
+		{
+			return true;
+		}
+		sql.add(sets.join(','));
+		sql.add(' WHERE pay_plan_id=$pay_plan_id');
+		var stmt =  S.my.stmt_init();
+		trace(sql.toString());
+		var success:Bool = stmt.prepare(sql.toString());
+		if (!success)
+		{
+			trace(stmt.error);
+			return false;
+		}
+		//trace(' values:' );
+		trace(values2bind);
+		success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+		trace ('success:' + success);
+		if (success)
+		{
+			success = stmt.execute();
+			if (!success)
+			{
+				trace(stmt.error);
+				return false;
+			}		
+			return true;
+		}			
+		return false;
+	}
+	
 	function checkOrCreateCustomTable(srcTable:String, ?suffix:String='log'):Bool
 	{
 		var newTable:String = S.my.real_escape_string(srcTable + '_' + suffix);
