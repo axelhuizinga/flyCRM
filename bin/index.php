@@ -113,7 +113,9 @@
 					{{each(oi, ov) $data.optionsMap[k]}}
 						<input type="radio" name="${k}"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
 					{{/each}}
-					{{/if}}
+					{{else $data.typeMap[k] == 'DATE'}}
+						<input type="text" size="11" name="${k}" class="datepicker" >
+					{{/if}}					
 					</td>
 				</tr>
 				{{/each}}
@@ -222,7 +224,7 @@
 			</div>
 		</script>
 		
-		<!--  MEMBERS LIST data-direction="ASC"-->
+		<!--  MEMBERS LIST data-direction="ASC" v!=$data.primary_id && ri!=$data.primary_id && -->
 		
 		<script type="text/x-jquery-tmpl"  id="t-clients-list">
 		
@@ -230,15 +232,15 @@
 				${($data.oddi=0,'')}
 				<tr class="headrow" >
 				{{each(i,v) $data.fields}}
-					{{if v!=$data.primary_id && !has($data.hidden,v)}}
+					{{if hasNot($data.hidden,v)}}
 					<th data-order="${v}" >${fieldNames[v]}</th>
 					{{/if}}
 				{{/each}}
 				</tr>
 				{{each(i,v) $data.rows}}
-					<tr id="${v.vendor_lead_code}" class="${((i+1) % 2 ? 'odd' : 'even')}"  ${data($data.hidden,v)} >
+					<tr id="${v.client_id}" class="${((i+1) % 2 ? 'odd' : 'even')}"  ${data($data.hidden,v)} >
 					{{each(ri,rv) v}}
-						{{if ri!=$data.primary_id && !has($data.hidden,ri)}}
+						{{if   hasNot($data.hidden,ri)}}
 							{{if displayFormats[ri] }}
 						<td data-name="${ri}" >${display(displayFormats[ri],rv)}</td>												
 							{{else}}
@@ -295,36 +297,36 @@
 		</div>
 		</script>
 		
-		<!-- MEMBERS  PAY_<SOMETHING> EDITOR  ${primary_id=$data.table+'_id'}-->
+		<!-- MEMBERS  PAY_<SOMETHING> EDITOR  ${primary_id=$data.table+'_id'}${id=1;}-->
 		
 		<script type="text/x-jquery-tmpl"  id="t-pay-editor">
 		<div id="overlay" class="overlay-left">
 		<div  class="scrollbox">
 			<form  id="${$data.table}-form" action="clients" class="main-left">
-			{{each(i,v) $data.h}}				
-				<table  >
+			{{each(i,v) $data.h}}
+			<table  >
 				{{each(k,val) v}}
 				{{if $data.typeMap[k] != 'HIDDEN'}}
 				<tr>
 					<td>{{html $data.fieldNames[k]}}:</td>
 					<td class="nowrap">
 					{{if $data.typeMap[k] == 'TEXT' || $data.typeMap[k] == 'READONLY' }}
-						<input name="${k}[]" value="${displayFormats[k]?display(displayFormats[k],val):val}"
+						<input name="${nID(k,v[$data.table+'_id'])}" value="${displayFormats[k]?display(displayFormats[k],val):val}"
 							{{if $data.typeMap[k] == 'READONLY'}}readonly="readonly"{{/if}}>
 					{{else $data.typeMap[k] == 'AREA'}}
-					<textarea name="${k}[]">${val}</textarea>
+					<textarea name="${nID(k,v[$data.table+'_id'])}">${val}</textarea>
 					{{else $data.typeMap[k] == 'SELECT'}}
-					<select name="${k}[]" >
+					<select name="${nID(k,v[$data.table+'_id'])}" >
 					{{each(oi, ov) $data.optionsMap[k]}}
 						<option value="${ov[0]}" {{if ov[0]==val}}selected="selected"{{/if}}>${ov[1]}</option>
 					{{/each}}
 					</select>
 					{{else $data.typeMap[k] == 'RADIO'}}
 					{{each(oi, ov) $data.optionsMap[k]}}
-						<input type="radio" name="${k}[]"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
+						<input type="radio" name="${nID(k,v[$data.table+'_id'])}"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
 					{{/each}}
 					{{else $data.typeMap[k] == 'CHECKBOX'}}					
-						<input type="checkbox" name="${k}[]" {{if val==1}}checked="checked"{{/if}}>	
+						<input type="checkbox" name="${nID(k,v[$data.table+'_id'])}" {{if val==1}}checked="checked"{{/if}}>	
 					{{/if}}
 					</td>
 				</tr>
@@ -689,6 +691,22 @@
 				return false;
 		  }
 		  
+		  	function hasNot(keyNames,key)
+		  {
+				if (!keyNames) {
+					 return true;
+				}
+				//trace(keyNames + ':' + key);
+				var keys = keyNames.split(',');
+				for(k in keys)
+				{
+					var re = new RegExp('.'+keys[k]+'$','');
+					if (keys[k]==key || key.match(re) ) 
+						  return false;
+				}
+				return true;
+		  }
+		  
 		  function kM(keyName,key)
 		  {
 				if (!keyName) {
@@ -701,6 +719,13 @@
 
 				return false;
 		  }		  
+		  
+		  function nID(k, id)
+		  {
+			//${k}[{$data.table+'_id'}]
+				//trace(k + '[' + id + ']');
+				return k + '[' + id + ']';
+		  }
 		  
 		  /*IBAN GENERATE + CHECK FUNCTIONS*/
 		  var gIBAN;

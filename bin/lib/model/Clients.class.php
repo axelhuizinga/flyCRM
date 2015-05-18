@@ -120,6 +120,9 @@ class model_Clients extends Model {
 					}
 					$editTables->set($table, php_Lib::hashOfAssociativeArray($this->doSelect($p, $sb, $phValues)));
 				}
+				if($table === "pay_source") {
+					haxe_Log::trace($tableFields->get($table), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 161, "className" => "model.Clients", "methodName" => "edit")));
+				}
 				unset($table,$sb,$phValues,$p);
 			}
 		}
@@ -140,7 +143,7 @@ class model_Clients extends Model {
 			$a = $this->doSelect($param, $sb, $phValues);
 			$cFields = new _hx_array($a);
 		}
-		haxe_Log::trace($cFields->length, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 183, "className" => "model.Clients", "methodName" => "getCustomFields")));
+		haxe_Log::trace($cFields->length, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 186, "className" => "model.Clients", "methodName" => "getCustomFields")));
 		$ret = new _hx_array(array());
 		{
 			$_g = 0;
@@ -193,26 +196,25 @@ class model_Clients extends Model {
 			$records = new _hx_array($a);
 		}
 		$rc = $this->num_rows;
-		haxe_Log::trace("" . _hx_string_rec($rc, "") . " == " . _hx_string_rec($records->length, ""), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 239, "className" => "model.Clients", "methodName" => "getRecordings")));
-		return php_Lib::toPhpArray($records->filter(array(new _hx_lambda(array(&$lead_id, &$rc, &$records), "model_Clients_7"), 'execute'))->splice(0, 5));
+		haxe_Log::trace("" . _hx_string_rec($rc, "") . " == " . _hx_string_rec($records->length, ""), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 242, "className" => "model.Clients", "methodName" => "getRecordings")));
+		return php_Lib::toPhpArray($records->filter(array(new _hx_lambda(array(&$lead_id, &$rc, &$records), "model_Clients_7"), 'execute')));
 	}
 	public function save($q) {
 		$lead_id = Std::parseInt($q->get("lead_id"));
 		$res = S::$my->query("INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id," . _hx_string_rec($lead_id, "") . " AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id FROM `vicidial_list`WHERE `lead_id`=" . _hx_string_rec($lead_id, "") . ")AS vl", null);
 		$log_id = S::$my->insert_id;
-		if($log_id > 0) {
+		if(Util::any2bool($res) && $log_id > 0) {
 			$cTable = "custom_" . Std::string($q->get("entry_list_id"));
-			haxe_Log::trace(_hx_string_or_null($cTable) . " log_id:" . _hx_string_rec($log_id, ""), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 256, "className" => "model.Clients", "methodName" => "save")));
 			if($this->checkOrCreateCustomTable($cTable, null)) {
 				$cLogTable = _hx_string_or_null($cTable) . "_log";
 				$res = S::$my->query("INSERT INTO " . _hx_string_or_null($cLogTable) . " SELECT * FROM (SELECT " . _hx_string_rec($log_id, "") . " AS log_id) AS ll JOIN (SELECT * FROM `" . _hx_string_or_null($cTable) . "`WHERE `lead_id`=" . _hx_string_rec($lead_id, "") . ")AS cl", null);
-				haxe_Log::trace("INSERT INTO " . _hx_string_or_null($cLogTable) . " ..." . _hx_string_or_null(S::$my->error) . "<", _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 263, "className" => "model.Clients", "methodName" => "save")));
+				haxe_Log::trace("INSERT INTO " . _hx_string_or_null($cLogTable) . " ..." . _hx_string_or_null(S::$my->error) . "<", _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 266, "className" => "model.Clients", "methodName" => "save")));
 				if(S::$my->error === "") {
 					$primary_id = S::$my->real_escape_string($q->get("primary_id"));
 					$sql = new StringBuf();
 					$sql->add("UPDATE " . _hx_string_or_null($cTable) . " SET ");
 					$cFields = S::tableFields("" . _hx_string_or_null($cTable), null);
-					haxe_Log::trace("" . _hx_string_or_null($cTable) . " fields:" . _hx_string_or_null($cFields->toString()), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 271, "className" => "model.Clients", "methodName" => "save")));
+					haxe_Log::trace("" . _hx_string_or_null($cTable) . " fields:" . _hx_string_or_null($cFields->toString()), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 274, "className" => "model.Clients", "methodName" => "save")));
 					$cFields->remove($primary_id);
 					$bindTypes = "";
 					$values2bind = null;
@@ -246,18 +248,18 @@ class model_Clients extends Model {
 					$sql->add($sets->join(","));
 					$sql->add(" WHERE lead_id=" . _hx_string_rec($lead_id, ""));
 					$stmt = S::$my->stmt_init();
-					haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 293, "className" => "model.Clients", "methodName" => "save")));
+					haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 296, "className" => "model.Clients", "methodName" => "save")));
 					$success = $stmt->prepare($sql->b);
 					if(!$success) {
-						haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 297, "className" => "model.Clients", "methodName" => "save")));
+						haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 300, "className" => "model.Clients", "methodName" => "save")));
 						return false;
 					}
 					$success = myBindParam($stmt, $values2bind, $bindTypes);
-					haxe_Log::trace("success:" . Std::string($success), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 301, "className" => "model.Clients", "methodName" => "save")));
+					haxe_Log::trace("success:" . Std::string($success), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 304, "className" => "model.Clients", "methodName" => "save")));
 					if($success) {
 						$success = $stmt->execute();
 						if(!$success) {
-							haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 307, "className" => "model.Clients", "methodName" => "save")));
+							haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 310, "className" => "model.Clients", "methodName" => "save")));
 							return false;
 						}
 						$sql = new StringBuf();
@@ -322,18 +324,18 @@ class model_Clients extends Model {
 						$sql->add($sets->join(","));
 						$sql->add(" WHERE lead_id=" . _hx_string_rec($lead_id, ""));
 						$stmt1 = S::$my->stmt_init();
-						haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 366, "className" => "model.Clients", "methodName" => "save")));
+						haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 369, "className" => "model.Clients", "methodName" => "save")));
 						$success1 = $stmt1->prepare($sql->b);
 						if(!$success1) {
-							haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 370, "className" => "model.Clients", "methodName" => "save")));
+							haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 373, "className" => "model.Clients", "methodName" => "save")));
 							return false;
 						}
 						$success1 = myBindParam($stmt1, $values2bind, $bindTypes);
-						haxe_Log::trace("success:" . Std::string($success1), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 376, "className" => "model.Clients", "methodName" => "save")));
+						haxe_Log::trace("success:" . Std::string($success1), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 379, "className" => "model.Clients", "methodName" => "save")));
 						if($success1) {
 							$success1 = $stmt1->execute();
 							if(!$success1) {
-								haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 382, "className" => "model.Clients", "methodName" => "save")));
+								haxe_Log::trace($stmt1->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 385, "className" => "model.Clients", "methodName" => "save")));
 								return false;
 							}
 							return $this->saveClientData($q);
@@ -341,7 +343,7 @@ class model_Clients extends Model {
 						return false;
 					}
 				} else {
-					haxe_Log::trace("oops:" . _hx_string_or_null(S::$my->error), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 392, "className" => "model.Clients", "methodName" => "save")));
+					haxe_Log::trace("oops:" . _hx_string_or_null(S::$my->error), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 395, "className" => "model.Clients", "methodName" => "save")));
 				}
 			}
 		}
@@ -351,6 +353,11 @@ class model_Clients extends Model {
 		$clientID = $q->get("client_id");
 		if($clientID === null) {
 			return true;
+		}
+		$res = S::$my->query("INSERT INTO fly_crm.client_log SELECT * FROM fly_crm.clients JOIN (SELECT NULL AS log_date)AS llog WHERE client_id=" . Std::string($clientID), null);
+		if(!Util::any2bool($res)) {
+			haxe_Log::trace("failed to: INSERT INTO fly_crm.client_log SELECT * FROM fly_crm.clients JOIN (SELECT NULL AS log_date)AS llog WHERE client_id=" . Std::string($clientID), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 411, "className" => "model.Clients", "methodName" => "saveClientData")));
+			return false;
 		}
 		$sql = new StringBuf();
 		$uFields = model_Clients::$clients_fields;
@@ -391,22 +398,101 @@ class model_Clients extends Model {
 		$sql->add($sets->join(","));
 		$sql->add(" WHERE client_id=" . Std::string($clientID));
 		$stmt = S::$my->stmt_init();
-		haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 432, "className" => "model.Clients", "methodName" => "saveClientData")));
+		haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 442, "className" => "model.Clients", "methodName" => "saveClientData")));
 		$success = $stmt->prepare($sql->b);
 		if(!$success) {
-			haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 436, "className" => "model.Clients", "methodName" => "saveClientData")));
+			haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 446, "className" => "model.Clients", "methodName" => "saveClientData")));
 			return false;
 		}
-		haxe_Log::trace($values2bind, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 440, "className" => "model.Clients", "methodName" => "saveClientData")));
+		haxe_Log::trace($values2bind, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 450, "className" => "model.Clients", "methodName" => "saveClientData")));
 		$success = myBindParam($stmt, $values2bind, $bindTypes);
-		haxe_Log::trace("success:" . Std::string($success), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 442, "className" => "model.Clients", "methodName" => "saveClientData")));
+		haxe_Log::trace("success:" . Std::string($success), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 452, "className" => "model.Clients", "methodName" => "saveClientData")));
 		if($success) {
 			$success = $stmt->execute();
 			if(!$success) {
-				haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 448, "className" => "model.Clients", "methodName" => "saveClientData")));
+				haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 458, "className" => "model.Clients", "methodName" => "saveClientData")));
 				return false;
 			}
 			return true;
+		}
+		return false;
+	}
+	public function save_pay_plan($q) {
+		$product = php_Lib::hashOfAssociativeArray($q->get("product"));
+		haxe_Log::trace(Std::string($product) . ":" . Std::string(model_Clients_8($this, $product, $q)), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 471, "className" => "model.Clients", "methodName" => "save_pay_plan")));
+		$pIt = $product->keys();
+		while($pIt->hasNext()) {
+			$pay_plan_id = $pIt->next();
+			$res = S::$my->query("INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,user,pay_plan_state,pay_method,NULL AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id), null);
+			if(!Util::any2bool($res)) {
+				haxe_Log::trace("Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT * FROM fly_crm.pay_plan WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 482, "className" => "model.Clients", "methodName" => "save_pay_plan")));
+				return false;
+			}
+			$sql = new StringBuf();
+			$uFields = model_Clients::$pay_plan_fields;
+			$uFields->remove("pay_plan_id");
+			$bindTypes = "";
+			$values2bind = null;
+			$i = 0;
+			$dbFieldTypes = php_Lib::hashOfAssociativeArray(php_Lib::associativeArrayOfObject(S::$conf->get("dbFieldTypes")));
+			$sets = new _hx_array(array());
+			$sql->add("UPDATE fly_crm.pay_plan SET ");
+			{
+				$_g = 0;
+				while($_g < $uFields->length) {
+					$c = $uFields[$_g];
+					++$_g;
+					haxe_Log::trace(_hx_string_or_null($c) . ":" . Std::string(Type::typeof($q->get($c))), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 496, "className" => "model.Clients", "methodName" => "save_pay_plan")));
+					$p = $q->get($c);
+					$val = null;
+					if($p !== null) {
+						if(!Std::is($p, _hx_qtype("String"))) {
+							$valMap = php_Lib::hashOfAssociativeArray($q->get($c));
+							$val = $valMap->get($pay_plan_id);
+							unset($valMap);
+						} else {
+							$val = $p;
+						}
+						$values2bind[$i++] = $val;
+						$type = $dbFieldTypes->get($c);
+						if(Util::any2bool($type)) {
+							$bindTypes .= _hx_string_or_null($type);
+						} else {
+							$bindTypes .= "s";
+						}
+						$sets->push(_hx_string_or_null($c) . "=?");
+						unset($type);
+					}
+					unset($val,$p,$c);
+				}
+				unset($_g);
+			}
+			if($sets->length === 0) {
+				continue;
+			}
+			$sql->add($sets->join(","));
+			$sql->add(" WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id));
+			$stmt = S::$my->stmt_init();
+			haxe_Log::trace($sql->b, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 524, "className" => "model.Clients", "methodName" => "save_pay_plan")));
+			$success = $stmt->prepare($sql->b);
+			if(!$success) {
+				haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 528, "className" => "model.Clients", "methodName" => "save_pay_plan")));
+				return false;
+			}
+			haxe_Log::trace($values2bind, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 532, "className" => "model.Clients", "methodName" => "save_pay_plan")));
+			$success = myBindParam($stmt, $values2bind, $bindTypes);
+			haxe_Log::trace("success:" . Std::string($success), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 534, "className" => "model.Clients", "methodName" => "save_pay_plan")));
+			if($success) {
+				$success = $stmt->execute();
+				if(!$success) {
+					haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 540, "className" => "model.Clients", "methodName" => "save_pay_plan")));
+					return false;
+				}
+				if(!$pIt->hasNext()) {
+					return true;
+				}
+			}
+			unset($values2bind,$uFields,$success,$stmt,$sql,$sets,$res,$pay_plan_id,$i,$dbFieldTypes,$bindTypes);
 		}
 		return false;
 	}
@@ -417,7 +503,7 @@ class model_Clients extends Model {
 		$newTable = S::$my->real_escape_string(_hx_string_or_null($srcTable) . "_" . _hx_string_or_null($suffix));
 		$res = S::$my->query("SHOW TABLES LIKE  \"" . _hx_string_or_null($newTable) . "\"", null);
 		if(Util::any2bool($res) && $res->num_rows === 0) {
-			haxe_Log::trace("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 463, "className" => "model.Clients", "methodName" => "checkOrCreateCustomTable")));
+			haxe_Log::trace("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 558, "className" => "model.Clients", "methodName" => "checkOrCreateCustomTable")));
 			$res1 = S::$my->query("CREATE TABLE `" . _hx_string_or_null($newTable) . "` like `" . _hx_string_or_null($srcTable) . "`", null);
 			if(S::$my->error === "") {
 				$res1 = S::$my->query("ALTER TABLE " . _hx_string_or_null($newTable) . " DROP PRIMARY KEY, ADD `log_id` INT(9) NOT NULL  FIRST,  ADD  PRIMARY KEY (`log_id`)", null);
@@ -429,7 +515,7 @@ class model_Clients extends Model {
 				S::hexit(S::$my->error);
 			}
 		} else {
-			haxe_Log::trace("num_rows:" . _hx_string_rec($res->num_rows, ""), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 474, "className" => "model.Clients", "methodName" => "checkOrCreateCustomTable")));
+			haxe_Log::trace("num_rows:" . _hx_string_rec($res->num_rows, ""), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 569, "className" => "model.Clients", "methodName" => "checkOrCreateCustomTable")));
 		}
 		return true;
 	}
@@ -446,8 +532,8 @@ class model_Clients extends Model {
 }
 model_Clients::$vicdial_list_fields = _hx_explode(",", "lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id");
 model_Clients::$clients_fields = _hx_explode(",", "client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,titel,namenszusatz,adresszusatz,storno_grund");
-model_Clients::$pay_source_fields = _hx_explode(",", "id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date");
-model_Clients::$pay_plan_fields = _hx_explode(",", "pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,cycle,amount,product,user,pay_plan_state,pay_method");
+model_Clients::$pay_source_fields = _hx_explode(",", "pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date");
+model_Clients::$pay_plan_fields = _hx_explode(",", "pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,user,pay_plan_state,pay_method");
 function model_Clients_0(&$fields, &$phValues, &$q, &$sb, $f) {
 	{
 		return S::$my->real_escape_string($f);
@@ -495,6 +581,17 @@ function model_Clients_6(&$__hx__this, &$param, &$phValues, &$sb, &$table_name) 
 }
 function model_Clients_7(&$lead_id, &$rc, &$records, $r) {
 	{
-		return php_Lib::objectOfAssociativeArray($r)->length_in_sec > 20;
+		return php_Lib::objectOfAssociativeArray($r)->length_in_sec > 60;
+	}
+}
+function model_Clients_8(&$__hx__this, &$product, &$q) {
+	{
+		$_e = $product;
+		return array(new _hx_lambda(array(&$_e, &$product, &$q), "model_Clients_9"), 'execute');
+	}
+}
+function model_Clients_9(&$_e, &$product, &$q, $pred) {
+	{
+		return Lambda::count($_e, $pred);
 	}
 }

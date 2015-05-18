@@ -29,7 +29,7 @@ class model_Users extends Model {
 }
 function model_Users_0(&$__hx__this, &$param, &$phValues, &$result, &$sb, &$user) {
 	if($user === null) {
-		return "active|Y";
+		return "user_group|AGENTS_A";
 	} else {
 		return "user|" . _hx_string_or_null($user);
 	}

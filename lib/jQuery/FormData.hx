@@ -73,9 +73,10 @@ class FormData
 		
 		for (fd in ret)
 		{
-			if (Reflect.hasField(App.storeFormats, fd.name))
+			var itemName:String = fd.name.split('[')[0];
+			if (Reflect.hasField(App.storeFormats, itemName))
 				{
-					var sForm:Array<Dynamic> = Reflect.field(App.storeFormats, fd.name);
+					var sForm:Array<Dynamic> = Reflect.field(App.storeFormats, itemName);
 					var callParam:Array<Dynamic> = sForm.length>1 ? sForm.slice(1) : [];
 					var method:String = sForm[0];
 					trace('call FormData' + method);
@@ -191,13 +192,15 @@ class FormData
 	{
 		/*var t = value.split();
 					 return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);*/
-		var d:Array<String> = ~/[- :]/g.split(gDateTime).map(function(s:String) return StringTools.trim(s));
+		var d:Array<String> = ~/[\. :]/g.split(gDateTime).map(function(s:String) return StringTools.trim(s));
+		trace(d);
 		if (d.length != 6)
 		{			
 			trace('Falsches Datumsformat:$gDateTime');
 			return 'Falsches Datumsformat:' + gDateTime;
 		}
-		return '$d[2].$d[1].$d[0] $d[3]:$d[4]:$d[5]';
+		return d[2] + '-' + d[1] + '-' + d[0] + ' ' + d[3] + ':' + d[4] + ':' + d[5];
+		//return '$d[2].$d[1].$d[0] $d[3]:$d[4]:$d[5]';
 		//return d[2] + '-' + d[1] + '-' + d[0] + ' ' + time;
 	}	
 }

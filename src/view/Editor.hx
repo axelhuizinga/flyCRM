@@ -220,15 +220,8 @@ class Editor extends View
 								save(action);
 						}
 						else
-						{//J('#' + parentView.id + '-edit-form')
+						{
 							App.inputError( J('#' + parentView.id + '-edit-form'), ['account','blz','iban'] );
-							/*App.modal('confirm', { 
-								header:'Bitte folgende Werte prüfen:',
-								id:parentView.id,
-								info:'IBAN, Kontonummer oder  BLZ sind nicht korrekt!',
-								mID:'confirm',
-								confirm:[]
-							} );*/
 						}
 					});
 				}

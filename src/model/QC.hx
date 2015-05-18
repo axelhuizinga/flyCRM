@@ -42,6 +42,46 @@ class QC extends Clients
 		var fieldRequired:StringMap<Bool> = new StringMap();
 		var typeMap:StringMap<String> = new StringMap();
 		var optionsMap:StringMap<String> = new StringMap();
+		//--->
+		//var eF:StringMap<Array<StringMap<String>>> = getEditorFields().get('vicidial_list');
+		var eF:Array<StringMap<String>> = getEditorFields().get('vicidial_list');
+
+		for (f in eF)
+		{
+			/*var field:String = f.get('field_label');
+			if (! cFields.has(field))
+			{
+				
+				cFields.push(field);
+				cF.push(f);
+			}*/
+			fieldNames.set(f.get('field_label'), f.get('field_name'));					
+			if (f.get('field_options') != null)
+				optionsMap.set(f.get('field_label'), f.get('field_options'));
+			typeMap.set(f.get('field_label'), f.get('field_type'));
+		}
+		/*var keys:Iterator<String> = eF.keys();				
+		while (keys.hasNext())
+		{
+			var k:String = keys.next();
+
+			var aFields:Array<StringMap<String>> = eF.get(k);
+			//trace(aFields);
+			//var cFields:Array<String> = aFields.map(function(field:StringMap<String>):String return field.get('field_label'));
+			var vFields:Array<String> = eF.map(function(field:StringMap<String>):String return field.get('field_label'));
+			trace(vFields);
+			//tableFields.set(k, cFields);
+			for (f in 0...vFields.length)
+			{
+				fieldNames.set(vFields[f], eF[f].get('field_name'));					
+				if (eF[f].get('field_options') != null)
+					optionsMap.set(vFields[f], aFields[f].get('field_options'));
+				typeMap.set(vFields[f], aFields[f].get('field_type'));
+			}			
+		}*/
+		//trace(cFields);
+		//trace(fieldNames);
+		//<---
 		for (f in 0...cFields.length)
 		{
 			fieldNames.set(cFields[f], cF[f].get('field_name'));
@@ -63,6 +103,7 @@ class QC extends Clients
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
 		//trace(param);
+		trace(fieldNames);
 		data =  {
 			fieldDefault:Lib.associativeArrayOfHash(fieldDefault),
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),
@@ -78,7 +119,7 @@ class QC extends Clients
 		var p:StringMap<String> = new StringMap();
 		p.set('table', 'vicidial_users');
 		p.set('fields', 'user,full_name');
-		p.set('where', 'active|Y');
+		p.set('where', 'user_group|AGENTS_A');
 		//data.userMap = doSelect(p, sb, phValues);
 		trace(num_rows + ':' + param.get('owner'));
 		data.userMap = new Users().get_info();
@@ -208,9 +249,9 @@ class QC extends Clients
 						values2bind[i++] = S.user;
 						bindTypes += 's';
 						sets.push('province=?');//STORE QC AGENT
-						/*values2bind[i++] = 'XXX';
+						values2bind[i++] = 'XXX';
 						bindTypes += 's';						
-						sets.push('security_phrase=?');//RESTORE SAVING FLAG*/
+						sets.push('security_phrase=?');//RESTORE SAVING FLAG
 						if (q.get('status') == 'QCOK' || q.get('status') == 'QCBAD')
 						{//	MOVE INTO MITGLIEDER LISTE (10000) OR QCBAD (1800)
 							var list_id:Int = 10000;

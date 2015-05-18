@@ -5,6 +5,7 @@ package view;
  * @author ...
  */
 import haxe.ds.StringMap;
+import haxe.Timer;
 import jQuery.*;
 import jQuery.JHelper.J;
 import jQuery.FormData.FData;
@@ -25,9 +26,10 @@ class ClientEditor extends Editor
 		super(data);
 	}
 	
-	override public function contextAction(contextAction:String)
+	override public function contextAction(action:String)
 	{
-		switch(contextAction)
+		this.action = action;
+		switch(action)
 		{
 			case 'close':
 				trace('going to close:' + J('#overlay').length);
@@ -44,7 +46,6 @@ class ClientEditor extends Editor
 						parentView.interactionState = 'init';
 						overlay.animate( { opacity:0.0 }, 300, null, function() { overlay.detach(); } );						
 				}
-
 			case 'save':
 				switch(activeScreen)
 				{
@@ -67,16 +68,22 @@ class ClientEditor extends Editor
 					case 'pay_plan', 'pay_history', 'client_history':
 						save_sub_screen();
 					default:// SAVE CLIENT DATA
-						save();
+						if (parentView.interactionState == 'call')
+							cMenu.hangup(this, function() save(action));
+						else
+							save(action);						
 				}
 
 				
 			case 'call':
+				if (parentView.interactionState == 'call')					
+					cMenu.call(this, function() save(action));
+				else
 				cMenu.call(this);
 			case 'pay_plan','pay_source','pay_history','client_history':
-				showScreen(contextAction);
+				showScreen(action);
 			default:
-				trace(contextAction);
+				trace(action);
 		}//DONE END ACTION CASE EDIT
 	}
 	
@@ -140,7 +147,7 @@ class ClientEditor extends Editor
 		sData.typeMap = typeMap;
 		sData.fieldNames = fieldNames;
 		
-		//trace(sData);
+		trace(sData);
 		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
 		screens.set(name, J('#t-pay-editor').tmpl(sData).appendTo('#' + parentView.id).css( {
@@ -150,10 +157,21 @@ class ClientEditor extends Editor
 			width:Std.string( J('#clients-menu').offset().left - 35 ) + 'px'
 		}).animate( { opacity:1 } ));
 		activeScreen = name;
+		J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());
 	}
 	
 	override public function save(?status:String):Void
 	{
+		trace(parentView.interactionState);
+		if (parentView.interactionState == 'call')
+		{
+			if (!ready4save())
+			{//	SET WAIT TIMEOUT
+				trace ("have to wait...");
+					Timer.delay(function() save(status), 500);
+				return;				
+			}
+		}		
 		var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
 		p.push( { name:'className', value:parentView.name });
 		p.push( { name:'action', value:'save' });
@@ -168,7 +186,7 @@ class ClientEditor extends Editor
 					p.push( { name:k, value:eData.data(k) } );
 			}													
 		}
-		trace(p);
+		//trace(p);
 		//return;
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			trace('>' + data + ':' + Type.typeof(data) + ': ' + (data ? 'Y':'N'));

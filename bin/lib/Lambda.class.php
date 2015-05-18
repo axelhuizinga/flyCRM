@@ -63,5 +63,28 @@ class Lambda {
 		}
 		return $l;
 	}
+	static function count($it, $pred = null) {
+		$n = 0;
+		if($pred === null) {
+			if(null == $it) throw new HException('null iterable');
+			$__hx__it = $it->iterator();
+			while($__hx__it->hasNext()) {
+				unset($_);
+				$_ = $__hx__it->next();
+				$n++;
+			}
+		} else {
+			if(null == $it) throw new HException('null iterable');
+			$__hx__it = $it->iterator();
+			while($__hx__it->hasNext()) {
+				unset($x);
+				$x = $__hx__it->next();
+				if(call_user_func_array($pred, array($x))) {
+					$n++;
+				}
+			}
+		}
+		return $n;
+	}
 	function __toString() { return 'Lambda'; }
 }

@@ -26,7 +26,7 @@ class Users extends Model
 		var param:StringMap<String> = new StringMap();
 		param.set('table', 'vicidial_users');
 		param.set('fields', 'user,user_level, pass,full_name');
-		param.set('where', (user == null?'active|Y':'user|$user'));
+		param.set('where', (user == null?'user_group|AGENTS_A':'user|$user'));
 		param.set('limit', '50');
 		var userMap:NativeArray = doSelect(param, sb, phValues);		
 		//trace(param);

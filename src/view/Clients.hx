@@ -90,7 +90,7 @@ typedef ClientsData =
 	override public function update(data:Dynamic)
 	{
 		super.update(data);
-		trace(data);
+		//trace(data);
 		trace('#' + id + '-list tr[data-status]' + J('#' + id + '-list data-status').length);
 		J('#' + id + '-list tr[data-status]').each(function(i:Int, n:Node)
 		{

@@ -103,7 +103,7 @@ var uiData = {
 					[{							
 						Clients:{
 							action:'find',
-							fields:'entry_list_id,status,vicidial_list.lead_id,vendor_lead_code,first_name,last_name,phone_number,vendor_lead_code,city,register_on',
+							fields:'entry_list_id,status,vicidial_list.lead_id,first_name,last_name,phone_number,client_id,city,register_on',
 							primary_id:'vendor_lead_code',
 							hidden:'lead_id,entry_list_id,status',							
 							id:'clients',
@@ -133,7 +133,7 @@ var uiData = {
 										{
 											action:'find',
 											label:'Finden',
-											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+											fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
 											ranges:['last_local_call_time'],
 											table:'vicidial_list',
 											buttons:

@@ -86,6 +86,11 @@ div.lpad
 	height:100%;
 }
 
+.main-left table
+{
+	 width: 100%;
+}
+
 .ui-accordion .ui-accordion-content
 {
 	padding: 0;
@@ -223,6 +228,9 @@ tr.selected
 	background-color: rgb(242,180,40);
 }
 
+.headrow th{
+	 text-align: left;
+}
 
 #choice-content 
 {
@@ -392,6 +400,10 @@ tr.MPRINT td
 tr.QCOK td
 {
 	 color: #750075!important;
+}
+tr.QCDUP td
+{
+	 color: #ff99ff!important;
 }
 tr.MPASS td
 {

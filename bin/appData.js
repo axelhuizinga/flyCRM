@@ -8,15 +8,15 @@ var fieldNames =
 	city:'Ort',
 	last_local_call_time:'Anrufzeit',
 	lead_id:'LeadID',
-	client_id:'Mitgliedsnr.',
-	vendor_lead_code:'Mitgliedsnr.',
+	client_id:'MitglNr.',
+	vendor_lead_code:'MitglNr.',
 	vicidial_campaigns:'Kampagnen',
 	vicidial_lists:'Listen',
-	entry_date:'Auftragsdatum',
-	order_date:'Auftragsdatum',
+	entry_date:'Verkauf',
+	order_date:'Verkauf',
 	join_date:'Auftragsdatum',
 	full_name:'Agent',
-	register_on:'Beitrittsdatum'
+	register_on:'Verkauf'
 }
 
 var appLabel =

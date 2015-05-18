@@ -440,6 +440,9 @@ class View
 				parentView:this
 			});
 		}
+		//if(J('#clients-menu').length>0 && 
+		J('.main-left').width(Std.string( J('#'+id+'-menu').offset().left - 35 ) );
+		trace(Std.string( J('#'+id+'-menu').offset().left - 35 ) );
 		wait(false);
 	}
 	
