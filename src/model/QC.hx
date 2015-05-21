@@ -162,10 +162,11 @@ class QC extends Clients
 	override public function save(q:StringMap<Dynamic>):Bool
 	{
 		var lead_id = Std.parseInt(q.get('lead_id'));
+		var user:String = S.user;
 		//COPY LEAD TO VICIDIAL_LEAD_LOG + CUSTOM_LOG
 		//return false;
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query(
-			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id,$lead_id AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id FROM `vicidial_list`WHERE `lead_id`=$lead_id)AS vl'
+			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id,$lead_id AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id,$user AS log_user FROM `vicidial_list`WHERE `lead_id`=$lead_id)AS vl'
 			);
 		var log_id:Int = S.my.insert_id;
 		if (log_id > 0)

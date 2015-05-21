@@ -19,11 +19,14 @@ class ClientEditor extends Editor
 {	
 	var screens:StringMap<JQuery>;
 	var activeScreen:String;
-	var editData:Dynamic;
+	var editData:Dynamic;	
 	
 	public function new(?data:Dynamic)
 	{
 		super(data);
+		accountSelector = "pay_source-form input[name^='account']";
+		blzSelector = "pay_source-form input[name^='blz']";
+		ibanSelector = "pay_source-form input[name^='iban']";		
 	}
 	
 	override public function contextAction(action:String)
@@ -60,8 +63,8 @@ class ClientEditor extends Editor
 								save_sub_screen();
 							}
 							else
-							{//J('#' + parentView.id + '-edit-form')
-								App.inputError( J('#' + parentView.id + '-edit-form'), ['account','blz','iban'] );
+							{//J('#' + parentView.id + '-edit-form')	TODO: App.inputError implement startsWith
+								App.inputError( J('#' + parentView.id + '-edit-form'), ['account[','blz[','iban['] );
 							}
 						});
 					}
@@ -82,6 +85,8 @@ class ClientEditor extends Editor
 				cMenu.call(this);
 			case 'pay_plan','pay_source','pay_history','client_history':
 				showScreen(action);
+			case 'reload':
+				reload();
 			default:
 				trace(action);
 		}//DONE END ACTION CASE EDIT
@@ -90,8 +95,12 @@ class ClientEditor extends Editor
 	function reload()
 	{
 		close();
-		trace(cMenu.parentView.id +':' + J('#' + cMenu.parentView.id + 'tr[class~="selected"]').length);
-		edit(J('#' + cMenu.parentView.id + 'tr[class~="selected"]'));
+		cMenu.parentView.reloadID = cMenu.parentView.selectedID;
+		trace(cMenu.parentView.reloadID);
+		cMenu.parentView.find(parentView.lastFindParam);
+		
+		//trace(cMenu.parentView.id +':' + J('#' + cMenu.parentView.id + 'tr[class~="selected"]').length);
+		//edit(J('#' + cMenu.parentView.id + 'tr[class~="selected"]'));
 	}
 	
 	function save_sub_screen()
@@ -99,6 +108,7 @@ class ClientEditor extends Editor
 		var p:Array<FData> = FormData.save(J('#' + activeScreen + '-form'));
 		p.push( { name:'className', value:parentView.name });
 		p.push( { name:'action', value:'save_' + activeScreen});
+		p.push( { name:'user', value:App.user});
 		p.push( { name:'primary_id', value:vData.primary_id} );
 		p.push( { name: vData.primary_id, value: eData.attr('id') } );
 		if (parentView.vData.hidden != null)
@@ -113,12 +123,15 @@ class ClientEditor extends Editor
 		}
 		trace(p);
 		//return;
+		wait();
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
-			trace(data +': ' + (data == 'true' ? 'Y':'N'));
-			if (data == 'true') {
-			var s:JQuery = screens.get(activeScreen);
-			s.animate( { opacity:0.0 }, 300, null, function() { s.detach(); } );
-			activeScreen = null;
+			trace(data +': ' + (data  ? 'Y':'N'));
+			if (data) {
+				wait(false);
+				parentView.interactionState = 'subScreenSaved';
+				var s:JQuery = screens.get(activeScreen);
+				s.animate( { opacity:0.0 }, 300, null, function() { s.detach(); } );
+				activeScreen = null;
 			}
 		});
 	}
@@ -174,7 +187,8 @@ class ClientEditor extends Editor
 		}		
 		var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
 		p.push( { name:'className', value:parentView.name });
-		p.push( { name:'action', value:'save' });
+		p.push( { name:'action', value:'save' } );
+		p.push( { name:'user', value:App.user});
 		p.push( { name:'primary_id', value: parentView.vData.primary_id} );
 		p.push( { name:parentView.vData.primary_id, value: eData.attr('id') } );
 		if (parentView.vData.hidden != null)
@@ -257,7 +271,6 @@ class ClientEditor extends Editor
 		J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());
 		//trace(id + ':' + parentView.id + ':' + J('#' + parentView.id +' .scrollbox').length + ':' +   J('#' + parentView.id +' .scrollbox').height());
 		trace(leadID);
-
 		
 		//cMenu.root.accordion("refresh");
 	}

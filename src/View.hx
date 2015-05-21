@@ -87,6 +87,7 @@ class View
 	public var inputs:StringMap<Input>;	
 	public var selectedID:String;
 	public var lastFindParam:StringMap<String>;
+	public var reloadID:String;
 	
 			
 	public function new(?data:Dynamic ) 
@@ -442,8 +443,15 @@ class View
 		}
 		//if(J('#clients-menu').length>0 && 
 		J('.main-left').width(Std.string( J('#'+id+'-menu').offset().left - 35 ) );
-		trace(Std.string( J('#'+id+'-menu').offset().left - 35 ) );
+		trace(Std.string( J('#'+id+'-menu').offset().left - 35 ) +' reloadID:' + reloadID);
 		wait(false);
+		if (reloadID != null)
+		{
+			trace('#' + reloadID + ' : ' + J('#' + reloadID ).length);
+			J('#' + reloadID ).children().first().trigger('click');
+			trace(id +':' + J('#' + id + '-list tr[class~="selected"]').length);
+			reloadID =  null;
+		}		
 	}
 	
 
@@ -476,7 +484,7 @@ class View
 		if (timeout == null)
 			timeout = App.waitTime;
 			
-		J('#t-wait' ).tmpl( { wait: message} ).appendTo('#' +id).css({width:J(Browser.window).width(), height:J(Browser.window).height()}).animate({opacity:0.8});
+		J('#t-wait' ).tmpl( { wait: message} ).appendTo('#' +id).css({width:J(Browser.window).width(), height:J(Browser.window).height(), zIndex:8000}).animate({opacity:0.8});
 
 		spinner = untyped  Browser.window.spin('wait');
 		if (message == App.uiMessage.retry || message == App.uiMessage.timeout) 

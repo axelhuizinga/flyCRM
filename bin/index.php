@@ -258,7 +258,7 @@
 		<script type="text/x-jquery-tmpl"  id="t-clients-editor">
 		<div id="overlay" class="overlay-left">
 		<div  class="scrollbox">
-			<form  id="clients-edit-form" action="clients" class="main-left">
+			<form  id="clients-edit-form" action="clients" class="2main-left">
 			{{each(i,v) $data.editData.clients.h}}				
 				<table id="edit-client">
 				{{each(k,val) v}}
@@ -302,7 +302,7 @@
 		<script type="text/x-jquery-tmpl"  id="t-pay-editor">
 		<div id="overlay" class="overlay-left">
 		<div  class="scrollbox">
-			<form  id="${$data.table}-form" action="clients" class="main-left">
+			<form  id="${$data.table}-form" action="clients" class="2main-left">
 			{{each(i,v) $data.h}}
 			<table  >
 				{{each(k,val) v}}

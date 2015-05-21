@@ -56,8 +56,9 @@ typedef ClientsData =
 		if(data.views != null)
 			addViews(data.views);
 			
-		addInteractionState('selected', { disables:[], enables:['call','pay_plan', 'pay_source','pay_history','client_history','close','save'] } );
-		addInteractionState('init', { disables:['call','pay_plan', 'pay_source','pay_history','client_history','close','save'], enables:[] } );
+		addInteractionState('selected', { disables:['reload'], enables:['call','pay_plan', 'pay_source','pay_history','client_history','close','save'] } );
+		addInteractionState('subScreenSaved', { enables:['reload'],disables:[] } );
+		addInteractionState('init', { disables:['call','pay_plan', 'pay_source','pay_history','client_history','close','save','reload'], enables:[] } );
 		edit = cast views.get(instancePath + '.' + id + '-editor');		
 		trace('found editor:' + instancePath + '.' +  id + '-editor :' + edit.vData.id);
 		init();

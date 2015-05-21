@@ -32,28 +32,36 @@ class Editor extends View
 	public var agent:String;
 	public var leadID:String;
 	var savingFlagSet:Bool;
+	var accountSelector:String;
+	var blzSelector:String;
+	var ibanSelector:String;
 	public function new(?data:Dynamic)  
 	{
 		super(data);
+		
 		cMenu =  cast (parentView.views.get(parentView.instancePath + '.' + parentView.id + '-menu'), ContextMenu);
 		name = parentView.name;	//ACCESS PARENT VIEW CLASS ON SERVER
 		//Out.dumpObject(data);
 		templ = J('#t-' + id);
 		trace(id);
 		init();
+		accountSelector = parentView.id + '-edit-form ' + 'input[name="account"]';
+		blzSelector = parentView.id + '-edit-form ' + 'input[name="blz"]';
+		ibanSelector = parentView.id + '-edit-form ' + 'input[name="iban"]';
 	}
 	
 	public function checkIban():Bool
 	{
-		var iban:String = J('#' + parentView.id + '-edit-form  input[name="iban"]').val();
+		var iban:String = J('#' + parentView.id + '-edit-form ' + ibanSelector).val();
 		trace(iban);
 		return IBAN.checkIBAN(iban);
 	}
 	
 	public function checkAccountAndBLZ(ok2submit:Bool->Void):Void
 	{
-		var account:String = J('#' + parentView.id + '-edit-form input[name="account"]').val();
-		var blz:String = J('#' + parentView.id + '-edit-form input[name="blz"]').val();
+		var account:String = J('#' + accountSelector).val();
+		var blz:String = J('#' +  blzSelector).val();
+		trace('accountSelector: #' + accountSelector);
 		trace(account + ':' + blz);
 		if (!(account.length > 0 && blz.length > 0))
 		{
@@ -63,7 +71,7 @@ class Editor extends View
 		IBAN.buildIBAN(account, blz, function(success:IbanSuccess) {
 			if (IBAN.checkIBAN(success.iban))
 			{
-				J('#' + parentView.id + '-edit-form input[name="iban"]').val(success.iban);
+				J('#' + ibanSelector ).val(success.iban);
 				ok2submit(true);
 			}
 		},
@@ -157,6 +165,7 @@ class Editor extends View
 	
 	public function  edit(dataRow:JQuery)
 	{
+		trace(dataRow);
 		savingFlagSet = false;
 		var p:Dynamic = resetParams();
 		p.primary_id = (vData.primary_id == null ? parentView.primary_id : vData.primary_id);
@@ -296,7 +305,8 @@ class Editor extends View
 		var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
 		//trace(p);
 		p.push( { name:'className', value:parentView.name });
-		p.push( { name:'action', value:'save' });
+		p.push( { name:'action', value:'save' } );
+		p.push( { name:'user', value:App.user});
 		p.push( { name:'primary_id', value: parentView.vData.primary_id} );
 		p.push( { name:parentView.vData.primary_id, value: eData.attr('id') } );
 		trace (status);
@@ -342,6 +352,7 @@ class Editor extends View
 		}
 		data.user = eData.data('owner');
 		optionsMap = data.optionsMap = dataOptions;
+		data.typeMap.buchungs_tag = 'SELECT';
 		typeMap = data.typeMap;
 		var dRows:Array<Dynamic> = data.rows;
 		var fieldDefault:Dynamic = data.fieldDefault;

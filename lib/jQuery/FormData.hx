@@ -129,6 +129,7 @@ class FormData
 					callParam.push(item.value);
 					//item.value = Reflect.callMethod(FormData, Reflect.field(FormData, method), callParam);
 					item.value = Reflect.callMethod(Browser.window, Reflect.field(Browser.window, method), callParam);
+					trace(item.value);
 				}
 				var matchTypeOption:JQuery =  jForm.find('[name="' + item.name + '_match_option"]');
 				if (matchTypeOption.length == 1)

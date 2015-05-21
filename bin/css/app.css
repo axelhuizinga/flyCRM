@@ -397,7 +397,7 @@ tr.MPRINT td
 {
 	 color: #a86602!important;
 }
-tr.QCOK td
+tr.QCOK td, tr.QCOKM td
 {
 	 color: #750075!important;
 }
@@ -407,5 +407,5 @@ tr.QCDUP td
 }
 tr.MPASS td
 {
-	 color: #800000!important;
+	 color: #880000!important;
 }

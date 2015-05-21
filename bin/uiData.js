@@ -88,7 +88,7 @@ var uiData = {
 									id:'qc-editor',
 									attach2:'#qc',					
 									join_table:'custom_*list_id',
-									read_only:'vendor_lead_code,last_local_call_time',
+									read_only:'vendor_lead_code',
 									TODO:'PHONE-NUMBER READONLY?'
 								}
 							}
@@ -120,16 +120,7 @@ var uiData = {
 									id:'clients-menu',
 									heightStyle: 'fill',
 									items:[
-										{
-											action:'mailings',
-											label:'Anschreiben',											
-											buttons:
-											{
-												previewOne:'Vorschau',
-												printOne:'Drucken',
-												printNewMembers:'Alle neuen Anschreiben Drucken'												
-											}
-										},										
+									
 										{
 											action:'find',
 											label:'Finden',
@@ -141,6 +132,16 @@ var uiData = {
 												find:'Anzeigen'
 											}
 										},
+										{
+											action:'mailings',
+											label:'Anschreiben',											
+											buttons:
+											{
+												previewOne:'Vorschau',
+												printOne:'Drucken',
+												printNewMembers:'Alle neuen Anschreiben Drucken'												
+											}
+										},											
 										{ 
 											action:'edit',
 											label:'Bearbeiten',
