@@ -35,7 +35,7 @@ class QC extends Clients
 		var entry_list_id:String = param.get('entry_list_id');
 		var cF:Array<StringMap<String>> = getCustomFields(entry_list_id);
 		var cFields:Array<String> = cF.map(function(field:StringMap<String>):String return field.get('field_label'));
-		//trace(cFields);
+		trace(cFields);
 		//trace(param);
 		var fieldDefault:StringMap<String> = new StringMap();
 		var fieldNames:StringMap<String> = new StringMap();
@@ -60,25 +60,7 @@ class QC extends Clients
 				optionsMap.set(f.get('field_label'), f.get('field_options'));
 			typeMap.set(f.get('field_label'), f.get('field_type'));
 		}
-		/*var keys:Iterator<String> = eF.keys();				
-		while (keys.hasNext())
-		{
-			var k:String = keys.next();
-
-			var aFields:Array<StringMap<String>> = eF.get(k);
-			//trace(aFields);
-			//var cFields:Array<String> = aFields.map(function(field:StringMap<String>):String return field.get('field_label'));
-			var vFields:Array<String> = eF.map(function(field:StringMap<String>):String return field.get('field_label'));
-			trace(vFields);
-			//tableFields.set(k, cFields);
-			for (f in 0...vFields.length)
-			{
-				fieldNames.set(vFields[f], eF[f].get('field_name'));					
-				if (eF[f].get('field_options') != null)
-					optionsMap.set(vFields[f], aFields[f].get('field_options'));
-				typeMap.set(vFields[f], aFields[f].get('field_type'));
-			}			
-		}*/
+		
 		//trace(cFields);
 		//trace(fieldNames);
 		//<---
@@ -103,7 +85,7 @@ class QC extends Clients
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
 		//trace(param);
-		trace(fieldNames);
+		//trace(fieldNames);
 		data =  {
 			fieldDefault:Lib.associativeArrayOfHash(fieldDefault),
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),
@@ -320,25 +302,5 @@ class QC extends Clients
 		return false;
 	}
 	
-	/*function checkOrCreateCustomTable(srcTable:String, ?suffix:String='log'):Bool
-	{
-		var newTable:String = S.my.real_escape_string(srcTable + '_' + suffix);
-		//trace('SHOW TABLES LIKE  "$newTable"');
-		var res:MySQLi_Result = S.my.query('SHOW TABLES LIKE  "$newTable"');
-		if (res.any2bool() && res.num_rows == 0)
-		{
-			trace('CREATE TABLE `$newTable` like `$srcTable`');
-			var res:EitherType < MySQLi_Result, Bool > = S.my.query('CREATE TABLE `$newTable` like `$srcTable`');
-			if (S.my.error == '')
-			{
-				res = S.my.query('ALTER TABLE $newTable DROP PRIMARY KEY, ADD `log_id` INT(9) NOT NULL  FIRST,  ADD  PRIMARY KEY (`log_id`)');
-				if (S.my.error != '')
-					S.exit(S.my.error);
-				return true;
-			}
-			else S.exit(S.my.error);
-		}
-		else trace('num_rows:' + res.num_rows);
-		return true;
-	}*/
+	
 }

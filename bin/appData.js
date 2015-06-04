@@ -12,6 +12,7 @@ var fieldNames =
 	vendor_lead_code:'MitglNr.',
 	vicidial_campaigns:'Kampagnen',
 	vicidial_lists:'Listen',
+	birth_date:'Geburtsdatum',
 	entry_date:'Verkauf',
 	order_date:'Verkauf',
 	join_date:'Auftragsdatum',
@@ -61,6 +62,7 @@ var matchKeywords =
 var dbFieldTypes =
 {
 	active:'s',
+	birth_date:'s',
 	first_name:'s',
 	last_name:'s',
 	list_id:'s',
@@ -91,6 +93,7 @@ var displayFormats =
 	sign_date:'date',
 	start_date:'date',
 	entry_date:'date',
+	birth_date:'date',
 	teilnahme_beginn:'date',
 	creation_date:'datetime',
 	last_local_call_time:'datetime',
@@ -108,6 +111,7 @@ var storeFormats =
 	register_off:['gDate2mysql'],
 	register_off_to:['gDate2mysql'],
 	sign_date:['gDate2mysql'],
+	birth_date:['gDate2mysql'],
 	entry_date:['gDate2mysql'],
 	start_date:['gDate2mysql'],
 	teilnahme_beginn:['gDate2mysql'],

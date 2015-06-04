@@ -105,6 +105,7 @@ div.lpad
 	margin:0px 22px;
 	float: right; 
 	clear: right;
+	text-align:right;
 	/*width:8em;*/
 }
 .ui-datepicker {

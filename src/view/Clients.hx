@@ -96,7 +96,10 @@ typedef ClientsData =
 		J('#' + id + '-list tr[data-status]').each(function(i:Int, n:Node)
 		{
 			//trace(i + ':' + J(n).data('status'));
-			J(n).addClass(J(n).data('status')) ;
+			if (J(n).data('state') == 'passive')
+				J(n).addClass('MPASS') ;
+			else
+				J(n).addClass(J(n).data('status')) ;
 		});
 	}
 }

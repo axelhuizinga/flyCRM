@@ -12,7 +12,10 @@ import jQuery.FormData.FData;
 import js.Browser;
 import App.Rectangle;
 import js.html.Audio;
+import js.html.Node;
+import me.cunity.debug.Out;
 
+using js.JqueryUI;
 using Lambda;
 
 class ClientEditor extends Editor
@@ -145,7 +148,8 @@ class ClientEditor extends Editor
 		}
 		var dRows:Array<Dynamic> = Reflect.field(editData, name).h;
 		var sData:Dynamic = Reflect.field(editData, name);// { h:[] };
-		//trace(dRows);
+		trace(name);
+		trace(dRows);
 		/*for (r in dRows)
 		{
 			var aRow:Dynamic = { };
@@ -160,7 +164,7 @@ class ClientEditor extends Editor
 		sData.typeMap = typeMap;
 		sData.fieldNames = fieldNames;
 		
-		trace(sData);
+		//trace(sData);
 		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
 		screens.set(name, J('#t-pay-editor').tmpl(sData).appendTo('#' + parentView.id).css( {
@@ -233,6 +237,7 @@ class ClientEditor extends Editor
 	{
 		parentView.wait(false);
 		editData = data.editData;
+		//trace('birth_date:' + editData.clients.h[0].birth_date);
 		agent = data.agent;
 		screens = new StringMap();
 		var dataOptions:Dynamic = {};
@@ -266,6 +271,23 @@ class ClientEditor extends Editor
 			height:Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px',
 			width:Std.string( J('#clients-menu').offset().left - 35 ) + 'px'
 		}).animate( { opacity:1 } );
+		trace(parentView.id + ':' + J('#' + parentView.id +'-edit-form .datepicker').length);
+		J('#' + parentView.id +'-edit-form .datepicker').each(function(i, n:Node)
+		{
+			trace(J(n).attr('name'));
+			//Out.dumpObjectTree(J(n).datepicker( { dateFormat: "dd.mm.yy" } ));
+			var dateString:String = untyped editData.clients.h[0][J(n).attr('name')];
+			if (dateString != '' && dateString != '0000-00-00')
+			{				
+				//dateString = DateTools.delta(Date.now(), -1000 * 3600 * 24 * 365 * 80).toString();
+				J(n).datepicker( { dateFormat: "dd.mm.yy" } ).val(DateTools.format(Date.fromString(dateString), '%d.%m.%Y'));
+			}
+			else
+				J(n).datepicker( { dateFormat: "dd.mm.yy" } ).attr("placeholder",DateTools.format(DateTools.delta(Date.now(), -1000 * 3600 * 24 * 365 * 80), '%d.%m.%Y'));
+			
+			//untyped J(n).setDate(editData.clients[0]);
+			//dp.datepicker(options).attr("placeholder", DateTools.format(Date.now(), '%d.%m.%Y'));
+		});
 		//trace(J(Browser.window).width() + '-' +   J('#clients-menu').offset().left);
 		//trace(mSpace.height + ':' +  2 * oMargin + ':' + Std.parseFloat(J('#overlay').css('padding-top')) + ':' + Std.parseFloat(J('#overlay').css('padding-bottom')));
 		J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());

@@ -23,14 +23,15 @@ import jQuery.*;
 	
 	public static function datepicker(dp:JQuery, ?options:Dynamic):JQuery
 	{
+		trace(options);
 		return untyped dp.datepicker(options).attr("placeholder", DateTools.format(Date.now(), '%d.%m.%Y'));
 	}
 	
 	public static function editable(e:JQuery, ?options:Dynamic):JQuery
 	{
 		return untyped e.editable(function( value, settings ) {
-      date.html( value );
-    }, options);
+			date.html( value );
+		}, options);
 	}	
 	
 }

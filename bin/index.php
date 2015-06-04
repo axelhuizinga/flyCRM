@@ -95,6 +95,9 @@
 			{{each(i,v) $data.rows}}
 				<table id="qc-edit-data-${i}">
 				{{each(k,val) v}}
+				{{if $data.typeMap[k] == 'HIDDEN'}}
+					<input type="hidden" name="${k}" value="${val}">
+				{{else}}
 				<tr>
 					<td>{{html $data.fieldNames[k]}}:</td>
 					<td class="nowrap">
@@ -111,13 +114,15 @@
 					</select>
 					{{else $data.typeMap[k] == 'RADIO'}}
 					{{each(oi, ov) $data.optionsMap[k]}}
-						<input type="radio" name="${k}"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
+						<input type="radio" name="${k}"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}
+						><span class="optLabel">${ov[1]}</span>
 					{{/each}}
 					{{else $data.typeMap[k] == 'DATE'}}
 						<input type="text" size="11" name="${k}" class="datepicker" >
 					{{/if}}					
 					</td>
 				</tr>
+				{{/if}}
 				{{/each}}
 				<tr>
 				<td>Agent:</td><td>
@@ -262,9 +267,9 @@
 			{{each(i,v) $data.editData.clients.h}}				
 				<table id="edit-client">
 				{{each(k,val) v}}
-				
-				{{if $data.typeMap[k] != 'HIDDEN'}}
-				
+				{{if $data.typeMap[k] == 'HIDDEN'}}
+					<input type="hidden" name="${k}" value="${val}">
+				{{else}}
 				<tr>
 					<td>{{html $data.fieldNames[k]}}:</td>
 					<td class="nowrap">
@@ -281,10 +286,17 @@
 					</select>
 					{{else $data.typeMap[k] == 'RADIO'}}
 					{{each(oi, ov) $data.optionsMap[k]}}
-						<input type="radio" name="${k}"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}><span class="optLabel">${ov[1]}</span>
+						{{if k=='state'}}
+						<input type="radio" name="${k}"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{else}} disabled="disabled"{{/if}}>
+						{{else}}
+						<input type="radio" name="${k}"  value="${ov[0]}" {{if ov[0]==val}}checked="checked"{{/if}}>
+						{{/if}}						
+						<span class="optLabel">${ov[1]}</span>
 					{{/each}}
 					{{else $data.typeMap[k] == 'CHECKBOX'}}					
-						<input type="checkbox" name="${k}" {{if val==1}}checked="checked"{{/if}}>	
+						<input type="checkbox" name="${k}" {{if val==1}}checked="checked"{{/if}}>
+					{{else $data.typeMap[k] == 'DATE'}}
+						<input type="text" size="11" name="${k}" class="datepicker" >
 					{{/if}}
 					</td>
 				</tr>

@@ -103,9 +103,9 @@ var uiData = {
 					[{							
 						Clients:{
 							action:'find',
-							fields:'entry_list_id,status,vicidial_list.lead_id,first_name,last_name,phone_number,client_id,city,register_on',
+							fields:'entry_list_id,status,vicidial_list.lead_id,first_name,last_name,phone_number,client_id,city,register_on,clients.state',
 							primary_id:'vendor_lead_code',
-							hidden:'lead_id,entry_list_id,status',							
+							hidden:'lead_id,entry_list_id,status,clients.state,state',							
 							id:'clients',
 							limit:15,
 							order:'vendor_lead_code|DESC',
@@ -153,7 +153,8 @@ var uiData = {
 												client_history:'Verlauf',
 												call:'Anrufen',
 												close:'Schließen',
-												save:'Speichern'
+												save:'Speichern',
+												reload:'Aktualisieren'
 											}
 										}										
 									],
