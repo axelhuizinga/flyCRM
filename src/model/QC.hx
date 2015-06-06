@@ -164,7 +164,7 @@ class QC extends Clients
 				trace ('INSERT INTO $cLogTable ...' + S.my.error + '<');
 				if (S.my.error == '')
 				{
-					//SAVE QC DATA
+					//SAVE QC DATA ONLY AFTER SUCCESSFUL LOG ENTRY
 					var primary_id:String =  S.my.real_escape_string(q.get('primary_id'));
 					var sql:StringBuf  = new StringBuf();
 					sql.add('UPDATE $cTable SET ');

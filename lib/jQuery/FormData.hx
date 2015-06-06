@@ -79,7 +79,7 @@ class FormData
 					var sForm:Array<Dynamic> = Reflect.field(App.storeFormats, itemName);
 					var callParam:Array<Dynamic> = sForm.length>1 ? sForm.slice(1) : [];
 					var method:String = sForm[0];
-					trace('call FormData' + method);
+					//trace('call FormData' + method);
 					callParam.push(fd.value);
 					fd.value = Reflect.callMethod(Browser.window, Reflect.field(Browser.window, method), callParam);
 					//fd.value = Reflect.callMethod(FormData, Reflect.field(FormData, method), callParam);
@@ -179,9 +179,15 @@ class FormData
 	@:expose('gDate2mysql')
 	public static function gDate2mysql(gDate:String):String
 	{
+		if (gDate == null || gDate == '')
+			return null;
 		var d:Array<String> = gDate.split('.').map(function(s:String) return StringTools.trim(s));
 		if (d.length != 3)
 		{			
+			if (d.length == 1 && d[0].length == 4)
+			{
+				return d[0] + '-01-01';
+			}
 			trace('Falsches Datumsformat:$gDate');
 			return 'Falsches Datumsformat:' + gDate;
 		}

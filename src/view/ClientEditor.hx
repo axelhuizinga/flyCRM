@@ -210,6 +210,7 @@ class ClientEditor extends Editor
 			trace('>' + data + ':' + Type.typeof(data) + ': ' + (data ? 'Y':'N'));
 			if (data) 
 			{
+				//editCheck(eData); return;
 				close();
 				if(lastFindParam != null)
 					parentView.find(parentView.lastFindParam);
@@ -238,6 +239,7 @@ class ClientEditor extends Editor
 		parentView.wait(false);
 		editData = data.editData;
 		//trace('birth_date:' + editData.clients.h[0].birth_date);
+		//Reflect.deleteField(editData.clients.h[0], 'owner');
 		agent = data.agent;
 		screens = new StringMap();
 		var dataOptions:Dynamic = {};

@@ -25,7 +25,8 @@ class S {
 			php_Lib::println("<div><pre>");
 			php_Lib::println($params);
 		}
-		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 59, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace(Date::now()->toString(), _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 59, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($params, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 60, "className" => "S", "methodName" => "main")));
 		$action = $params->get("action");
 		if(strlen($action) === 0 || $params->get("className") === null) {
 			S::dump(_hx_anonymous(array("error" => "required params missing")));
@@ -33,13 +34,13 @@ class S {
 		}
 		S::$my = new MySQLi("localhost", S::$dbUser, S::$dbPass, S::$db, null, null);
 		$auth = S::checkAuth();
-		haxe_Log::trace(_hx_string_or_null($action) . ":" . Std::string($auth), _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 72, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace(_hx_string_or_null($action) . ":" . Std::string($auth), _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 73, "className" => "S", "methodName" => "main")));
 		if(!$auth) {
 			S::hexit("AUTH FAILURE");
 			return;
 		}
 		$result = Model::dispatch($params);
-		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 80, "className" => "S", "methodName" => "main")));
+		haxe_Log::trace($result, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 81, "className" => "S", "methodName" => "main")));
 		if(!S::$headerSent) {
 			header("Content-Type" . ": " . "application/json");
 			S::$headerSent = true;
@@ -48,11 +49,11 @@ class S {
 	}
 	static function checkAuth() {
 		S::$user = php_Session::get("PHP_AUTH_USER");
-		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 93, "className" => "S", "methodName" => "checkAuth")));
+		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 94, "className" => "S", "methodName" => "checkAuth")));
 		if(S::$user === null) {
 			return false;
 		}
-		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 96, "className" => "S", "methodName" => "checkAuth")));
+		haxe_Log::trace(S::$user, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 97, "className" => "S", "methodName" => "checkAuth")));
 		$pass = php_Session::get("PHP_AUTH_PW");
 		if($pass === null) {
 			return false;

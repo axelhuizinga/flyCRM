@@ -86,11 +86,11 @@
 			</table>		
 		</script>
 		
-		<!-- QC EDITOR -->
+		<!-- QC EDITOR ${trace($data.typeMap)}-->
 		
 		<script type="text/x-jquery-tmpl"  id="t-qc-editor">
 		<div id="overlay" class="overlay-left">
-		<div  class="scrollbox">
+		<div  class="scrollbox">		
 			<form  id="qc-edit-form" action="qc" class="main-left">
 			{{each(i,v) $data.rows}}
 				<table id="qc-edit-data-${i}">

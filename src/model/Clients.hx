@@ -29,10 +29,16 @@ typedef CustomField =
  class Clients extends Model
 {
 	private static var vicdial_list_fields = 'lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id'.split(',');		
-	private static var clients_fields = 'client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,titel,namenszusatz,adresszusatz,storno_grund,birth_date'.split(',');	
+	private static var clients_fields = 'client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,adresszusatz,storno_grund,birth_date'.split(',');	
 	private static var pay_source_fields = 'pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date'.split(',');
 	private static var pay_plan_fields = 'pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,user,pay_plan_state,pay_method,end_date,end_reason'.split(',');
 	//private static var pay_source_fields = '';
+	
+	private static var custom_fields_map:StringMap<String> = [
+		'title'=>'anrede',
+		'co_field'=>'addresszusatz',
+		'geburts_datum'=>'birth_date',
+	];
 	
 	override public function doJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
@@ -169,6 +175,14 @@ typedef CustomField =
 			optionsMap:Lib.associativeArrayOfHash(optionsMap),
 			recordings:getRecordings(Std.parseInt(param.get('lead_id')))
 		};
+		var userMap:StringMap<String> = new StringMap();
+		var sb:StringBuf = new StringBuf();
+		var phValues:Array<Array<Dynamic>> = new Array();		
+		var p:StringMap<String> = new StringMap();
+		p.set('table', 'vicidial_users');
+		p.set('fields', 'user,full_name');
+		p.set('where', 'user_group|AGENTS_A');
+		data.userMap = new Users().get_info();
 		return json_encode();		
 	}
 	
@@ -274,6 +288,7 @@ typedef CustomField =
 					sql.add('UPDATE $cTable SET ');
 					var cFields = S.tableFields('$cTable');
 					trace('$cTable fields:' + cFields.toString());
+					cFields.remove('lead_id');
 					cFields.remove(primary_id);
 					var bindTypes:String = '';
 					var values2bind:NativeArray = null;
@@ -282,37 +297,53 @@ typedef CustomField =
 					var sets:Array<String> = new Array();
 					for (c in cFields)
 					{
-						var val:Dynamic = q.get(c);
+						var val:Dynamic = q.get(custom_fields_map.get(c));
+						trace(c + ':' + val);
 						if (val != null)
 						{
-							//TODO: MULTIVAL SELECT OR CHECKBOX
+							//TODO: MULTIVAL SELECT OR CHECKBOX custom_fields_map
 							values2bind[i++] = (Std.is(val,String) ? val: val[0] );
 							var type:String = dbFieldTypes.get(c);
 							bindTypes += (type.any2bool() ?  type : 's');	
 							sets.push(c + '=?');
 						}
 					}
-					sql.add(sets.join(','));
-					sql.add(' WHERE lead_id=$lead_id');
+					var customFields2Save:Bool = false;
+					var success:Bool = false;
 					var stmt =  S.my.stmt_init();
-					trace(sql.toString());
-					var success:Bool = stmt.prepare(sql.toString());
+					if (sets.length > 0)
+					{
+						customFields2Save = true;
+						sql.add(sets.join(','));
+						sql.add(' WHERE lead_id=$lead_id');						
+						trace(sql.toString());
+						success = stmt.prepare(sql.toString());					
+					}
+					else success = true;
 					if (!success)
 					{
 						trace(stmt.error);
 						return false;
 					}
-					success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
-					trace ('success:' + success);
+					if (customFields2Save)
+					{
+						success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);						
+					}
+					else
+						success = true;
+					//trace ('success:' + success);
 					if (success)
 					{
-						success = stmt.execute();
-						if (!success)
-						{
-							trace(stmt.error);
-							return false;
-						}			
-						//CUSTOM SAVED 
+						if (customFields2Save)
+						{						
+							success = stmt.execute();
+							if (!success)
+							{
+								trace(stmt.error);
+								return false;
+							}			
+							//CUSTOM SAVED 
+						}
 						sql = new StringBuf();
 						var uFields = vicdial_list_fields;
 						uFields.remove(primary_id);
@@ -407,11 +438,11 @@ typedef CustomField =
 		var user:String = S.user;
 		if (clientID == null)
 			return true;
-		//var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id, creation_date,`state`,pay_obligation,comments,use_email,register_on,register_off,register_off_to,teilnahme_beginn,titel,namenszusatz,adresszusatz,storno_grund, NULL AS log_date FROM fly_crm.clients WHERE client_id=$clientID');
-		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,titel,namenszusatz,adresszusatz,storno_grund,birth_date,$user AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=$clientID');
+		//var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id, creation_date,`state`,pay_obligation,comments,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,adresszusatz,storno_grund, NULL AS log_date FROM fly_crm.clients WHERE client_id=$clientID');
+		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,adresszusatz,storno_grund,birth_date,$user AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=$clientID');
 		if (!res.any2bool())
 		{
-			trace('failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,titel,namenszusatz,adresszusatz,storno_grund,birth_date,$user AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=$clientID');
+			trace('failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,adresszusatz,storno_grund,birth_date,$user AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=$clientID');
 			return false;
 		}
 		var sql:StringBuf = new StringBuf();

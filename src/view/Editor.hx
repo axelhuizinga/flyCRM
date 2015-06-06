@@ -143,10 +143,23 @@ class Editor extends View
 		if (errors.length > 0)
 		{
 			trace('edit check failed :(');
-			Browser.window.alert(errors.toString());
+			var fD:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
+			var fDs:String = '';
+			fD.iter(function(d:FData) fDs += "\n" + d.name + '=>' + d.value);
+			var content:Dynamic = {
+				header:'edit check failed :(\r\n',
+				form: fDs  + '\r\n',
+				data:Std.string(data) + '\r\n',
+				errors:errors.toString()  + '\r\n'
+			};
+			JQueryStatic.post('/flyCRM/editorLog.php', content,function(d:Dynamic, s:String, _) { trace(d); trace(s); } ).fail(function() {
+				trace( "error" );
+			});
+			
+			//Browser.window.alert(errors.toString());
 		}
-		else
-		{//DATA SAVED IS VALIDATED AGAINST FORM CONTENT - OK TO CLOSE FORM
+		//else
+		//{//DATA SAVED IS VALIDATED AGAINST FORM CONTENT - OK TO CLOSE FORM
 			close();
 			if(lastFindParam != null)
 				parentView.find(parentView.lastFindParam);
@@ -160,7 +173,7 @@ class Editor extends View
 				});
 				parentView.find( (parentView.lastFindParam == null ? new StringMap<String>(): parentView.lastFindParam));
 			}
-		}
+		//}
 	}
 	
 	public function  edit(dataRow:JQuery)
@@ -338,7 +351,7 @@ class Editor extends View
 		parentView.wait(false);
 		//primary_id,hidden,
 		agent = data.agent;
-		trace(data.agent);
+		//trace(data.agent);
 		//trace(data);
 		var dataOptions:Dynamic = {};
 		var keys:Array<String> = Reflect.fields(data.optionsMap);
@@ -366,6 +379,7 @@ class Editor extends View
 			
 		}
 		//trace(data);
+		//trace(data.typeMap);
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;
 		var rData = { recordings:data.recordings.map(function(rec) {
 				rec.filename = ( r.match(rec.location) ?  r.matched(1) : rec.location);
@@ -387,6 +401,7 @@ class Editor extends View
 		trace(mSpace.height + ':' +  2 * oMargin + ':' + Std.parseFloat(J('#overlay').css('padding-top')) + ':' + Std.parseFloat(J('#overlay').css('padding-bottom')));
 		J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());
 		trace(id + ':' + parentView.id + ':' + J('#' + parentView.id +' .scrollbox').length + ':' +   J('#' + parentView.id +' .scrollbox').height());
+		//trace(overlay.html());
 		//trace(data.recordings);
 
 		//cMenu.root.accordion("refresh");

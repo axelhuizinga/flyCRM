@@ -56,6 +56,7 @@ class S
 			Lib.println('<div><pre>');
 			Lib.println(params);
 		}
+		trace(Date.now().toString());		
 		trace(params);		
 
 		var action:String = params.get('action');
