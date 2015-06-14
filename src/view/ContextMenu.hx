@@ -27,6 +27,7 @@ typedef ContextMenuData =
 {>ViewData,
 	var context:String;
 	var items:Array<Dynamic>;
+	var tables:Array<String>;
 	@:optional var heightStyle:String;
 }
 
@@ -47,6 +48,7 @@ typedef ContextMenuData =
 	{
 		super(data);
 		contextData = cast data;
+		contextData.
 		trace(id+ ' heightStyle:' + contextData.heightStyle + ' attach2:' + data.attach2);
 		if (contextData.heightStyle == null)
 			contextData.heightStyle = 'auto';
@@ -328,8 +330,14 @@ typedef ContextMenuData =
 				
 	}
 
-	public function showResult(data:Dynamic, _):Void
+	override function initState():Void
 	{
-		trace(data);
+		super.initState();
+		layout();
+		root.find('').each(function(i:Int, n:Node)
+		{
+			vData.fields.push();
+		});
+				
 	}
 }

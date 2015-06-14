@@ -8,6 +8,7 @@ import js.Browser;
  */
 
 using Lambda;
+using StringTools;
  
 typedef FData = 
 {
@@ -89,13 +90,10 @@ class FormData
 	}
 	
 	public static function where(jForm:JQuery, fields:Array<String>):String
-	//public static function where(jForm:JQuery, fields:Array<String>):StringMap<String>
 	{
 		var ret:Array<String> = new Array();
 		var fD:Array<FData> = cast jForm.serializeArray();
 		trace(fields);
-		//trace(jForm.html());
-		//trace(fD);
 		var aFields:StringMap<Array<String>> = new StringMap();
 		fD.iter(function(aFD:FData) {
 			 aFields.set(aFD.name, (aFields.exists(aFD.name) ? aFields.get(aFD.name).concat(aFD.value): [aFD.value]));
@@ -116,7 +114,10 @@ class FormData
 		for (item in fD)
 		{
 			trace( item.name);
-			if (!(fields.has(item.name) || item.name.indexOf('range_from_') == 0))
+			//if (!(fields.has(item.name) || item.name.indexOf('range_from_') == 0))
+			if (!(fields.has(item.name) || fields.forone(function(f:String) { 
+				trace(f + ':' + item.name + (item.name.indexOf('.')>-1 && item.name.startsWith(f.split('.')[0])?'TRUE':'FALSE'));
+				return item.name.indexOf('.')>-1 && item.name.startsWith(f.split('.')[0]); } ) || item.name.indexOf('range_from_') == 0))
 				continue;
 			if (item.value != null && item.value != '' || item.name.indexOf('range_from_') == 0)
 			{
@@ -188,7 +189,7 @@ class FormData
 			{
 				return d[0] + '-01-01';
 			}
-			trace('Falsches Datumsformat:$gDate');
+			trace('Falsches Datumsformat:$gDate ' + d.);
 			return 'Falsches Datumsformat:' + gDate;
 		}
 		return d[2] + '-' + d[1] + '-' + d[0];

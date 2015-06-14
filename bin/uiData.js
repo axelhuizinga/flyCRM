@@ -124,12 +124,17 @@ var uiData = {
 										{
 											action:'find',
 											label:'Finden',
-											fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+											fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time','pay_history','pay_source'],
+											options:['ruecklast'],
 											ranges:['last_local_call_time'],
 											table:'vicidial_list',
 											buttons:
 											{
 												find:'Anzeigen'
+											},
+											pay_source_fields:
+											{
+												iban:'IBAN'
 											}
 										},
 										{

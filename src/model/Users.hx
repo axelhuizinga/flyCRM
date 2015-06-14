@@ -29,7 +29,7 @@ class Users extends Model
 		param.set('where', (user == null?'user_group|AGENTS_A':'user|$user'));
 		param.set('limit', '50');
 		var userMap:NativeArray = doSelect(param, sb, phValues);		
-		//trace(param);
+		trace(param);
 		//trace(userMap);
 		//trace(num_rows);
 		for (n in 0...num_rows)
@@ -43,4 +43,10 @@ class Users extends Model
 		return result;
 	}
 	
+	public function ex_user(?user:String):String
+	{
+		user = S.my.real_escape_string(user);
+		var ex_user_data:NativeArray = query('SELECT * FROM fly_crm.agent_ids WHERE ANr=$user');
+		return '';
+	}
 }

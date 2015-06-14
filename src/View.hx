@@ -135,7 +135,7 @@ class View
 	{
 		interactionState = iState;
 		var iS:InteractionState = interactionStates.get(iState);
-		trace(id + ':' + iState + ':' + iS);
+		//trace(id + ':' + iState + ':' + iS);
 		if (iS == null)
 			return null;
 		var lIt:Iterator<JQuery> = listening.keys();
@@ -159,13 +159,13 @@ class View
 	
 	function addInteractionState(name:String, iS:InteractionState):Void
 	{
-		trace(id + ':' + name + ':' + iS);
+		//trace(id + ':' + name + ':' + iS);
 		interactionStates.set(name, iS);
 	}
 	
 	function addInputs(v:Array<Dynamic>, className:String):Void
 	{
-		trace(v.length);
+		//trace(v.length);
 		for (aI in v)
 		{
 			aI.parentView = this;
@@ -190,7 +190,7 @@ class View
 			//trace(Std.string(iParam));
 			aI = Type.createInstance(cl, [iParam]);
 			inputs.set(iParam.id, aI);				
-			trace("inputs.set(" +iParam.id +")");
+			//trace("inputs.set(" +iParam.id +")");
 			if (iParam.db == 1)
 				aI.init();
 		}		
@@ -216,7 +216,7 @@ class View
 		var cl:Class<Dynamic> = Type.resolveClass('view.' + className);
 		if (cl != null)
 		{
-			//trace(cl);
+			trace(cl);
 			if (Reflect.hasField(v, 'attach2'))
 				iParam.attach2 = v.attach2;
 			if (Reflect.hasField(v, 'dbLoaderIndex'))
@@ -261,8 +261,8 @@ class View
 			//trace(untyped __js__("this"));
 			//trace(J(untyped __js__("this")).attr('id')); 			
 			});
-		if (name == 'ContextMenu')
-			cast(this, ContextMenu).layout();
+		J(
+		vData.fields.push();
 	}
 	
 	function loadingComplete():Bool
@@ -348,7 +348,6 @@ class View
 				}
 				else
 					Reflect.setField(fData, f, p.exists(f) ? p.get(f) : Reflect.field(vData, f));
-					//Reflect.setField(fData, f, Reflect.field(vData, f));
 			}
 			if (f != 'where' && p.exists(f))
 				Reflect.setField(fData, f, p.get(f));

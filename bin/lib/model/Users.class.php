@@ -14,6 +14,7 @@ class model_Users extends Model {
 		$param->set("where", model_Users_0($this, $param, $phValues, $result, $sb, $user));
 		$param->set("limit", "50");
 		$userMap = $this->doSelect($param, $sb, $phValues);
+		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Users.hx", "lineNumber" => 32, "className" => "model.Users", "methodName" => "get_info")));
 		{
 			$_g1 = 0;
 			$_g = $this->num_rows;
@@ -24,6 +25,11 @@ class model_Users extends Model {
 			}
 		}
 		return $result;
+	}
+	public function ex_user($user = null) {
+		$user = S::$my->real_escape_string($user);
+		$ex_user_data = $this->query("SELECT * FROM fly_crm.agent_ids WHERE ANr=" . _hx_string_or_null($user));
+		return "";
 	}
 	function __toString() { return 'model.Users'; }
 }

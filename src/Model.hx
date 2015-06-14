@@ -52,6 +52,7 @@ class Model
 	public var table:String;
 	public var primary:String;
 	public var num_rows(default, null):Int;
+	var joinTable:String;
 	
 	public static function dispatch(param:StringMap<Dynamic>):EitherType<String,Bool>
 	{
@@ -109,7 +110,7 @@ class Model
 		sb.add('SELECT COUNT(*) AS count');
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
 		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
-		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
+		joinTable = (q.get('jointable').any2bool() ? q.get('jointable') : null);
 		
 		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
 		if (joinTable != null)
@@ -313,8 +314,9 @@ class Model
 		return null;
 	}
 	
-	public function buildCond(whereParam:String, sb:StringBuf, phValues:Array<Array<Dynamic>>):Bool
+	public function buildCond(whereParam:String, sob:StringBuf, phValues:Array<Array<Dynamic>>):Bool
 	{
+		var sb:StringBuf = new StringBuf();
 		var where:Array<Dynamic> = whereParam.split(',');
 		//trace(where);
 		if (where.length == 0)
@@ -322,15 +324,21 @@ class Model
 		var first:Bool = true;
 		for (w in where)
 		{
+
+			
+			var wData:Array<String> = w.split('|');
+			var values:Array<String> = wData.slice(2);
+			trace(wData + ':' + joinTable);
+			if (~/pay_[a-zA-Z_]+\./.match(wData[0]) && wData[0].split('.')[0] != joinTable)
+			{
+				continue;
+			}
+			
 			if (first)
 				sb.add(' WHERE ' );
 			else
 				sb.add(' AND ');
-			first = false;
-				
-			var wData:Array<String> = w.split('|');
-			var values:Array<String> = wData.slice(2);
-			//trace(wData);
+			first = false;			
 			
 			switch(wData[1].toUpperCase())
 			{
@@ -373,6 +381,7 @@ class Model
 					}			
 			}			
 		}
+		sob.add(sb.toString());
 		return true;
 	}
 

@@ -92,6 +92,7 @@ var displayFormats =
 	register_off_to:'date',
 	sign_date:'date',
 	start_date:'date',
+	event_date:'date',
 	entry_date:'date',
 	birth_date:'date',
 	teilnahme_beginn:'date',

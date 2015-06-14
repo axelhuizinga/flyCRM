@@ -182,7 +182,10 @@ typedef CustomField =
 		p.set('table', 'vicidial_users');
 		p.set('fields', 'user,full_name');
 		p.set('where', 'user_group|AGENTS_A');
+		var owner:Int = Std.parseInt(Lib.hashOfAssociativeArray(untyped editTables.get('clients').get('0')).get('owner'));
+		trace(owner);
 		data.userMap = new Users().get_info();
+		//data.userMap = new Users().get_info(owner<1000?Std.string(owner):null);
 		return json_encode();		
 	}
 	

@@ -106,6 +106,7 @@ class QC extends Clients
 		trace(num_rows + ':' + param.get('owner'));
 		data.userMap = new Users().get_info();
 		//trace(new Users().get_info(param.get('owner')));
+		//return false;
 		return json_encode();		
 	}
 	
@@ -161,7 +162,7 @@ class QC extends Clients
 				res = S.my.query(
 					'INSERT INTO $cLogTable SELECT * FROM (SELECT $log_id AS log_id) AS ll JOIN (SELECT * FROM `$cTable`WHERE `lead_id`=$lead_id)AS cl'
 				);
-				trace ('INSERT INTO $cLogTable ...' + S.my.error + '<');
+				trace ('INSERT INTO $cLogTable SELECT * FROM (SELECT $log_id AS log_id) AS ll JOIN (SELECT * FROM `$cTable`WHERE `lead_id`=$lead_id)AS cl ' + S.my.error + '<');
 				if (S.my.error == '')
 				{
 					//SAVE QC DATA ONLY AFTER SUCCESSFUL LOG ENTRY
