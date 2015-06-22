@@ -267,6 +267,11 @@ class ClientEditor extends Editor
 		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
 		//FILL TEMPLATE AND SHOW EDITOR FORM OVERLAY
+		//data.editData.pay_plan.h.agent = data.userMap.a
+		trace(data.editData.pay_plan.h.agent);
+		trace(data.userMap.a.find(function(uM) return uM.user == data.editData.pay_plan.h[0].agent) );
+		//data.editData.pay_plan.h[0].agent = data.userMap.a.find(function(uM) return uM.user == data.editData.pay_plan.h[0].agent).full_name;
+		trace(data.editData.pay_plan.h);
 		overlay = templ.tmpl(data).appendTo('#' + parentView.id).css( {
 			marginTop:Std.string(mSpace.top + oMargin ) + 'px',
 			marginLeft:Std.string(oMargin ) + 'px',

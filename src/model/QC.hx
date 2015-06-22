@@ -26,6 +26,7 @@ class QC extends Clients
 	{
 		var self:QC = new QC();	
 		self.table = 'vicidial_list';
+		self.param = param;
 		//trace(param);
 		return Reflect.callMethod(self, Reflect.field(self,param.get('action')), [param]);
 	}

@@ -31,7 +31,7 @@ typedef CustomField =
 	private static var vicdial_list_fields = 'lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id'.split(',');		
 	private static var clients_fields = 'client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,adresszusatz,storno_grund,birth_date'.split(',');	
 	private static var pay_source_fields = 'pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date'.split(',');
-	private static var pay_plan_fields = 'pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,user,pay_plan_state,pay_method,end_date,end_reason'.split(',');
+	private static var pay_plan_fields = 'pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason'.split(',');
 	//private static var pay_source_fields = '';
 	
 	private static var custom_fields_map:StringMap<String> = [
@@ -41,6 +41,38 @@ typedef CustomField =
 	];
 	
 	override public function doJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
+	{
+		var fields:String = q.get('fields');	
+		//trace(fields);
+		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
+		sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
+		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
+		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
+		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
+		//trace ('table:' + q.get('table') + ':' + (q.get('table').any2bool() ? q.get('table') : table) + '' + joinCond );
+		//trace (sb.toString());
+		//sb.add(' FROM ' + (q.exists('filter_tables') && q.get('filter_tables').any2bool() ?q.get('filter_tables').split(',').map(
+			//function(f:String) return 'fly_crm.' + S.my.real_escape_string(f) + ' AS $f' ).join(',') +',':'' )+ S.my.real_escape_string(qTable));		
+		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		if (joinTable != null)
+			sb.add(' INNER JOIN $joinTable');
+		if (joinCond != null)
+			sb.add(' ON $joinCond');
+		var where:String = q.get('where');
+		if (where != null)
+			buildCond(where, sb, phValues);
+		var groupParam:String = q.get('group');
+		if (groupParam != null)
+			buildGroup(groupParam, sb);
+		//TODO:HAVING
+		var order:String = q.get('order');
+		if (order != null)
+			buildOrder(order, sb);
+		var limit:String = q.get('limit');
+		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
+		return execute(sb.toString(), q, phValues);
+	}
+	/*override public function doJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		var fields:String = q.get('fields');	
 		//trace(fields);
@@ -69,12 +101,12 @@ typedef CustomField =
 		var limit:String = q.get('limit');
 		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
 		return execute(sb.toString(), q, phValues);
-	}
-	
+	}*/
 	public static function create(param:StringMap<String>):EitherType<String,Bool>
 	{
 		var self:Clients = new Clients();	
 		self.table = 'vicidial_list';
+		self.param = param;
 		//trace(param);
 		return Reflect.callMethod(self, Reflect.field(self,param.get('action')), [param]);
 	}
@@ -514,10 +546,10 @@ typedef CustomField =
 		{
 			var pay_plan_id = pIt.next();
 			// SAVE TO LOG
-			var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,user,pay_plan_state,pay_method,end_date,end_reason,$user AS log_user,NULL AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
+			var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
 			if (!res.any2bool())
 			{
-				trace ('Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,user,pay_plan_state,pay_method,end_date,end_reason,$user AS log_user,NULL AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
+				trace ('Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
 				return false;
 			}
 			var sql:StringBuf = new StringBuf();
@@ -599,10 +631,10 @@ typedef CustomField =
 		{
 			var pay_source_id = pIt.next();
 			// SAVE TO LOG
-			var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_source_log SELECT  pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NULL AS log_date FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
+			var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_source_log SELECT  pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
 			if (!res.any2bool())
 			{
-				trace ('Failed to:  INSERT INTO fly_crm.pay_source_log SELECT pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NULL AS log_date FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
+				trace ('Failed to:  INSERT INTO fly_crm.pay_source_log SELECT pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
 				return false;
 			}
 			var sql:StringBuf = new StringBuf();

@@ -261,8 +261,6 @@ class View
 			//trace(untyped __js__("this"));
 			//trace(J(untyped __js__("this")).attr('id')); 			
 			});
-		J(
-		vData.fields.push();
 	}
 	
 	function loadingComplete():Bool
@@ -337,12 +335,12 @@ class View
 		trace(id + '|'+where+'|' + (where.any2bool() ? 'Y':'N'));
 		trace(vData.where);
 		var fData:Dynamic = { };
-		var pkeys:Array<String> = 'action,className,fields,primary_id,hidden,limit,order,page,table,where'.split(',');
+		var pkeys:Array<String> = 'action,className,fields,primary_id,hidden,limit,order,page,pay_source,filter_tables,table,where'.split(',');
 		for (f in pkeys)
 		{
 			if (Reflect.field(vData, f) != null)		
 			{
-				if (f == 'where' && (where.any2bool() || 	vData.where.any2bool()))			
+				if (f == 'where' && (where.any2bool() || vData.where.any2bool()))			
 				{
 					fData.where = (vData.where.any2bool() ? vData.where + (where.any2bool() ? ',' + where  : '') : where);
 				}
@@ -371,7 +369,7 @@ class View
 	
 	private function resetParams(?pData:Dynamic):Dynamic
 	{		
-		var pkeys:Array<String> = 'action,className,fields,limit,order,page,table,jointable,joincond,joinfields,where'.split(',');
+		var pkeys:Array<String> = 'action,className,fields,limit,order,page,table,jointable,filter_tables,pay_source,joincond,joinfields,where'.split(',');
 		//var aData:Dynamic = pData.any2bool() ? pData : vData;
 		//MERGE pData into vData
 		trace(pData);

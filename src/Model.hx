@@ -53,6 +53,7 @@ class Model
 	public var primary:String;
 	public var num_rows(default, null):Int;
 	var joinTable:String;
+	var param:StringMap<Dynamic>;
 	
 	public static function dispatch(param:StringMap<Dynamic>):EitherType<String,Bool>
 	{
@@ -112,6 +113,9 @@ class Model
 		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
 		joinTable = (q.get('jointable').any2bool() ? q.get('jointable') : null);
 		
+		//sb.add(' FROM ' + (q.exists('filter_tables') && q.get('filter_tables').any2bool() ?q.get('filter_tables').split(',').map(
+			//function(f:String) return 'fly_crm.' + S.my.real_escape_string(f) + ' AS $f').join(',') +',':'' )
+			//+ S.my.real_escape_string(qTable));		
 		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
 		if (joinTable != null)
 			sb.add(' INNER JOIN $joinTable');
@@ -328,8 +332,16 @@ class Model
 			
 			var wData:Array<String> = w.split('|');
 			var values:Array<String> = wData.slice(2);
-			trace(wData + ':' + joinTable);
-			if (~/pay_[a-zA-Z_]+\./.match(wData[0]) && wData[0].split('.')[0] != joinTable)
+			
+			var filter_tables:Array<String> = null;
+			if (param.any2bool() && param.exists('filter_tables') && param.get('filter_tables').any2bool())
+			{
+				var jt:String = param.get('filter_tables');
+				filter_tables = jt.split(',');
+			}
+			
+			trace(wData + ':' + joinTable + ':' +  filter_tables);
+			if (~/pay_[a-zA-Z_]+\./.match(wData[0]) && wData[0].split('.')[0] != joinTable )
 			{
 				continue;
 			}

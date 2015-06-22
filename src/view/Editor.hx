@@ -52,7 +52,8 @@ class Editor extends View
 	
 	public function checkIban():Bool
 	{
-		var iban:String = J('#' + parentView.id + '-edit-form ' + ibanSelector).val();
+		var iban:String = J('#' + ibanSelector).val();
+		trace('#' + ibanSelector);
 		trace(iban);
 		return IBAN.checkIBAN(iban);
 	}

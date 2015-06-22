@@ -351,17 +351,18 @@
 		</div>
 		</script>
 		
-		<!-- MEMBERS MENU -->
+		<!-- MEMBERS MENU ${testinc( '666' )}-->
 		
 		<script type="text/x-jquery-tmpl" id="t-clients-menu">		
 			<div id="clients-menu" class="menu-right">
 			{{each(i,v) $data.items}}
+			${trace('members.menu:' + i + ':' + v.label)}
 				<h3>${v.label}</h3>
 				<div>
 					<form >
 					<table>
 						<input type="hidden" name="action" value="${action}">
-						{{each(fi,fv) v.fields}}					
+						{{each(fi,fv) v.fields}}						
 							{{if rangeFields[fv]}}
 							<tr class="lh32">
 								<td><div class="lpad" >${rangeLabels.from}</div>
@@ -391,7 +392,33 @@
 								</td>
 							</tr>														
 							{{/if}}								
-							{{/each}}						
+							{{/each}}
+
+							{{if v.pay_source_fields}}
+								<tr>
+									<td colspan="3">
+										<h5>${appLabel.pay_source}</h5>							
+									</td>						
+								</tr>
+							{{/if}}
+							{{each(k,pv) v.pay_source_fields}}
+								${trace($data.typeMap)}
+						<tr class="lh32" data-table="pay_source" >
+							<td>
+							<div class="lpad" >${pv}</div>
+							</td>
+							
+							<td >																
+							<input type="${ fieldTypes[pv] ? fieldTypes[pv] : 'text' }" name="pay_source.${k}" class="menu-input-right" >
+							</td>
+							<td >
+							<div class="rpad" >{{tmpl('pay_source.'+k) "#t-find-match"}}</div>
+							</td>						
+					
+						</tr>								
+							
+							{{/each}}
+							
 						{{each(bi,bv) v.buttons}}
 						<tr>
 							<td colspan="3">
@@ -405,7 +432,7 @@
 			{{/each}}	
 			</div>	
 		</script>
-		
+		<!-- -{{if $data.typeMap[k] == 'TEXT' || $data.typeMap[k] == 'READONLY' }} {{/if}} -->
 		<script type="text/x-jquery-tmpl" id="t-find-match">
 			<select name="${$item.data}_match_option"  class="menu-end-right">
 			{{each(i,v) matchOptions}}
@@ -549,7 +576,7 @@
 		</script>
 		
 		  <!-- OVERLAY CONFIRM TEMPLATE ${trace($data)} ${trace(i + ':' + v.status)}-->
-		  <script type="text/x-jquery-tmpl" id="t-confirm">		
+		  <script type="text/x-jquery-tmpl" id="t-confirm">
 				<div id="confirm" class="overlay">
 				<div  class="scrollbox">			
 					 <table id="confirm-content" class="ccontent">
@@ -570,6 +597,21 @@
 				</div>
 				</div>
 		</script>
+		
+			<!-- test template ${fieldNames[pi]}{{tmpl(pv) "#t-find-match"}}-->
+			<script type="text/x-jquery-tmpl" id="t-test">		
+				<tr class="lh32">
+					<td>
+					<div class="lpad" >${ti}</div>
+					</td>
+					<td >																
+					<input type="${ fieldTypes[pv] ? fieldTypes[pv] : 'text' }" name="${pv}" class="menu-input-right" >
+					</td>
+					<td >
+					<div class="rpad" ></div>
+					</td>
+				</tr>
+			</script>
 		
 		<script src="js/LAB.src.js"></script>
 		<!--
@@ -630,6 +672,11 @@
 		  function trace(m) {//debug from template
 			  console.log(m);
 			  return '';
+		  }
+		  var ti=0;
+		  function testinc(m) {//debug from template
+			  console.log('ti:' + ++ti + ':' + m);
+			  return ti;
 		  }
 		  
 		  function replace(r,b,s)

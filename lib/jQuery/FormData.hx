@@ -1,5 +1,6 @@
 package jQuery;
 import haxe.ds.StringMap;
+import haxe.xml.Check.Attrib;
 import js.Browser;
 
 /**
@@ -71,7 +72,7 @@ class FormData
 	{
 		//PREPARE EDITOR DATA FOR POSTING
 		var ret: Array<FData> = cast jForm.serializeArray();
-		
+		trace(ret);
 		for (fd in ret)
 		{
 			var itemName:String = fd.name.split('[')[0];
@@ -87,6 +88,66 @@ class FormData
 				}
 		}
 		return ret;
+	}
+	
+	public static function filter(jForm:JQuery, tableData:StringMap<Array<String>>, tableNames:Array<String>):String
+	{
+		var fResult:String = '';
+		for (tN in tableNames)
+		{
+			var tD:Array<String> = tableData.get(tN);
+			//if(tD.length >0)
+				//fResult += ' AND vicidial_list.vendor_lead_code IN (SELECT $tN.client_id FROM $tN WHERE'; 
+			var ret:Array<String> = new Array();
+			for (tDn in tD)
+			{		
+				var matchTypeOption:JQuery =  jForm.find('[name="' + tDn + '_match_option"]');
+				trace (tDn + ':' + matchTypeOption.length );
+				if (matchTypeOption.length == 1)
+				{
+					ret.push(switch(matchTypeOption.val())
+					{
+						case 'exact':
+							tDn + '|' + jForm.find('[name="' + tDn +'"]').val();
+						case 'start':
+							tDn + '|LIKE|' + jForm.find('[name="' + tDn +'"]').val() + '%';
+						case 'end':
+							tDn + '|LIKE|%' + jForm.find('[name="' + tDn +'"]').val();
+						case 'any':
+							tDn + '|LIKE|%' + jForm.find('[name="' + tDn +'"]').val() + '%';		
+						case _:
+							trace('ERROR: unknown matchTypeOption value:' + matchTypeOption.val());
+							'ERROR|unknown matchTypeOption value:' + matchTypeOption.val();							
+					});
+					//trace('done $tDn');
+					continue;
+				}
+				if (tDn.indexOf('range_from_') == 0 )
+				{
+					var from:String = jForm.find('[name="' + tDn +'"]').val();
+					if (from.length > 0)
+						from = gDateTime2mysql(from + '00:00:00');
+					var name:String = tDn.substr(11);
+					trace(name + ':' +  jForm.find('[name="range_from_' + name + '"]').val() );
+					var to:String = jForm.find('[name="range_to_' + name + '"]').val();
+					if (to.length > 0)
+						to = gDateTime2mysql(to + '23:59:59');
+					if (from.length > 0 && to.length > 0)
+						ret.push(name + '|BETWEEN|' + from + '|' + to);
+					else if (from.length > 0)
+						ret.push(name + '|BETWEEN|' + from + '|' + DateTools.format(Date.now(), '%Y-%m-%d'));
+					else if (to.length > 0)//	TODO: CONFIG SYSTEM START DATE
+						ret.push(name + '|BETWEEN|2015-01-01 00:00:00|' + to);
+				}
+				else if (tDn.indexOf('range_to_') == 0)
+					continue;
+				else
+					ret.push (tDn + '|' + jForm.find('[name="' + tDn +'"]') );
+				
+			}
+			fResult += ret.join(',');
+		}
+		return fResult;
 	}
 	
 	public static function where(jForm:JQuery, fields:Array<String>):String
@@ -113,12 +174,13 @@ class FormData
 		//trace(fD);
 		for (item in fD)
 		{
-			trace( item.name);
+			
 			//if (!(fields.has(item.name) || item.name.indexOf('range_from_') == 0))
-			if (!(fields.has(item.name) || fields.forone(function(f:String) { 
-				trace(f + ':' + item.name + (item.name.indexOf('.')>-1 && item.name.startsWith(f.split('.')[0])?'TRUE':'FALSE'));
-				return item.name.indexOf('.')>-1 && item.name.startsWith(f.split('.')[0]); } ) || item.name.indexOf('range_from_') == 0))
+			if ( item.name.indexOf('_match_option')>-1 || !(fields.has(item.name) || fields.forone(function(f:String) { 
+				//trace(f + ':' + item.name + ' ' + (item.name.indexOf('.')>-1 && item.name.startsWith(f.split('.')[0])?'TRUE':'FALSE'));
+				return item.name.indexOf('.')>-1 && item.name.startsWith(f.split('.')[0]); } ) || item.name.indexOf('range_from_') == 0) )
 				continue;
+			trace( item.name);
 			if (item.value != null && item.value != '' || item.name.indexOf('range_from_') == 0)
 			{
 				if (Reflect.hasField(App.storeFormats, item.name))
@@ -133,6 +195,7 @@ class FormData
 					trace(item.value);
 				}
 				var matchTypeOption:JQuery =  jForm.find('[name="' + item.name + '_match_option"]');
+				trace (item.name + ':' + matchTypeOption.length );
 				if (matchTypeOption.length == 1)
 				{
 					ret.push(switch(matchTypeOption.val())
@@ -149,8 +212,10 @@ class FormData
 							trace('ERROR: unknown matchTypeOption value:' + matchTypeOption.val());
 							'ERROR|unknown matchTypeOption value:' + matchTypeOption.val();							
 					});
+					//trace('skipping $item');
+					continue;
 				}
-				else if (item.name.indexOf('range_from_') == 0 )
+				if (item.name.indexOf('range_from_') == 0 )
 				{
 					var from:String = item.value;
 					if (from.length > 0)
@@ -189,7 +254,7 @@ class FormData
 			{
 				return d[0] + '-01-01';
 			}
-			trace('Falsches Datumsformat:$gDate ' + d.);
+			trace('Falsches Datumsformat:$gDate :' + d.toString());
 			return 'Falsches Datumsformat:' + gDate;
 		}
 		return d[2] + '-' + d[1] + '-' + d[0];

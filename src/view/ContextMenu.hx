@@ -27,7 +27,7 @@ typedef ContextMenuData =
 {>ViewData,
 	var context:String;
 	var items:Array<Dynamic>;
-	var tables:Array<String>;
+	var tableData:StringMap<Array<String>>;
 	@:optional var heightStyle:String;
 }
 
@@ -48,7 +48,7 @@ typedef ContextMenuData =
 	{
 		super(data);
 		contextData = cast data;
-		contextData.
+		contextData.tableData = new StringMap();
 		trace(id+ ' heightStyle:' + contextData.heightStyle + ' attach2:' + data.attach2);
 		if (contextData.heightStyle == null)
 			contextData.heightStyle = 'auto';
@@ -268,14 +268,29 @@ typedef ContextMenuData =
 		{
 			case 'find':
 				var fields:Array<String> = vData.items[active].fields;
+				
 				if (fields != null && fields.length > 0)/*READ FIND FORM*/
 				{
+					var tables:Iterator<String> = contextData.tableData.keys();
+					var tableNames:Array<String> = new Array();
+					while (tables.hasNext())
+					{
+						var table:String = tables.next();
+						tableNames.push(table);
+						trace(table);
+						//fields = fields.concat(contextData.tableData.get(table));// .map(function(f:String) return table + '.' + f));
+					}					
 					//var where:String = FormData.where(J(cast( evt.target, Element)).parent(), fields);
 					var where:String = FormData.where(jNode.closest('form'), fields);
 					trace(where);
 					var wM:StringMap<String> = new StringMap();
+					wM.set('filter_tables', tableNames.join(','));
+					//for (tn in tableNames)
+						//wM.set(tn, contextData.tableData.get(tn).toString());
+					wM.set('filter', FormData.filter(jNode.closest('form'), contextData.tableData, tableNames));
 					wM.set('where', where);
-					Reflect.callMethod(parentView, Reflect.field(parentView, action), [wM]);			
+					parentView.find(wM);
+					//Reflect.callMethod(parentView, Reflect.field(parentView, action), [wM]);			
 				}	
 			case 'edit':
 				var editor:Editor = cast(parentView.views.get(parentView.instancePath + '.' + parentView.id + '-editor'), Editor);
@@ -333,11 +348,29 @@ typedef ContextMenuData =
 	override function initState():Void
 	{
 		super.initState();
+		trace(id + ':' + root.find('tr[data-table]').length);
 		layout();
-		root.find('').each(function(i:Int, n:Node)
+		root.find('tr[data-table]').each(function(i:Int, n:Node)
 		{
-			vData.fields.push();
+			var table:String = J(n).data('table');
+			if (!contextData.tableData.exists(table))
+			{
+				contextData.tableData.set(table, new Array());
+			}
+			//vData.fields.push();
 		});
+		
+		var tables:Iterator<String> = contextData.tableData.keys();
+		while (tables.hasNext())
+		{
+			var table:String = tables.next();
+			trace(table);
+			J('tr[data-table^=' + table+'] input').each(function(_, inp) {
+				if(J(inp).attr('name').indexOf('_match_option')==-1)
+					contextData.tableData.get(table).push(J(inp).attr('name'));
+			});
+			trace(contextData.tableData.toString());
+		}		
 				
 	}
 }

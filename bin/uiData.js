@@ -103,7 +103,7 @@ var uiData = {
 					[{							
 						Clients:{
 							action:'find',
-							fields:'entry_list_id,status,vicidial_list.lead_id,first_name,last_name,phone_number,client_id,city,register_on,clients.state',
+							fields:'entry_list_id,status,vicidial_list.lead_id,first_name,last_name,phone_number,clients.client_id,city,register_on,clients.state',
 							primary_id:'vendor_lead_code',
 							hidden:'lead_id,entry_list_id,status,clients.state,state',							
 							id:'clients',
@@ -124,7 +124,7 @@ var uiData = {
 										{
 											action:'find',
 											label:'Finden',
-											fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time','pay_history','pay_source'],
+											fields:['vendor_lead_code','first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
 											options:['ruecklast'],
 											ranges:['last_local_call_time'],
 											table:'vicidial_list',
@@ -189,94 +189,7 @@ var uiData = {
 							}]
 						}
 					}]									
-				},
-				{
-					id:'campaigns',
-					label:'Kampagnen',
-					views:[{
-						Campaigns:
-						{
-							fields:'lead_id,vendor_lead_code,first_name,last_name,phone_number,address1,city,last_local_call_time',
-							id:'campaigns',
-							limit:15,
-							order:'vendor_lead_code|ASC',
-							where:'',
-							table:'vicidial_list',
-							listattach2:'#campaigns-list-anchor',
-							views:[
-							{
-								ContextMenu:{
-									id:'campaigns-menu',
-									heightStyle: 'fill',
-									items:[
-										{
-											action:'findLeads',
-											contextLevel:1,
-											fields:['campaign_id'],
-											label:'Kampagnen Auswahl',											
-											Select:[
-											{
-												action:'find',
-												name:'campaign_id',
-												table:'vicidial_campaigns',
-												default:'all',
-												dependsOn:[],
-												db:1,
-												multi:1,
-												value:'campaign_id',
-												label:'campaign_name',
-												size:1,
-												options:[],
-												check:[
-												{
-													name:'active',
-													checked:true
-												}
-												],
-												where:{check:['active']}
-											}],
-											buttons:
-											{
-												findLeads:'Anzeigen'
-											}
-										},
-										{
-											action:'selectList',
-											label:'Listen Auswahl',
-											Select:[
-											{
-												name:'vicidial_lists',
-												default:'all',
-												dependsOn:['campaigns-menu_vicidial_campaigns'],
-												db:1,
-												multi:1,
-												value:'list_id',
-												label:'list_name',
-												size:1,
-												options:[],
-												check:[
-												{
-													name:'active',
-													checked:true
-												},
-												{
-													name:'filter',
-													checked:true
-												}]
-												,where:{check:['active','filter']}
-											}],
-											buttons:
-											{
-												listLeads:'Anzeigen'
-											}
-										}										
-									],
-									attach2:'#campaigns'
-								}
-							}]
-						}
-					}]									
-				},	
+				},				
 				{
 					id:'stats',
 					label:'Statistik',

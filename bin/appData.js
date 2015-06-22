@@ -17,7 +17,8 @@ var fieldNames =
 	order_date:'Verkauf',
 	join_date:'Auftragsdatum',
 	full_name:'Agent',
-	register_on:'Verkauf'
+	register_on:'Verkauf',
+	iban:'IBAN'
 }
 
 var appLabel =
@@ -29,7 +30,8 @@ var appLabel =
 	select:'Auswählen',
 	selectStatus:'Status Auswählen',
 	close:'Schließen',
-	of:'von'
+	of:'von',
+	pay_source:'Konto'
 }
 
 var matchOptions =
