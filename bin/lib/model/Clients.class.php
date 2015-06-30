@@ -379,9 +379,9 @@ class model_Clients extends Model {
 		if($clientID === null) {
 			return true;
 		}
-		$res = S::$my->query("INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,adresszusatz,storno_grund,birth_date," . _hx_string_or_null($user) . " AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=" . Std::string($clientID), null);
+		$res = S::$my->query("INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date," . _hx_string_or_null($user) . " AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=" . Std::string($clientID), null);
 		if(!Util::any2bool($res)) {
-			haxe_Log::trace("failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,adresszusatz,storno_grund,birth_date," . _hx_string_or_null($user) . " AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=" . Std::string($clientID), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 480, "className" => "model.Clients", "methodName" => "saveClientData")));
+			haxe_Log::trace("failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date," . _hx_string_or_null($user) . " AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=" . Std::string($clientID), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 480, "className" => "model.Clients", "methodName" => "saveClientData")));
 			return false;
 		}
 		$sql = new StringBuf();
@@ -639,7 +639,7 @@ class model_Clients extends Model {
 	function __toString() { return 'model.Clients'; }
 }
 model_Clients::$vicdial_list_fields = _hx_explode(",", "lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id");
-model_Clients::$clients_fields = _hx_explode(",", "client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,adresszusatz,storno_grund,birth_date");
+model_Clients::$clients_fields = _hx_explode(",", "client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date");
 model_Clients::$pay_source_fields = _hx_explode(",", "pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date");
 model_Clients::$pay_plan_fields = _hx_explode(",", "pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason");
 model_Clients::$custom_fields_map = model_Clients_10();
