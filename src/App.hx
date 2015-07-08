@@ -51,6 +51,7 @@ class App
 	
 	public  var hasTabs:Bool;
 	public  var rootViewPath:String;
+	public var globals:Dynamic;
 	public var altPressed:Bool;
 	public var ctrlPressed:Bool;
 	public var shiftPressed:Bool;
@@ -134,6 +135,7 @@ class App
 		}
 		basePath = Browser.location.pathname.split(config.appName)[0] + config.appName + '/';
 		//trace(cssStyles);
+		ist.globals = { firstLoad:true};
 		ist.initUI(config.views);		
 
 		return ist;

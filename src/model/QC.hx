@@ -24,9 +24,8 @@ class QC extends Clients
 	 
 	public static function create(param:StringMap<String>):EitherType<String,Bool>
 	{
-		var self:QC = new QC();	
+		var self:QC = new QC(param);	
 		self.table = 'vicidial_list';
-		self.param = param;
 		//trace(param);
 		return Reflect.callMethod(self, Reflect.field(self,param.get('action')), [param]);
 	}

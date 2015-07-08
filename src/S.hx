@@ -47,7 +47,7 @@ class S
 		Session.start();
 
 		var pd:Dynamic = Web.getPostData();
-		
+		trace(pd);
 		var params:StringMap<String> = Web.getParams();
 		if (params.get('debug') == '1')
 		{

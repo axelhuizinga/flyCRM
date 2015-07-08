@@ -1,9 +1,9 @@
 <?php
 
 class model_AgcApi extends Model {
-	public function __construct() {
+	public function __construct($param = null) {
 		if(!php_Boot::$skip_constructor) {
-		parent::__construct();
+		parent::__construct($param);
 	}}
 	public $vicidialUser;
 	public $vicidialPass;
@@ -64,7 +64,7 @@ class model_AgcApi extends Model {
 			throw new HException('Unable to call <'.$m.'>');
 	}
 	static function create($param) {
-		$self = new model_AgcApi();
+		$self = new model_AgcApi(null);
 		$self->vicidialUser = S::$vicidialUser;
 		$self->vicidialPass = S::$vicidialPass;
 		return Reflect::callMethod($self, Reflect::field($self, $param->get("action")), (new _hx_array(array($param))));

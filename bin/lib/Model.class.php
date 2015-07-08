@@ -1,18 +1,26 @@
 <?php
 
 class Model {
-	public function __construct() {}
+	public function __construct($param = null) {
+		if(!php_Boot::$skip_constructor) {
+		$this->param = $param;
+		if($param !== null && $param->get("firstLoad") === "true") {
+			haxe_Log::trace("firstLoad", _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 442, "className" => "Model", "methodName" => "new")));
+			$this->globals = _hx_anonymous(array());
+			$this->globals->users = $this->query("SELECT full_name, user, active, user_group FROM vicidial_users");
+		}
+	}}
 	public $data;
 	public $db;
+	public $globals;
 	public $table;
 	public $primary;
 	public $num_rows;
 	public $joinTable;
 	public $param;
 	public function count($q, $sb, $phValues) {
-		if(!php_Boot::$skip_constructor) {
 		$fields = $q->get("fields");
-		haxe_Log::trace("table:" . _hx_string_or_null($q->get("table")) . ":" . _hx_string_or_null((Model_0($this, $fields, $phValues, $q, $sb))), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 91, "className" => "Model", "methodName" => "count")));
+		haxe_Log::trace("table:" . _hx_string_or_null($q->get("table")) . ":" . _hx_string_or_null((Model_0($this, $fields, $phValues, $q, $sb))), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 93, "className" => "Model", "methodName" => "count")));
 		$sb->add("SELECT COUNT(*) AS count");
 		$qTable = null;
 		if(Util::any2bool($q->get("table"))) {
@@ -41,10 +49,10 @@ class Model {
 			$this1 = php_Lib::hashOfAssociativeArray(_hx_array_get($this->execute($sb->b, $q, $phValues), 0));
 			return $this1->get("count");
 		}
-	}}
+	}
 	public function countJoin($q, $sb, $phValues) {
 		$fields = $q->get("fields");
-		haxe_Log::trace("table:" . _hx_string_or_null($q->get("table")) . ":" . _hx_string_or_null((Model_1($this, $fields, $phValues, $q, $sb))), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 109, "className" => "Model", "methodName" => "countJoin")));
+		haxe_Log::trace("table:" . _hx_string_or_null($q->get("table")) . ":" . _hx_string_or_null((Model_1($this, $fields, $phValues, $q, $sb))), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 111, "className" => "Model", "methodName" => "countJoin")));
 		$sb->add("SELECT COUNT(*) AS count");
 		$qTable = null;
 		if(Util::any2bool($q->get("table"))) {
@@ -81,7 +89,7 @@ class Model {
 	}
 	public function doJoin($q, $sb, $phValues) {
 		$fields = $q->get("fields");
-		haxe_Log::trace("table:" . _hx_string_or_null($q->get("table")) . ":" . _hx_string_or_null((Model_2($this, $fields, $phValues, $q, $sb))), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 135, "className" => "Model", "methodName" => "doJoin")));
+		haxe_Log::trace("table:" . _hx_string_or_null($q->get("table")) . ":" . _hx_string_or_null((Model_2($this, $fields, $phValues, $q, $sb))), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 137, "className" => "Model", "methodName" => "doJoin")));
 		$sb->add("SELECT " . _hx_string_or_null(((($fields !== null) ? $this->fieldFormat(_hx_explode(",", $fields)->map(array(new _hx_lambda(array(&$fields, &$phValues, &$q, &$sb), "Model_3"), 'execute'))->join(",")) : "*"))));
 		$qTable = null;
 		if(Util::any2bool($q->get("table"))) {
@@ -126,7 +134,7 @@ class Model {
 	}
 	public function doSelect($q, $sb, $phValues) {
 		$fields = $q->get("fields");
-		haxe_Log::trace("table:" . Std::string($q->get("table")) . ":" . Std::string(Model_4($this, $fields, $phValues, $q, $sb)), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 165, "className" => "Model", "methodName" => "doSelect")));
+		haxe_Log::trace("table:" . Std::string($q->get("table")) . ":" . Std::string(Model_4($this, $fields, $phValues, $q, $sb)), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 167, "className" => "Model", "methodName" => "doSelect")));
 		$sb->add("SELECT " . _hx_string_or_null(((($fields !== null) ? $this->fieldFormat($fields) : "*"))));
 		$qTable = null;
 		if(Util::any2bool($q->get("table"))) {
@@ -183,17 +191,17 @@ class Model {
 		$count = $this->countJoin($param, $sb, $phValues);
 		$sb = new StringBuf();
 		$phValues = new _hx_array(array());
-		haxe_Log::trace("count:" . _hx_string_rec($count, "") . " page:" . _hx_string_or_null($param->get("page")) . ": " . _hx_string_or_null(((($param->exists("page")) ? "Y" : "N"))), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 225, "className" => "Model", "methodName" => "find")));
+		haxe_Log::trace("count:" . _hx_string_rec($count, "") . " page:" . _hx_string_or_null($param->get("page")) . ": " . _hx_string_or_null(((($param->exists("page")) ? "Y" : "N"))), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 227, "className" => "Model", "methodName" => "find")));
 		$this->data = _hx_anonymous(array("count" => $count, "page" => (($param->exists("page")) ? Std::parseInt($param->get("page")) : 1), "rows" => $this->doSelect($param, $sb, $phValues)));
 		return $this->json_encode();
 	}
 	public function execute($sql, $param, $phValues = null) {
-		haxe_Log::trace($sql, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 236, "className" => "Model", "methodName" => "execute")));
+		haxe_Log::trace($sql, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 238, "className" => "Model", "methodName" => "execute")));
 		$stmt = S::$my->stmt_init();
 		$success = $stmt->prepare($sql);
-		haxe_Log::trace($success, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 240, "className" => "Model", "methodName" => "execute")));
+		haxe_Log::trace($success, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 242, "className" => "Model", "methodName" => "execute")));
 		if(!$success) {
-			haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 243, "className" => "Model", "methodName" => "execute")));
+			haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 245, "className" => "Model", "methodName" => "execute")));
 			return null;
 		}
 		$bindTypes = "";
@@ -216,15 +224,15 @@ class Model {
 				unset($type,$ph);
 			}
 		}
-		haxe_Log::trace(Std::string($values2bind), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 260, "className" => "Model", "methodName" => "execute")));
+		haxe_Log::trace(Std::string($values2bind), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 262, "className" => "Model", "methodName" => "execute")));
 		if($phValues->length > 0) {
 			$success = myBindParam($stmt, $values2bind, $bindTypes);
-			haxe_Log::trace("success:" . Std::string($success), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 264, "className" => "Model", "methodName" => "execute")));
+			haxe_Log::trace("success:" . Std::string($success), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 266, "className" => "Model", "methodName" => "execute")));
 			if($success) {
 				$data = null;
 				$success = $stmt->execute();
 				if(!$success) {
-					haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 272, "className" => "Model", "methodName" => "execute")));
+					haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 274, "className" => "Model", "methodName" => "execute")));
 					return null;
 				}
 				$result = $stmt->get_result();
@@ -238,7 +246,7 @@ class Model {
 			$data1 = null;
 			$success = $stmt->execute();
 			if(!$success) {
-				haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 290, "className" => "Model", "methodName" => "execute")));
+				haxe_Log::trace($stmt->error, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 292, "className" => "Model", "methodName" => "execute")));
 				return array("ERROR", $stmt->error);
 			}
 			$result1 = $stmt->get_result();
@@ -253,13 +261,13 @@ class Model {
 		return array("ERROR", $stmt->error);
 	}
 	public function query($sql) {
-		haxe_Log::trace($sql, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 308, "className" => "Model", "methodName" => "query")));
+		haxe_Log::trace($sql, _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 310, "className" => "Model", "methodName" => "query")));
 		$res = S::$my->query($sql, 1);
 		if($res) {
 			$data = _hx_deref(($res))->fetch_all(1);
 			return $data;
 		} else {
-			haxe_Log::trace(Std::string($res) . ":" . _hx_string_or_null(S::$my->error), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 317, "className" => "Model", "methodName" => "query")));
+			haxe_Log::trace(Std::string($res) . ":" . _hx_string_or_null(S::$my->error), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 319, "className" => "Model", "methodName" => "query")));
 		}
 		return null;
 	}
@@ -283,7 +291,7 @@ class Model {
 					$filter_tables = _hx_explode(",", $jt);
 					unset($jt);
 				}
-				haxe_Log::trace(Std::string($wData) . ":" . _hx_string_or_null($this->joinTable) . ":" . Std::string($filter_tables), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 343, "className" => "Model", "methodName" => "buildCond")));
+				haxe_Log::trace(Std::string($wData) . ":" . _hx_string_or_null($this->joinTable) . ":" . Std::string($filter_tables), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 345, "className" => "Model", "methodName" => "buildCond")));
 				if(_hx_deref(new EReg("pay_[a-zA-Z_]+\\.", ""))->match($wData[0]) && _hx_array_get(_hx_explode(".", $wData[0]), 0) !== $this->joinTable) {
 					continue;
 				}
@@ -375,6 +383,7 @@ class Model {
 	}
 	public function json_encode() {
 		$this->data->agent = S::$user;
+		$this->data->globals = $this->globals;
 		return json_encode($this->data, 320);
 	}
 	public function json_response($res) {
@@ -394,20 +403,20 @@ class Model {
 	static function dispatch($param) {
 		$cl = Type::resolveClass("model." . Std::string($param->get("className")));
 		if($cl === null) {
-			haxe_Log::trace("model." . Std::string($param->get("className")) . " ???", _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 64, "className" => "Model", "methodName" => "dispatch")));
+			haxe_Log::trace("model." . Std::string($param->get("className")) . " ???", _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 66, "className" => "Model", "methodName" => "dispatch")));
 			return false;
 		}
 		$fl = Reflect::field($cl, "create");
 		if($fl === null) {
-			haxe_Log::trace(Std::string($cl) . "create is null", _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 71, "className" => "Model", "methodName" => "dispatch")));
+			haxe_Log::trace(Std::string($cl) . "create is null", _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 73, "className" => "Model", "methodName" => "dispatch")));
 			return false;
 		}
 		$iFields = Type::getInstanceFields($cl);
 		if(Lambda::has($iFields, $param->get("action"))) {
-			haxe_Log::trace("calling create " . Std::string($cl), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 78, "className" => "Model", "methodName" => "dispatch")));
+			haxe_Log::trace("calling create " . Std::string($cl), _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 80, "className" => "Model", "methodName" => "dispatch")));
 			return Reflect::callMethod($cl, $fl, (new _hx_array(array($param))));
 		} else {
-			haxe_Log::trace("not calling create ", _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 83, "className" => "Model", "methodName" => "dispatch")));
+			haxe_Log::trace("not calling create ", _hx_anonymous(array("fileName" => "Model.hx", "lineNumber" => 85, "className" => "Model", "methodName" => "dispatch")));
 			return false;
 		}
 	}

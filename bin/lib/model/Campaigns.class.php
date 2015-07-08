@@ -1,9 +1,9 @@
 <?php
 
 class model_Campaigns extends Model {
-	public function __construct() {
+	public function __construct($param = null) {
 		if(!php_Boot::$skip_constructor) {
-		parent::__construct();
+		parent::__construct($param);
 	}}
 	public $campaign_id;
 	public function findLeads($q) {
@@ -37,7 +37,7 @@ class model_Campaigns extends Model {
 			throw new HException('Unable to call <'.$m.'>');
 	}
 	static function create($param) {
-		$self = new model_Campaigns();
+		$self = new model_Campaigns(null);
 		$self->table = "vicidial_campaigns";
 		haxe_Log::trace($param, _hx_anonymous(array("fileName" => "Campaigns.hx", "lineNumber" => 22, "className" => "model.Campaigns", "methodName" => "create")));
 		return Reflect::callMethod($self, Reflect::field($self, $param->get("action")), (new _hx_array(array($param))));

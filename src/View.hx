@@ -387,9 +387,12 @@ class View
 		var order:String = (params == null ? null : params.order);
 		params = {
 			action:'find',
+			firstLoad:App.ist.globals.firstLoad,
 			className:name,
 			instancePath:instancePath
 		};
+		App.ist.globals.firstLoad = false;
+		
 
 		for (f in pkeys)
 		{
@@ -413,6 +416,11 @@ class View
 	public function update(data:Dynamic):Void
 	{
 		// UPDATE MAIN DATA TABLE
+		if (data.globals != null)
+		{
+			App.ist.globals.users = data.globals.users;
+			//trace(App.ist.globals.users);
+		}
 		data.fields = fields;
 		data.hidden = vData.hidden;
 		data.primary_id = primary_id;

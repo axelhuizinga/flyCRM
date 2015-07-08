@@ -1,8 +1,8 @@
 <?php
 
 class model_Clients extends Model {
-	public function __construct() { if(!php_Boot::$skip_constructor) {
-		parent::__construct();
+	public function __construct($param = null) { if(!php_Boot::$skip_constructor) {
+		parent::__construct($param);
 	}}
 	public function doJoin($q, $sb, $phValues) {
 		$fields = $q->get("fields");
@@ -135,7 +135,7 @@ class model_Clients extends Model {
 		$p1->set("where", "user_group|AGENTS_A");
 		$owner = Std::parseInt(model_Clients_5($this, $eF, $editTables, $fieldNames, $keys, $optionsMap, $p1, $param, $phValues1, $sb1, $tableFields, $tableNames, $ti, $typeMap, $userMap));
 		haxe_Log::trace($owner, _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 218, "className" => "model.Clients", "methodName" => "edit")));
-		$this->data->userMap = _hx_deref(new model_Users())->get_info(null);
+		$this->data->userMap = _hx_deref(new model_Users(null))->get_info(null);
 		return $this->json_encode();
 	}
 	public function getCustomFields($list_id) {
@@ -631,9 +631,8 @@ class model_Clients extends Model {
 	static $pay_plan_fields;
 	static $custom_fields_map;
 	static function create($param) {
-		$self = new model_Clients();
+		$self = new model_Clients($param);
 		$self->table = "vicidial_list";
-		$self->param = $param;
 		return Reflect::callMethod($self, Reflect::field($self, $param->get("action")), (new _hx_array(array($param))));
 	}
 	function __toString() { return 'model.Clients'; }

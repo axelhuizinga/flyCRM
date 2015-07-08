@@ -18,6 +18,7 @@ class S {
 		S::$conf = Config::load("appData.js");
 		php_Session::start();
 		$pd = php_Web::getPostData();
+		haxe_Log::trace($pd, _hx_anonymous(array("fileName" => "S.hx", "lineNumber" => 50, "className" => "S", "methodName" => "main")));
 		$params = php_Web::getParams();
 		if($params->get("debug") === "1") {
 			header("Content-Type" . ": " . "text/html; charset=utf-8");
@@ -58,11 +59,11 @@ class S {
 		if($pass === null) {
 			return false;
 		}
-		$res = php_Lib::hashOfAssociativeArray(_hx_deref(new Model())->query("SELECT use_non_latin,webroot_writable,pass_hash_enabled,pass_key,pass_cost,hosted_settings FROM system_settings"));
+		$res = php_Lib::hashOfAssociativeArray(_hx_deref(new Model(null))->query("SELECT use_non_latin,webroot_writable,pass_hash_enabled,pass_key,pass_cost,hosted_settings FROM system_settings"));
 		if(S_0($pass, $res) === "1") {
 			S::hexit("ENCRYPTED PASSWORDS NOT IMPLEMENTED");
 		}
-		$res = php_Lib::hashOfAssociativeArray(_hx_deref(new Model())->query("SELECT count(*) AS cnt FROM vicidial_users WHERE user=\"" . _hx_string_or_null(S::$user) . "\" and pass=\"" . _hx_string_or_null($pass) . "\" and user_level > 7 and active=\"Y\""));
+		$res = php_Lib::hashOfAssociativeArray(_hx_deref(new Model(null))->query("SELECT count(*) AS cnt FROM vicidial_users WHERE user=\"" . _hx_string_or_null(S::$user) . "\" and pass=\"" . _hx_string_or_null($pass) . "\" and user_level > 7 and active=\"Y\""));
 		return $res->exists("0") && S_1($pass, $res) === "1";
 	}
 	static function hexit($d) {

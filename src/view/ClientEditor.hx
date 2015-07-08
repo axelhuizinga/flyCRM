@@ -150,21 +150,13 @@ class ClientEditor extends Editor
 		var sData:Dynamic = Reflect.field(editData, name);// { h:[] };
 		trace(name);
 		trace(dRows);
-		/*for (r in dRows)
-		{
-			var aRow:Dynamic = { };
-			for (f in Reflect.fields(r))
-			{
-				Reflect.setField(aRow, f+'[]', Reflect.field(f, r));
-			}
-			sData.h.push(aRow);
-		}*/
 		sData.table = name;
+		optionsMap.agent = prepareAgentMap();
 		sData.optionsMap = optionsMap;
 		sData.typeMap = typeMap;
 		sData.fieldNames = fieldNames;
 		
-		//trace(sData);
+		trace(sData.);
 		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
 		screens.set(name, J('#t-pay-editor').tmpl(sData).appendTo('#' + parentView.id).css( {
@@ -302,6 +294,20 @@ class ClientEditor extends Editor
 		trace(leadID);
 		
 		//cMenu.root.accordion("refresh");
+	}
+	
+	function prepareAgentMap():Array<Array<String>>
+	{
+		var agents:Array<Array<String>> = new Array();
+		var users:Array<Dynamic> = App.ist.globals.users;
+		for (u in users) 
+		{
+			if (u.user_group == 'AGENTS_A' && u.active == 'Y')
+			{
+				agents.push([u.user ,u.full_name]);		
+			}
+		}
+		return agents;
 	}
 	
 }

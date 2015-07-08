@@ -104,9 +104,9 @@ typedef CustomField =
 	}*/
 	public static function create(param:StringMap<String>):EitherType<String,Bool>
 	{
-		var self:Clients = new Clients();	
+		var self:Clients = new Clients(param);	
 		self.table = 'vicidial_list';
-		self.param = param;
+		//self.param = param;
 		//trace(param);
 		return Reflect.callMethod(self, Reflect.field(self,param.get('action')), [param]);
 	}

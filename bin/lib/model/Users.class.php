@@ -1,8 +1,8 @@
 <?php
 
 class model_Users extends Model {
-	public function __construct() { if(!php_Boot::$skip_constructor) {
-		parent::__construct();
+	public function __construct($param = null) { if(!php_Boot::$skip_constructor) {
+		parent::__construct($param);
 	}}
 	public function get_info($user = null) {
 		$sb = new StringBuf();

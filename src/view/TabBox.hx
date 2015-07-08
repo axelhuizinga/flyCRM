@@ -149,11 +149,11 @@ typedef TabBoxData =
 		trace(url + ':' + tabLinks.join(','));
 		trace(tabsInstance.options.active + ' : ' + tabLinks.indexOf(url));
 		//Out.dumpObject(p);
-		if (tabsInstance.options.active == tabLinks.indexOf(url))
+		/*if (tabsInstance.options.active == tabLinks.indexOf(url))
 		{
-			trace('full reload');
+			//trace('full reload');
 			//Browser.window.location.reload();
-		}
+		}*/
 		
 		if (!Std.is(url, String))
 		{

@@ -27,6 +27,7 @@ typedef MData =
 	@:optional var count:Int;
 	@:optional var page:Int;
 	@:optional var editData:NativeArray;
+	@:optional var globals:Dynamic;
 	@:optional var rows:NativeArray;
 	@:optional var response:String;
 	@:optional var choice:NativeArray;
@@ -49,6 +50,7 @@ class Model
 	}
 	public var data:MData;
 	public var db:String;
+	public var globals:Dynamic;
 	public var table:String;
 	public var primary:String;
 	public var num_rows(default, null):Int;
@@ -433,11 +435,20 @@ class Model
 		return KEYWORDS.exists(f.toLowerCase()) ? "`"+f+"`" : f;
 	}	
 	
-	public function new() {}
+	public function new(?param:StringMap<String>) {
+		this.param = param;
+		if (param != null && param.get('firstLoad') == 'true')
+		{
+			trace('firstLoad');
+			globals = { };
+			globals.users = query("SELECT full_name, user, active, user_group FROM vicidial_users");
+		}
+	}
 	
 	public function json_encode():EitherType<String,Bool>
 	{	
 		data.agent = S.user;
+		data.globals = globals;
 		return untyped __call__("json_encode", data, 64|256);//JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
 	}
 	
