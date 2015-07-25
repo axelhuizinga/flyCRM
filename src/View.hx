@@ -330,12 +330,13 @@ class View
 	//public function find(where:String):Void
 	{
 		lastFindParam = p.copy();
+		trace(p);
 		trace(lastFindParam);
 		var where:String = p.get('where');
 		trace(id + '|'+where+'|' + (where.any2bool() ? 'Y':'N'));
 		trace(vData.where);
 		var fData:Dynamic = { };
-		var pkeys:Array<String> = 'action,className,fields,primary_id,hidden,limit,order,page,pay_source,filter_tables,table,where'.split(',');
+		var pkeys:Array<String> = 'action,className,fields,primary_id,hidden,limit,order,page,pay_source,filter_tables,table,where,filter'.split(',');
 		for (f in pkeys)
 		{
 			if (Reflect.field(vData, f) != null)		
@@ -369,7 +370,7 @@ class View
 	
 	private function resetParams(?pData:Dynamic):Dynamic
 	{		
-		var pkeys:Array<String> = 'action,className,fields,limit,order,page,table,jointable,filter_tables,pay_source,joincond,joinfields,where'.split(',');
+		var pkeys:Array<String> = 'action,className,fields,limit,order,page,table,jointable,filter_tables,pay_source,joincond,joinfields,where,filter'.split(',');
 		//var aData:Dynamic = pData.any2bool() ? pData : vData;
 		//MERGE pData into vData
 		trace(pData);

@@ -284,10 +284,10 @@ typedef ContextMenuData =
 					var where:String = FormData.where(jNode.closest('form'), fields);
 					trace(where);
 					var wM:StringMap<String> = new StringMap();
-					wM.set('filter_tables', tableNames.join(','));
 					//for (tn in tableNames)
 						//wM.set(tn, contextData.tableData.get(tn).toString());
 					wM.set('filter', FormData.filter(jNode.closest('form'), contextData.tableData, tableNames));
+					wM.set('filter_tables', tableNames.join(','));
 					wM.set('where', where);
 					parentView.find(wM);
 					//Reflect.callMethod(parentView, Reflect.field(parentView, action), [wM]);			

@@ -35,7 +35,8 @@ class QC extends Clients
 		var entry_list_id:String = param.get('entry_list_id');
 		var cF:Array<StringMap<String>> = getCustomFields(entry_list_id);
 		var cFields:Array<String> = cF.map(function(field:StringMap<String>):String return field.get('field_label'));
-		trace(cFields);
+		trace(cFields.join(','));
+		//trace(cFields);
 		//trace(param);
 		var fieldDefault:StringMap<String> = new StringMap();
 		var fieldNames:StringMap<String> = new StringMap();

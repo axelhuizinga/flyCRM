@@ -31,7 +31,8 @@ var appLabel =
 	selectStatus:'Status Auswählen',
 	close:'Schließen',
 	of:'von',
-	pay_source:'Konto'
+	pay_source:'Konto',
+	pay_plan:'Produkt'
 }
 
 var matchOptions =
@@ -51,6 +52,7 @@ var rangeLabels =
 var rangeFields =
 {
 	last_local_call_time:1,
+	register_on:1,
 	order_date:1,
 	join_date:1
 }

@@ -14,7 +14,7 @@ class model_Campaigns extends Model {
 		$sb->add(" FROM  `vicidial_list` WHERE `list_id` IN( SELECT `list_id` FROM vicidial_lists ");
 		$where = $q->get("where");
 		if($where !== null) {
-			$this->buildCond($where, $sb, $phValues);
+			$this->buildCond($where, $sb, $phValues, null);
 		}
 		$sb->add(")");
 		$order = $q->get("order");

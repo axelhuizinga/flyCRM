@@ -418,6 +418,30 @@
 						</tr>								
 							
 							{{/each}}
+							{{if v.pay_plan_fields}}
+								<tr>
+									<td colspan="3">
+										<h5>${appLabel.pay_plan}</h5>							
+									</td>						
+								</tr>
+							{{/if}}
+							{{each(k,pv) v.pay_plan_fields}}
+								${trace($data.typeMap)}
+						<tr class="lh32" data-table="pay_plan" >
+							<td>
+							<div class="lpad" >${pv}</div>
+							</td>
+							
+							<td >																
+							<input type="${ fieldTypes[pv] ? fieldTypes[pv] : 'text' }" name="pay_plan.${k}" class="menu-input-right" >
+							</td>
+							<td >
+							<div class="rpad" >{{tmpl('pay_plan.'+k) "#t-find-match"}}</div>
+							</td>						
+					
+						</tr>								
+							
+							{{/each}}							
 							
 						{{each(bi,bv) v.buttons}}
 						<tr>

@@ -958,13 +958,14 @@ View.prototype = {
 	}
 	,find: function(p) {
 		this.lastFindParam = me_cunity_util_Data.copy(p);
-		haxe_Log.trace(this.lastFindParam,{ fileName : "View.hx", lineNumber : 333, className : "View", methodName : "find"});
+		haxe_Log.trace(p,{ fileName : "View.hx", lineNumber : 333, className : "View", methodName : "find"});
+		haxe_Log.trace(this.lastFindParam,{ fileName : "View.hx", lineNumber : 334, className : "View", methodName : "find"});
 		var where;
 		where = __map_reserved.where != null?p.getReserved("where"):p.h["where"];
-		haxe_Log.trace(this.id + "|" + where + "|" + (Util.any2bool(where)?"Y":"N"),{ fileName : "View.hx", lineNumber : 335, className : "View", methodName : "find"});
-		haxe_Log.trace(this.vData.where,{ fileName : "View.hx", lineNumber : 336, className : "View", methodName : "find"});
+		haxe_Log.trace(this.id + "|" + where + "|" + (Util.any2bool(where)?"Y":"N"),{ fileName : "View.hx", lineNumber : 336, className : "View", methodName : "find"});
+		haxe_Log.trace(this.vData.where,{ fileName : "View.hx", lineNumber : 337, className : "View", methodName : "find"});
 		var fData = { };
-		var pkeys = "action,className,fields,primary_id,hidden,limit,order,page,pay_source,filter_tables,table,where".split(",");
+		var pkeys = "action,className,fields,primary_id,hidden,limit,order,page,pay_source,filter_tables,table,where,filter".split(",");
 		var _g = 0;
 		while(_g < pkeys.length) {
 			var f = pkeys[_g];
@@ -983,8 +984,8 @@ View.prototype = {
 		this.loadData("server.php",this.params,$bind(this,this.update));
 	}
 	,resetParams: function(pData) {
-		var pkeys = "action,className,fields,limit,order,page,table,jointable,filter_tables,pay_source,joincond,joinfields,where".split(",");
-		haxe_Log.trace(pData,{ fileName : "View.hx", lineNumber : 375, className : "View", methodName : "resetParams"});
+		var pkeys = "action,className,fields,limit,order,page,table,jointable,filter_tables,pay_source,joincond,joinfields,where,filter".split(",");
+		haxe_Log.trace(pData,{ fileName : "View.hx", lineNumber : 376, className : "View", methodName : "resetParams"});
 		var aData = me_cunity_util_Data.copy(this.vData);
 		if(pData != null) {
 			var pFields = Reflect.fields(pData);
@@ -996,9 +997,9 @@ View.prototype = {
 			}
 		}
 		if(Util.any2bool(aData.fields)) this.fields = aData.fields.split(","); else this.fields = null;
-		haxe_Log.trace(this.fields,{ fileName : "View.hx", lineNumber : 384, className : "View", methodName : "resetParams"});
-		haxe_Log.trace(aData.hidden,{ fileName : "View.hx", lineNumber : 385, className : "View", methodName : "resetParams"});
-		haxe_Log.trace(aData.joincond,{ fileName : "View.hx", lineNumber : 386, className : "View", methodName : "resetParams"});
+		haxe_Log.trace(this.fields,{ fileName : "View.hx", lineNumber : 385, className : "View", methodName : "resetParams"});
+		haxe_Log.trace(aData.hidden,{ fileName : "View.hx", lineNumber : 386, className : "View", methodName : "resetParams"});
+		haxe_Log.trace(aData.joincond,{ fileName : "View.hx", lineNumber : 387, className : "View", methodName : "resetParams"});
 		var order;
 		if(this.params == null) order = null; else order = this.params.order;
 		this.params = { action : "find", firstLoad : App.ist.globals.firstLoad, className : this.name, instancePath : this.instancePath};
@@ -1018,7 +1019,7 @@ View.prototype = {
 		data.fields = this.fields;
 		data.hidden = this.vData.hidden;
 		data.primary_id = this.primary_id;
-		haxe_Log.trace(this.id + ":" + Std.string(data.fields) + ":" + Std.string(data.hidden) + ":" + Std.string(data.primary_id) + ":" + this.root.length,{ fileName : "View.hx", lineNumber : 427, className : "View", methodName : "update"});
+		haxe_Log.trace(this.id + ":" + Std.string(data.fields) + ":" + Std.string(data.hidden) + ":" + Std.string(data.primary_id) + ":" + this.root.length,{ fileName : "View.hx", lineNumber : 428, className : "View", methodName : "update"});
 		if(new $("#" + this.id + "-list").length > 0) new $("#" + this.id + "-list").replaceWith(new $("#t-" + this.id + "-list").tmpl(data)); else new $("#t-" + this.id + "-list").tmpl(data).appendTo(jQuery_JHelper.J(data.loaderId).first());
 		new $("#" + this.id + "-list th").each(function(i,el) {
 			new $(el).click(function(_) {
@@ -1032,21 +1033,21 @@ View.prototype = {
 			var pager = new view_Pager({ count : data.count, id : this.vData.id, limit : limit, page : data.page, parentView : this});
 		}
 		new $(".main-left").width(Std.string(new $("#" + this.id + "-menu").offset().left - 35));
-		haxe_Log.trace(Std.string(new $("#" + this.id + "-menu").offset().left - 35) + " reloadID:" + this.reloadID,{ fileName : "View.hx", lineNumber : 451, className : "View", methodName : "update"});
+		haxe_Log.trace(Std.string(new $("#" + this.id + "-menu").offset().left - 35) + " reloadID:" + this.reloadID,{ fileName : "View.hx", lineNumber : 452, className : "View", methodName : "update"});
 		this.wait(false);
 		if(this.reloadID != null) {
-			haxe_Log.trace("#" + this.reloadID + " : " + new $("#" + this.reloadID).length,{ fileName : "View.hx", lineNumber : 455, className : "View", methodName : "update"});
+			haxe_Log.trace("#" + this.reloadID + " : " + new $("#" + this.reloadID).length,{ fileName : "View.hx", lineNumber : 456, className : "View", methodName : "update"});
 			new $("#" + this.reloadID).children().first().trigger("click");
-			haxe_Log.trace(this.id + ":" + new $("#" + this.id + "-list tr[class~=\"selected\"]").length,{ fileName : "View.hx", lineNumber : 457, className : "View", methodName : "update"});
+			haxe_Log.trace(this.id + ":" + new $("#" + this.id + "-list tr[class~=\"selected\"]").length,{ fileName : "View.hx", lineNumber : 458, className : "View", methodName : "update"});
 			this.reloadID = null;
 		}
 	}
 	,runLoaders: function() {
-		haxe_Log.trace(this.dbLoaderIndex,{ fileName : "View.hx", lineNumber : 465, className : "View", methodName : "runLoaders"});
+		haxe_Log.trace(this.dbLoaderIndex,{ fileName : "View.hx", lineNumber : 466, className : "View", methodName : "runLoaders"});
 		this.loadAllData(this.dbLoaderIndex);
 	}
 	,select: function(evt) {
-		haxe_Log.trace("has to be implemented in subclass!",{ fileName : "View.hx", lineNumber : 471, className : "View", methodName : "select"});
+		haxe_Log.trace("has to be implemented in subclass!",{ fileName : "View.hx", lineNumber : 472, className : "View", methodName : "select"});
 	}
 	,wait: function(start,message,timeout) {
 		if(timeout == null) timeout = 15000;
@@ -1054,10 +1055,10 @@ View.prototype = {
 		var _g = this;
 		if(!start && this.waiting != null) {
 			this.waiting.stop();
-			haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 479, className : "View", methodName : "wait"});
+			haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 480, className : "View", methodName : "wait"});
 			new $("#wait").animate({ opacity : 0.0},300,null,function() {
 				new $("#wait").detach();
-				haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 480, className : "View", methodName : "wait"});
+				haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 481, className : "View", methodName : "wait"});
 			});
 			this.spinner.stop();
 		}
@@ -1069,7 +1070,7 @@ View.prototype = {
 		if(message == App.uiMessage.retry || message == App.uiMessage.timeout) this.waiting = haxe_Timer.delay(function() {
 			_g.wait(false);
 		},timeout); else {
-			haxe_Log.trace("set timeout:" + timeout + ":" + message,{ fileName : "View.hx", lineNumber : 501, className : "View", methodName : "wait"});
+			haxe_Log.trace("set timeout:" + timeout + ":" + message,{ fileName : "View.hx", lineNumber : 502, className : "View", methodName : "wait"});
 			this.waiting = haxe_Timer.delay(function() {
 				_g.wait(true,App.uiMessage.timeout,3500);
 			},timeout);
@@ -1449,7 +1450,7 @@ jQuery_FormData.query = function(jForm,eData) {
 };
 jQuery_FormData.save = function(jForm) {
 	var ret = jForm.serializeArray();
-	haxe_Log.trace(ret,{ fileName : "FormData.hx", lineNumber : 75, className : "jQuery.FormData", methodName : "save"});
+	haxe_Log.trace(ret,{ fileName : "FormData.hx", lineNumber : 76, className : "jQuery.FormData", methodName : "save"});
 	var _g = 0;
 	while(_g < ret.length) {
 		var fd = ret[_g];
@@ -1468,6 +1469,8 @@ jQuery_FormData.save = function(jForm) {
 };
 jQuery_FormData.filter = function(jForm,tableData,tableNames) {
 	var fResult = "";
+	var table2remove = [];
+	haxe_Log.trace(tableNames.join(","),{ fileName : "FormData.hx", lineNumber : 98, className : "jQuery.FormData", methodName : "filter"});
 	var _g = 0;
 	while(_g < tableNames.length) {
 		var tN = tableNames[_g];
@@ -1479,8 +1482,12 @@ jQuery_FormData.filter = function(jForm,tableData,tableNames) {
 		while(_g1 < tD.length) {
 			var tDn = tD[_g1];
 			++_g1;
+			if(!Util.any2bool(jForm.find("[name=\"" + tDn + "\"]").val())) {
+				haxe_Log.trace("" + tDn + " not set:" + Std.string(jForm.find("[name=\"" + tDn + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 107, className : "jQuery.FormData", methodName : "filter"});
+				continue;
+			}
 			var matchTypeOption = jForm.find("[name=\"" + tDn + "_match_option\"]");
-			haxe_Log.trace(tDn + ":" + matchTypeOption.length,{ fileName : "FormData.hx", lineNumber : 105, className : "jQuery.FormData", methodName : "filter"});
+			haxe_Log.trace(tDn + ":" + matchTypeOption.length,{ fileName : "FormData.hx", lineNumber : 111, className : "jQuery.FormData", methodName : "filter"});
 			if(matchTypeOption.length == 1) {
 				ret.push((function($this) {
 					var $r;
@@ -1503,7 +1510,7 @@ jQuery_FormData.filter = function(jForm,tableData,tableNames) {
 						default:
 							$r = (function($this) {
 								var $r;
-								haxe_Log.trace("ERROR: unknown matchTypeOption value:" + Std.string(matchTypeOption.val()),{ fileName : "FormData.hx", lineNumber : 119, className : "jQuery.FormData", methodName : "filter"});
+								haxe_Log.trace("ERROR: unknown matchTypeOption value:" + Std.string(matchTypeOption.val()),{ fileName : "FormData.hx", lineNumber : 125, className : "jQuery.FormData", methodName : "filter"});
 								$r = "ERROR|unknown matchTypeOption value:" + Std.string(matchTypeOption.val());
 								return $r;
 							}($this));
@@ -1516,22 +1523,29 @@ jQuery_FormData.filter = function(jForm,tableData,tableNames) {
 			}
 			if(tDn.indexOf("range_from_") == 0) {
 				var from = jForm.find("[name=\"" + tDn + "\"]").val();
-				if(from.length > 0) from = jQuery_FormData.gDateTime2mysql(from + "00:00:00");
+				if(from.length > 0) from = jQuery_FormData.gDateTime2mysql(from + " 00:00:00");
 				var name = HxOverrides.substr(tDn,11,null);
-				haxe_Log.trace(name + ":" + Std.string(jForm.find("[name=\"range_from_" + name + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 131, className : "jQuery.FormData", methodName : "filter"});
+				haxe_Log.trace(name + ":" + Std.string(jForm.find("[name=\"range_from_" + name + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 137, className : "jQuery.FormData", methodName : "filter"});
 				var to = jForm.find("[name=\"range_to_" + name + "\"]").val();
-				if(to.length > 0) to = jQuery_FormData.gDateTime2mysql(to + "23:59:59");
+				if(to.length > 0) to = jQuery_FormData.gDateTime2mysql(to + " 23:59:59");
 				if(from.length > 0 && to.length > 0) ret.push(name + "|BETWEEN|" + from + "|" + to); else if(from.length > 0) ret.push(name + "|BETWEEN|" + from + "|" + DateTools.format(new Date(),"%Y-%m-%d")); else if(to.length > 0) ret.push(name + "|BETWEEN|2015-01-01 00:00:00|" + to);
 			} else if(tDn.indexOf("range_to_") == 0) continue; else ret.push(tDn + "|" + Std.string(jForm.find("[name=\"" + tDn + "\"]")));
 		}
-		fResult += ret.join(",");
+		if(ret.length > 0) {
+			if(fResult != "") fResult += ",";
+			fResult += ret.join("|");
+		} else table2remove.push(tN);
 	}
+	table2remove.map(function(s) {
+		HxOverrides.remove(tableNames,s);
+	});
+	haxe_Log.trace(tableNames,{ fileName : "FormData.hx", lineNumber : 165, className : "jQuery.FormData", methodName : "filter"});
 	return fResult;
 };
 jQuery_FormData.where = function(jForm,fields) {
 	var ret = [];
 	var fD = jForm.serializeArray();
-	haxe_Log.trace(fields,{ fileName : "FormData.hx", lineNumber : 157, className : "jQuery.FormData", methodName : "where"});
+	haxe_Log.trace(fields,{ fileName : "FormData.hx", lineNumber : 174, className : "jQuery.FormData", methodName : "where"});
 	var aFields = new haxe_ds_StringMap();
 	Lambda.iter(fD,function(aFD) {
 		aFields.set(aFD.name,aFields.exists(aFD.name)?aFields.get(aFD.name).concat(aFD.value):[aFD.value]);
@@ -1558,20 +1572,20 @@ jQuery_FormData.where = function(jForm,fields) {
 				return item[0].name.indexOf(".") > -1 && StringTools.startsWith(item[0].name,f.split(".")[0]);
 			};
 		})(item)) || item[0].name.indexOf("range_from_") == 0)) continue;
-		haxe_Log.trace(item[0].name,{ fileName : "FormData.hx", lineNumber : 183, className : "jQuery.FormData", methodName : "where"});
+		haxe_Log.trace(item[0].name,{ fileName : "FormData.hx", lineNumber : 200, className : "jQuery.FormData", methodName : "where"});
 		if(item[0].value != null && item[0].value != "" || item[0].name.indexOf("range_from_") == 0) {
 			if(Object.prototype.hasOwnProperty.call(App.storeFormats,item[0].name)) {
 				var sForm = Reflect.field(App.storeFormats,item[0].name);
 				var callParam;
 				if(sForm.length > 1) callParam = sForm.slice(1); else callParam = [];
 				var method = sForm[0];
-				haxe_Log.trace("call FormData" + method,{ fileName : "FormData.hx", lineNumber : 191, className : "jQuery.FormData", methodName : "where"});
+				haxe_Log.trace("call FormData" + method,{ fileName : "FormData.hx", lineNumber : 208, className : "jQuery.FormData", methodName : "where"});
 				callParam.push(item[0].value);
 				item[0].value = Reflect.callMethod(window,Reflect.field(window,method),callParam);
-				haxe_Log.trace(item[0].value,{ fileName : "FormData.hx", lineNumber : 195, className : "jQuery.FormData", methodName : "where"});
+				haxe_Log.trace(item[0].value,{ fileName : "FormData.hx", lineNumber : 212, className : "jQuery.FormData", methodName : "where"});
 			}
 			var matchTypeOption = jForm.find("[name=\"" + item[0].name + "_match_option\"]");
-			haxe_Log.trace(item[0].name + ":" + matchTypeOption.length,{ fileName : "FormData.hx", lineNumber : 198, className : "jQuery.FormData", methodName : "where"});
+			haxe_Log.trace(item[0].name + ":" + matchTypeOption.length,{ fileName : "FormData.hx", lineNumber : 215, className : "jQuery.FormData", methodName : "where"});
 			if(matchTypeOption.length == 1) {
 				ret1.push((function($this) {
 					var $r;
@@ -1594,7 +1608,7 @@ jQuery_FormData.where = function(jForm,fields) {
 						default:
 							$r = (function($this) {
 								var $r;
-								haxe_Log.trace("ERROR: unknown matchTypeOption value:" + Std.string(matchTypeOption.val()),{ fileName : "FormData.hx", lineNumber : 212, className : "jQuery.FormData", methodName : "where"});
+								haxe_Log.trace("ERROR: unknown matchTypeOption value:" + Std.string(matchTypeOption.val()),{ fileName : "FormData.hx", lineNumber : 229, className : "jQuery.FormData", methodName : "where"});
 								$r = "ERROR|unknown matchTypeOption value:" + Std.string(matchTypeOption.val());
 								return $r;
 							}($this));
@@ -1607,16 +1621,16 @@ jQuery_FormData.where = function(jForm,fields) {
 			}
 			if(item[0].name.indexOf("range_from_") == 0) {
 				var from = item[0].value;
-				if(from.length > 0) from = jQuery_FormData.gDateTime2mysql(from + "00:00:00");
+				if(from.length > 0) from = jQuery_FormData.gDateTime2mysql(from + " 00:00:00");
 				var name = HxOverrides.substr(item[0].name,11,null);
-				haxe_Log.trace(name + ":" + Std.string(jForm.find("[name=\"range_from_" + name + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 224, className : "jQuery.FormData", methodName : "where"});
+				haxe_Log.trace(name + ":" + Std.string(jForm.find("[name=\"range_from_" + name + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 241, className : "jQuery.FormData", methodName : "where"});
 				var to = jForm.find("[name=\"range_to_" + name + "\"]").val();
-				if(to.length > 0) to = jQuery_FormData.gDateTime2mysql(to + "23:59:59");
+				if(to.length > 0) to = jQuery_FormData.gDateTime2mysql(to + " 23:59:59");
 				if(from.length > 0 && to.length > 0) ret1.push(name + "|BETWEEN|" + from + "|" + to); else if(from.length > 0) ret1.push(name + "|BETWEEN|" + from + "|" + DateTools.format(new Date(),"%Y-%m-%d")); else if(to.length > 0) ret1.push(name + "|BETWEEN|2015-01-01 00:00:00|" + to);
 			} else if(item[0].name.indexOf("range_to_") == 0) continue; else ret1.push(item[0].name + "|" + Std.string(item[0].value));
 		}
 	}
-	haxe_Log.trace(ret1.join(","),{ fileName : "FormData.hx", lineNumber : 241, className : "jQuery.FormData", methodName : "where"});
+	haxe_Log.trace(ret1.join(","),{ fileName : "FormData.hx", lineNumber : 258, className : "jQuery.FormData", methodName : "where"});
 	return ret1.join(",");
 };
 jQuery_FormData.gDate2mysql = $hx_exports.gDate2mysql = function(gDate) {
@@ -1626,7 +1640,7 @@ jQuery_FormData.gDate2mysql = $hx_exports.gDate2mysql = function(gDate) {
 	});
 	if(d.length != 3) {
 		if(d.length == 1 && d[0].length == 4) return d[0] + "-01-01";
-		haxe_Log.trace("Falsches Datumsformat:" + gDate + " :" + d.toString(),{ fileName : "FormData.hx", lineNumber : 257, className : "jQuery.FormData", methodName : "gDate2mysql"});
+		haxe_Log.trace("Falsches Datumsformat:" + gDate + " :" + d.toString(),{ fileName : "FormData.hx", lineNumber : 274, className : "jQuery.FormData", methodName : "gDate2mysql"});
 		return "Falsches Datumsformat:" + gDate;
 	}
 	return d[2] + "-" + d[1] + "-" + d[0];
@@ -1635,9 +1649,9 @@ jQuery_FormData.gDateTime2mysql = $hx_exports.gDateTime2mysql = function(gDateTi
 	var d = new EReg("[\\. :]","g").split(gDateTime).map(function(s) {
 		return StringTools.trim(s);
 	});
-	haxe_Log.trace(d,{ fileName : "FormData.hx", lineNumber : 269, className : "jQuery.FormData", methodName : "gDateTime2mysql"});
+	haxe_Log.trace(d,{ fileName : "FormData.hx", lineNumber : 286, className : "jQuery.FormData", methodName : "gDateTime2mysql"});
 	if(d.length != 6) {
-		haxe_Log.trace("Falsches Datumsformat:" + gDateTime,{ fileName : "FormData.hx", lineNumber : 272, className : "jQuery.FormData", methodName : "gDateTime2mysql"});
+		haxe_Log.trace("Falsches Datumsformat:" + gDateTime,{ fileName : "FormData.hx", lineNumber : 289, className : "jQuery.FormData", methodName : "gDateTime2mysql"});
 		return "Falsches Datumsformat:" + gDateTime;
 	}
 	return d[2] + "-" + d[1] + "-" + d[0] + " " + d[3] + ":" + d[4] + ":" + d[5];
@@ -2898,7 +2912,6 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		sData.optionsMap = this.optionsMap;
 		sData.typeMap = this.typeMap;
 		sData.fieldNames = this.fieldNames;
-		haxe_Log.trace(sData,{ fileName : "ClientEditor.hx", lineNumber : 159, className : "view.ClientEditor", methodName : "showScreen"});
 		var oMargin = 8;
 		var mSpace = App.getMainSpace();
 		this.screens.set(name,new $("#t-pay-editor").tmpl(sData).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1}));
@@ -2957,6 +2970,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		var _g = this;
 		this.parentView.wait(false);
 		this.editData = data.editData;
+		haxe_Log.trace(this.editData.pay_plan.h,{ fileName : "ClientEditor.hx", lineNumber : 235, className : "view.ClientEditor", methodName : "update"});
 		this.agent = data.agent;
 		this.screens = new haxe_ds_StringMap();
 		var dataOptions = { };
@@ -2987,23 +3001,23 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		this.cMenu.activePanel.find("form").append(recordings);
 		var oMargin = 8;
 		var mSpace = App.getMainSpace();
-		haxe_Log.trace(data.editData.pay_plan.h.agent,{ fileName : "ClientEditor.hx", lineNumber : 263, className : "view.ClientEditor", methodName : "update"});
+		haxe_Log.trace(data.editData.pay_plan.h[0].agent,{ fileName : "ClientEditor.hx", lineNumber : 264, className : "view.ClientEditor", methodName : "update"});
 		haxe_Log.trace(data.userMap.a.find(function(uM) {
 			return uM.user == data.editData.pay_plan.h[0].agent;
-		}),{ fileName : "ClientEditor.hx", lineNumber : 264, className : "view.ClientEditor", methodName : "update"});
-		haxe_Log.trace(data.editData.pay_plan.h,{ fileName : "ClientEditor.hx", lineNumber : 266, className : "view.ClientEditor", methodName : "update"});
+		}),{ fileName : "ClientEditor.hx", lineNumber : 266, className : "view.ClientEditor", methodName : "update"});
+		haxe_Log.trace(data.editData.pay_plan.h,{ fileName : "ClientEditor.hx", lineNumber : 268, className : "view.ClientEditor", methodName : "update"});
 		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
-		haxe_Log.trace(this.parentView.id + ":" + new $("#" + this.parentView.id + "-edit-form .datepicker").length,{ fileName : "ClientEditor.hx", lineNumber : 273, className : "view.ClientEditor", methodName : "update"});
+		haxe_Log.trace(this.parentView.id + ":" + new $("#" + this.parentView.id + "-edit-form .datepicker").length,{ fileName : "ClientEditor.hx", lineNumber : 275, className : "view.ClientEditor", methodName : "update"});
 		new $("#" + this.parentView.id + "-edit-form .datepicker").each(function(i,n) {
-			haxe_Log.trace(new $(n).attr("name"),{ fileName : "ClientEditor.hx", lineNumber : 276, className : "view.ClientEditor", methodName : "update"});
+			haxe_Log.trace(new $(n).attr("name"),{ fileName : "ClientEditor.hx", lineNumber : 278, className : "view.ClientEditor", methodName : "update"});
 			var dateString = _g.editData.clients.h[0][new $(n).attr("name")];
 			if(dateString != "" && dateString != "0000-00-00") js_JqueryUI.datepicker(new $(n),{ dateFormat : "dd.mm.yy"}).val(DateTools.format(HxOverrides.strDate(dateString),"%d.%m.%Y")); else js_JqueryUI.datepicker(new $(n),{ dateFormat : "dd.mm.yy"}).attr("placeholder",DateTools.format(DateTools.delta(new Date(),-86400000 * 365 * 80),"%d.%m.%Y"));
 		});
 		new $("#" + this.parentView.id + " .scrollbox").height(new $("#" + this.parentView.id + " #overlay").height());
-		haxe_Log.trace(this.leadID,{ fileName : "ClientEditor.hx", lineNumber : 294, className : "view.ClientEditor", methodName : "update"});
+		haxe_Log.trace(this.leadID,{ fileName : "ClientEditor.hx", lineNumber : 296, className : "view.ClientEditor", methodName : "update"});
 	}
 	,prepareAgentMap: function() {
-		var agents = [];
+		var agents = [["",""]];
 		var users = App.ist.globals.users;
 		var _g = 0;
 		while(_g < users.length) {
@@ -3211,8 +3225,8 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 				var where = jQuery_FormData.where(jNode.closest("form"),fields);
 				haxe_Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 285, className : "view.ContextMenu", methodName : "run"});
 				var wM = new haxe_ds_StringMap();
-				wM.set("filter_tables",tableNames.join(","));
 				wM.set("filter",jQuery_FormData.filter(jNode.closest("form"),this.contextData.tableData,tableNames));
+				wM.set("filter_tables",tableNames.join(","));
 				if(__map_reserved.where != null) wM.setReserved("where",where); else wM.h["where"] = where;
 				this.parentView.find(wM);
 			}

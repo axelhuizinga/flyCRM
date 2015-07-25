@@ -51,9 +51,15 @@ typedef CustomField =
 		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
 		//trace ('table:' + q.get('table') + ':' + (q.get('table').any2bool() ? q.get('table') : table) + '' + joinCond );
 		//trace (sb.toString());
-		//sb.add(' FROM ' + (q.exists('filter_tables') && q.get('filter_tables').any2bool() ?q.get('filter_tables').split(',').map(
-			//function(f:String) return 'fly_crm.' + S.my.real_escape_string(f) + ' AS $f' ).join(',') +',':'' )+ S.my.real_escape_string(qTable));		
-		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		var filterTables:String = '';
+		if (q.get('filter').any2bool() )
+		{
+			filterTables = q.get('filter_tables').split(',').map(function(f:String) return 'fly_crm.' + S.my.real_escape_string(f)).join(',');			
+			sb.add(' FROM $filterTables,' + S.my.real_escape_string(qTable));
+		}
+		else
+			sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		//sb.add(' FROM ' + S.my.real_escape_string(qTable));		
 		if (joinTable != null)
 			sb.add(' INNER JOIN $joinTable');
 		if (joinCond != null)
@@ -61,6 +67,14 @@ typedef CustomField =
 		var where:String = q.get('where');
 		if (where != null)
 			buildCond(where, sb, phValues);
+
+		if (q.get('filter').any2bool())
+		{			
+			buildCond(q.get('filter').split(',').map( function(f:String) return 'fly_crm.' + S.my.real_escape_string(f) 
+			).join(','), sb, phValues, false);
+			sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=clients.client_id').join(' '));
+		}
+		
 		var groupParam:String = q.get('group');
 		if (groupParam != null)
 			buildGroup(groupParam, sb);
@@ -115,7 +129,7 @@ typedef CustomField =
 	{	
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
-		//trace(param);
+		trace(param);
 		var count:Int = countJoin(param, sb, phValues);
 		
 		sb = new StringBuf();

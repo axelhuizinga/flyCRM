@@ -96,11 +96,13 @@ class Model
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
 		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
 		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
-		
+		// add filter tables
+		//var filterTables:String = (q.get('filter_tables').any2bool() ? q.get('filter_tables') + ',' : '');
 		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
 		var where:String = q.get('where');
 		if (where != null)
 			buildCond(where, sb, phValues);
+
 		return Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]).get('count');
 	}
 	
@@ -115,10 +117,15 @@ class Model
 		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
 		joinTable = (q.get('jointable').any2bool() ? q.get('jointable') : null);
 		
-		//sb.add(' FROM ' + (q.exists('filter_tables') && q.get('filter_tables').any2bool() ?q.get('filter_tables').split(',').map(
-			//function(f:String) return 'fly_crm.' + S.my.real_escape_string(f) + ' AS $f').join(',') +',':'' )
-			//+ S.my.real_escape_string(qTable));		
-		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		var filterTables:String = '';
+		if (q.get('filter').any2bool() )
+		{
+			filterTables = q.get('filter_tables').split(',').map(function(f:String) return 'fly_crm.' + S.my.real_escape_string(f)).join(',');			
+			sb.add(' FROM $filterTables,' + S.my.real_escape_string(qTable));
+		}
+		else
+			sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		
 		if (joinTable != null)
 			sb.add(' INNER JOIN $joinTable');
 		if (joinCond != null)
@@ -126,6 +133,13 @@ class Model
 		var where:String = q.get('where');
 		if (where != null)
 			buildCond(where, sb, phValues);
+		// add filter conditions
+		if (q.get('filter').any2bool())
+		{			
+			buildCond(q.get('filter').split(',').map( function(f:String) return 'fly_crm.' + S.my.real_escape_string(f) 
+			).join(','), sb, phValues, false);
+			sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=clients.client_id').join(' '));
+		}
 		//var hash =  Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]);
 		//trace(hash + ': ' + (hash.exists('count') ? 'Y':'N') );
 		return Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]).get('count');
@@ -140,8 +154,15 @@ class Model
 		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
 		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
 		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
-		
-		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		var filterTables:String = '';
+		if (q.get('filter').any2bool() )
+		{
+			filterTables = q.get('filter_tables').split(',').map(function(f:String) return 'fly_crm.' + S.my.real_escape_string(f)).join(',');			
+			sb.add(' FROM $filterTables,' + S.my.real_escape_string(qTable));
+		}
+		else
+			sb.add(' FROM ' + S.my.real_escape_string(qTable));		
+		//sb.add(' FROM ' + S.my.real_escape_string(qTable));		
 		if (joinTable != null)
 			sb.add(' INNER JOIN $joinTable');
 		if (joinCond != null)
@@ -149,6 +170,14 @@ class Model
 		var where:String = q.get('where');
 		if (where != null)
 			buildCond(where, sb, phValues);
+			
+		if (q.get('filter').any2bool())
+		{			
+			buildCond(q.get('filter').split(',').map( function(f:String) return 'fly_crm.' + S.my.real_escape_string(f) 
+			).join(','), sb, phValues, false);
+			sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=clients.client_id').join(' '));
+		}		
+		
 		var groupParam:String = q.get('group');
 		if (groupParam != null)
 			buildGroup(groupParam, sb);
@@ -156,6 +185,7 @@ class Model
 		var order:String = q.get('order');
 		if (order != null)
 			buildOrder(order, sb);
+			
 		var limit:String = q.get('limit');
 		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
 		return execute(sb.toString(), q, phValues);
@@ -320,14 +350,14 @@ class Model
 		return null;
 	}
 	
-	public function buildCond(whereParam:String, sob:StringBuf, phValues:Array<Array<Dynamic>>):Bool
+	public function buildCond(whereParam:String, sob:StringBuf, phValues:Array<Array<Dynamic>>, ?first:Bool=true):Bool
 	{
 		var sb:StringBuf = new StringBuf();
 		var where:Array<Dynamic> = whereParam.split(',');
 		//trace(where);
 		if (where.length == 0)
 			return false;
-		var first:Bool = true;
+		//var first:Bool = true;
 		for (w in where)
 		{
 
@@ -343,7 +373,7 @@ class Model
 			}
 			
 			trace(wData + ':' + joinTable + ':' +  filter_tables);
-			if (~/pay_[a-zA-Z_]+\./.match(wData[0]) && wData[0].split('.')[0] != joinTable )
+			if (~/^pay_[a-zA-Z_]+\./.match(wData[0]) && wData[0].split('.')[0] != joinTable )
 			{
 				continue;
 			}

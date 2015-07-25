@@ -156,7 +156,7 @@ class ClientEditor extends Editor
 		sData.typeMap = typeMap;
 		sData.fieldNames = fieldNames;
 		
-		trace(sData.);
+		//trace(sData.optionsMap);
 		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
 		screens.set(name, J('#t-pay-editor').tmpl(sData).appendTo('#' + parentView.id).css( {
@@ -232,6 +232,7 @@ class ClientEditor extends Editor
 		editData = data.editData;
 		//trace('birth_date:' + editData.clients.h[0].birth_date);
 		//Reflect.deleteField(editData.clients.h[0], 'owner');
+		trace(editData.pay_plan.h);
 		agent = data.agent;
 		screens = new StringMap();
 		var dataOptions:Dynamic = {};
@@ -260,7 +261,8 @@ class ClientEditor extends Editor
 		var mSpace:Rectangle = App.getMainSpace();
 		//FILL TEMPLATE AND SHOW EDITOR FORM OVERLAY
 		//data.editData.pay_plan.h.agent = data.userMap.a
-		trace(data.editData.pay_plan.h.agent);
+		trace(data.editData.pay_plan.h[0].agent);
+		//trace(data.userMap);
 		trace(data.userMap.a.find(function(uM) return uM.user == data.editData.pay_plan.h[0].agent) );
 		//data.editData.pay_plan.h[0].agent = data.userMap.a.find(function(uM) return uM.user == data.editData.pay_plan.h[0].agent).full_name;
 		trace(data.editData.pay_plan.h);
@@ -298,7 +300,7 @@ class ClientEditor extends Editor
 	
 	function prepareAgentMap():Array<Array<String>>
 	{
-		var agents:Array<Array<String>> = new Array();
+	var agents:Array<Array<String>> = [['','']];
 		var users:Array<Dynamic> = App.ist.globals.users;
 		for (u in users) 
 		{

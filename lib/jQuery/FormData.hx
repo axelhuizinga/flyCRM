@@ -10,6 +10,7 @@ import js.Browser;
 
 using Lambda;
 using StringTools;
+using Util;
  
 typedef FData = 
 {
@@ -93,14 +94,19 @@ class FormData
 	public static function filter(jForm:JQuery, tableData:StringMap<Array<String>>, tableNames:Array<String>):String
 	{
 		var fResult:String = '';
+		var table2remove:Array<String> = new Array();
+		trace(tableNames.join(','));
 		for (tN in tableNames)
 		{
 			var tD:Array<String> = tableData.get(tN);
-			//if(tD.length >0)
-				//fResult += ' AND vicidial_list.vendor_lead_code IN (SELECT $tN.client_id FROM $tN WHERE'; 
 			var ret:Array<String> = new Array();
 			for (tDn in tD)
 			{		
+				if (!jForm.find('[name="' + tDn +'"]').val().any2bool())
+				{		
+					trace('$tDn not set:' + jForm.find('[name="' + tDn +'"]').val());
+					continue;
+				}
 				var matchTypeOption:JQuery =  jForm.find('[name="' + tDn + '_match_option"]');
 				trace (tDn + ':' + matchTypeOption.length );
 				if (matchTypeOption.length == 1)
@@ -126,12 +132,12 @@ class FormData
 				{
 					var from:String = jForm.find('[name="' + tDn +'"]').val();
 					if (from.length > 0)
-						from = gDateTime2mysql(from + '00:00:00');
+						from = gDateTime2mysql(from + ' 00:00:00');
 					var name:String = tDn.substr(11);
 					trace(name + ':' +  jForm.find('[name="range_from_' + name + '"]').val() );
 					var to:String = jForm.find('[name="range_to_' + name + '"]').val();
 					if (to.length > 0)
-						to = gDateTime2mysql(to + '23:59:59');
+						to = gDateTime2mysql(to + ' 23:59:59');
 					if (from.length > 0 && to.length > 0)
 						ret.push(name + '|BETWEEN|' + from + '|' + to);
 					else if (from.length > 0)
@@ -143,10 +149,21 @@ class FormData
 					continue;
 				else
 					ret.push (tDn + '|' + jForm.find('[name="' + tDn +'"]') );
+					
 				
 			}
-			fResult += ret.join(',');
+			if (ret.length > 0)
+			{
+				if (fResult != '')
+					fResult += ',';
+				fResult += ret.join('|');
+			}
+			else
+				table2remove.push(tN);
 		}
+		table2remove.map(function(s:String) tableNames.remove(s));
+		trace(tableNames);
+		//fResult = ret.join(',');tableNames.remove(tN);
 		return fResult;
 	}
 	
@@ -219,12 +236,12 @@ class FormData
 				{
 					var from:String = item.value;
 					if (from.length > 0)
-						from = gDateTime2mysql(from + '00:00:00');
+						from = gDateTime2mysql(from + ' 00:00:00');
 					var name:String = item.name.substr(11);
 					trace(name + ':' +  jForm.find('[name="range_from_' + name + '"]').val() );
 					var to:String = jForm.find('[name="range_to_' + name + '"]').val();
 					if (to.length > 0)
-						to = gDateTime2mysql(to + '23:59:59');
+						to = gDateTime2mysql(to + ' 23:59:59');
 					if (from.length > 0 && to.length > 0)
 						ret.push(name + '|BETWEEN|' + from + '|' + to);
 					else if (from.length > 0)

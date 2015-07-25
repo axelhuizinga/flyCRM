@@ -1,7 +1,7 @@
 <?php
 	 
 	$appLog = "/var/log/flyCRM.log";
-	error_log("syncLog:$appLog");
+	#error_log("syncLog:$appLog");
 	
 	function array2json($arr)
 	{
