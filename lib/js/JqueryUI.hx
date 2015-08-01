@@ -23,7 +23,7 @@ import jQuery.*;
 	
 	public static function datepicker(dp:JQuery, ?options:Dynamic):JQuery
 	{
-		trace(options);
+		//trace(options);
 		return untyped dp.datepicker(options).attr("placeholder", DateTools.format(Date.now(), '%d.%m.%Y'));
 	}
 	

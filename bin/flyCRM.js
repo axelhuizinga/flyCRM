@@ -783,7 +783,7 @@ var View = function(data) {
 	if(data1.attach2 == null) this.attach2 = "#" + this.id; else this.attach2 = data1.attach2;
 	this.name = Type.getClassName(js_Boot.getClass(this)).split(".").pop();
 	this.root = new $("#" + this.id).css({ opacity : 0});
-	haxe_Log.trace(this.name + ":" + this.id + ":" + this.root.length + ":" + new $(this.attach2).attr("id") + ":" + this.dbLoaderIndex,{ fileName : "View.hx", lineNumber : 119, className : "View", methodName : "new"});
+	haxe_Log.trace(this.name + ":" + this.id + ":" + this.root.length + ":" + new $(this.attach2).attr("id") + ":" + this.dbLoaderIndex,{ fileName : "View.hx", lineNumber : 120, className : "View", methodName : "new"});
 	this.interactionStates = new haxe_ds_StringMap();
 	this.listening = new haxe_ds_ObjectMap();
 	this.suspended = new haxe_ds_StringMap();
@@ -801,7 +801,6 @@ View.prototype = {
 	,template: null
 	,spinner: null
 	,waiting: null
-	,views: null
 	,parentView: null
 	,parentTab: null
 	,params: null
@@ -812,6 +811,7 @@ View.prototype = {
 	,dbLoader: null
 	,templ: null
 	,dbLoaderIndex: null
+	,contextMenu: null
 	,id: null
 	,instancePath: null
 	,interactionState: null
@@ -819,6 +819,7 @@ View.prototype = {
 	,selectedID: null
 	,lastFindParam: null
 	,reloadID: null
+	,views: null
 	,init: function() {
 		this.loading = 0;
 		if(this.loadingComplete()) this.initState(); else haxe_Timer.delay($bind(this,this.initState),1000);
@@ -826,6 +827,7 @@ View.prototype = {
 	,set_interactionState: function(iState) {
 		this.interactionState = iState;
 		var iS = this.interactionStates.get(iState);
+		haxe_Log.trace(this.id + ":" + iState + ":" + Std.string(iS),{ fileName : "View.hx", lineNumber : 139, className : "View", methodName : "set_interactionState"});
 		if(iS == null) return null;
 		var lIt = this.listening.keys();
 		while(lIt.hasNext()) {
@@ -834,7 +836,7 @@ View.prototype = {
 			if(Lambda.has(iS.disables,aAction)) aListener.prop("disabled",true);
 			if(Lambda.has(iS.enables,aAction)) aListener.prop("disabled",false);
 		}
-		haxe_Log.trace(iState,{ fileName : "View.hx", lineNumber : 156, className : "View", methodName : "set_interactionState"});
+		haxe_Log.trace(iState,{ fileName : "View.hx", lineNumber : 157, className : "View", methodName : "set_interactionState"});
 		return iState;
 	}
 	,addInteractionState: function(name,iS) {
@@ -853,7 +855,7 @@ View.prototype = {
 	,addInput: function(v,className) {
 		var aI = null;
 		var iParam = v;
-		haxe_Log.trace(className + ":" + Std.string(iParam.id),{ fileName : "View.hx", lineNumber : 182, className : "View", methodName : "addInput"});
+		haxe_Log.trace(className + ":" + Std.string(iParam.id),{ fileName : "View.hx", lineNumber : 183, className : "View", methodName : "addInput"});
 		var cl = Type.resolveClass("view." + className);
 		if(cl != null) {
 			if(Object.prototype.hasOwnProperty.call(v,"attach2")) iParam.attach2 = v.attach2;
@@ -874,16 +876,16 @@ View.prototype = {
 		var av = null;
 		var className = Reflect.fields(v)[0];
 		var iParam = Reflect.field(v,className);
-		haxe_Log.trace(this.name + ":" + className + ":" + this.dbLoader.length,{ fileName : "View.hx", lineNumber : 214, className : "View", methodName : "addView"});
+		haxe_Log.trace(this.name + ":" + className + ":" + this.dbLoader.length,{ fileName : "View.hx", lineNumber : 215, className : "View", methodName : "addView"});
 		var cl = Type.resolveClass("view." + className);
 		if(cl != null) {
-			haxe_Log.trace(cl,{ fileName : "View.hx", lineNumber : 219, className : "View", methodName : "addView"});
+			haxe_Log.trace(cl,{ fileName : "View.hx", lineNumber : 220, className : "View", methodName : "addView"});
 			if(Object.prototype.hasOwnProperty.call(v,"attach2")) iParam.attach2 = v.attach2;
 			if(Object.prototype.hasOwnProperty.call(v,"dbLoaderIndex")) iParam.dbLoaderIndex = v.dbLoaderIndex;
 			iParam.parentView = this;
 			av = Type.createInstance(cl,[iParam]);
 			this.views.set(av.instancePath,av);
-			haxe_Log.trace("views.set(" + av.instancePath + ")",{ fileName : "View.hx", lineNumber : 228, className : "View", methodName : "addView"});
+			haxe_Log.trace("views.set(" + av.instancePath + ")",{ fileName : "View.hx", lineNumber : 229, className : "View", methodName : "addView"});
 		}
 		return av;
 	}
@@ -897,7 +899,7 @@ View.prototype = {
 		}
 	}
 	,initState: function() {
-		haxe_Log.trace(this.id + ":" + (this.loadingComplete()?"Y":"N") + " :" + new $("button[data-contextaction]").length,{ fileName : "View.hx", lineNumber : 247, className : "View", methodName : "initState"});
+		haxe_Log.trace(this.id + ":" + (this.loadingComplete()?"Y":"N") + " :" + new $("button[data-contextaction]").length,{ fileName : "View.hx", lineNumber : 248, className : "View", methodName : "initState"});
 		if(!this.loadingComplete()) {
 			haxe_Timer.delay($bind(this,this.initState),1000);
 			return;
@@ -906,7 +908,7 @@ View.prototype = {
 		this.set_interactionState("init");
 		new $("td").attr("tabindex",-1);
 		var el = new $("#" + this.id).get()[0];
-		haxe_Log.trace(this.id + " initState complete - we can show up :)" + ":" + Std.string(el),{ fileName : "View.hx", lineNumber : 257, className : "View", methodName : "initState"});
+		haxe_Log.trace(this.id + " initState complete - we can show up :)" + ":" + Std.string(el),{ fileName : "View.hx", lineNumber : 258, className : "View", methodName : "initState"});
 		new $("#" + this.id).animate({ opacity : 1},300,"linear",function() {
 		});
 	}
@@ -924,16 +926,16 @@ View.prototype = {
 	,addDataLoader: function(loaderId,dL,loaderIndex) {
 		if(loaderIndex == null) loaderIndex = 0;
 		this.dbLoader[loaderIndex].set(loaderId,dL);
-		haxe_Log.trace(this.id + ":" + loaderIndex + ":" + loaderId,{ fileName : "View.hx", lineNumber : 286, className : "View", methodName : "addDataLoader"});
+		haxe_Log.trace(this.id + ":" + loaderIndex + ":" + loaderId,{ fileName : "View.hx", lineNumber : 287, className : "View", methodName : "addDataLoader"});
 	}
 	,loadAllData: function(loaderIndex) {
 		if(loaderIndex == null) loaderIndex = 0;
 		var dLoader = this.dbLoader[loaderIndex];
 		var keys = dLoader.keys();
-		haxe_Log.trace(Lambda.count(dLoader) + ":" + loaderIndex,{ fileName : "View.hx", lineNumber : 294, className : "View", methodName : "loadAllData"});
+		haxe_Log.trace(Lambda.count(dLoader) + ":" + loaderIndex,{ fileName : "View.hx", lineNumber : 295, className : "View", methodName : "loadAllData"});
 		while( keys.hasNext() ) {
 			var k = keys.next();
-			haxe_Log.trace(k,{ fileName : "View.hx", lineNumber : 297, className : "View", methodName : "loadAllData"});
+			haxe_Log.trace(k,{ fileName : "View.hx", lineNumber : 298, className : "View", methodName : "loadAllData"});
 			this.load(k,loaderIndex);
 		}
 	}
@@ -943,7 +945,7 @@ View.prototype = {
 		var loader = this.dbLoader[loaderIndex].get(loaderId);
 		if(!loader.valid) this.loadData("server.php",loader.prepare(),function(data) {
 			data.loaderId = loaderId;
-			haxe_Log.trace(_g.id + ":" + Std.string(data.fields) + ":" + Std.string(data.loaderId),{ fileName : "View.hx", lineNumber : 311, className : "View", methodName : "load"});
+			haxe_Log.trace(_g.id + ":" + Std.string(data.fields) + ":" + Std.string(data.loaderId),{ fileName : "View.hx", lineNumber : 312, className : "View", methodName : "load"});
 			loader.callBack(data);
 			loader.valid = true;
 		});
@@ -958,12 +960,8 @@ View.prototype = {
 	}
 	,find: function(p) {
 		this.lastFindParam = me_cunity_util_Data.copy(p);
-		haxe_Log.trace(p,{ fileName : "View.hx", lineNumber : 333, className : "View", methodName : "find"});
-		haxe_Log.trace(this.lastFindParam,{ fileName : "View.hx", lineNumber : 334, className : "View", methodName : "find"});
 		var where;
 		where = __map_reserved.where != null?p.getReserved("where"):p.h["where"];
-		haxe_Log.trace(this.id + "|" + where + "|" + (Util.any2bool(where)?"Y":"N"),{ fileName : "View.hx", lineNumber : 336, className : "View", methodName : "find"});
-		haxe_Log.trace(this.vData.where,{ fileName : "View.hx", lineNumber : 337, className : "View", methodName : "find"});
 		var fData = { };
 		var pkeys = "action,className,fields,primary_id,hidden,limit,order,page,pay_source,filter_tables,table,where,filter".split(",");
 		var _g = 0;
@@ -1019,7 +1017,7 @@ View.prototype = {
 		data.fields = this.fields;
 		data.hidden = this.vData.hidden;
 		data.primary_id = this.primary_id;
-		haxe_Log.trace(this.id + ":" + Std.string(data.fields) + ":" + Std.string(data.hidden) + ":" + Std.string(data.primary_id) + ":" + this.root.length,{ fileName : "View.hx", lineNumber : 428, className : "View", methodName : "update"});
+		haxe_Log.trace(this.id + ":" + Std.string(data.fields) + ":" + Std.string(data.hidden) + ":" + Std.string(data.primary_id) + ":" + this.root.length,{ fileName : "View.hx", lineNumber : 421, className : "View", methodName : "update"});
 		if(new $("#" + this.id + "-list").length > 0) new $("#" + this.id + "-list").replaceWith(new $("#t-" + this.id + "-list").tmpl(data)); else new $("#t-" + this.id + "-list").tmpl(data).appendTo(jQuery_JHelper.J(data.loaderId).first());
 		new $("#" + this.id + "-list th").each(function(i,el) {
 			new $(el).click(function(_) {
@@ -1033,21 +1031,21 @@ View.prototype = {
 			var pager = new view_Pager({ count : data.count, id : this.vData.id, limit : limit, page : data.page, parentView : this});
 		}
 		new $(".main-left").width(Std.string(new $("#" + this.id + "-menu").offset().left - 35));
-		haxe_Log.trace(Std.string(new $("#" + this.id + "-menu").offset().left - 35) + " reloadID:" + this.reloadID,{ fileName : "View.hx", lineNumber : 452, className : "View", methodName : "update"});
+		haxe_Log.trace(Std.string(new $("#" + this.id + "-menu").offset().left - 35) + " reloadID:" + this.reloadID,{ fileName : "View.hx", lineNumber : 445, className : "View", methodName : "update"});
 		this.wait(false);
 		if(this.reloadID != null) {
-			haxe_Log.trace("#" + this.reloadID + " : " + new $("#" + this.reloadID).length,{ fileName : "View.hx", lineNumber : 456, className : "View", methodName : "update"});
+			haxe_Log.trace("#" + this.reloadID + " : " + new $("#" + this.reloadID).length,{ fileName : "View.hx", lineNumber : 449, className : "View", methodName : "update"});
 			new $("#" + this.reloadID).children().first().trigger("click");
-			haxe_Log.trace(this.id + ":" + new $("#" + this.id + "-list tr[class~=\"selected\"]").length,{ fileName : "View.hx", lineNumber : 458, className : "View", methodName : "update"});
+			haxe_Log.trace(this.id + ":" + new $("#" + this.id + "-list tr[class~=\"selected\"]").length,{ fileName : "View.hx", lineNumber : 451, className : "View", methodName : "update"});
 			this.reloadID = null;
 		}
 	}
 	,runLoaders: function() {
-		haxe_Log.trace(this.dbLoaderIndex,{ fileName : "View.hx", lineNumber : 466, className : "View", methodName : "runLoaders"});
+		haxe_Log.trace(this.dbLoaderIndex,{ fileName : "View.hx", lineNumber : 459, className : "View", methodName : "runLoaders"});
 		this.loadAllData(this.dbLoaderIndex);
 	}
 	,select: function(evt) {
-		haxe_Log.trace("has to be implemented in subclass!",{ fileName : "View.hx", lineNumber : 472, className : "View", methodName : "select"});
+		haxe_Log.trace("has to be implemented in subclass!",{ fileName : "View.hx", lineNumber : 465, className : "View", methodName : "select"});
 	}
 	,wait: function(start,message,timeout) {
 		if(timeout == null) timeout = 15000;
@@ -1055,10 +1053,10 @@ View.prototype = {
 		var _g = this;
 		if(!start && this.waiting != null) {
 			this.waiting.stop();
-			haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 480, className : "View", methodName : "wait"});
+			haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 473, className : "View", methodName : "wait"});
 			new $("#wait").animate({ opacity : 0.0},300,null,function() {
 				new $("#wait").detach();
-				haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 481, className : "View", methodName : "wait"});
+				haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 474, className : "View", methodName : "wait"});
 			});
 			this.spinner.stop();
 		}
@@ -1070,7 +1068,7 @@ View.prototype = {
 		if(message == App.uiMessage.retry || message == App.uiMessage.timeout) this.waiting = haxe_Timer.delay(function() {
 			_g.wait(false);
 		},timeout); else {
-			haxe_Log.trace("set timeout:" + timeout + ":" + message,{ fileName : "View.hx", lineNumber : 502, className : "View", methodName : "wait"});
+			haxe_Log.trace("set timeout:" + timeout + ":" + message,{ fileName : "View.hx", lineNumber : 495, className : "View", methodName : "wait"});
 			this.waiting = haxe_Timer.delay(function() {
 				_g.wait(true,App.uiMessage.timeout,3500);
 			},timeout);
@@ -1450,19 +1448,28 @@ jQuery_FormData.query = function(jForm,eData) {
 };
 jQuery_FormData.save = function(jForm) {
 	var ret = jForm.serializeArray();
-	haxe_Log.trace(ret,{ fileName : "FormData.hx", lineNumber : 76, className : "jQuery.FormData", methodName : "save"});
+	var checkBoxes = jForm.find("input[type=\"checkbox\"]");
+	checkBoxes.each(function(i,n) {
+		var checkBox = new $(n);
+		if(!Lambda.forone(ret,function(fd) {
+			return fd.name == checkBox.attr("name");
+		})) ret.push({ name : checkBox.attr("name"), value : checkBox.prop("checked")?1:0}); else ret = ret.map(function(fd1) {
+			if(fd1.name == checkBox.attr("name")) if(checkBox.prop("checked")) fd1.value = 1; else fd1.value = 0;
+			return fd1;
+		});
+	});
 	var _g = 0;
 	while(_g < ret.length) {
-		var fd = ret[_g];
+		var fd2 = ret[_g];
 		++_g;
-		var itemName = fd.name.split("[")[0];
+		var itemName = fd2.name.split("[")[0];
 		if(Object.prototype.hasOwnProperty.call(App.storeFormats,itemName)) {
 			var sForm = Reflect.field(App.storeFormats,itemName);
 			var callParam;
 			if(sForm.length > 1) callParam = sForm.slice(1); else callParam = [];
 			var method = sForm[0];
-			callParam.push(fd.value);
-			fd.value = Reflect.callMethod(window,Reflect.field(window,method),callParam);
+			callParam.push(fd2.value);
+			fd2.value = Reflect.callMethod(window,Reflect.field(window,method),callParam);
 		}
 	}
 	return ret;
@@ -1470,7 +1477,7 @@ jQuery_FormData.save = function(jForm) {
 jQuery_FormData.filter = function(jForm,tableData,tableNames) {
 	var fResult = "";
 	var table2remove = [];
-	haxe_Log.trace(tableNames.join(","),{ fileName : "FormData.hx", lineNumber : 98, className : "jQuery.FormData", methodName : "filter"});
+	haxe_Log.trace(tableNames.join(","),{ fileName : "FormData.hx", lineNumber : 116, className : "jQuery.FormData", methodName : "filter"});
 	var _g = 0;
 	while(_g < tableNames.length) {
 		var tN = tableNames[_g];
@@ -1483,11 +1490,11 @@ jQuery_FormData.filter = function(jForm,tableData,tableNames) {
 			var tDn = tD[_g1];
 			++_g1;
 			if(!Util.any2bool(jForm.find("[name=\"" + tDn + "\"]").val())) {
-				haxe_Log.trace("" + tDn + " not set:" + Std.string(jForm.find("[name=\"" + tDn + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 107, className : "jQuery.FormData", methodName : "filter"});
+				haxe_Log.trace("" + tDn + " not set:" + Std.string(jForm.find("[name=\"" + tDn + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 125, className : "jQuery.FormData", methodName : "filter"});
 				continue;
 			}
 			var matchTypeOption = jForm.find("[name=\"" + tDn + "_match_option\"]");
-			haxe_Log.trace(tDn + ":" + matchTypeOption.length,{ fileName : "FormData.hx", lineNumber : 111, className : "jQuery.FormData", methodName : "filter"});
+			haxe_Log.trace(tDn + ":" + matchTypeOption.length,{ fileName : "FormData.hx", lineNumber : 129, className : "jQuery.FormData", methodName : "filter"});
 			if(matchTypeOption.length == 1) {
 				ret.push((function($this) {
 					var $r;
@@ -1510,7 +1517,7 @@ jQuery_FormData.filter = function(jForm,tableData,tableNames) {
 						default:
 							$r = (function($this) {
 								var $r;
-								haxe_Log.trace("ERROR: unknown matchTypeOption value:" + Std.string(matchTypeOption.val()),{ fileName : "FormData.hx", lineNumber : 125, className : "jQuery.FormData", methodName : "filter"});
+								haxe_Log.trace("ERROR: unknown matchTypeOption value:" + Std.string(matchTypeOption.val()),{ fileName : "FormData.hx", lineNumber : 143, className : "jQuery.FormData", methodName : "filter"});
 								$r = "ERROR|unknown matchTypeOption value:" + Std.string(matchTypeOption.val());
 								return $r;
 							}($this));
@@ -1525,7 +1532,7 @@ jQuery_FormData.filter = function(jForm,tableData,tableNames) {
 				var from = jForm.find("[name=\"" + tDn + "\"]").val();
 				if(from.length > 0) from = jQuery_FormData.gDateTime2mysql(from + " 00:00:00");
 				var name = HxOverrides.substr(tDn,11,null);
-				haxe_Log.trace(name + ":" + Std.string(jForm.find("[name=\"range_from_" + name + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 137, className : "jQuery.FormData", methodName : "filter"});
+				haxe_Log.trace(name + ":" + Std.string(jForm.find("[name=\"range_from_" + name + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 155, className : "jQuery.FormData", methodName : "filter"});
 				var to = jForm.find("[name=\"range_to_" + name + "\"]").val();
 				if(to.length > 0) to = jQuery_FormData.gDateTime2mysql(to + " 23:59:59");
 				if(from.length > 0 && to.length > 0) ret.push(name + "|BETWEEN|" + from + "|" + to); else if(from.length > 0) ret.push(name + "|BETWEEN|" + from + "|" + DateTools.format(new Date(),"%Y-%m-%d")); else if(to.length > 0) ret.push(name + "|BETWEEN|2015-01-01 00:00:00|" + to);
@@ -1539,16 +1546,16 @@ jQuery_FormData.filter = function(jForm,tableData,tableNames) {
 	table2remove.map(function(s) {
 		HxOverrides.remove(tableNames,s);
 	});
-	haxe_Log.trace(tableNames,{ fileName : "FormData.hx", lineNumber : 165, className : "jQuery.FormData", methodName : "filter"});
+	haxe_Log.trace(tableNames,{ fileName : "FormData.hx", lineNumber : 183, className : "jQuery.FormData", methodName : "filter"});
 	return fResult;
 };
 jQuery_FormData.where = function(jForm,fields) {
 	var ret = [];
 	var fD = jForm.serializeArray();
-	haxe_Log.trace(fields,{ fileName : "FormData.hx", lineNumber : 174, className : "jQuery.FormData", methodName : "where"});
+	haxe_Log.trace(fields,{ fileName : "FormData.hx", lineNumber : 192, className : "jQuery.FormData", methodName : "where"});
 	var aFields = new haxe_ds_StringMap();
 	Lambda.iter(fD,function(aFD) {
-		aFields.set(aFD.name,aFields.exists(aFD.name)?aFields.get(aFD.name).concat(aFD.value):[aFD.value]);
+		if(Lambda.has(fields,aFD.name)) aFields.set(aFD.name,aFields.exists(aFD.name)?aFields.get(aFD.name).concat(aFD.value):[aFD.value]);
 	});
 	var it = aFields.keys();
 	var ret1 = [];
@@ -1572,20 +1579,20 @@ jQuery_FormData.where = function(jForm,fields) {
 				return item[0].name.indexOf(".") > -1 && StringTools.startsWith(item[0].name,f.split(".")[0]);
 			};
 		})(item)) || item[0].name.indexOf("range_from_") == 0)) continue;
-		haxe_Log.trace(item[0].name,{ fileName : "FormData.hx", lineNumber : 200, className : "jQuery.FormData", methodName : "where"});
+		haxe_Log.trace(item[0].name,{ fileName : "FormData.hx", lineNumber : 219, className : "jQuery.FormData", methodName : "where"});
 		if(item[0].value != null && item[0].value != "" || item[0].name.indexOf("range_from_") == 0) {
 			if(Object.prototype.hasOwnProperty.call(App.storeFormats,item[0].name)) {
 				var sForm = Reflect.field(App.storeFormats,item[0].name);
 				var callParam;
 				if(sForm.length > 1) callParam = sForm.slice(1); else callParam = [];
 				var method = sForm[0];
-				haxe_Log.trace("call FormData" + method,{ fileName : "FormData.hx", lineNumber : 208, className : "jQuery.FormData", methodName : "where"});
+				haxe_Log.trace("call FormData" + method,{ fileName : "FormData.hx", lineNumber : 227, className : "jQuery.FormData", methodName : "where"});
 				callParam.push(item[0].value);
 				item[0].value = Reflect.callMethod(window,Reflect.field(window,method),callParam);
-				haxe_Log.trace(item[0].value,{ fileName : "FormData.hx", lineNumber : 212, className : "jQuery.FormData", methodName : "where"});
+				haxe_Log.trace(item[0].value,{ fileName : "FormData.hx", lineNumber : 231, className : "jQuery.FormData", methodName : "where"});
 			}
 			var matchTypeOption = jForm.find("[name=\"" + item[0].name + "_match_option\"]");
-			haxe_Log.trace(item[0].name + ":" + matchTypeOption.length,{ fileName : "FormData.hx", lineNumber : 215, className : "jQuery.FormData", methodName : "where"});
+			haxe_Log.trace(item[0].name + ":" + matchTypeOption.length,{ fileName : "FormData.hx", lineNumber : 234, className : "jQuery.FormData", methodName : "where"});
 			if(matchTypeOption.length == 1) {
 				ret1.push((function($this) {
 					var $r;
@@ -1608,7 +1615,7 @@ jQuery_FormData.where = function(jForm,fields) {
 						default:
 							$r = (function($this) {
 								var $r;
-								haxe_Log.trace("ERROR: unknown matchTypeOption value:" + Std.string(matchTypeOption.val()),{ fileName : "FormData.hx", lineNumber : 229, className : "jQuery.FormData", methodName : "where"});
+								haxe_Log.trace("ERROR: unknown matchTypeOption value:" + Std.string(matchTypeOption.val()),{ fileName : "FormData.hx", lineNumber : 248, className : "jQuery.FormData", methodName : "where"});
 								$r = "ERROR|unknown matchTypeOption value:" + Std.string(matchTypeOption.val());
 								return $r;
 							}($this));
@@ -1623,14 +1630,14 @@ jQuery_FormData.where = function(jForm,fields) {
 				var from = item[0].value;
 				if(from.length > 0) from = jQuery_FormData.gDateTime2mysql(from + " 00:00:00");
 				var name = HxOverrides.substr(item[0].name,11,null);
-				haxe_Log.trace(name + ":" + Std.string(jForm.find("[name=\"range_from_" + name + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 241, className : "jQuery.FormData", methodName : "where"});
+				haxe_Log.trace(name + ":" + Std.string(jForm.find("[name=\"range_from_" + name + "\"]").val()),{ fileName : "FormData.hx", lineNumber : 260, className : "jQuery.FormData", methodName : "where"});
 				var to = jForm.find("[name=\"range_to_" + name + "\"]").val();
 				if(to.length > 0) to = jQuery_FormData.gDateTime2mysql(to + " 23:59:59");
 				if(from.length > 0 && to.length > 0) ret1.push(name + "|BETWEEN|" + from + "|" + to); else if(from.length > 0) ret1.push(name + "|BETWEEN|" + from + "|" + DateTools.format(new Date(),"%Y-%m-%d")); else if(to.length > 0) ret1.push(name + "|BETWEEN|2015-01-01 00:00:00|" + to);
 			} else if(item[0].name.indexOf("range_to_") == 0) continue; else ret1.push(item[0].name + "|" + Std.string(item[0].value));
 		}
 	}
-	haxe_Log.trace(ret1.join(","),{ fileName : "FormData.hx", lineNumber : 258, className : "jQuery.FormData", methodName : "where"});
+	haxe_Log.trace(ret1.join(","),{ fileName : "FormData.hx", lineNumber : 277, className : "jQuery.FormData", methodName : "where"});
 	return ret1.join(",");
 };
 jQuery_FormData.gDate2mysql = $hx_exports.gDate2mysql = function(gDate) {
@@ -1640,7 +1647,7 @@ jQuery_FormData.gDate2mysql = $hx_exports.gDate2mysql = function(gDate) {
 	});
 	if(d.length != 3) {
 		if(d.length == 1 && d[0].length == 4) return d[0] + "-01-01";
-		haxe_Log.trace("Falsches Datumsformat:" + gDate + " :" + d.toString(),{ fileName : "FormData.hx", lineNumber : 274, className : "jQuery.FormData", methodName : "gDate2mysql"});
+		haxe_Log.trace("Falsches Datumsformat:" + gDate + " :" + d.toString(),{ fileName : "FormData.hx", lineNumber : 293, className : "jQuery.FormData", methodName : "gDate2mysql"});
 		return "Falsches Datumsformat:" + gDate;
 	}
 	return d[2] + "-" + d[1] + "-" + d[0];
@@ -1649,9 +1656,9 @@ jQuery_FormData.gDateTime2mysql = $hx_exports.gDateTime2mysql = function(gDateTi
 	var d = new EReg("[\\. :]","g").split(gDateTime).map(function(s) {
 		return StringTools.trim(s);
 	});
-	haxe_Log.trace(d,{ fileName : "FormData.hx", lineNumber : 286, className : "jQuery.FormData", methodName : "gDateTime2mysql"});
+	haxe_Log.trace(d,{ fileName : "FormData.hx", lineNumber : 305, className : "jQuery.FormData", methodName : "gDateTime2mysql"});
 	if(d.length != 6) {
-		haxe_Log.trace("Falsches Datumsformat:" + gDateTime,{ fileName : "FormData.hx", lineNumber : 289, className : "jQuery.FormData", methodName : "gDateTime2mysql"});
+		haxe_Log.trace("Falsches Datumsformat:" + gDateTime,{ fileName : "FormData.hx", lineNumber : 308, className : "jQuery.FormData", methodName : "gDateTime2mysql"});
 		return "Falsches Datumsformat:" + gDateTime;
 	}
 	return d[2] + "-" + d[1] + "-" + d[0] + " " + d[3] + ":" + d[4] + ":" + d[5];
@@ -1849,7 +1856,6 @@ js_JqueryUI.tabs = function(tb,options) {
 	return tb.tabs(options);
 };
 js_JqueryUI.datepicker = function(dp,options) {
-	haxe_Log.trace(options,{ fileName : "JqueryUI.hx", lineNumber : 26, className : "js.JqueryUI", methodName : "datepicker"});
 	return dp.datepicker(options).attr("placeholder",DateTools.format(new Date(),"%d.%m.%Y"));
 };
 js_JqueryUI.editable = function(e,options) {
@@ -2612,17 +2618,19 @@ view_Editor.prototype = $extend(View.prototype,{
 				Reflect.setField(p,k,this.eData.data(k));
 			}
 		}
-		haxe_Log.trace(p,{ fileName : "Editor.hx", lineNumber : 198, className : "view.Editor", methodName : "edit"});
+		haxe_Log.trace(p,{ fileName : "Editor.hx", lineNumber : 199, className : "view.Editor", methodName : "edit"});
 		this.leadID = p.lead_id;
-		haxe_Log.trace(this.leadID,{ fileName : "Editor.hx", lineNumber : 200, className : "view.Editor", methodName : "edit"});
+		haxe_Log.trace(this.leadID,{ fileName : "Editor.hx", lineNumber : 201, className : "view.Editor", methodName : "edit"});
 		p.action = "edit";
 		if(this.vData.fields != null) p.fields = this.vData.fields; else p.fields = this.parentView.vData.fields;
-		this.cMenu.set_active(this.cMenu.getIndexOf(this.vData.action));
+		this.cMenu.set_active(this.cMenu.getIndexOf(p.action));
+		haxe_Log.trace(Std.string(p.action) + ":" + this.cMenu.get_active(),{ fileName : "Editor.hx", lineNumber : 208, className : "view.Editor", methodName : "edit"});
+		this.cMenu.root.data("disabled",1);
 		this.loadData("server.php",p,$bind(this,this.update));
 	}
 	,close: function() {
 		var _g = this;
-		haxe_Log.trace("going to close:" + new $("#overlay").length,{ fileName : "Editor.hx", lineNumber : 213, className : "view.Editor", methodName : "close"});
+		haxe_Log.trace("going to close:" + new $("#overlay").length,{ fileName : "Editor.hx", lineNumber : 215, className : "view.Editor", methodName : "close"});
 		this.cMenu.root.find(".recordings").remove();
 		this.cMenu.root.data("disabled",0);
 		new $(this.cMenu.attach2).find("tr").removeClass("selected");
@@ -2641,7 +2649,7 @@ view_Editor.prototype = $extend(View.prototype,{
 			break;
 		case "save":case "qcok":
 			if(!this.checkIban()) this.checkAccountAndBLZ(function(ok) {
-				haxe_Log.trace(ok,{ fileName : "Editor.hx", lineNumber : 236, className : "view.Editor", methodName : "contextAction"});
+				haxe_Log.trace(ok,{ fileName : "Editor.hx", lineNumber : 238, className : "view.Editor", methodName : "contextAction"});
 				if(ok) {
 					if(_g.parentView.interactionState == "call") _g.cMenu.hangup(_g,function() {
 						_g.save(action);
@@ -2662,7 +2670,7 @@ view_Editor.prototype = $extend(View.prototype,{
 			}); else this.cMenu.call(this);
 			break;
 		default:
-			haxe_Log.trace(action,{ fileName : "Editor.hx", lineNumber : 268, className : "view.Editor", methodName : "contextAction"});
+			haxe_Log.trace(action,{ fileName : "Editor.hx", lineNumber : 270, className : "view.Editor", methodName : "contextAction"});
 		}
 	}
 	,ready4save: function() {
@@ -2672,26 +2680,26 @@ view_Editor.prototype = $extend(View.prototype,{
 		p.push({ name : "lead_id", value : this.leadID});
 		var amReady = false;
 		$.ajax({ type : "POST", url : "server.php", data : p, success : function(result) {
-			haxe_Log.trace(result,{ fileName : "Editor.hx", lineNumber : 285, className : "view.Editor", methodName : "ready4save"});
+			haxe_Log.trace(result,{ fileName : "Editor.hx", lineNumber : 287, className : "view.Editor", methodName : "ready4save"});
 			try {
 				if(result.response.security_phrase == "XXX") {
-					haxe_Log.trace("OK - XXX HAS BEEN RESTORED",{ fileName : "Editor.hx", lineNumber : 290, className : "view.Editor", methodName : "ready4save"});
+					haxe_Log.trace("OK - XXX HAS BEEN RESTORED",{ fileName : "Editor.hx", lineNumber : 292, className : "view.Editor", methodName : "ready4save"});
 					amReady = true;
 				}
 			} catch( ex ) {
 				if (ex instanceof js__$Boot_HaxeError) ex = ex.val;
-				haxe_Log.trace(ex,{ fileName : "Editor.hx", lineNumber : 296, className : "view.Editor", methodName : "ready4save"});
+				haxe_Log.trace(ex,{ fileName : "Editor.hx", lineNumber : 298, className : "view.Editor", methodName : "ready4save"});
 			}
 		}, dataType : "json", async : false});
-		haxe_Log.trace("returning " + (amReady == null?"null":"" + amReady),{ fileName : "Editor.hx", lineNumber : 303, className : "view.Editor", methodName : "ready4save"});
+		haxe_Log.trace("returning " + (amReady == null?"null":"" + amReady),{ fileName : "Editor.hx", lineNumber : 305, className : "view.Editor", methodName : "ready4save"});
 		return amReady;
 	}
 	,save: function(status) {
 		var _g = this;
-		haxe_Log.trace(this.parentView.interactionState,{ fileName : "Editor.hx", lineNumber : 309, className : "view.Editor", methodName : "save"});
+		haxe_Log.trace(this.parentView.interactionState,{ fileName : "Editor.hx", lineNumber : 311, className : "view.Editor", methodName : "save"});
 		if(this.parentView.interactionState == "call") {
 			if(!this.ready4save()) {
-				haxe_Log.trace("have to wait...",{ fileName : "Editor.hx", lineNumber : 314, className : "view.Editor", methodName : "save"});
+				haxe_Log.trace("have to wait...",{ fileName : "Editor.hx", lineNumber : 316, className : "view.Editor", methodName : "save"});
 				haxe_Timer.delay(function() {
 					_g.save(status);
 				},500);
@@ -2704,7 +2712,7 @@ view_Editor.prototype = $extend(View.prototype,{
 		p.push({ name : "user", value : App.user});
 		p.push({ name : "primary_id", value : this.parentView.vData.primary_id});
 		p.push({ name : this.parentView.vData.primary_id, value : this.eData.attr("id")});
-		haxe_Log.trace(status,{ fileName : "Editor.hx", lineNumber : 326, className : "view.Editor", methodName : "save"});
+		haxe_Log.trace(status,{ fileName : "Editor.hx", lineNumber : 328, className : "view.Editor", methodName : "save"});
 		if(status != null) switch(status) {
 		case "qcok":case "qcbad":case "call":
 			p.push({ name : "status", value : status == "call"?"QCOPEN":status.toUpperCase()});
@@ -2723,9 +2731,8 @@ view_Editor.prototype = $extend(View.prototype,{
 				})(k))) p.push({ name : k[0], value : this.eData.data(k[0])});
 			}
 		}
-		haxe_Log.trace(p,{ fileName : "Editor.hx", lineNumber : 341, className : "view.Editor", methodName : "save"});
 		this.parentView.loadData("server.php",p,function(data) {
-			haxe_Log.trace(Std.string(data) + ": " + (data?"Y":"N"),{ fileName : "Editor.hx", lineNumber : 343, className : "view.Editor", methodName : "save"});
+			haxe_Log.trace(Std.string(data) + ": " + (data?"Y":"N"),{ fileName : "Editor.hx", lineNumber : 345, className : "view.Editor", methodName : "save"});
 			if(data) _g.editCheck(_g.eData);
 		});
 	}
@@ -2776,9 +2783,9 @@ view_Editor.prototype = $extend(View.prototype,{
 		var oMargin = 8;
 		var mSpace = App.getMainSpace();
 		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#" + Std.string(this.parentView.vData.id) + "-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
-		haxe_Log.trace(mSpace.height + ":" + 2 * oMargin + ":" + Std.parseFloat(new $("#overlay").css("padding-top")) + ":" + Std.parseFloat(new $("#overlay").css("padding-bottom")),{ fileName : "Editor.hx", lineNumber : 402, className : "view.Editor", methodName : "update"});
+		haxe_Log.trace(mSpace.height + ":" + 2 * oMargin + ":" + Std.parseFloat(new $("#overlay").css("padding-top")) + ":" + Std.parseFloat(new $("#overlay").css("padding-bottom")),{ fileName : "Editor.hx", lineNumber : 404, className : "view.Editor", methodName : "update"});
 		new $("#" + this.parentView.id + " .scrollbox").height(new $("#" + this.parentView.id + " #overlay").height());
-		haxe_Log.trace(this.id + ":" + this.parentView.id + ":" + new $("#" + this.parentView.id + " .scrollbox").length + ":" + new $("#" + this.parentView.id + " .scrollbox").height(),{ fileName : "Editor.hx", lineNumber : 404, className : "view.Editor", methodName : "update"});
+		haxe_Log.trace(this.id + ":" + this.parentView.id + ":" + new $("#" + this.parentView.id + " .scrollbox").length + ":" + new $("#" + this.parentView.id + " .scrollbox").height(),{ fileName : "Editor.hx", lineNumber : 406, className : "view.Editor", methodName : "update"});
 	}
 	,__class__: view_Editor
 });
@@ -2970,7 +2977,6 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		var _g = this;
 		this.parentView.wait(false);
 		this.editData = data.editData;
-		haxe_Log.trace(this.editData.pay_plan.h,{ fileName : "ClientEditor.hx", lineNumber : 235, className : "view.ClientEditor", methodName : "update"});
 		this.agent = data.agent;
 		this.screens = new haxe_ds_StringMap();
 		var dataOptions = { };
@@ -3005,7 +3011,6 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		haxe_Log.trace(data.userMap.a.find(function(uM) {
 			return uM.user == data.editData.pay_plan.h[0].agent;
 		}),{ fileName : "ClientEditor.hx", lineNumber : 266, className : "view.ClientEditor", methodName : "update"});
-		haxe_Log.trace(data.editData.pay_plan.h,{ fileName : "ClientEditor.hx", lineNumber : 268, className : "view.ClientEditor", methodName : "update"});
 		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
 		haxe_Log.trace(this.parentView.id + ":" + new $("#" + this.parentView.id + "-edit-form .datepicker").length,{ fileName : "ClientEditor.hx", lineNumber : 275, className : "view.ClientEditor", methodName : "update"});
 		new $("#" + this.parentView.id + "-edit-form .datepicker").each(function(i,n) {
@@ -3081,19 +3086,20 @@ view_Clients.prototype = $extend(View.prototype,{
 var view_ContextMenu = function(data) {
 	var _g = this;
 	View.call(this,data);
+	this.parentView.contextMenu = this;
 	this.contextData = data;
 	this.contextData.tableData = new haxe_ds_StringMap();
-	haxe_Log.trace(this.id + " heightStyle:" + this.contextData.heightStyle + " attach2:" + Std.string(data.attach2),{ fileName : "ContextMenu.hx", lineNumber : 52, className : "view.ContextMenu", methodName : "new"});
+	haxe_Log.trace(this.id + " heightStyle:" + this.contextData.heightStyle + " attach2:" + Std.string(data.attach2),{ fileName : "ContextMenu.hx", lineNumber : 53, className : "view.ContextMenu", methodName : "new"});
 	if(this.contextData.heightStyle == null) this.contextData.heightStyle = "auto";
 	var tmp = new $("#t-" + this.id).tmpl(data);
 	tmp.appendTo(jQuery_JHelper.J(data.attach2));
 	this.createInputs();
-	this.active = 0;
-	this.root = new $("#" + this.id).accordion({ active : 1, activate : $bind(this,this.activate), 'autoHeight' : false, beforeActivate : function(event,ui) {
+	this.set_active(0);
+	this.root = new $("#" + this.id).accordion({ active : 0, activate : $bind(this,this.activate), 'autoHeight' : false, beforeActivate : function(event,ui) {
 		if(_g.root.data("disabled")) event.preventDefault(); else _g.activePanel = new $(ui.newPanel[0]);
 	}, create : $bind(this,this.create), fillSpace : true, heightStyle : this.contextData.heightStyle});
 	this.accordion = this.root.accordion("instance");
-	haxe_Log.trace(new $("#" + this.id).find(".datepicker").length,{ fileName : "ContextMenu.hx", lineNumber : 85, className : "view.ContextMenu", methodName : "new"});
+	haxe_Log.trace(new $("#" + this.id).find(".datepicker").length,{ fileName : "ContextMenu.hx", lineNumber : 86, className : "view.ContextMenu", methodName : "new"});
 	js_JqueryUI.datepicker(new $("#" + this.id).find(".datepicker"),{ beforeShow : function(el,ui1) {
 		var jq = new $(el);
 		if(jq.val() == "") jq.val(jq.attr("placeholder"));
@@ -3108,21 +3114,18 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 	accordion: null
 	,contextData: null
 	,action: null
-	,active: null
 	,activePanel: null
 	,get_active: function() {
-		this.active = this.root.accordion("option","active");
-		return this.active;
+		return this.root.accordion("option","active");
 	}
 	,set_active: function(act) {
-		this.active = act;
-		haxe_Log.trace(this.active,{ fileName : "ContextMenu.hx", lineNumber : 106, className : "view.ContextMenu", methodName : "set_active"});
+		haxe_Log.trace(this.get_active() + " => " + act,{ fileName : "ContextMenu.hx", lineNumber : 105, className : "view.ContextMenu", methodName : "set_active"});
 		this.root.accordion("option","active",act);
-		this.root.data("disabled",1);
 		return act;
 	}
 	,activate: function(event,ui) {
 		this.action = new $(ui.newPanel[0]).find("input[name=\"action\"]").first().val();
+		this.set_active(this.getIndexOf(this.action));
 		haxe_Log.trace(this.action + ":" + this.activePanel.attr("id") + " == " + new $(ui.newPanel[0]).attr("id"),{ fileName : "ContextMenu.hx", lineNumber : 118, className : "view.ContextMenu", methodName : "activate"});
 	}
 	,call: function(editor,onComplete) {
@@ -3162,22 +3165,26 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 	,getIndexOf: function(act) {
 		var index = null;
 		Lambda.mapi(this.contextData.items,function(i,item) {
-			if(item.action == act) index = i;
+			if(item.action == act) {
+				haxe_Log.trace(i + ":" + act,{ fileName : "ContextMenu.hx", lineNumber : 183, className : "view.ContextMenu", methodName : "getIndexOf"});
+				index = i;
+			}
 			return item;
 		});
+		haxe_Log.trace(index,{ fileName : "ContextMenu.hx", lineNumber : 188, className : "view.ContextMenu", methodName : "getIndexOf"});
 		return index;
 	}
 	,hangup: function(editor,onCompletion) {
 		var _g = this;
-		haxe_Log.trace("OK",{ fileName : "ContextMenu.hx", lineNumber : 190, className : "view.ContextMenu", methodName : "hangup"});
+		haxe_Log.trace("OK",{ fileName : "ContextMenu.hx", lineNumber : 194, className : "view.ContextMenu", methodName : "hangup"});
 		var p = { className : "AgcApi", action : "update_fields_x", lead_id : editor.leadID, security_phrase : ""};
 		this.parentView.loadData("server.php",p,function(data) {
 			if(data.response == "OK") {
-				haxe_Log.trace("OK",{ fileName : "ContextMenu.hx", lineNumber : 204, className : "view.ContextMenu", methodName : "hangup"});
+				haxe_Log.trace("OK security_phrase CLEARED",{ fileName : "ContextMenu.hx", lineNumber : 208, className : "view.ContextMenu", methodName : "hangup"});
 				p = { className : "AgcApi", action : "external_hangup", lead_id : editor.leadID, agent_user : editor.agent};
 				_g.parentView.loadData("server.php",p,function(data1) {
 					if(data1.response == "OK") {
-						haxe_Log.trace("OK",{ fileName : "ContextMenu.hx", lineNumber : 216, className : "view.ContextMenu", methodName : "hangup"});
+						haxe_Log.trace("OK",{ fileName : "ContextMenu.hx", lineNumber : 220, className : "view.ContextMenu", methodName : "hangup"});
 						_g.setCallStatus(editor,onCompletion);
 					} else App.choice({ header : data1.response, id : _g.parentView.id});
 				});
@@ -3194,36 +3201,67 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		while(_g1 < _g) {
 			var p1 = _g1++;
 			var jEl = new $(jP[p1]);
-			if(p1 != this.active) jEl.css("visibility","hidden").show();
+			if(p1 != this.get_active()) jEl.css("visibility","hidden").show();
 			maxWidth = Math.max(jEl.width(),maxWidth);
 			maxHeight = Math.max(jEl.height(),maxHeight);
-			if(p1 != this.active) jEl.hide(0).css("visibility","visible");
+			if(p1 != this.get_active()) jEl.hide(0).css("visibility","visible");
 		}
 		this.root.find("table").width(maxWidth);
-		this.root.accordion("option","active",this.active);
+		this.root.accordion("option","active",this.get_active());
+	}
+	,findPage: function(page,limit) {
+		var _g = this;
+		this.action = "find";
+		var items = this.vData.items;
+		Lambda.mapi(items,function(i,item) {
+			if(item.action == _g.action) _g.set_active(i);
+			return item;
+		});
+		haxe_Log.trace(this.action + ":" + this.get_active(),{ fileName : "ContextMenu.hx", lineNumber : 265, className : "view.ContextMenu", methodName : "findPage"});
+		var findFields = this.vData.items[this.get_active()].fields;
+		haxe_Log.trace(findFields,{ fileName : "ContextMenu.hx", lineNumber : 267, className : "view.ContextMenu", methodName : "findPage"});
+		if(findFields != null && findFields.length > 0) {
+			var tables = this.contextData.tableData.keys();
+			var tableNames = [];
+			while(tables.hasNext()) {
+				var table = tables.next();
+				tableNames.push(table);
+				haxe_Log.trace(table,{ fileName : "ContextMenu.hx", lineNumber : 276, className : "view.ContextMenu", methodName : "findPage"});
+			}
+			var form = new $("#" + this.parentView.id + "-menu .ui-accordion-content-active form");
+			var where = jQuery_FormData.where(form,findFields);
+			haxe_Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 281, className : "view.ContextMenu", methodName : "findPage"});
+			var wM = new haxe_ds_StringMap();
+			wM.set("filter",jQuery_FormData.filter(form,this.contextData.tableData,tableNames));
+			wM.set("filter_tables",tableNames.join(","));
+			if(__map_reserved.where != null) wM.setReserved("where",where); else wM.h["where"] = where;
+			if(__map_reserved.limit != null) wM.setReserved("limit",limit); else wM.h["limit"] = limit;
+			if(__map_reserved.page != null) wM.setReserved("page",page); else wM.h["page"] = page;
+			haxe_Log.trace(wM,{ fileName : "ContextMenu.hx", lineNumber : 290, className : "view.ContextMenu", methodName : "findPage"});
+			this.parentView.find(wM);
+		}
 	}
 	,run: function(evt) {
 		evt.preventDefault();
-		var active = this.get_active();
 		var jNode = jQuery_JHelper.J(js_Boot.__cast(evt.target , Node));
-		this.action = this.vData.items[active].action;
-		haxe_Log.trace(this.action + ":" + active,{ fileName : "ContextMenu.hx", lineNumber : 263, className : "view.ContextMenu", methodName : "run"});
+		this.action = this.vData.items[this.get_active()].action;
+		haxe_Log.trace(this.action + ":" + this.get_active(),{ fileName : "ContextMenu.hx", lineNumber : 304, className : "view.ContextMenu", methodName : "run"});
 		var contextAction = jNode.data("contextaction");
-		haxe_Log.trace(this.action + ":" + contextAction,{ fileName : "ContextMenu.hx", lineNumber : 266, className : "view.ContextMenu", methodName : "run"});
+		haxe_Log.trace(this.action + ":" + contextAction,{ fileName : "ContextMenu.hx", lineNumber : 307, className : "view.ContextMenu", methodName : "run"});
 		var _g = this.action;
 		switch(_g) {
 		case "find":
-			var fields = this.vData.items[active].fields;
+			var fields = this.vData.items[this.get_active()].fields;
 			if(fields != null && fields.length > 0) {
 				var tables = this.contextData.tableData.keys();
 				var tableNames = [];
 				while(tables.hasNext()) {
 					var table = tables.next();
 					tableNames.push(table);
-					haxe_Log.trace(table,{ fileName : "ContextMenu.hx", lineNumber : 280, className : "view.ContextMenu", methodName : "run"});
+					haxe_Log.trace(table,{ fileName : "ContextMenu.hx", lineNumber : 321, className : "view.ContextMenu", methodName : "run"});
 				}
 				var where = jQuery_FormData.where(jNode.closest("form"),fields);
-				haxe_Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 285, className : "view.ContextMenu", methodName : "run"});
+				haxe_Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 326, className : "view.ContextMenu", methodName : "run"});
 				var wM = new haxe_ds_StringMap();
 				wM.set("filter",jQuery_FormData.filter(jNode.closest("form"),this.contextData.tableData,tableNames));
 				wM.set("filter_tables",tableNames.join(","));
@@ -3239,7 +3277,7 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		case "mailings":
 			var mailing;
 			mailing = js_Boot.__cast(this.parentView.views.get(this.parentView.instancePath + "." + this.parentView.id + "-mailing") , view_Mailing);
-			haxe_Log.trace(contextAction,{ fileName : "ContextMenu.hx", lineNumber : 300, className : "view.ContextMenu", methodName : "run"});
+			haxe_Log.trace(contextAction,{ fileName : "ContextMenu.hx", lineNumber : 341, className : "view.ContextMenu", methodName : "run"});
 			switch(contextAction) {
 			case "previewOne":
 				mailing.previewOne(this.parentView.selectedID);
@@ -3251,16 +3289,16 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 				mailing.printNewMembers();
 				break;
 			default:
-				haxe_Log.trace(contextAction,{ fileName : "ContextMenu.hx", lineNumber : 310, className : "view.ContextMenu", methodName : "run"});
+				haxe_Log.trace(contextAction,{ fileName : "ContextMenu.hx", lineNumber : 351, className : "view.ContextMenu", methodName : "run"});
 			}
 			break;
 		default:
-			haxe_Log.trace(this.action + ":" + contextAction,{ fileName : "ContextMenu.hx", lineNumber : 313, className : "view.ContextMenu", methodName : "run"});
+			haxe_Log.trace(this.action + ":" + contextAction,{ fileName : "ContextMenu.hx", lineNumber : 354, className : "view.ContextMenu", methodName : "run"});
 		}
 	}
 	,setCallStatus: function(editor,onCompletion) {
 		var _g = this;
-		haxe_Log.trace(editor.action + ":" + Std.string(onCompletion),{ fileName : "ContextMenu.hx", lineNumber : 319, className : "view.ContextMenu", methodName : "setCallStatus"});
+		haxe_Log.trace(editor.action + ":" + Std.string(onCompletion),{ fileName : "ContextMenu.hx", lineNumber : 360, className : "view.ContextMenu", methodName : "setCallStatus"});
 		var p = { className : "AgcApi", action : "external_status", dispo : (function($this) {
 			var $r;
 			var _g1 = editor.action;
@@ -3278,7 +3316,7 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 			return $r;
 		}(this)), agent_user : editor.agent};
 		this.parentView.loadData("server.php",p,function(data) {
-			haxe_Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 333, className : "view.ContextMenu", methodName : "setCallStatus"});
+			haxe_Log.trace(data,{ fileName : "ContextMenu.hx", lineNumber : 374, className : "view.ContextMenu", methodName : "setCallStatus"});
 			if(data.response == "OK") {
 				if(onCompletion != null) onCompletion(); else _g.parentView.set_interactionState("init");
 			} else App.choice({ header : data.response, id : _g.parentView.id});
@@ -3287,7 +3325,7 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 	,initState: function() {
 		var _g = this;
 		View.prototype.initState.call(this);
-		haxe_Log.trace(this.id + ":" + this.root.find("tr[data-table]").length,{ fileName : "ContextMenu.hx", lineNumber : 351, className : "view.ContextMenu", methodName : "initState"});
+		haxe_Log.trace(this.id + ":" + this.root.find("tr[data-table]").length,{ fileName : "ContextMenu.hx", lineNumber : 392, className : "view.ContextMenu", methodName : "initState"});
 		this.layout();
 		this.root.find("tr[data-table]").each(function(i,n) {
 			var table = new $(n).data("table");
@@ -3296,13 +3334,13 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		var tables = this.contextData.tableData.keys();
 		while(tables.hasNext()) {
 			var table1 = [tables.next()];
-			haxe_Log.trace(table1[0],{ fileName : "ContextMenu.hx", lineNumber : 367, className : "view.ContextMenu", methodName : "initState"});
+			haxe_Log.trace(table1[0],{ fileName : "ContextMenu.hx", lineNumber : 408, className : "view.ContextMenu", methodName : "initState"});
 			new $("tr[data-table^=" + table1[0] + "] input").each((function(table1) {
 				return function(_,inp) {
 					if(new $(inp).attr("name").indexOf("_match_option") == -1) _g.contextData.tableData.get(table1[0]).push(new $(inp).attr("name"));
 				};
 			})(table1));
-			haxe_Log.trace(this.contextData.tableData.toString(),{ fileName : "ContextMenu.hx", lineNumber : 372, className : "view.ContextMenu", methodName : "initState"});
+			haxe_Log.trace(this.contextData.tableData.toString(),{ fileName : "ContextMenu.hx", lineNumber : 413, className : "view.ContextMenu", methodName : "initState"});
 		}
 	}
 	,__class__: view_ContextMenu
@@ -3420,7 +3458,7 @@ var view_Pager = function(data) {
 	this.page = data.page;
 	this.last = Math.ceil(this.count / this.limit);
 	this.parentView = data.parentView;
-	haxe_Log.trace(Std.string(data.id) + ":" + this.page + ":" + this.count,{ fileName : "Pager.hx", lineNumber : 28, className : "view.Pager", methodName : "new"});
+	haxe_Log.trace(Std.string(data.id) + ":" + this.page + ":" + this.count,{ fileName : "Pager.hx", lineNumber : 29, className : "view.Pager", methodName : "new"});
 	new $("#t-pager").tmpl(data).appendTo(new $("#" + Std.string(data.id) + "-list"));
 	new $("#" + Std.string(data.id) + "-pager *[data-action]").each(function(i,n) {
 		new $(n).click($bind(_g,_g.go));
@@ -3437,7 +3475,7 @@ view_Pager.prototype = {
 	,go: function(evt) {
 		evt.preventDefault();
 		var action = new $(evt.target).data("action");
-		haxe_Log.trace(action + ":" + this.page + ":" + this.count + ":" + this.last,{ fileName : "Pager.hx", lineNumber : 41, className : "view.Pager", methodName : "go"});
+		haxe_Log.trace(action + ":" + this.page + ":" + this.count + ":" + this.last,{ fileName : "Pager.hx", lineNumber : 42, className : "view.Pager", methodName : "go"});
 		switch(action) {
 		case "go2page":
 			var iVal = Std.parseInt(new $("#" + this.parentView.id + "-pager input[name=\"page\"]").val());
@@ -3462,10 +3500,10 @@ view_Pager.prototype = {
 		}
 	}
 	,loadPage: function(p) {
-		var param = new haxe_ds_StringMap();
-		param.set("page",p == null?"null":"" + p);
-		param.set("limit",(p - 1) * this.limit + "," + (p + this.limit <= this.count?this.limit:this.count - (p - 1) * this.limit));
-		this.parentView.find(param);
+		var form = new $("#" + this.parentView.id + "-menu .ui-accordion-content-active form");
+		haxe_Log.trace(form.find("button[data-contextaction]").data("contextaction"),{ fileName : "Pager.hx", lineNumber : 75, className : "view.Pager", methodName : "loadPage"});
+		haxe_Log.trace(Type["typeof"](this.parentView.contextMenu),{ fileName : "Pager.hx", lineNumber : 78, className : "view.Pager", methodName : "loadPage"});
+		this.parentView.contextMenu.findPage(p == null?"null":"" + p,(p - 1) * this.limit + "," + (p + this.limit <= this.count?this.limit:this.count - (p - 1) * this.limit));
 	}
 	,__class__: view_Pager
 };

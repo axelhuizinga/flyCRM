@@ -41,12 +41,13 @@ typedef ContextMenuData =
 	var accordion:JQuery;
 	var contextData:ContextMenuData;
 	var action:String;
-	public var active:Int;
+	public var active(get,set):Int;
 	public var activePanel:JQuery;
 	
 	public function new(?data:Dynamic) 
 	{
 		super(data);
+		parentView.contextMenu = this;
 		contextData = cast data;
 		contextData.tableData = new StringMap();
 		trace(id+ ' heightStyle:' + contextData.heightStyle + ' attach2:' + data.attach2);
@@ -61,7 +62,7 @@ typedef ContextMenuData =
 		active = 0;
 		root =  J('#' + id).accordion( 
 		{ 
-			active:1,
+			active:0,
 			activate:activate,	
 			"autoHeight": false,
 			beforeActivate:function(event:Event, ui) {
@@ -96,16 +97,14 @@ typedef ContextMenuData =
 	
 	public function get_active():Int
 	{
-		active = root.accordion('option', 'active');
-		return active;
+		return root.accordion('option', 'active');
 	}
 	
 	public function set_active(act:Int):Int
 	{
-		active = act;
-		trace(active);
+		trace(active + ' => ' + act);
 		root.accordion('option','active', act);
-		root.data('disabled', 1);
+		//root.data('disabled', 1);
 		return act;
 	}
 	
@@ -113,6 +112,7 @@ typedef ContextMenuData =
 	{
 		//trace(ui);
 		action = J(ui.newPanel[0]).find('input[name="action"]').first().val();
+		active = getIndexOf(action);
 		//activePanel = parentView.root.find('.ui-accordion-content [style^="display: block"]');// J(ui.newPanel[0]);
 		//activePanel = J(ui.newPanel[0]);
 		trace(action + ':' + activePanel.attr('id') + ' == ' + J(ui.newPanel[0]).attr('id'));
@@ -179,9 +179,13 @@ typedef ContextMenuData =
 		contextData.items.mapi(function(i:Int,  item:Dynamic):Dynamic
 		{
 			if (item.action == act)
+			{
+				trace(i + ':' + act);
 				index = i;		
+			}
 			return item;
 		});
+		trace(index);
 		return index;
 	}
 	
@@ -201,7 +205,7 @@ typedef ContextMenuData =
 			//trace(data);
 			if (data.response == 'OK') 
 			{//security_phrase CLEARED
-				trace('OK');		
+				trace('OK security_phrase CLEARED');		
 				p = {
 					className:'AgcApi',
 					action:'external_hangup',
@@ -252,12 +256,49 @@ typedef ContextMenuData =
 		root.accordion("option", "active", active);
 	}
 	
+	public function findPage(page:String, limit:String)
+	{
+		action = 'find';
+		var items:Array<Dynamic> = vData.items;
+		//trace(items);
+		items.mapi(function(i:Int, item:Dynamic) {if (item.action == action){ active = i; } return item;});
+		trace(action + ':' + active);
+		var findFields:Array<String> = vData.items[active].fields;		
+		trace(findFields);
+		if (findFields != null && findFields.length > 0)/*READ FIND FORM*/
+		{
+			var tables:Iterator<String> = contextData.tableData.keys();
+			var tableNames:Array<String> = new Array();
+			while (tables.hasNext())
+			{
+				var table:String = tables.next();
+				tableNames.push(table);
+				trace(table);
+				//fields = fields.concat(contextData.tableData.get(table));// .map(function(f:String) return table + '.' + f));
+			}					
+			var form:JQuery = J('#' + parentView.id + '-menu .ui-accordion-content-active form');
+			var where:String = FormData.where(form, findFields);
+			trace(where);
+			var wM:StringMap<String> = new StringMap();
+			//for (tn in tableNames)
+				//wM.set(tn, contextData.tableData.get(tn).toString());
+			wM.set('filter', FormData.filter(form, contextData.tableData, tableNames));
+			wM.set('filter_tables', tableNames.join(','));
+			wM.set('where', where);
+			wM.set('limit', limit);
+			wM.set('page', page);
+			trace(wM);
+			parentView.find(wM);
+			//Reflect.callMethod(parentView, Reflect.field(parentView, action), [wM]);			
+		}
+	}
+	
 	public function run(evt:Event)
 	{
 		evt.preventDefault();
 		
 		//var options =  cast root.accordion( "option");
-		var active:Int = get_active();
+		//var active:Int = get_active();
 		var jNode:JQuery = J(cast( evt.target, Node));
 		action = vData.items[active].action;
 		trace( action + ':' + active); 		

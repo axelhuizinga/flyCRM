@@ -2,6 +2,8 @@ package jQuery;
 import haxe.ds.StringMap;
 import haxe.xml.Check.Attrib;
 import js.Browser;
+import js.html.Node;
+import jQuery.JHelper.J;
 
 /**
  * ...
@@ -73,7 +75,23 @@ class FormData
 	{
 		//PREPARE EDITOR DATA FOR POSTING
 		var ret: Array<FData> = cast jForm.serializeArray();
-		trace(ret);
+		var checkBoxes = jForm.find('input[type="checkbox"]');
+		checkBoxes.each(function(i:Int, n:Node) {
+			var checkBox:JQuery = J(n);
+			//trace(checkBox.attr('name') + ':' + checkBox.prop('checked'));
+			//if (!checkBoxes.prop('checked'))
+			if (! ret.forone(function(fd:FData):Bool return fd.name == checkBox.attr('name')))
+			{
+				ret.push( { name:checkBox.attr('name'), value:(checkBox.prop('checked')?1:0) } );
+			}
+			else ret = ret.map(function(fd:FData):FData {
+				if(fd.name==checkBox.attr('name'))
+					fd.value = (checkBox.prop('checked')?1:0);
+				return fd;
+			});
+			//trace(ret);
+		});
+		//trace(ret);
 		for (fd in ret)
 		{
 			var itemName:String = fd.name.split('[')[0];
@@ -85,9 +103,9 @@ class FormData
 					//trace('call FormData' + method);
 					callParam.push(fd.value);
 					fd.value = Reflect.callMethod(Browser.window, Reflect.field(Browser.window, method), callParam);
-					//fd.value = Reflect.callMethod(FormData, Reflect.field(FormData, method), callParam);
 				}
 		}
+		//trace(ret);
 		return ret;
 	}
 	
@@ -174,6 +192,7 @@ class FormData
 		trace(fields);
 		var aFields:StringMap<Array<String>> = new StringMap();
 		fD.iter(function(aFD:FData) {
+			if(fields.has(aFD.name))
 			 aFields.set(aFD.name, (aFields.exists(aFD.name) ? aFields.get(aFD.name).concat(aFD.value): [aFD.value]));
 		});
 		var it:Iterator<String> = aFields.keys();

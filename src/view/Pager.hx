@@ -3,6 +3,7 @@ package view;
 import haxe.ds.StringMap;
 import jQuery.Event;
 import jQuery.JHelper.J;
+import jQuery.JQuery;
 
 /**
  * ...
@@ -68,10 +69,19 @@ class Pager// extends View
 	
 	function loadPage(p:Int):Void
 	{
-		var param:StringMap<String> = new StringMap();
-		param.set('page', Std.string(p));
-		param.set('limit', ((p - 1) * limit) + ',' + (p + limit <= count? limit:count - ((p - 1) * limit)));
-		parentView.find(param);
+		var form:JQuery = J('#' + parentView.id + '-menu .ui-accordion-content-active form');
+		//form.find('input[name="page"]').val(Std.string(p));
+		//form.find('input[name="limit"]').val(((p - 1) * limit) + ',' + (p + limit <= count? limit:count - ((p - 1) * limit)));
+		trace(form.find('button[data-contextaction]').data('contextaction'));
+		//form.find('button[data-contextaction]').click();
+		//var active:Int = J('#' + parentView.id + '-menu').accordion('option', 'active');
+		trace(Type.typeof(parentView.contextMenu));
+		parentView.contextMenu.findPage(Std.string(p), ((p - 1) * limit) + ',' + (p + limit <= count? limit:count - ((p - 1) * limit)));
+		//trace(cast(parentView, ContextMenu).activePanel.find(('button[data-contextaction]')).length);
+		//var param:StringMap<String> = new StringMap();
+		//param.set('page', Std.string(p));
+		//param.set('limit', ((p - 1) * limit) + ',' + (p + limit <= count? limit:count - ((p - 1) * limit)));
+		//parentView.find(param);
 	}
 	
 }

@@ -69,7 +69,6 @@ class View
 	var template:JQuery;
 	var spinner:Dynamic;
 	var waiting:Timer;
-	var views:StringMap<View>;
 	var parentView:View;	
 	var parentTab:Int;
 	var params:Dynamic;	
@@ -81,6 +80,7 @@ class View
 	var templ:JQuery;
 	
 	public var dbLoaderIndex:Int;
+	public var contextMenu:ContextMenu;	
 	public var id:String;	
 	public var instancePath:String;	
 	public var interactionState(default, set):String;
@@ -88,6 +88,7 @@ class View
 	public var selectedID:String;
 	public var lastFindParam:StringMap<String>;
 	public var reloadID:String;
+	public var views(default, null):StringMap<View>;
 	
 			
 	public function new(?data:Dynamic ) 
@@ -135,7 +136,7 @@ class View
 	{
 		interactionState = iState;
 		var iS:InteractionState = interactionStates.get(iState);
-		//trace(id + ':' + iState + ':' + iS);
+		trace(id + ':' + iState + ':' + iS);
 		if (iS == null)
 			return null;
 		var lIt:Iterator<JQuery> = listening.keys();
@@ -327,14 +328,13 @@ class View
 	}
 	
 	public function find(p:StringMap<String>):Void
-	//public function find(where:String):Void
 	{
 		lastFindParam = p.copy();
-		trace(p);
-		trace(lastFindParam);
+		//trace(p);
+		//trace(lastFindParam);
 		var where:String = p.get('where');
-		trace(id + '|'+where+'|' + (where.any2bool() ? 'Y':'N'));
-		trace(vData.where);
+		//trace(id + '|'+where+'|' + (where.any2bool() ? 'Y':'N'));
+		//trace(vData.where);
 		var fData:Dynamic = { };
 		var pkeys:Array<String> = 'action,className,fields,primary_id,hidden,limit,order,page,pay_source,filter_tables,table,where,filter'.split(',');
 		for (f in pkeys)
@@ -399,14 +399,7 @@ class View
 		{
 			if (Reflect.field(aData, f) != null)
 			{//trace(Reflect.field(aData, f));
-				switch(f)
-				{
-					//case 'fields':
-						//Reflect.setField(params, f, Reflect.field(aData, f).split(','));
-					default:
-						Reflect.setField(params, f, Reflect.field(aData, f));
-				}
-				
+				Reflect.setField(params, f, Reflect.field(aData, f));				
 			}
 		}
 		if (order != null)

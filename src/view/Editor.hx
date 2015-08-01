@@ -180,6 +180,7 @@ class Editor extends View
 	public function  edit(dataRow:JQuery)
 	{
 		trace(dataRow);
+		
 		savingFlagSet = false;
 		var p:Dynamic = resetParams();
 		p.primary_id = (vData.primary_id == null ? parentView.primary_id : vData.primary_id);
@@ -202,10 +203,11 @@ class Editor extends View
 		//var eFields:Array<String> = vData.fields;
 		//p.fields = parentView.vData.fields.split(',').filter(function(f:String) return (eFields.has(f) ? ;
 		p.fields = (vData.fields != null ? vData.fields : parentView.vData.fields);
-		cMenu.set_active(cMenu.getIndexOf(vData.action));
+		//cMenu.active    cMenu.getIndexOf(vData.action));
+		cMenu.active = cMenu.getIndexOf(p.action);
+		trace(p.action + ':' + cMenu.active);
+		cMenu.root.data('disabled', 1);
 		loadData('server.php', p, update);		
-		//active = cMenu.getIndexOf(vData.trigger.split('|')[1]);
-		//cMenu.set_active(cMenu.getIndexOf(vData.trigger.split('|')[1]));
 	}
 	
 	function close()
@@ -338,7 +340,7 @@ class Editor extends View
 					p.push( { name:k, value:eData.data(k) } );
 			}													
 		}
-		trace(p);
+		//trace(p);
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			trace(data +': ' + (data ? 'Y':'N'));
 			if (data) {
