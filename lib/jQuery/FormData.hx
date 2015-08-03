@@ -165,8 +165,8 @@ class FormData
 				}
 				else if (tDn.indexOf('range_to_') == 0)
 					continue;
-				else
-					ret.push (tDn + '|' + jForm.find('[name="' + tDn +'"]') );
+				else if (tDn.indexOf('_match_option') == -1)
+					ret.push (tDn + '|' + jForm.find('[name="' + tDn +'"]').val() );
 					
 				
 			}
@@ -180,7 +180,9 @@ class FormData
 				table2remove.push(tN);
 		}
 		table2remove.map(function(s:String) tableNames.remove(s));
-		trace(tableNames);
+		//trace(table2remove);
+		//trace(tableNames);
+		//trace(fResult);
 		//fResult = ret.join(',');tableNames.remove(tN);
 		return fResult;
 	}

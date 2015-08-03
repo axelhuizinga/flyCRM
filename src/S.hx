@@ -8,10 +8,12 @@ import me.cunity.php.db.MySQLi;
 import me.cunity.php.db.MySQLi_Result;
 import me.cunity.php.db.MySQLi_STMT;
 import model.AgcApi;
+import model.App;
 import model.Campaigns;
 import model.Clients;
 import model.QC;
 import model.Select;
+import model.Users;
 import php.Lib;
 import me.cunity.php.Debug;
 import php.NativeArray;
@@ -94,7 +96,6 @@ class S
 		trace(user);
 		if (user == null)
 			return false;
-		trace(user);
 		var pass:String = Session.get('PHP_AUTH_PW');
 		if (pass == null)
 			return false;

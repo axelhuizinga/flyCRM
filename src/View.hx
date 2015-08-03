@@ -373,7 +373,7 @@ class View
 		var pkeys:Array<String> = 'action,className,fields,limit,order,page,table,jointable,filter_tables,pay_source,joincond,joinfields,where,filter'.split(',');
 		//var aData:Dynamic = pData.any2bool() ? pData : vData;
 		//MERGE pData into vData
-		trace(pData);
+		//trace(pData);
 		var aData:Dynamic = vData.copy();
 		if (pData != null)
 		{
@@ -382,9 +382,9 @@ class View
 				Reflect.setField(aData, f, Reflect.field(pData, f));
 		}
 		fields = aData.fields.any2bool()?aData.fields.split(','):null;
-		trace(fields);
-		trace(aData.hidden);
-		trace(aData.joincond);
+		//trace(fields);
+		//trace(aData.hidden);
+		//trace(aData.joincond);
 		var order:String = (params == null ? null : params.order);
 		params = {
 			action:'find',

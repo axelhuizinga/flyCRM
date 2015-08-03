@@ -54,13 +54,25 @@ typedef ContextMenuData =
 		if (contextData.heightStyle == null)
 			contextData.heightStyle = 'auto';
 		//Out.dumpObjectTree(data);
+		//trace(data);
+		data.optionsMap = App.ist.globals.optionsMap.h;
+		data.typeMap = App.ist.globals.typeMap.h;
+		if (id == 'qc-menu')
+		{
+			data.optionsMap.owner = App.ist.prepareAgentMap();
+			data.typeMap.owner = 'SELECT';
+		}
+		else
+		data.optionsMap.agent = App.ist.prepareAgentMap();
+		//{ agent:App.ist.prepareAgentMap() };
+		//trace(data.optionsMap);
 		var tmp = J('#t-' + id).tmpl(data);// .appendTo(J(data.attach2)) ;
 		//trace('OK:' + tmp.html());
 		tmp.appendTo(J(data.attach2)) ;
 		//J('#t-' + id).tmpl(data).appendTo(J(data.attach2)) ;
 		createInputs();
 		active = 0;
-		root =  J('#' + id).accordion( 
+		root = J('#' + id).accordion( 
 		{ 
 			active:0,
 			activate:activate,	
@@ -385,7 +397,7 @@ typedef ContextMenuData =
 		});
 				
 	}
-
+	
 	override function initState():Void
 	{
 		super.initState();
@@ -410,8 +422,10 @@ typedef ContextMenuData =
 				if(J(inp).attr('name').indexOf('_match_option')==-1)
 					contextData.tableData.get(table).push(J(inp).attr('name'));
 			});
-			trace(contextData.tableData.toString());
+			J('tr[data-table^=' + table+'] select').each(function(_, inp) {
+				contextData.tableData.get(table).push(J(inp).attr('name'));
+			});
 		}		
-				
+		trace(contextData.tableData.toString());		
 	}
 }

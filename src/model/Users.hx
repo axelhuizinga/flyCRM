@@ -1,7 +1,7 @@
 package model;
 import haxe.ds.StringMap;
 import php.NativeArray;
-
+import haxe.extern.EitherType;
 /**
  * ...
  * @author ...
@@ -17,6 +17,11 @@ typedef UserInfo =
 class Users extends Model
 {
 	
+	public static function create(param:StringMap<String>):EitherType<String,Bool>
+	{
+		var me:Users = new Users(param);
+		return untyped __call__("json_encode",  me.globals, 64|256);//JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
+	}
 	
 	public function get_info(?user:String):Array<UserInfo>
 	{

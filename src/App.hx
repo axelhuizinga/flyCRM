@@ -136,7 +136,8 @@ class App
 		basePath = Browser.location.pathname.split(config.appName)[0] + config.appName + '/';
 		//trace(cssStyles);
 		ist.globals = { firstLoad:true};
-		ist.initUI(config.views);		
+		ist.globals = { };
+		//ist.initUI(config.views);		
 
 		return ist;
 	}
@@ -183,6 +184,20 @@ class App
 			views.get(rootViewPath).runLoaders();
 		},500);
 		
+	}
+	
+	public function prepareAgentMap():Array<Array<String>>
+	{
+	var agents:Array<Array<String>> = [['','']];
+		var users:Array<Dynamic> = App.ist.globals.userMap.users;
+		for (u in users) 
+		{
+			if (u.user_group == 'AGENTS_A' && u.active == 'Y')
+			{
+				agents.push([u.user ,u.full_name]);		
+			}
+		}
+		return agents;
 	}
 	
 	public static function getMainSpace():Rectangle

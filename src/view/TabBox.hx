@@ -83,7 +83,7 @@ typedef TabBoxData =
 			
 			tabObj = root.tabs( 
 			{
-				active:active,
+				active:0,
 				activate: function( event:Event, ui ) 
 				{
 					trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active + ':' + active);
@@ -105,26 +105,26 @@ typedef TabBoxData =
 						//trace(views.get(tabBoxData.append2header));
 						views.get(App.appName + '.' + tabBoxData.append2header).template.appendTo(J('#' + id + ' ul'));
 					}
-						var tabIndex:Int = 0;
-						for (t in tabBoxData.tabs)
+					var tabIndex:Int = 0;
+					for (t in tabBoxData.tabs)
+					{
+						//trace(t);
+						for (v in t.views)
 						{
-							//trace(t);
-							for (v in t.views)
-							{
-								//trace(v);
-								v.dbLoaderIndex = tabIndex;
-								v.attach2 =  tabsInstance.panels[tabIndex];
-								var jP:JQuery = J(tabsInstance.panels[tabIndex]);
-								//Out.dumpObjectTree(tabsInstance.panels[tabIndex]);
-								if (tabIndex != active)
-									jP.css('visibility','hidden').show();
-								trace('adding:' +t.id + ' to:' + id + ' @:'  + tabIndex );
-								addView(v);
-								if (tabIndex != active)
-									jP.hide(0).css('visibility','visible');								
-							}
-							tabIndex++;
+							//trace(v);
+							v.dbLoaderIndex = tabIndex;
+							v.attach2 =  tabsInstance.panels[tabIndex];
+							var jP:JQuery = J(tabsInstance.panels[tabIndex]);
+							//Out.dumpObjectTree(tabsInstance.panels[tabIndex]);
+							if (tabIndex != active)
+								jP.css('visibility','hidden').show();
+							trace('adding:' +t.id + ' to:' + id + ' @:'  + tabIndex );
+							addView(v);
+							if (tabIndex != active)
+								jP.hide(0).css('visibility','visible');								
 						}
+						tabIndex++;
+					}
 					//APP UI CREATION DONE - LOAD DATA 4 ACTIVE TAB
 				},
 				beforeLoad: function( event:Event, ui ) 
@@ -140,11 +140,15 @@ typedef TabBoxData =
 			trace(dbLoader.length + ':'  + active );
 		}
 		init();
+		trace (Browser.window.location.pathname + ' != ' + App.basePath);
+		if (Browser.window.location.pathname != App.basePath)
+			go(Browser.window.location.href);
 	}
 	
 	//public function load(res:Dynamic, data:String, xhr:JqXHR):Void
 	
-	public function go(url:String, p:Dynamic):Void
+	//public function go(url:String, p:Dynamic):Void
+	public function go(url:String):Void
 	{
 		trace(url + ':' + tabLinks.join(','));
 		trace(tabsInstance.options.active + ' : ' + tabLinks.indexOf(url));

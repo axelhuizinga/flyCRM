@@ -50,7 +50,7 @@ typedef CustomField =
 		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
 		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
 		//trace ('table:' + q.get('table') + ':' + (q.get('table').any2bool() ? q.get('table') : table) + '' + joinCond );
-		//trace (sb.toString());
+		//trace (sb.toString());oh
 		var filterTables:String = '';
 		if (q.get('filter').any2bool() )
 		{
@@ -72,7 +72,12 @@ typedef CustomField =
 		{			
 			buildCond(q.get('filter').split(',').map( function(f:String) return 'fly_crm.' + S.my.real_escape_string(f) 
 			).join(','), sb, phValues, false);
-			sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=clients.client_id').join(' '));
+			
+			if (joinTable == 'vicidial_users')
+				sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=vicidial_list.vendor_lead_code').join(' '));
+			else
+				sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=clients.client_id').join(' '));
+			//sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=clients.client_id').join(' '));
 		}
 		
 		var groupParam:String = q.get('group');
@@ -260,7 +265,7 @@ typedef CustomField =
 		return ret;
 	}
 	
-	function getEditorFields(?table_name:String):StringMap<Array<StringMap<String>>>
+	/*function getEditorFields(?table_name:String):StringMap<Array<StringMap<String>>>
 	{
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();
@@ -296,7 +301,7 @@ typedef CustomField =
 		}
 		//trace(ret);
 		return ret;
-	}
+	}*/
 	
 	function getRecordings(lead_id:Int):NativeArray
 	{

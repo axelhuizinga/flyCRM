@@ -138,7 +138,10 @@ class Model
 		{			
 			buildCond(q.get('filter').split(',').map( function(f:String) return 'fly_crm.' + S.my.real_escape_string(f) 
 			).join(','), sb, phValues, false);
-			sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=clients.client_id').join(' '));
+			if (joinTable == 'vicidial_users')
+				sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=vicidial_list.vendor_lead_code').join(' '));
+			else
+				sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=clients.client_id').join(' '));
 		}
 		//var hash =  Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]);
 		//trace(hash + ': ' + (hash.exists('count') ? 'Y':'N') );
@@ -175,7 +178,11 @@ class Model
 		{			
 			buildCond(q.get('filter').split(',').map( function(f:String) return 'fly_crm.' + S.my.real_escape_string(f) 
 			).join(','), sb, phValues, false);
-			sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=clients.client_id').join(' '));
+						
+			if (joinTable == 'vicidial_users')
+				sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=vicidial_list.vendor_lead_code').join(' '));
+			else
+				sb.add(' ' + filterTables.split(',').map(function(f:String) return 'AND $f.client_id=clients.client_id').join(' '));
 		}		
 		
 		var groupParam:String = q.get('group');
@@ -487,16 +494,42 @@ class Model
 		return untyped __call__("json_encode", {response:res}, 64);//JSON_UNESCAPED_SLASHES
 	}
 	
-	/*function getConfig(param:StringMap<Dynamic>):MConfig
+	function getEditorFields(?table_name:String):StringMap<Array<StringMap<String>>>
 	{
-		if (S.conf.exists('hasTabs') && S.conf.get('hasTabs'))
+		var sb:StringBuf = new StringBuf();
+		var phValues:Array<Array<Dynamic>> = new Array();
+		var param:StringMap<String> = new StringMap();
+		param.set('table', 'fly_crm.editor_fields');
+		
+		param.set('where', 'field_cost|>-2' + (table_name != null ? 
+		',table_name|' + S.my.real_escape_string(table_name): ''));
+		param.set('fields', 'field_name,field_label,field_type,field_options,table_name');
+		param.set('order', 'table_name,field_rank,field_order');
+		param.set('limit', '100');
+		//trace(param);
+		var eFields:Array<Dynamic> = Lib.toHaxeArray( doSelect(param, sb, phValues));
+		//var eFields:NativeArray = doSelect(param, sb, phValues);
+		//var eFields:Dynamic = doSelect(param, sb, phValues);
+		//trace(eFields);
+		//trace(eFields.length);
+		var ret:StringMap<Array<StringMap<String>>> = new StringMap();
+		//var ret:Array<StringMap<String>> = new Array();
+		for (ef in eFields)
 		{
-			trace(param.get('instancePath'));
-			var tabBox:Dynamic = S.conf.get('views')[0].TabBox;
-			var iPath:String = S.conf.get('appName') + '.' + tabBox.id;
-			//var tabs:Array<Dynamic> = tabBox.tabs;
+			var table:String = untyped ef['table_name'];
+			if (!ret.exists(table))
+			{
+				ret.set(table, []);
+			}
+			//var field:StringMap<String> = Lib.hashOfAssociativeArray(ef);
+			//trace(field.get('field_label')+ ':' + field);
+			var a:Array<StringMap<String>> = ret.get(table);
+			a.push(Lib.hashOfAssociativeArray(ef));
+			ret.set(table, a);
+			//return ret;
 		}
-		return null;
-	}*/
+		//trace(ret);
+		return ret;
+	}
 	
 }

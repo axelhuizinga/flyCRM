@@ -50,7 +50,7 @@ class ClientEditor extends Editor
 						cMenu.root.data('disabled', 0);
 						J(cMenu.attach2).find('tr').removeClass('selected');
 						parentView.interactionState = 'init';
-						overlay.animate( { opacity:0.0 }, 300, null, function() { overlay.detach(); } );						
+						overlay.animate( { opacity:0.0 }, 300, null, function() { overlay.detach(); cMenu.active = cMenu.getIndexOf('find'); } );						
 				}
 			case 'save':
 				switch(activeScreen)
@@ -151,7 +151,7 @@ class ClientEditor extends Editor
 		trace(name);
 		trace(dRows);
 		sData.table = name;
-		optionsMap.agent = prepareAgentMap();
+		optionsMap.agent = App.ist.prepareAgentMap();
 		sData.optionsMap = optionsMap;
 		sData.typeMap = typeMap;
 		sData.fieldNames = fieldNames;
@@ -296,20 +296,6 @@ class ClientEditor extends Editor
 		trace(leadID);
 		
 		//cMenu.root.accordion("refresh");
-	}
-	
-	function prepareAgentMap():Array<Array<String>>
-	{
-	var agents:Array<Array<String>> = [['','']];
-		var users:Array<Dynamic> = App.ist.globals.users;
-		for (u in users) 
-		{
-			if (u.user_group == 'AGENTS_A' && u.active == 'Y')
-			{
-				agents.push([u.user ,u.full_name]);		
-			}
-		}
-		return agents;
 	}
 	
 }
