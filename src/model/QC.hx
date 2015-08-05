@@ -61,7 +61,7 @@ class QC extends Clients
 				optionsMap.set(f.get('field_label'), f.get('field_options'));
 			typeMap.set(f.get('field_label'), f.get('field_type'));
 		}
-		
+		//
 		//trace(cFields);
 		//trace(fieldNames);
 		//<---
@@ -82,6 +82,7 @@ class QC extends Clients
 				fieldRequired.set(cFields[f], true);					
 			typeMap.set(cFields[f], cF[f].get('field_type'));
 		}
+		cFields.push('entry_date');
 		param.set('fields', cFields);		
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();

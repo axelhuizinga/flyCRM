@@ -382,7 +382,7 @@ class View
 				Reflect.setField(aData, f, Reflect.field(pData, f));
 		}
 		fields = aData.fields.any2bool()?aData.fields.split(','):null;
-		//trace(fields);
+		trace(fields);
 		//trace(aData.hidden);
 		//trace(aData.joincond);
 		var order:String = (params == null ? null : params.order);
@@ -412,9 +412,10 @@ class View
 		// UPDATE MAIN DATA TABLE
 		if (data.globals != null)
 		{
-			App.ist.globals.users = data.globals.users;
+			//App.ist.globals.users = data.globals.users;
 			//trace(App.ist.globals.users);
 		}
+		//trace(params);
 		data.fields = fields;
 		data.hidden = vData.hidden;
 		data.primary_id = primary_id;

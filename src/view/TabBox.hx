@@ -84,9 +84,19 @@ typedef TabBoxData =
 			tabObj = root.tabs( 
 			{
 				active:0,
-				activate: function( event:Event, ui ) 
+				activate: function( event:Event, ui:Dynamic ) 
 				{
-					trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active + ':' + active);
+					trace(J(ui.newPanel));	
+					var selector = ui.newPanel.selector;
+					var template = '';
+					try
+					{
+						trace('$selector a:' + J('$selector').attr('aria-labelledby'));
+						selector = J('$selector').attr('aria-labelledby');
+						template = Reflect.field(App.ist.globals.templates, J('#$selector').attr('href'));
+					}
+					catch (ex:Dynamic) { trace(ex); }
+					trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active + ':' + active + ' template:' + template);
 					dbLoaderIndex = active = tabsInstance.options.active;
 					PushState.replace(Std.string(ui.newTab.context).split(Browser.window.location.hostname).pop());
 					//trace(tabObj.tabs);

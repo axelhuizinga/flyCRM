@@ -107,7 +107,7 @@ class Editor extends View
 	function compareEdit(data:Dynamic):Void
 	{
 		var displayFormats:Dynamic = untyped window.displayFormats;
-		trace(data.rows[0]);
+		//trace(data.rows[0]);
 		var cData:Dynamic = data.rows[0];
 		var cOK:Bool = true;
 		var errors:StringBuf = new StringBuf();
@@ -117,33 +117,41 @@ class Editor extends View
 			if (f == 'vendor_lead_code' && overlay.find('[name="vendor_lead_code"]').val()=='')
 				continue;
 			var val:Dynamic = '';
+			var dbData:Dynamic = Reflect.field(cData, f);
+			//trace(f +':' + (Reflect.hasField(displayFormats, f) ? 'Y':'N') + ' :' + (['date','datetime'].has(Reflect.field(displayFormats, f))) +':' + untyped __typeof__(window[Reflect.field(displayFormats, f)]) + ':>' +  Reflect.field(displayFormats, f));
 			if (Reflect.hasField(displayFormats, f))
 			{
-				if (untyped __typeof__(Reflect.field(Browser.window, Reflect.field(displayFormats, f))) == 'function')
-					val = Reflect.field(Browser.window, Reflect.field(displayFormats, f))(f, Reflect.field(cData, f));
+				if (['date','datetime'].has(Reflect.field(displayFormats, f)))
+				{
+					//val = Reflect.field(Browser.window, Reflect.field(displayFormats, f))(f, Reflect.field(cData, f));
+					val = Reflect.callMethod(Browser.window, Reflect.field(Browser.window,'display'), [Reflect.field(displayFormats, f),dbData]);
+					trace(dbData + ':' + Reflect.field(displayFormats, f) + ':' + val);
+				}
 				else
 					val = untyped window.sprintf(Reflect.field(displayFormats, f), Reflect.field(cData, f));				
 			}
 			else
 				val = Reflect.field(cData, f);
+			
 			cOK = switch(Reflect.field(data.typeMap, f))
 			{
 				case 'RADIO','CHECKBOX':
 					val == overlay.find('[name="$f"]:checked').val();
 				default:
+					//val == dbData;
 					val == overlay.find('[name="$f"]').val();
 			}
 			
 			if (!cOK)
 			{
-				trace('oops - $f: $val not = ' + overlay.find('[name="$f"]').val());
+				trace('$dbData< oops - $f: >$val< not = >' + overlay.find('[name="$f"]').val() + '<');
 				errors.add('oops - $f: $val not = ' + overlay.find('[name="$f"]').val() + '\r\n');
 				//break;
 			}			
 		}
 		if (errors.length > 0)
 		{
-			trace('edit check failed :(');
+			trace('edit check failed :(' +errors.toString()  + '<-\r\n');
 			var fD:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
 			var fDs:String = '';
 			fD.iter(function(d:FData) fDs += "\n" + d.name + '=>' + d.value);

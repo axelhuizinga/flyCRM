@@ -17,6 +17,7 @@ var fieldNames =
 	order_date:'Verkauf',
 	join_date:'Auftragsdatum',
 	full_name:'Agent',
+	owner:'Agent',
 	register_on:'Verkauf',
 	iban:'IBAN'
 }
@@ -121,7 +122,7 @@ var storeFormats =
 	start_date:['gDate2mysql'],
 	teilnahme_beginn:['gDate2mysql'],
 	pay_obligation:['check2tinyint'],
-	use_email:['check2tinyint']
+	//use_email:['check2tinyint']
 }
 
 var fieldTypes =
