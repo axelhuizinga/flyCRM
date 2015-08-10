@@ -96,14 +96,21 @@ class FormData
 		{
 			var itemName:String = fd.name.split('[')[0];
 			if (Reflect.hasField(App.storeFormats, itemName))
+			{
+				var sForm:Array<Dynamic> = Reflect.field(App.storeFormats, itemName);
+				var callParam:Array<Dynamic> = sForm.length>1 ? sForm.slice(1) : [];
+				var method:String = sForm[0];
+				//trace('call FormData' + method);
+				callParam.push(fd.value);
+				if (itemName.indexOf('_') == 0)
 				{
-					var sForm:Array<Dynamic> = Reflect.field(App.storeFormats, itemName);
-					var callParam:Array<Dynamic> = sForm.length>1 ? sForm.slice(1) : [];
-					var method:String = sForm[0];
-					//trace('call FormData' + method);
-					callParam.push(fd.value);
-					fd.value = Reflect.callMethod(Browser.window, Reflect.field(Browser.window, method), callParam);
+					//trace(J('input[name="' + fd.name + '"]').data('value'));
+					callParam.push(J('input[name="' + fd.name + '"]').data('value'));
+					fd.name = fd.name.substr(1);
+					//trace(fd.name);
 				}
+				fd.value = Reflect.callMethod(Browser.window, Reflect.field(Browser.window, method), callParam);
+			}
 		}
 		//trace(ret);
 		return ret;
@@ -301,8 +308,6 @@ class FormData
 	@:expose('gDateTime2mysql')
 	public static function gDateTime2mysql(gDateTime:String):String
 	{
-		/*var t = value.split();
-					 return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);*/
 		var d:Array<String> = ~/[\. :]/g.split(gDateTime).map(function(s:String) return StringTools.trim(s));
 		trace(d);
 		if (d.length != 6)
@@ -311,7 +316,29 @@ class FormData
 			return 'Falsches Datumsformat:' + gDateTime;
 		}
 		return d[2] + '-' + d[1] + '-' + d[0] + ' ' + d[3] + ':' + d[4] + ':' + d[5];
-		//return '$d[2].$d[1].$d[0] $d[3]:$d[4]:$d[5]';
-		//return d[2] + '-' + d[1] + '-' + d[0] + ' ' + time;
+	}	
+	
+	@:expose('_gDateTime2mysql')
+	public static function _gDateTime2mysql(gDate:String, gDateTime:String):String
+	{
+		var d:Array<String> = ~/[\- :]/g.split(gDateTime).map(function(s:String) return StringTools.trim(s));
+		trace(d);
+		if (d.length != 6)
+		{			
+			trace('Falsches Datumsformat:$gDateTime');
+			return 'Falsches Datumsformat:' + gDateTime;
+		}
+		var n:Array<String> = gDate.split('.').map(function(s:String) return StringTools.trim(s));
+		if (n.length != 3)
+		{			
+			/*if (n.length == 1 && n[0].length == 4)
+			{
+				return d[0] + '-01-01';
+			}*/
+			trace('Falsches Datumsformat:$gDate :' + d.toString());
+			return 'Falsches Datumsformat:' + gDate;
+		}
+		//return d[2] + '-' + d[1] + '-' + d[0];
+		return n[2] + '-' + n[1] + '-' + n[0] + ' ' + d[3] + ':' + d[4] + ':' + d[5];
 	}	
 }

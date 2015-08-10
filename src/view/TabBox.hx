@@ -5,6 +5,7 @@ import haxe.ds.StringMap;
 import js.Browser;
 import js.html.Element;
 import js.html.Node;
+import js.html.XMLHttpRequest;
 import View;
 import jQuery.*;
 import jQuery.JHelper.J;
@@ -14,7 +15,7 @@ import me.cunity.debug.Out;
 
 
 using js.JqueryUI;
-
+using Util;
 
 /**
  * ...
@@ -94,6 +95,21 @@ typedef TabBoxData =
 						trace('$selector a:' + J('$selector').attr('aria-labelledby'));
 						selector = J('$selector').attr('aria-labelledby');
 						template = Reflect.field(App.ist.globals.templates, J('#$selector').attr('href'));
+						if (!template.any2bool())
+						{
+							//LOAD TEMPLATE
+							trace('loading templates/' +  J('#$selector').attr('href') + '.html...');
+							JQueryStatic.get('templates/' +  J('#$selector').attr('href') + '.html',function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest){
+								trace(textStatus);
+								trace(data);
+								if (textStatus == 'success')
+								{									
+									J('body').append(data);
+									Reflect.setField(App.ist.globals.templates, J('#$selector').attr('href'),true);
+								}
+								
+							});
+						}
 					}
 					catch (ex:Dynamic) { trace(ex); }
 					trace('activate:' + ui.newPanel.selector + ':' + ui.newTab.context + ':' + tabsInstance.options.active + ':' + active + ' template:' + template);

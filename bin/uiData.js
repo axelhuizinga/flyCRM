@@ -58,7 +58,7 @@ var uiData = {
 										{
 											action:'find',
 											label:'Finden',
-											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time'],
+											fields:['first_name','last_name','phone_number','address1', 'city','last_local_call_time','owner'],
 											ranges:['last_local_call_time'],
 											table:'vicidial_list',
 											buttons:
@@ -176,7 +176,7 @@ var uiData = {
 									id:'clients-editor',
 									hidden:'lead_id',	
 									attach2:'#clients',
-									fields:'first_name,last_name,phone_number,address1,address2,postal_code,city,owner,comments',
+									fields:'first_name,last_name,phone_number,address1,address2,postal_code,city,email,owner,comments',
 									jointable:'fly_crm.clients AS clients',
 									joincond:'fly_crm.clients.client_id=vendor_lead_code ',									
 									primary_id:'client_id',

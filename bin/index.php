@@ -102,7 +102,11 @@
 					<td>{{html $data.fieldNames[k]}}:</td>
 					<td class="nowrap">
 					{{if $data.typeMap[k] == 'TEXT' || $data.typeMap[k] == 'READONLY' }}
-					<input name="${k}" value="${displayFormats[k]?display(displayFormats[k],val):val}"
+						{{if displayFormats[k]}}
+					<input {{if displayFormats[k].indexOf('_')==0}} name="_${k}"  data-value="${val}" {{else}} name="${k}"{{/if}} value="${display(displayFormats[k],val)}"
+						{{else}}
+					<input name="${k}" value="${val}"
+						{{/if}}
 						{{if $data.typeMap[k] == 'READONLY'}}readonly="readonly"{{/if}}>
 					{{else $data.typeMap[k] == 'AREA'}}
 					<textarea name="${k}">${val}</textarea>
@@ -145,6 +149,7 @@
 		
 		<script type="text/x-jquery-tmpl" id="t-qc-menu">		
 			<div id="qc-menu" class="menu-right">
+			${trace($data)}
 			{{each(i,v) $data.items}}
 				<h3>${v.label}</h3>
 				<div>
@@ -167,21 +172,32 @@
 								<td colspan="2">
 								<input type="text" size="11" name="range_to_${fv}" class="datepicker" >
 								</td>				
-							</tr>				
+							</tr>
+
 							{{else}}
 							<tr class="lh32">
 								<td>
 								<div class="lpad" >${fieldNames[fv]}</div>
 								</td>
+								{{if $data.typeMap[fv] == 'SELECT'}}
+								<td colspan="2">
+									<select name="${fv}" >
+									{{each(oi, ov) $data.optionsMap[fv]}}
+										<option value="${ov[0]}" {{if ov[0]==fv}}selected="selected"{{/if}}>${ov[1]}</option>
+									{{/each}}
+									</select>
+								</td>
+								{{else}}
 								<td >																
 								<input type="${ fieldTypes[fv] ? fieldTypes[fv] : 'text' }" name="${fv}" class="menu-input-right">
 								</td>
 								<td >
 								<div class="rpad" >{{tmpl(fv) "#t-find-match"}}</div>
 								</td>
+								{{/if}}
 							</tr>							
-							{{/if}}							
-							{{/each}}		
+							{{/if}}																					
+							{{/each}}
 						{{each(bi,bv) v.buttons}}
 						<tr>
 							<td colspan="3">
@@ -351,17 +367,19 @@
 		</div>
 		</script>
 		
-		<!-- MEMBERS MENU ${testinc( '666' )}-->
+		<!-- MEMBERS MENU ${testinc( '666' )}${trace('members.menu:' + i + ':' + v.label)}<input type="hidden" name="page" value="${data.page}">
+						<input type="hidden" name="limit" value="${data.limit}">${trace($data)}-->
 		
-		<script type="text/x-jquery-tmpl" id="t-clients-menu">		
+		<script type="text/x-jquery-tmpl" id="t-clients-menu">
+		${trace($data)}
 			<div id="clients-menu" class="menu-right">
-			{{each(i,v) $data.items}}
-			${trace('members.menu:' + i + ':' + v.label)}
+			{{each(i,v) $data.items}}			
 				<h3>${v.label}</h3>
 				<div>
 					<form >
 					<table>
 						<input type="hidden" name="action" value="${action}">
+						
 						{{each(fi,fv) v.fields}}						
 							{{if rangeFields[fv]}}
 							<tr class="lh32">
@@ -395,27 +413,27 @@
 							{{/each}}
 
 							{{if v.pay_source_fields}}
-								<tr>
-									<td colspan="3">
-										<h5>${appLabel.pay_source}</h5>							
-									</td>						
-								</tr>
+							<tr>
+								<td colspan="3">
+									<h5>${appLabel.pay_source}</h5>							
+								</td>						
+							</tr>
 							{{/if}}
 							{{each(k,pv) v.pay_source_fields}}
-								${trace($data.typeMap)}
-						<tr class="lh32" data-table="pay_source" >
-							<td>
-							<div class="lpad" >${pv}</div>
-							</td>
-							
-							<td >																
-							<input type="${ fieldTypes[pv] ? fieldTypes[pv] : 'text' }" name="pay_source.${k}" class="menu-input-right" >
-							</td>
-							<td >
-							<div class="rpad" >{{tmpl('pay_source.'+k) "#t-find-match"}}</div>
-							</td>						
-					
-						</tr>								
+				
+							<tr class="lh32" data-table="pay_source" >
+								<td>
+								<div class="lpad" >${pv}</div>
+								</td>
+								
+								<td >																
+								<input type="${ fieldTypes[pv] ? fieldTypes[pv] : 'text' }" name="pay_source.${k}" class="menu-input-right" >
+								</td>
+								<td >
+								<div class="rpad" >{{tmpl('pay_source.'+k) "#t-find-match"}}</div>
+								</td>						
+						
+							</tr>								
 							
 							{{/each}}
 							{{if v.pay_plan_fields}}
@@ -426,20 +444,28 @@
 								</tr>
 							{{/if}}
 							{{each(k,pv) v.pay_plan_fields}}
-								${trace($data.typeMap)}
-						<tr class="lh32" data-table="pay_plan" >
-							<td>
-							<div class="lpad" >${pv}</div>
-							</td>
-							
-							<td >																
-							<input type="${ fieldTypes[pv] ? fieldTypes[pv] : 'text' }" name="pay_plan.${k}" class="menu-input-right" >
-							</td>
-							<td >
-							<div class="rpad" >{{tmpl('pay_plan.'+k) "#t-find-match"}}</div>
-							</td>						
-					
-						</tr>								
+														
+							<tr class="lh32" data-table="pay_plan" >
+								<td>
+								<div class="lpad" >${pv}</div>
+								</td>
+								{{if $data.typeMap[k] == 'TEXT' || $data.typeMap[k] == 'READONLY' }}	
+								<td >																
+								<input type="${ fieldTypes[pv] ? fieldTypes[pv] : 'text' }" name="pay_plan.${k}" class="menu-input-right" >
+								</td>
+								<td >
+								<div class="rpad" >{{tmpl('pay_plan.'+k) "#t-find-match"}}</div>
+								</td>
+								{{else $data.typeMap[k] == 'SELECT'}}
+								<td colspan="2">
+									<select name="pay_plan.${k}" >
+									{{each(oi, ov) $data.optionsMap[k]}}
+										<option value="${ov[0]}" {{if ov[0]==pv}}selected="selected"{{/if}}>${ov[1]}</option>
+									{{/each}}
+									</select>
+								</td>
+								{{/if}}
+							</tr>								
 							
 							{{/each}}							
 							
@@ -654,6 +680,7 @@
 		<script src="flyCRM.js"></script>
 		<script src="appData.js"></script>		-->	
 		<script 	>
+		
 			$LAB.setGlobalDefaults({Debug:false}).
 			script('js/jquery-2.1.3.js.gz').
 			script('js/stacktrace.js.gz').
@@ -676,8 +703,20 @@
 				uiData.params="<?php echo $params;?>";
 				uiData.user="<?php echo $user;?>";
 				//console.log('uiData.company:' + uiData.company);
-				initApp(uiData);
-				$('#loader').remove();
+				$.post('server.php',{
+					className:'App',
+					action:'getGlobals',
+					firstLoad:'true'
+				},function(data){
+					trace(data);
+					//$('#dev').append('<pre>' + data[0].full_name + '</pre>');
+					app = initApp(uiData);
+					app.globals = data;
+					app.globals.templates = templates;
+					app.initUI(uiData.views);
+					$('#loader').remove();
+				},'json');
+				
 				//setTimeout(function(){trace('title:' + document.title)},1500);
 		  });
 			
@@ -741,6 +780,7 @@
 					 var t = value.split(/[- :]/);
 					 return sprintf('%s.%s.%s %s:%s:%s', t[2], t[1], t[0], t[3], t[4], t[5]);
 					 break;
+					 case '_datetime':
 					 case 'date':
 					 if (!value) {
 						return '';

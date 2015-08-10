@@ -119,16 +119,27 @@ class Editor extends View
 			var val:Dynamic = '';
 			var dbData:Dynamic = Reflect.field(cData, f);
 			//trace(f +':' + (Reflect.hasField(displayFormats, f) ? 'Y':'N') + ' :' + (['date','datetime'].has(Reflect.field(displayFormats, f))) +':' + untyped __typeof__(window[Reflect.field(displayFormats, f)]) + ':>' +  Reflect.field(displayFormats, f));
-			if (Reflect.hasField(displayFormats, f))
+			var displayFormat:String = Reflect.field(displayFormats, f);
+			if (displayFormat != null)
 			{
-				if (['date','datetime'].has(Reflect.field(displayFormats, f)))
+				if (displayFormat.indexOf('%') > -1)
+					val = untyped window.sprintf(displayFormat, Reflect.field(cData, f));
+				else
+				/*if (['date','datetime','_datetime','gFloat'].has(displayFormat))*/
 				{
 					//val = Reflect.field(Browser.window, Reflect.field(displayFormats, f))(f, Reflect.field(cData, f));
-					val = Reflect.callMethod(Browser.window, Reflect.field(Browser.window,'display'), [Reflect.field(displayFormats, f),dbData]);
-					trace(dbData + ':' + Reflect.field(displayFormats, f) + ':' + val);
+					if (displayFormat.indexOf('_') == 0)
+					{
+						trace('input[name="_$f"]');
+						val = Reflect.callMethod(Browser.window, Reflect.field(Browser.window,'display'), [displayFormat,dbData,J('input[name="_$f"]').data('value')]);
+					}
+					else
+						val = Reflect.callMethod(Browser.window, Reflect.field(Browser.window,'display'), [displayFormat,dbData]);
+					trace(dbData + ':' + displayFormat + ':' + val);
 				}
-				else
-					val = untyped window.sprintf(Reflect.field(displayFormats, f), Reflect.field(cData, f));				
+				/*else
+					val = untyped window.sprintf(displayFormat, Reflect.field(cData, f));	
+					*/
 			}
 			else
 				val = Reflect.field(cData, f);
@@ -139,7 +150,10 @@ class Editor extends View
 					val == overlay.find('[name="$f"]:checked').val();
 				default:
 					//val == dbData;
-					val == overlay.find('[name="$f"]').val();
+					if (displayFormat != null && displayFormat.indexOf('_') == 0)
+						val == overlay.find('[name="_$f"]').val();
+					else
+						val == overlay.find('[name="$f"]').val();
 			}
 			
 			if (!cOK)

@@ -433,9 +433,9 @@ class model_Clients extends Model {
 		$pIt = $product->keys();
 		while($pIt->hasNext()) {
 			$pay_plan_id = $pIt->next();
-			$res = S::$my->query("INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id), null);
+			$res = S::$my->query("INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,baID," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id), null);
 			if(!Util::any2bool($res)) {
-				haxe_Log::trace("Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 572, "className" => "model.Clients", "methodName" => "save_pay_plan")));
+				haxe_Log::trace("Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,baID," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 572, "className" => "model.Clients", "methodName" => "save_pay_plan")));
 				return false;
 			}
 			$sql = new StringBuf();

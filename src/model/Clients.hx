@@ -566,10 +566,10 @@ typedef CustomField =
 		{
 			var pay_plan_id = pIt.next();
 			// SAVE TO LOG
-			var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
+			var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,baID,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
 			if (!res.any2bool())
 			{
-				trace ('Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
+				trace ('Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,baID,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
 				return false;
 			}
 			var sql:StringBuf = new StringBuf();

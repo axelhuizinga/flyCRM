@@ -98,7 +98,7 @@ var displayFormats =
 	sign_date:'date',
 	start_date:'date',
 	event_date:'date',
-	entry_date:'date',
+	entry_date:'_datetime',
 	birth_date:'date',
 	teilnahme_beginn:'date',
 	creation_date:'datetime',
@@ -118,7 +118,8 @@ var storeFormats =
 	register_off_to:['gDate2mysql'],
 	sign_date:['gDate2mysql'],
 	birth_date:['gDate2mysql'],
-	entry_date:['gDate2mysql'],
+	//entry_date:['gDateTime2mysql'],
+	_entry_date:['_gDateTime2mysql'],
 	start_date:['gDate2mysql'],
 	teilnahme_beginn:['gDate2mysql'],
 	pay_obligation:['check2tinyint'],
@@ -130,3 +131,10 @@ var fieldTypes =
 	title:'select'
 }
 
+var templates =
+{
+	qc:true,
+	clients:true,
+	stats:false,
+	settings:false
+}
