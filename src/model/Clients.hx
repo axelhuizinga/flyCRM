@@ -321,7 +321,7 @@ typedef CustomField =
 		//return false;
 		var newStatus:String = q.get('status');
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query(
-			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id,$lead_id AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,"$newStatus",comments,called_count,last_local_call_time,rank,owner,entry_list_id,$user AS log_user FROM `vicidial_list`WHERE `lead_id`=$lead_id)AS vl'
+			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id,$lead_id AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,"$newStatus",comments,called_count,last_local_call_time,rank,owner,entry_list_id,$user AS log_user,NULL as ref_id FROM `vicidial_list` WHERE `lead_id`=$lead_id)AS vl'
 			);
 		var log_id:Int = S.my.insert_id;
 		if (res.any2bool() && log_id > 0)
@@ -332,7 +332,7 @@ typedef CustomField =
 			{
 				var cLogTable =  cTable + '_log';
 				res = S.my.query(
-					'INSERT INTO $cLogTable SELECT * FROM (SELECT $log_id AS log_id) AS ll JOIN (SELECT * FROM `$cTable`WHERE `lead_id`=$lead_id)AS cl'
+					'INSERT INTO $cLogTable SELECT * FROM (SELECT $log_id AS log_id) AS ll JOIN (SELECT * FROM `$cTable` WHERE `lead_id`=$lead_id)AS cl'
 				);
 				trace ('INSERT INTO $cLogTable ...' + S.my.error + '<');
 				if (S.my.error == '')
@@ -494,10 +494,10 @@ typedef CustomField =
 		if (clientID == null)
 			return true;
 		//var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id, creation_date,`state`,pay_obligation,comments,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund, NULL AS log_date FROM fly_crm.clients WHERE client_id=$clientID');
-		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,$user AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=$clientID');
+		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,$user AS log_user,NULL AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=$clientID');
 		if (!res.any2bool())
 		{
-			trace('failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,$user AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=$clientID');
+			trace('failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,$user AS log_user,NULL AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=$clientID');
 			return false;
 		}
 		var sql:StringBuf = new StringBuf();
@@ -566,10 +566,10 @@ typedef CustomField =
 		{
 			var pay_plan_id = pIt.next();
 			// SAVE TO LOG
-			var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,baID,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
+			var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,repeat_date,$user AS log_user,NOW() AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
 			if (!res.any2bool())
 			{
-				trace ('Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,baID,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
+				trace ('Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,repeat_date,$user AS log_user,NOW() AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
 				return false;
 			}
 			var sql:StringBuf = new StringBuf();
@@ -651,10 +651,10 @@ typedef CustomField =
 		{
 			var pay_source_id = pIt.next();
 			// SAVE TO LOG
-			var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_source_log SELECT  pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
+			var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_source_log SELECT  pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NOW() AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
 			if (!res.any2bool())
 			{
-				trace ('Failed to:  INSERT INTO fly_crm.pay_source_log SELECT pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NOW() AS log_date FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
+				trace ('Failed to:  INSERT INTO fly_crm.pay_source_log SELECT pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NOW() AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
 				return false;
 			}
 			var sql:StringBuf = new StringBuf();

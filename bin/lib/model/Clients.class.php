@@ -195,13 +195,13 @@ class model_Clients extends Model {
 		$lead_id = Std::parseInt($q->get("lead_id"));
 		$user = S::$user;
 		$newStatus = $q->get("status");
-		$res = S::$my->query("INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id," . _hx_string_rec($lead_id, "") . " AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,\"" . _hx_string_or_null($newStatus) . "\",comments,called_count,last_local_call_time,rank,owner,entry_list_id," . _hx_string_or_null($user) . " AS log_user FROM `vicidial_list`WHERE `lead_id`=" . _hx_string_rec($lead_id, "") . ")AS vl", null);
+		$res = S::$my->query("INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id," . _hx_string_rec($lead_id, "") . " AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,\"" . _hx_string_or_null($newStatus) . "\",comments,called_count,last_local_call_time,rank,owner,entry_list_id," . _hx_string_or_null($user) . " AS log_user,NULL as ref_id FROM `vicidial_list` WHERE `lead_id`=" . _hx_string_rec($lead_id, "") . ")AS vl", null);
 		$log_id = S::$my->insert_id;
 		if(Util::any2bool($res) && $log_id > 0) {
 			$cTable = "custom_" . Std::string($q->get("entry_list_id"));
 			if($this->checkOrCreateCustomTable($cTable, null)) {
 				$cLogTable = _hx_string_or_null($cTable) . "_log";
-				$res = S::$my->query("INSERT INTO " . _hx_string_or_null($cLogTable) . " SELECT * FROM (SELECT " . _hx_string_rec($log_id, "") . " AS log_id) AS ll JOIN (SELECT * FROM `" . _hx_string_or_null($cTable) . "`WHERE `lead_id`=" . _hx_string_rec($lead_id, "") . ")AS cl", null);
+				$res = S::$my->query("INSERT INTO " . _hx_string_or_null($cLogTable) . " SELECT * FROM (SELECT " . _hx_string_rec($log_id, "") . " AS log_id) AS ll JOIN (SELECT * FROM `" . _hx_string_or_null($cTable) . "` WHERE `lead_id`=" . _hx_string_rec($lead_id, "") . ")AS cl", null);
 				haxe_Log::trace("INSERT INTO " . _hx_string_or_null($cLogTable) . " ..." . _hx_string_or_null(S::$my->error) . "<", _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 337, "className" => "model.Clients", "methodName" => "save")));
 				if(S::$my->error === "") {
 					$primary_id = S::$my->real_escape_string($q->get("primary_id"));
@@ -363,9 +363,9 @@ class model_Clients extends Model {
 		if($clientID === null) {
 			return true;
 		}
-		$res = S::$my->query("INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date," . _hx_string_or_null($user) . " AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=" . Std::string($clientID), null);
+		$res = S::$my->query("INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date," . _hx_string_or_null($user) . " AS log_user,NULL AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=" . Std::string($clientID), null);
 		if(!Util::any2bool($res)) {
-			haxe_Log::trace("failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date," . _hx_string_or_null($user) . " AS log_user,NULL AS log_date FROM fly_crm.clients WHERE client_id=" . Std::string($clientID), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 500, "className" => "model.Clients", "methodName" => "saveClientData")));
+			haxe_Log::trace("failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date," . _hx_string_or_null($user) . " AS log_user,NULL AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=" . Std::string($clientID), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 500, "className" => "model.Clients", "methodName" => "saveClientData")));
 			return false;
 		}
 		$sql = new StringBuf();
@@ -433,9 +433,9 @@ class model_Clients extends Model {
 		$pIt = $product->keys();
 		while($pIt->hasNext()) {
 			$pay_plan_id = $pIt->next();
-			$res = S::$my->query("INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,baID," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id), null);
+			$res = S::$my->query("INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,repeat_date," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id), null);
 			if(!Util::any2bool($res)) {
-				haxe_Log::trace("Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,baID," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date FROM fly_crm.pay_plan WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 572, "className" => "model.Clients", "methodName" => "save_pay_plan")));
+				haxe_Log::trace("Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,repeat_date," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=" . _hx_string_or_null($pay_plan_id), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 572, "className" => "model.Clients", "methodName" => "save_pay_plan")));
 				return false;
 			}
 			$sql = new StringBuf();
@@ -513,9 +513,9 @@ class model_Clients extends Model {
 		$user = S::$user;
 		while($pIt->hasNext()) {
 			$pay_source_id = $pIt->next();
-			$res = S::$my->query("INSERT INTO fly_crm.pay_source_log SELECT  pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date FROM fly_crm.pay_source WHERE pay_source_id=" . _hx_string_or_null($pay_source_id), null);
+			$res = S::$my->query("INSERT INTO fly_crm.pay_source_log SELECT  pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.pay_source WHERE pay_source_id=" . _hx_string_or_null($pay_source_id), null);
 			if(!Util::any2bool($res)) {
-				haxe_Log::trace("Failed to:  INSERT INTO fly_crm.pay_source_log SELECT pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date FROM fly_crm.pay_source WHERE pay_source_id=" . _hx_string_or_null($pay_source_id), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 657, "className" => "model.Clients", "methodName" => "save_pay_source")));
+				haxe_Log::trace("Failed to:  INSERT INTO fly_crm.pay_source_log SELECT pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date," . _hx_string_or_null($user) . " AS log_user,NOW() AS log_date,NULL AS ref_id, NULL as log_id FROM fly_crm.pay_source WHERE pay_source_id=" . _hx_string_or_null($pay_source_id), _hx_anonymous(array("fileName" => "Clients.hx", "lineNumber" => 657, "className" => "model.Clients", "methodName" => "save_pay_source")));
 				return false;
 			}
 			$sql = new StringBuf();

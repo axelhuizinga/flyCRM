@@ -18,6 +18,7 @@ import view.ContextMenu;
 import view.DateTime;
 import view.ClientEditor;
 import view.Editor;
+import view.History;
 import view.QC;
 import view.TabBox;
 import me.cunity.debug.Out;

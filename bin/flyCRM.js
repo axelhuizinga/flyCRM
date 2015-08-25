@@ -29,7 +29,7 @@ App.main = function() {
 	haxe_Log.trace = me_cunity_debug_Out._trace;
 };
 App.inputError = function(form,inputs) {
-	haxe_Log.trace(form.attr("id") + ":" + Std.string(inputs),{ fileName : "App.hx", lineNumber : 75, className : "App", methodName : "inputError"});
+	haxe_Log.trace(form.attr("id") + ":" + Std.string(inputs),{ fileName : "App.hx", lineNumber : 76, className : "App", methodName : "inputError"});
 	form.find("input").each(function(i,n) {
 		if(Lambda.has(inputs,new $(n).attr("name"))) new $(n).addClass("error");
 	});
@@ -37,17 +37,17 @@ App.inputError = function(form,inputs) {
 App.choice = $hx_exports.choice = function(data) {
 	if(data != null && data.id != null) {
 		new $("#t-choice").tmpl(data).appendTo("#" + Std.string(data.id)).css({ width : jQuery_JHelper.J(window).width(), height : jQuery_JHelper.J(window).height()}).animate({ opacity : 1});
-		haxe_Log.trace(Std.string(data.id) + ":" + new $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + new $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 93, className : "App", methodName : "choice"});
+		haxe_Log.trace(Std.string(data.id) + ":" + new $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + new $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 94, className : "App", methodName : "choice"});
 		new $("#" + Std.string(data.id) + " .overlay .scrollbox").height(new $("#" + Std.string(data.id) + " .overlay").height());
 	} else new $("#choice").hide(300,null,function() {
 		new $("#choice").remove();
 	});
 };
 App.modal = $hx_exports.modal = function(mID,data) {
-	haxe_Log.trace(data,{ fileName : "App.hx", lineNumber : 103, className : "App", methodName : "modal"});
+	haxe_Log.trace(data,{ fileName : "App.hx", lineNumber : 104, className : "App", methodName : "modal"});
 	if(data != null && data.mID != null) {
 		new $("#t-" + mID).tmpl(data).appendTo("#" + Std.string(data.id)).css({ width : jQuery_JHelper.J(window).width(), height : jQuery_JHelper.J(window).height()}).animate({ opacity : 1});
-		haxe_Log.trace(Std.string(data.id) + ":" + new $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + new $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 107, className : "App", methodName : "modal"});
+		haxe_Log.trace(Std.string(data.id) + ":" + new $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + new $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 108, className : "App", methodName : "modal"});
 		new $("#" + Std.string(data.id) + " .overlay .scrollbox").height(new $("#" + Std.string(data.id) + " .overlay").height());
 	} else new $("#" + mID).hide(300,null,function() {
 		new $("#" + mID).remove();
@@ -104,7 +104,7 @@ App.prototype = {
 			if(cl != null) {
 				var av = Type.createInstance(cl,[iParam]);
 				this.views.set(av.instancePath,av);
-				haxe_Log.trace("views.set(" + av.instancePath + ")",{ fileName : "App.hx", lineNumber : 158, className : "App", methodName : "initUI"});
+				haxe_Log.trace("views.set(" + av.instancePath + ")",{ fileName : "App.hx", lineNumber : 159, className : "App", methodName : "initUI"});
 			}
 		}
 		jQuery_JHelper.J(window).keydown(function(evt) {
@@ -153,14 +153,14 @@ App.prototype = {
 		var template = "{a} Hello {c} World!";
 		var data = { a : 123, b : 333, c : "{nested}"};
 		var t = "hello";
-		haxe_Log.trace(t + ":" + t.indexOf("lo"),{ fileName : "App.hx", lineNumber : 225, className : "App", methodName : "test"});
+		haxe_Log.trace(t + ":" + t.indexOf("lo"),{ fileName : "App.hx", lineNumber : 226, className : "App", methodName : "test"});
 		var ctempl = new EReg("{([a-x]*)}","g").map(template,function(r) {
 			var m = r.matched(1);
 			var d = Std.string(Reflect.field(data,m));
-			if(d.indexOf("{") == 0) haxe_Log.trace("nested template :) " + d.indexOf("{"),{ fileName : "App.hx", lineNumber : 232, className : "App", methodName : "test"});
+			if(d.indexOf("{") == 0) haxe_Log.trace("nested template :) " + d.indexOf("{"),{ fileName : "App.hx", lineNumber : 233, className : "App", methodName : "test"});
 			return d;
 		});
-		haxe_Log.trace(ctempl,{ fileName : "App.hx", lineNumber : 235, className : "App", methodName : "test"});
+		haxe_Log.trace(ctempl,{ fileName : "App.hx", lineNumber : 236, className : "App", methodName : "test"});
 	}
 	,__class__: App
 };
@@ -3409,6 +3409,15 @@ view_DateTime.prototype = $extend(View.prototype,{
 		this.template.html(jQuery_JHelper.vsprintf(this.format,[view_DateTime.wochentage[d.getDay()],d.getDate(),d.getMonth() + 1,d.getFullYear(),d.getHours(),d.getMinutes()]));
 	}
 	,__class__: view_DateTime
+});
+var view_History = function(data) {
+	View.call(this,data);
+};
+$hxClasses["view.History"] = view_History;
+view_History.__name__ = ["view","History"];
+view_History.__super__ = View;
+view_History.prototype = $extend(View.prototype,{
+	__class__: view_History
 });
 var view_Input = function(data) {
 	if(!(data.limit > 0)) data.limit = 15;

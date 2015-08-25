@@ -206,7 +206,7 @@ class View
 			listening.set(J(n), J(n).data('contextaction'));
 		});
 	}
-	
+	@:expose
 	public function addView(v:ViewData):View
 	{
 		var av:View = null;
