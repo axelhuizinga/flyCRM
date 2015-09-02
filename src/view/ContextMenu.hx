@@ -210,14 +210,14 @@ typedef ContextMenuData =
 			action:'update_fields_x',
 			lead_id:editor.leadID,
 			//agent_user:editor.agent,
-			security_phrase:''
+			state:''
 		};
 		
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			//trace(data);
 			if (data.response == 'OK') 
-			{//security_phrase CLEARED
-				trace('OK security_phrase CLEARED');		
+			{//state CLEARED
+				trace('OK state CLEARED');		
 				p = {
 					className:'AgcApi',
 					action:'external_hangup',

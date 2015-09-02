@@ -150,16 +150,16 @@ class QC extends Clients
 		var user:String = S.user;
 		//COPY LEAD TO VICIDIAL_LEAD_LOG + CUSTOM_LOG
 		//return false;
-		/*var newStatus:String = q.get('status');
+		var newStatus:String = q.get('status');
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query(
 			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id,$lead_id AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,"$newStatus",comments,called_count,last_local_call_time,rank,owner,entry_list_id,$user AS log_user,NULL AS ref_id FROM `vicidial_list` WHERE `lead_id`=$lead_id)AS vl'
-			);*/
-		var log_id:EitherType < Int, Bool > = false;
-		if (log_id  = saveLog(q))
+			);
+		var log_id:Int = S.my.insert_id;
+		if (log_id > 0)
 		{
 			var cTable:String = 'custom_' + q.get('entry_list_id');
 			trace(cTable + ' log_id:' + log_id);
-			/*if (checkOrCreateCustomTable(cTable))
+			if (checkOrCreateCustomTable(cTable))
 			{
 				var cLogTable =  cTable + '_log';
 				res = S.my.query(
@@ -167,145 +167,142 @@ class QC extends Clients
 				);
 				trace ('INSERT INTO $cLogTable SELECT * FROM (SELECT $log_id AS log_id) AS ll JOIN (SELECT * FROM `$cTable`WHERE `lead_id`=$lead_id)AS cl ' + S.my.error + '<');
 				if (S.my.error == '')
-				{*/
-			//SAVE QC DATA ONLY AFTER SUCCESSFUL LOG ENTRY
-			var primary_id:String =  S.my.real_escape_string(q.get('primary_id'));
-			var sql:StringBuf  = new StringBuf();
-			sql.add('UPDATE $cTable SET ');
-			var cFields = S.tableFields('$cTable');
-			trace('$cTable fields:' + cFields.toString());
-			cFields.remove(primary_id);
-			var bindTypes:String = '';
-			var values2bind:NativeArray = null;
-			var i:Int = 0;
-			var dbFieldTypes:StringMap<String> = Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject(S.conf.get('dbFieldTypes')));
-			var sets:Array<String> = new Array();
-			for (c in cFields)
-			{
-				var val:Dynamic = q.get(c);
-				if (val != null)
 				{
-					//TODO: MULTIVAL SELECT OR CHECKBOX
-					values2bind[i++] = (Std.is(val,String) ? val: val[0] );
-					var type:String = dbFieldTypes.get(c);
-					bindTypes += (type.any2bool() ?  type : 's');	
-					sets.push(c + '=?');
-				}
-			}
-			sql.add(sets.join(','));
-			sql.add(' WHERE lead_id=$lead_id');
-			var stmt =  S.my.stmt_init();
-			trace(sql.toString());
-			var success:Bool = stmt.prepare(sql.toString());
-			if (!success)
-			{
-				trace(stmt.error);
-				return false;
-			}
-			success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
-			trace ('success:' + success);
-			if (success)
-			{
-				success = stmt.execute();
-				if (!success)
-				{
-					trace(stmt.error);
-					return false;
-				}			
-				//CUSTOM SAVED 
-				sql = new StringBuf();
-				var uFields = vicdial_list_fields;
-				uFields.remove(primary_id);
-				bindTypes = '';
-				values2bind = null;
-				i = 0;						
-				sql.add('UPDATE vicidial_list SET ');
-				sets  = new Array();
-				for (c in uFields)
-				{
-					var val:Dynamic = q.get(c);
-					if (val != null)
+					//SAVE QC DATA ONLY AFTER SUCCESSFUL LOG ENTRY
+					var primary_id:String =  S.my.real_escape_string(q.get('primary_id'));
+					var sql:StringBuf  = new StringBuf();
+					sql.add('UPDATE $cTable SET ');
+					var cFields = S.tableFields('$cTable');
+					trace('$cTable fields:' + cFields.toString());
+					cFields.remove(primary_id);
+					var bindTypes:String = '';
+					var values2bind:NativeArray = null;
+					var i:Int = 0;
+					var dbFieldTypes:StringMap<String> = Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject(S.conf.get('dbFieldTypes')));
+					var sets:Array<String> = new Array();
+					for (c in cFields)
 					{
-						//TODO: MULTIVAL
-						values2bind[i++] = (Std.is(val,String) ? val: val[0] );
-						var type:String = dbFieldTypes.get(c);
-						bindTypes += (type.any2bool() ?  type : 's');	
-						sets.push(c + '=?');
+						var val:Dynamic = q.get(c);
+						if (val != null)
+						{
+							//TODO: MULTIVAL SELECT OR CHECKBOX
+							values2bind[i++] = (Std.is(val,String) ? val: val[0] );
+							var type:String = dbFieldTypes.get(c);
+							bindTypes += (type.any2bool() ?  type : 's');	
+							sets.push(c + '=?');
+						}
 					}
-				}
-				values2bind[i++] = S.user;
-				bindTypes += 's';
-				sets.push('security_phrase=?');//STORE QC AGENT
-				values2bind[i++] = 'XX';
-				bindTypes += 's';						
-				sets.push('state=?');//RESTORE SAVING FLAG
-				if (q.get('status') == 'QCOK' || q.get('status') == 'QCBAD')
-				{//	MOVE INTO MITGLIEDER LISTE (10000) OR QCBAD (1800)
-					var list_id:Int = 10000;
-					if (q.get('status') == 'QCOK') 
-					{
-						var mID:Int = Std.parseInt(q.get('vendor_lead_code'));
-						if (mID == null)//	NEW MEMBER - CREATE ID
-						{								
-							mID = S.newMemberID();
-							values2bind[i++] = mID;
-							bindTypes += 's';
-							sets.push('vendor_lead_code=?');								
-						}								
-					}
-					else
-						list_id = 1800;
-
-					var entry_list_id:String = q.get('entry_list_id');
-					values2bind[i++] = q.get('status');
-					bindTypes += 's';
-					sets.push('`status`=?');
-					values2bind[i++] = list_id;
-					bindTypes += 's';
-					sets.push('list_id=?');	
-					values2bind[i++] = entry_list_id;
-					bindTypes += 's';
-					sets.push('entry_list_id=?');	
-					values2bind[i++] = q.get('owner');
-					bindTypes += 's';
-					sets.push('owner=?');							
-				}
-				sql.add(sets.join(','));
-				sql.add(' WHERE lead_id=$lead_id');
-				var stmt =  S.my.stmt_init();
-				trace(sql.toString());
-				var success:Bool = stmt.prepare(sql.toString());
-				if (!success)
-				{
-					trace(stmt.error);
-					return false;
-				}
-				//trace(' values:' );
-				//trace(values2bind);
-				success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
-				trace ('success:' + success);
-				if (success)
-				{
-					success = stmt.execute();
+					sql.add(sets.join(','));
+					sql.add(' WHERE lead_id=$lead_id');
+					var stmt =  S.my.stmt_init();
+					trace(sql.toString());
+					var success:Bool = stmt.prepare(sql.toString());
 					if (!success)
 					{
 						trace(stmt.error);
 						return false;
-					}	
-					else
-					{
-						return saveLog(q, log_id) != false;
 					}
-				}			
-				return false;
+					success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+					trace ('success:' + success);
+					if (success)
+					{
+						success = stmt.execute();
+						if (!success)
+						{
+							trace(stmt.error);
+							return false;
+						}			
+						//CUSTOM SAVED 
+						sql = new StringBuf();
+						var uFields = vicdial_list_fields;
+						uFields.remove(primary_id);
+						bindTypes = '';
+						values2bind = null;
+						i = 0;						
+						sql.add('UPDATE vicidial_list SET ');
+						sets  = new Array();
+						for (c in uFields)
+						{
+							var val:Dynamic = q.get(c);
+							if (val != null)
+							{
+								//TODO: MULTIVAL
+								values2bind[i++] = (Std.is(val,String) ? val: val[0] );
+								var type:String = dbFieldTypes.get(c);
+								bindTypes += (type.any2bool() ?  type : 's');	
+								sets.push(c + '=?');
+							}
+						}
+						values2bind[i++] = S.user;
+						bindTypes += 's';
+						sets.push('security_phrase=?');//STORE QC AGENT
+						values2bind[i++] = 'XX';
+						bindTypes += 's';						
+						sets.push('state=?');//RESTORE SAVING FLAG
+						if (q.get('status') == 'QCOK' || q.get('status') == 'QCBAD')
+						{//	MOVE INTO MITGLIEDER LISTE (10000) OR QCBAD (1800)
+							var list_id:Int = 10000;
+							if (q.get('status') == 'QCOK') 
+							{
+								var mID:Int = Std.parseInt(q.get('vendor_lead_code'));
+								if (mID == null)//	NEW MEMBER - CREATE ID
+								{								
+									mID = S.newMemberID();
+									values2bind[i++] = mID;
+									bindTypes += 's';
+									sets.push('vendor_lead_code=?');								
+								}								
+							}
+							else
+								list_id = 1800;
+
+							var entry_list_id:String = q.get('entry_list_id');
+							values2bind[i++] = q.get('status');
+							bindTypes += 's';
+							sets.push('`status`=?');
+							values2bind[i++] = list_id;
+							bindTypes += 's';
+							sets.push('list_id=?');	
+							values2bind[i++] = entry_list_id;
+							bindTypes += 's';
+							sets.push('entry_list_id=?');	
+							values2bind[i++] = q.get('owner');
+							bindTypes += 's';
+							sets.push('owner=?');							
+						}
+						sql.add(sets.join(','));
+						sql.add(' WHERE lead_id=$lead_id');
+						var stmt =  S.my.stmt_init();
+						trace(sql.toString());
+						var success:Bool = stmt.prepare(sql.toString());
+						if (!success)
+						{
+							trace(stmt.error);
+							return false;
+						}
+						//trace(' values:' );
+						//trace(values2bind);
+						success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+						trace ('success:' + success);
+						if (success)
+						{
+							success = stmt.execute();
+							if (!success)
+							{
+								trace(stmt.error);
+								return false;
+							}		
+							return true;
+						}			
+						return false;
+					}
+				
+				}
+				else
+					trace('oops');
 			}
-		
-		}
-		else
-			trace('oops');
-			/*}
 			
-		}*/
+		}
 		return false;
 	}
 	

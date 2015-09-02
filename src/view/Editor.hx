@@ -53,8 +53,8 @@ class Editor extends View
 	public function checkIban():Bool
 	{
 		var iban:String = J('#' + ibanSelector).val();
-		trace('#' + ibanSelector);
-		trace(iban);
+		//trace('#' + ibanSelector);
+		//trace(iban);
 		return IBAN.checkIBAN(iban);
 	}
 	
@@ -309,9 +309,9 @@ class Editor extends View
 				trace(result);
 				try
 				{
-					if (result.response.security_phrase == 'XXX')
+					if (result.response.state == 'XX')
 					{
-						trace('OK - XXX HAS BEEN RESTORED');
+						trace('OK - XX HAS BEEN RESTORED');
 						amReady = true;
 					}				
 				}

@@ -63,7 +63,7 @@ class ClientEditor extends Editor
 							trace (ok);
 							if (ok)
 							{
-								save_sub_screen();
+								
 							}
 							else
 							{//J('#' + parentView.id + '-edit-form')	TODO: App.inputError implement startsWith
@@ -71,6 +71,11 @@ class ClientEditor extends Editor
 							}
 						});
 					}
+					else
+					{
+						save_sub_screen();
+					}
+					
 					case 'pay_plan', 'pay_history', 'client_history':
 						save_sub_screen();
 					default:// SAVE CLIENT DATA
