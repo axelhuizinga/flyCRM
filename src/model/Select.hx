@@ -36,7 +36,7 @@ class Select extends Input
 			
 		//trace(sb.toString());
 		data =  {
-			rows: execute(sb.toString(), param, placeHolder)
+			rows: execute(sb.toString(), placeHolder)
 		}*/
 		return json_encode();
 	}

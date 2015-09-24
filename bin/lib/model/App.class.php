@@ -37,7 +37,7 @@ class model_App extends Model {
 		}
 		$me = new model_Users($param);
 		$me->get_info(null);
-		$data = _hx_anonymous(array("fieldNames" => php_Lib::associativeArrayOfHash($fieldNames), "userMap" => $me->globals, "optionsMap" => $optionsMap, "typeMap" => $typeMap));
+		$data = _hx_anonymous(array("fieldNames" => php_Lib::associativeArrayOfHash($fieldNames), "userMap" => $me->globals, "optionsMap" => $optionsMap, "typeMap" => $typeMap, "limit" => _hx_array_get(S::$conf->get("sql"), "LIMIT")));
 		return $data;
 	}
 	static function create($param) {

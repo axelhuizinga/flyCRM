@@ -2,6 +2,7 @@ package view;
 
 import haxe.CallStack;
 import haxe.ds.StringMap;
+import haxe.Timer;
 import js.Browser;
 import js.html.Element;
 import js.html.Node;
@@ -101,11 +102,30 @@ typedef TabBoxData =
 							trace('loading templates/' +  J('#$selector').attr('href') + '.html...');
 							JQueryStatic.get('templates/' +  J('#$selector').attr('href') + '.html',function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest){
 								trace(textStatus);
-								trace(data);
+								//trace(data);
 								if (textStatus == 'success')
 								{									
 									J('body').append(data);
-									Reflect.setField(App.ist.globals.templates, J('#$selector').attr('href'),true);
+									Reflect.setField(App.ist.globals.templates, J('#$selector').attr('href'), true);
+									trace(untyped Browser.window.lastView);
+									//addView(untyped Browser.window.lastView);
+									tabBoxData.tabs[tabsInstance.options.active].views.push(untyped Browser.window.lastView);
+									trace(tabsInstance.options.active+':' + tabBoxData.tabs[tabsInstance.options.active].views.length);
+									var v:ViewData = tabBoxData.tabs[tabsInstance.options.active].views[tabBoxData.tabs[tabsInstance.options.active].views.length - 1];
+									v.attach2 =  tabsInstance.panels[tabsInstance.options.active];
+									v.dbLoaderIndex = tabsInstance.options.active;
+									
+									var jP:JQuery = J(tabsInstance.panels[tabsInstance.options.active]);
+									//Out.dumpObjectTree(tabsInstance.panels[tabIndex]);
+									//if (tabsInstance.options.active != active)
+										//jP.css('visibility','hidden').show();
+									trace('adding:' + tabBoxData.tabs[tabsInstance.options.active].id + ' to:' + id + ' @:'  + tabsInstance.options.active );
+									addView(v);
+									/*if (tabIndex != active)
+										jP.hide(0).css('visibility','visible');								
+											
+										}*/
+									loadAllData(v.dbLoaderIndex);
 								}
 								
 							});
@@ -120,8 +140,8 @@ typedef TabBoxData =
 				},				
 				create: function( event:Event, ui ) 
 				{
-					tabsInstance =  J('#' + id).tabs("instance");		
 					trace('ready2load content4tabs:' + tabBoxData.tabs.length);
+					tabsInstance =  J('#' + id).tabs("instance");		
 					//trace(tabObj.tabs);
 					//Out.dumpObject(tabsInstance.panels);
 					if (tabBoxData.append2header != null)
@@ -165,10 +185,14 @@ typedef TabBoxData =
 			trace(tabsInstance.option('active'));
 			trace(dbLoader.length + ':'  + active );
 		}
-		init();
+		
 		trace (Browser.window.location.pathname + ' != ' + App.basePath);
 		if (Browser.window.location.pathname != App.basePath)
-			go(Browser.window.location.href);
+		{			
+			Timer.delay(function() { go(Browser.window.location.href);init();} , 500);
+		}
+		else
+			init();
 	}
 	
 	//public function load(res:Dynamic, data:String, xhr:JqXHR):Void

@@ -160,7 +160,7 @@ class View
 	
 	function addInteractionState(name:String, iS:InteractionState):Void
 	{
-		//trace(id + ':' + name + ':' + iS);
+		trace(id + ':' + name + ':' + iS);
 		interactionStates.set(name, iS);
 	}
 	
@@ -206,6 +206,7 @@ class View
 			listening.set(J(n), J(n).data('contextaction'));
 		});
 	}
+	
 	@:expose
 	public function addView(v:ViewData):View
 	{
@@ -251,7 +252,7 @@ class View
 			Timer.delay(initState, 1000);
 			return;
 		}
-		addListener(J('button[data-contextaction]'));
+		addListener(J('#$id button[data-contextaction]'));
 		interactionState = 'init';
 		J('td').attr('tabindex', -1);
 		var el:Element = cast J('#' + id).get()[0];
@@ -430,6 +431,7 @@ class View
 		J('#' + id + '-list tr').first().siblings().click(select).find('td').off('click');
 		//J('td').attr('tabindex', -1);
 		var limit:Int = (vData.limit > 0? vData.limit : App.limit);
+		trace('data.count:'+ data.count + ' - limit $limit:' + vData.limit +' _ ' + App.limit);
 		if (limit < data.count)
 		{
 			//CREATE PAGER

@@ -173,8 +173,16 @@ class FormData
 				else if (tDn.indexOf('range_to_') == 0)
 					continue;
 				else if (tDn.indexOf('_match_option') == -1)
+				{
+					if (tDn == 'pay_source.pay_source_state')
+					{
+						if (jForm.find('[name="' + tDn +'"]').prop('checked'))
+							ret.push (tDn + '|IN|active|neu');
+					}
+					else
 					ret.push (tDn + '|' + jForm.find('[name="' + tDn +'"]').val() );
-					
+					//trace('name:$tDn' + jForm.find('[name="' + tDn +'"]').prop('checked'));
+				}
 				
 			}
 			if (ret.length > 0)

@@ -45,7 +45,7 @@ class Campaigns extends Model
 		var limit:String = q.get('limit');
 		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
 		data =  {
-			rows: execute(sb.toString(), q, phValues)
+			rows: execute(sb.toString(), phValues)
 		};
 		return json_encode();
 	}

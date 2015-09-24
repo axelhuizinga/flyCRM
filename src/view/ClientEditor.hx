@@ -153,6 +153,7 @@ class ClientEditor extends Editor
 		}
 		var dRows:Array<Dynamic> = Reflect.field(editData, name).h;
 		var sData:Dynamic = Reflect.field(editData, name);// { h:[] };
+
 		trace(name);
 		trace(dRows);
 		sData.table = name;
@@ -164,6 +165,50 @@ class ClientEditor extends Editor
 		//trace(sData.optionsMap);
 		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
+		if (name == 'pay_history')
+		{
+			sData = {rows:[],m_ID:editData.clients.h[0].client_id};
+			var kontoRows:Array<Dynamic> = Reflect.field(editData, 'konto_auszug').h;
+			for (r in kontoRows)
+			{
+				sData.rows.push( 
+				{ 
+					Termin:r.d,
+					info:switch(r.reason)
+					{
+						case "AC01":'IBAN FEHLER';
+						case "AC04":'KONTO AUFGELOEST';
+						case "MD06":'WIDERSPRUCH DURCH ZAHLER';
+						case "MS03":'SONSTIGE GRUENDE';
+						default: "''";
+					},
+					Betrag:r.amount,
+					extra:r.IBAN
+				});
+			}
+			
+			for (r in dRows)
+			{
+				sData.rows.push( 
+				{ 
+					Termin:r.Termin,
+					info:'baID ' + r.buchungsanforderungID,
+					Betrag:r.Betrag,
+					extra:null
+				});
+			}
+			//sData.rows = dateSort('Termin', sData.rows);
+			dateSort('Termin', sData.rows);
+			//trace(sData);
+			screens.set(name, J('#t-pay-history-editor').tmpl(sData).appendTo('#' + parentView.id).css( {
+				marginTop:Std.string(mSpace.top + oMargin ) + 'px',
+				marginLeft:Std.string(oMargin ) + 'px',
+				height:Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px',
+				width:Std.string( J('#clients-menu').offset().left - 35 ) + 'px'
+			}).animate( { opacity:1 } ));
+			
+		}
+		else
 		screens.set(name, J('#t-pay-editor').tmpl(sData).appendTo('#' + parentView.id).css( {
 			marginTop:Std.string(mSpace.top + oMargin ) + 'px',
 			marginLeft:Std.string(oMargin ) + 'px',
@@ -251,6 +296,7 @@ class ClientEditor extends Editor
 			Reflect.setField(dataOptions, k, opts);
 		}
 		fieldNames = data.fieldNames;
+		fieldNames = App.ist.globals.fieldNames;
 		optionsMap = data.optionsMap = dataOptions;
 		typeMap = data.typeMap;
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;
@@ -301,6 +347,12 @@ class ClientEditor extends Editor
 		trace(leadID);
 		
 		//cMenu.root.accordion("refresh");
+	}
+	
+	static function dateSort(field:String, a:Array<Dynamic>):Array<Dynamic>
+	{
+		//return untyped Browser.window.dateSort(Reflect.field(a, field), Reflect.field(b, field));
+		return untyped Browser.window.dateSort(field, a);
 	}
 	
 }

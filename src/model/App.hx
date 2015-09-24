@@ -55,7 +55,8 @@ class App extends Model
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),
 			userMap: me.globals,
 			optionsMap: optionsMap,
-			typeMap: typeMap
+			typeMap: typeMap,
+			limit:untyped S.conf.get('sql')['LIMIT']
 		}
 		return data;
 	}

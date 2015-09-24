@@ -103,7 +103,8 @@ class Model
 		if (where != null)
 			buildCond(where, sb, phValues);
 
-		return Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]).get('count');
+		return Lib.hashOfAssociativeArray(execute(sb.toString(), phValues)[0]).get('count');
+		//return Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]).get('count');
 	}
 	
 	public function countJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):Int
@@ -145,7 +146,8 @@ class Model
 		}
 		//var hash =  Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]);
 		//trace(hash + ': ' + (hash.exists('count') ? 'Y':'N') );
-		return Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]).get('count');
+		return Lib.hashOfAssociativeArray(execute(sb.toString(), phValues)[0]).get('count');
+		//return Lib.hashOfAssociativeArray(execute(sb.toString(), q, phValues)[0]).get('count');
 	}
 	
 	public function doJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
@@ -195,7 +197,8 @@ class Model
 			
 		var limit:String = q.get('limit');
 		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
-		return execute(sb.toString(), q, phValues);
+		return execute(sb.toString(), phValues);
+		//return execute(sb.toString(), q, phValues);
 	}
 	
 	public function doSelect(q:StringMap<Dynamic>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
@@ -220,7 +223,8 @@ class Model
 			buildOrder(order, sb);
 		var limit:String = q.get('limit');
 		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
-		return execute(sb.toString(), q, phValues);
+		return execute(sb.toString(), phValues);
+		//return execute(sb.toString(), q, phValues);
 	}
 	
 	public function fieldFormat(fields:String):String
@@ -270,7 +274,8 @@ class Model
 		return json_encode();
 	}
 	
-	public function execute(sql:String, param:StringMap<Dynamic>, ?phValues:Array<Array<Dynamic>>):NativeArray
+	//public function execute(sql:String, param:StringMap<Dynamic>, ?phValues:Array<Array<Dynamic>>):NativeArray
+	public function execute(sql:String, ?phValues:Array<Array<Dynamic>>):NativeArray
 	{
 		trace(sql);	
 		var stmt =  S.my.stmt_init();
@@ -367,7 +372,6 @@ class Model
 		//var first:Bool = true;
 		for (w in where)
 		{
-
 			
 			var wData:Array<String> = w.split('|');
 			var values:Array<String> = wData.slice(2);

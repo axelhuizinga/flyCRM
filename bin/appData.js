@@ -8,6 +8,7 @@ var fieldNames =
 	city:'Ort',
 	last_local_call_time:'Anrufzeit',
 	lead_id:'LeadID',
+	m_ID:'MitglNr.',
 	client_id:'MitglNr.',
 	vendor_lead_code:'MitglNr.',
 	vicidial_campaigns:'Kampagnen',
@@ -19,7 +20,11 @@ var fieldNames =
 	full_name:'Agent',
 	owner:'Agent',
 	register_on:'Verkauf',
-	iban:'IBAN'
+	IBAN:'IBAN',
+	iban:'IBAN',
+	d:'Datum',
+	amount:'Betrag',
+	reason:'Grund'
 }
 
 var appLabel =
@@ -88,10 +93,17 @@ var dbQueryFormats =
 	hstart_time:['DATE_FORMAT','%d.%m.%Y %H:%i:%s']
 }
 
+var displayClass =
+{
+	amount:'tRight'
+}
+
 var displayFormats =
 {
 	amount:'gFloat',
 	phone_number:'0%d',
+	d:'date',
+	reason:'grund',
 	register_on:'date',
 	register_off:'date',
 	register_off_to:'date',
@@ -137,4 +149,9 @@ var templates =
 	clients:true,
 	stats:false,
 	settings:false
+}
+
+var sql =
+{
+	LIMIT:15
 }

@@ -14,6 +14,7 @@ import js.Lib;
 import me.cunity.debug.Out;
 import view.Campaigns;
 import view.Clients;
+import view.ClientHistory;
 import view.ContextMenu;
 import view.DateTime;
 import view.ClientEditor;
@@ -216,6 +217,11 @@ class App
 	public static function getViews(): StringMap<View>
 	{
 		return ist.views;
+	}
+	
+	public static function dateSort(a:String, b:Array<Dynamic>):Void
+	{
+		untyped Browser.window.dateSort(a, b);
 	}
 	
 	function test()

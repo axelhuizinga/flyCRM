@@ -11,6 +11,7 @@ import model.AgcApi;
 import model.App;
 import model.Campaigns;
 import model.Clients;
+import model.ClientHistory;
 import model.QC;
 import model.Select;
 import model.Users;
@@ -46,6 +47,7 @@ class S
 	{		
 		haxe.Log.trace = Debug._trace;	
 		conf =  Config.load('appData.js');
+		//trace(conf);
 		Session.start();
 
 		var pd:Dynamic = Web.getPostData();

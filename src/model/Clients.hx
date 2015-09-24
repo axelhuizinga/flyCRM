@@ -30,6 +30,7 @@ typedef CustomField =
 {
 	private static var vicdial_list_fields = 'lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id'.split(',');		
 	private static var clients_fields = 'client_id,lead_id,creation_date,state,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date'.split(',');	
+	private static var pay_history_fields = 'buchungsanforderungID,Mandat-ID,Betrag,Termin'.split(',');
 	private static var pay_source_fields = 'pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date'.split(',');
 	private static var pay_plan_fields = 'pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason'.split(',');
 	//private static var pay_source_fields = '';
@@ -89,38 +90,10 @@ typedef CustomField =
 			buildOrder(order, sb);
 		var limit:String = q.get('limit');
 		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
-		return execute(sb.toString(), q, phValues);
+		return execute(sb.toString(), phValues);
+		//return execute(sb.toString(), q, phValues);
 	}
-	/*override public function doJoin(q:StringMap<String>, sb:StringBuf, phValues:Array<Array<Dynamic>>):NativeArray
-	{
-		var fields:String = q.get('fields');	
-		//trace(fields);
-		//sb.add('SELECT ' + fieldFormat((fields != null ? fields.split(',').map(function(f:String) return quoteField(f)).join(',') : '*' )));
-		sb.add('SELECT ' + (fields != null ? fieldFormat( fields.split(',').map(function(f:String) return S.my.real_escape_string(f)).join(',') ): '*' ));
-		var qTable:String = (q.get('table').any2bool() ? q.get('table') : table);
-		var joinCond:String = (q.get('joincond').any2bool() ? q.get('joincond') : null);
-		var joinTable:String = (q.get('jointable').any2bool() ? q.get('jointable') : null);
-		//trace ('table:' + q.get('table') + ':' + (q.get('table').any2bool() ? q.get('table') : table) + '' + joinCond );
-		
-		sb.add(' FROM ' + S.my.real_escape_string(qTable));		
-		if (joinTable != null)
-			sb.add(' INNER JOIN $joinTable');
-		if (joinCond != null)
-			sb.add(' ON $joinCond');
-		var where:String = q.get('where');
-		if (where != null)
-			buildCond(where, sb, phValues);
-		var groupParam:String = q.get('group');
-		if (groupParam != null)
-			buildGroup(groupParam, sb);
-		//TODO:HAVING
-		var order:String = q.get('order');
-		if (order != null)
-			buildOrder(order, sb);
-		var limit:String = q.get('limit');
-		buildLimit((limit == null?'15':limit), sb);	//	TODO: CONFIG LIMIT DEFAULT
-		return execute(sb.toString(), q, phValues);
-	}*/
+	
 	public static function create(param:StringMap<String>):EitherType<String,Bool>
 	{
 		var self:Clients = new Clients(param);	
@@ -153,7 +126,8 @@ typedef CustomField =
 		//var entry_list_id:String = param.get('entry_list_id');
 
 		var fieldNames:StringMap<String> = new StringMap();
-		var typeMap:StringMap<String> = new StringMap();
+		//var typeMap:StringMap<String> = new StringMap();
+		var typeMap:StringMap<String> = ['buchungsanforderungID'=>'HIDDEN','Mandat-ID'=>'TEXT','Betrag'=>'TEXT','Termin'=>'TEXT'];
 		var optionsMap:StringMap<String> = new StringMap();		
 		
 		var eF:StringMap<Array<StringMap<String>>> = getEditorFields();
@@ -186,6 +160,7 @@ typedef CustomField =
 		var editTables:StringMap<StringMap<String>> = new StringMap();
 		var ti:Int = 0;
 		tableNames.remove('vicidial_list');
+		tableNames.push('buchungs_anforderungen');
 		for (table in tableNames)
 		{
 			var p:StringMap<String> = new StringMap();
@@ -193,8 +168,9 @@ typedef CustomField =
 			var phValues:Array<Array<Dynamic>> = new Array();
 			p.set('primary_id', param.get('primary_id'));
 			//FETCH VICIDIAL DATA ALONG WITH MEMBER DATA
-			if (table == 'clients')
-			{
+			switch(table) {
+			case 'clients':
+			
 				p.set('table', 'vicidial_list');
 				p.set('jointable', 'fly_crm.' + table);
 				//p.set('joincond', 'vicidial_list.lead_id=fly_crm.clients.lead_id');
@@ -203,9 +179,12 @@ typedef CustomField =
 					+ ',' + tableFields.get(table).map(function(f:String) return table + '.' + f).join(','));
 				p.set('where', 'vicidial_list.lead_id|' + param.get('lead_id'));
 				editTables.set(table, Lib.hashOfAssociativeArray(doJoin(p, sb, phValues)));
-			}
-			else
-			{
+			case 'buchungs_anforderungen':
+				p.set('table', 'fly_crm.'+ table);
+				p.set('fields', pay_history_fields.map(function(el:String) return '`$el`').join(','));
+				p.set('where', '`Mandat-ID`|' +  param.get('client_id') + 'K1');
+				editTables.set('pay_history', Lib.hashOfAssociativeArray(doSelect(p, sb, phValues)));
+			default:
 				p.set('table', (table == 'vicidial_list'?table:'fly_crm.'+ table));
 				p.set('fields', tableFields.get(table).join(','));
 				if (table == 'vicidial_list')
@@ -213,18 +192,20 @@ typedef CustomField =
 				else
 				p.set('where', 'client_id|' +  param.get('client_id'));
 				editTables.set(table, Lib.hashOfAssociativeArray(doSelect(p, sb, phValues)));
-			}
+			
 			//trace(p);			
 			if(table == 'pay_source')
 				trace(tableFields.get(table));
+			}
 		}
-
+		var recordings:NativeArray = getRecordings(Std.parseInt(param.get('lead_id')));
+		editTables.set('konto_auszug', Lib.hashOfAssociativeArray(new ClientHistory().findClient(["where" => 'reason|AC01 AC04 MD06 MS03,m_ID|' +  param.get('client_id')], true)));
 		data =  {
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),
 			editData:Lib.associativeArrayOfHash(editTables),
 			typeMap:Lib.associativeArrayOfHash(typeMap),
 			optionsMap:Lib.associativeArrayOfHash(optionsMap),
-			recordings:getRecordings(Std.parseInt(param.get('lead_id')))
+			recordings:recordings
 		};
 		var userMap:StringMap<String> = new StringMap();
 		var sb:StringBuf = new StringBuf();

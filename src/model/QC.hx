@@ -140,7 +140,8 @@ class QC extends Clients
 		buildCond('vl.' + primary_id + '|' + S.my.real_escape_string(q.get(q.get('primary_id'))) , sb, phValues);
 		//trace(phValues);		
 		//trace(sb.toString());		
-		return execute(sb.toString(), q, phValues);
+		return execute(sb.toString(), phValues);
+		//return execute(sb.toString(), q, phValues);
 		return null;
 	}	
 	

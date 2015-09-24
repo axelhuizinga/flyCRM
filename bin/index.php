@@ -791,7 +791,26 @@
 					 return sprintf('%s.%s.%s', t[2], t[1], t[0]);
 					 break;
 					case 'gFloat':
-						return value.replace('.', ',');
+					//trace(value)
+						return sprintf('%.2f',value).replace('.', ',');
+						break;
+					case 'grund':
+						switch (value)
+						{
+							case 'AC01':
+							return 'IBAN FEHLERHAFT';
+							break;
+							case 'AC04':
+							return 'KONTO AUFGELOEST';
+							break;
+							case 'MD06':
+							return 'WIDERSPRUCH DURCH ZAHLER';
+							break;
+							case 'MS03':
+							return 'SONSTIGE GRUENDE';
+							break;							
+						}
+						break;
 					 default:
 					return sprintf(format, value);
 				}

@@ -23,7 +23,7 @@ class model_Campaigns extends Model {
 		}
 		$limit = $q->get("limit");
 		$this->buildLimit((($limit === null) ? "15" : $limit), $sb);
-		$this->data = _hx_anonymous(array("rows" => $this->execute($sb->b, $q, $phValues)));
+		$this->data = _hx_anonymous(array("rows" => $this->execute($sb->b, $phValues)));
 		return $this->json_encode();
 	}
 	public function __call($m, $a) {
