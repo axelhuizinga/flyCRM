@@ -113,6 +113,20 @@ class App
 			J('#' + mID).hide(300, null, function() J('#' + mID).remove());
 	}	
 	
+	@:expose('info')
+	public static function info(data:Dynamic)
+	{
+		trace(data);
+		if (data.target == null && data.id != null)
+		{
+			J('#t-info' ).tmpl(data).appendTo('#' +data.id).css( { width:(J(Browser.window).width() - 440) +'px', height:'100px', 
+				margin: (J(Browser.window).height() - 200) + 'px 0 0 100px' } ).animate( { opacity:1 } );
+			trace(data.id + ':' + J('#' +data.id + ' .overlay .scrollbox').length + ':' + J('#' +data.id + ' .overlay').height());
+		}
+		else
+			J('#$data #info').hide(300, null, function() J('#$data #info').remove());
+	}		
+	
 	@:expose("initApp") 
 	public static function init(config:Dynamic):App
 	{
@@ -145,7 +159,7 @@ class App
 	}
 	
 	function initUI(viewConfigs:Array<Dynamic>):Void
-	{
+	{//trace(viewConfigs);
 		for (v in viewConfigs)
 		{
 			var className:String = Reflect.fields(v)[0];

@@ -1,4 +1,6 @@
 bin/php/config/config.private.php
-lib/me
+bin/dokumente
+config/flyCRM.db.php
+config/private
 
 

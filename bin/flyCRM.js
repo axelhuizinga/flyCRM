@@ -53,6 +53,15 @@ App.modal = $hx_exports.modal = function(mID,data) {
 		new $("#" + mID).remove();
 	});
 };
+App.info = $hx_exports.info = function(data) {
+	haxe_Log.trace(data,{ fileName : "App.hx", lineNumber : 119, className : "App", methodName : "info"});
+	if(data.target == null && data.id != null) {
+		new $("#t-info").tmpl(data).appendTo("#" + Std.string(data.id)).css({ width : jQuery_JHelper.J(window).width() - 440 + "px", height : "100px", margin : jQuery_JHelper.J(window).height() - 200 + "px 0 0 100px"}).animate({ opacity : 1});
+		haxe_Log.trace(Std.string(data.id) + ":" + new $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + new $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 124, className : "App", methodName : "info"});
+	} else new $("#" + Std.string(data) + " #info").hide(300,null,function() {
+		new $("#" + Std.string(data) + " #info").remove();
+	});
+};
 App.init = $hx_exports.initApp = function(config) {
 	App.ist = new App();
 	App.appName = config.appName;
@@ -107,7 +116,7 @@ App.prototype = {
 			if(cl != null) {
 				var av = Type.createInstance(cl,[iParam]);
 				this.views.set(av.instancePath,av);
-				haxe_Log.trace("views.set(" + av.instancePath + ")",{ fileName : "App.hx", lineNumber : 160, className : "App", methodName : "initUI"});
+				haxe_Log.trace("views.set(" + av.instancePath + ")",{ fileName : "App.hx", lineNumber : 174, className : "App", methodName : "initUI"});
 			}
 		}
 		jQuery_JHelper.J(window).keydown(function(evt) {
@@ -156,14 +165,14 @@ App.prototype = {
 		var template = "{a} Hello {c} World!";
 		var data = { a : 123, b : 333, c : "{nested}"};
 		var t = "hello";
-		haxe_Log.trace(t + ":" + t.indexOf("lo"),{ fileName : "App.hx", lineNumber : 232, className : "App", methodName : "test"});
+		haxe_Log.trace(t + ":" + t.indexOf("lo"),{ fileName : "App.hx", lineNumber : 246, className : "App", methodName : "test"});
 		var ctempl = new EReg("{([a-x]*)}","g").map(template,function(r) {
 			var m = r.matched(1);
 			var d = Std.string(Reflect.field(data,m));
-			if(d.indexOf("{") == 0) haxe_Log.trace("nested template :) " + d.indexOf("{"),{ fileName : "App.hx", lineNumber : 239, className : "App", methodName : "test"});
+			if(d.indexOf("{") == 0) haxe_Log.trace("nested template :) " + d.indexOf("{"),{ fileName : "App.hx", lineNumber : 253, className : "App", methodName : "test"});
 			return d;
 		});
-		haxe_Log.trace(ctempl,{ fileName : "App.hx", lineNumber : 242, className : "App", methodName : "test"});
+		haxe_Log.trace(ctempl,{ fileName : "App.hx", lineNumber : 256, className : "App", methodName : "test"});
 	}
 	,__class__: App
 };
@@ -1040,26 +1049,26 @@ View.prototype = {
 		new $("#" + this.id + "-list tr").first().siblings().click($bind(this,this.select)).find("td").off("click");
 		var limit;
 		if(this.vData.limit > 0) limit = this.vData.limit; else limit = App.limit;
-		haxe_Log.trace("data.count:" + Std.string(data.count) + (" - limit " + limit + ":") + Std.string(this.vData.limit) + " _ " + App.limit,{ fileName : "View.hx", lineNumber : 434, className : "View", methodName : "update"});
+		haxe_Log.trace("data.count:" + Std.string(data.count) + (" - limit " + limit + ":") + Std.string(this.vData.limit) + " _ " + App.limit,{ fileName : "View.hx", lineNumber : 435, className : "View", methodName : "update"});
 		if(limit < data.count) {
 			var pager = new view_Pager({ count : data.count, id : this.vData.id, limit : limit, page : data.page, parentView : this});
 		}
 		new $(".main-left").width(Std.string(new $("#" + this.id + "-menu").offset().left - 35));
-		haxe_Log.trace(Std.string(new $("#" + this.id + "-menu").offset().left - 35) + " reloadID:" + this.reloadID,{ fileName : "View.hx", lineNumber : 448, className : "View", methodName : "update"});
+		haxe_Log.trace(Std.string(new $("#" + this.id + "-menu").offset().left - 35) + " reloadID:" + this.reloadID,{ fileName : "View.hx", lineNumber : 449, className : "View", methodName : "update"});
 		this.wait(false);
 		if(this.reloadID != null) {
-			haxe_Log.trace("#" + this.reloadID + " : " + new $("#" + this.reloadID).length,{ fileName : "View.hx", lineNumber : 452, className : "View", methodName : "update"});
+			haxe_Log.trace("#" + this.reloadID + " : " + new $("#" + this.reloadID).length,{ fileName : "View.hx", lineNumber : 453, className : "View", methodName : "update"});
 			new $("#" + this.reloadID).children().first().trigger("click");
-			haxe_Log.trace(this.id + ":" + new $("#" + this.id + "-list tr[class~=\"selected\"]").length,{ fileName : "View.hx", lineNumber : 454, className : "View", methodName : "update"});
+			haxe_Log.trace(this.id + ":" + new $("#" + this.id + "-list tr[class~=\"selected\"]").length,{ fileName : "View.hx", lineNumber : 455, className : "View", methodName : "update"});
 			this.reloadID = null;
 		}
 	}
 	,runLoaders: function() {
-		haxe_Log.trace(this.dbLoaderIndex,{ fileName : "View.hx", lineNumber : 462, className : "View", methodName : "runLoaders"});
+		haxe_Log.trace(this.dbLoaderIndex,{ fileName : "View.hx", lineNumber : 463, className : "View", methodName : "runLoaders"});
 		this.loadAllData(this.dbLoaderIndex);
 	}
 	,select: function(evt) {
-		haxe_Log.trace("has to be implemented in subclass!",{ fileName : "View.hx", lineNumber : 468, className : "View", methodName : "select"});
+		haxe_Log.trace("has to be implemented in subclass!",{ fileName : "View.hx", lineNumber : 469, className : "View", methodName : "select"});
 	}
 	,wait: function(start,message,timeout) {
 		if(timeout == null) timeout = 15000;
@@ -1067,10 +1076,10 @@ View.prototype = {
 		var _g = this;
 		if(!start && this.waiting != null) {
 			this.waiting.stop();
-			haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 476, className : "View", methodName : "wait"});
+			haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 477, className : "View", methodName : "wait"});
 			new $("#wait").animate({ opacity : 0.0},300,null,function() {
 				new $("#wait").detach();
-				haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 477, className : "View", methodName : "wait"});
+				haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 478, className : "View", methodName : "wait"});
 			});
 			this.spinner.stop();
 		}
@@ -1082,7 +1091,7 @@ View.prototype = {
 		if(message == App.uiMessage.retry || message == App.uiMessage.timeout) this.waiting = haxe_Timer.delay(function() {
 			_g.wait(false);
 		},timeout); else {
-			haxe_Log.trace("set timeout:" + timeout + ":" + message,{ fileName : "View.hx", lineNumber : 498, className : "View", methodName : "wait"});
+			haxe_Log.trace("set timeout:" + timeout + ":" + message,{ fileName : "View.hx", lineNumber : 499, className : "View", methodName : "wait"});
 			this.waiting = haxe_Timer.delay(function() {
 				_g.wait(true,App.uiMessage.timeout,3500);
 			},timeout);
@@ -1970,6 +1979,8 @@ me_cunity_debug_Out.dumpLayout = function(dI,recursive,i) {
 };
 me_cunity_debug_Out.dumpJLayout = function(jQ,recursive,i) {
 	if(recursive == null) recursive = false;
+	haxe_Log.trace(jQ.length,{ fileName : "Out.hx", lineNumber : 246, className : "me.cunity.debug.Out", methodName : "dumpJLayout"});
+	if(jQ.length == 0) return;
 	var m = jQ.attr("id") + " left:" + jQ.position().left + " top:" + jQ.position().top + " width:" + jQ.width() + " height:" + jQ.height() + " visibility:" + jQ.css("visibility") + " display:" + jQ.css("display") + " position:" + jQ.css("position") + " class:" + jQ.attr("class") + " overflow:" + jQ.css("overflow");
 	me_cunity_debug_Out._trace(m,i);
 };
@@ -1990,15 +2001,15 @@ me_cunity_debug_Out._dumpObjectTree = function(root,parent,recursive,i) {
 	if(Type.getClass(root) != null) fields = Type.getInstanceFields(Type.getClass(root)); else fields = Reflect.fields(root);
 	me_cunity_debug_Out.dumpedObjects.push(root);
 	try {
-		me_cunity_debug_Out._trace(m + " fields:" + fields.length + ":" + fields.slice(0,5).toString(),{ fileName : "Out.hx", lineNumber : 272, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
+		me_cunity_debug_Out._trace(m + " fields:" + fields.length + ":" + fields.slice(0,5).toString(),{ fileName : "Out.hx", lineNumber : 275, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
 		var _g = 0;
 		while(_g < fields.length) {
 			var f = fields[_g];
 			++_g;
-			haxe_Log.trace(f,{ fileName : "Out.hx", lineNumber : 275, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
+			haxe_Log.trace(f,{ fileName : "Out.hx", lineNumber : 278, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
 			if(recursive) {
 				if(me_cunity_debug_Out.dumpedObjects.length > 1000) {
-					me_cunity_debug_Out._trace(me_cunity_debug_Out.dumpedObjects.toString(),{ fileName : "Out.hx", lineNumber : 280, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
+					me_cunity_debug_Out._trace(me_cunity_debug_Out.dumpedObjects.toString(),{ fileName : "Out.hx", lineNumber : 283, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
 					throw new js__$Boot_HaxeError("oops");
 					break;
 					return;
@@ -2010,7 +2021,7 @@ me_cunity_debug_Out._dumpObjectTree = function(root,parent,recursive,i) {
 		}
 	} catch( ex ) {
 		if (ex instanceof js__$Boot_HaxeError) ex = ex.val;
-		haxe_Log.trace(ex,{ fileName : "Out.hx", lineNumber : 300, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
+		haxe_Log.trace(ex,{ fileName : "Out.hx", lineNumber : 303, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
 	}
 };
 me_cunity_debug_Out.dumpObject = function(ob,i) {
@@ -2027,6 +2038,27 @@ me_cunity_debug_Out.dumpObject = function(ob,i) {
 			var t = Std.string(Type["typeof"](Reflect.field(ob,name)));
 			if(me_cunity_debug_Out.skipFunctions && t == "TFunction") null;
 			m += name + ":" + Std.string(Reflect.field(ob,name)) + ":" + t + "\n";
+		} catch( ex ) {
+			if (ex instanceof js__$Boot_HaxeError) ex = ex.val;
+			m += name + ":" + Std.string(ex);
+		}
+	}
+	me_cunity_debug_Out._trace(m,i);
+};
+me_cunity_debug_Out.dumpObjectRsafe = function(ob,i) {
+	var tClass = Type.getClass(ob);
+	var m = "dumpObjectRsafe:" + Std.string(ob != null?Type.getClass(ob):ob) + "\n";
+	var names = [];
+	if(Type.getClass(ob) != null) names = Type.getInstanceFields(Type.getClass(ob)); else names = Reflect.fields(ob);
+	if(Type.getClass(ob) != null) m = Type.getClassName(Type.getClass(ob)) + ":\n";
+	var _g = 0;
+	while(_g < names.length) {
+		var name = names[_g];
+		++_g;
+		try {
+			var t = Std.string(Type["typeof"](Reflect.field(ob,name)));
+			if(me_cunity_debug_Out.skipFunctions && t == "TFunction") null;
+			if(name == "parentView" || name == "ContextMenu" || name == "cMenu") m += name + ":" + Std.string(ob.parentView.id) + "\n"; else m += name + ":" + Std.string(Reflect.field(ob,name)) + ":" + t + "\n";
 		} catch( ex ) {
 			if (ex instanceof js__$Boot_HaxeError) ex = ex.val;
 			m += name + ":" + Std.string(ex);
@@ -2346,8 +2378,9 @@ me_cunity_util_Data.copy = function(source) {
 	}
 	return c;
 };
-me_cunity_util_Data.mcopy = function(source) {
-	var c = new haxe_ds_StringMap();
+me_cunity_util_Data.mcopy = function(source,target) {
+	var c;
+	if(target == null) c = new haxe_ds_StringMap(); else c = target;
 	var $it0 = source.keys();
 	while( $it0.hasNext() ) {
 		var k = $it0.next();
@@ -3436,14 +3469,14 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 			mailing = js_Boot.__cast(this.parentView.views.get(this.parentView.instancePath + "." + this.parentView.id + "-mailing") , view_Mailing);
 			haxe_Log.trace(contextAction,{ fileName : "ContextMenu.hx", lineNumber : 353, className : "view.ContextMenu", methodName : "run"});
 			switch(contextAction) {
-			case "previewOne":
-				mailing.previewOne(this.parentView.selectedID);
+			case "printNewInfos":
+				mailing.printNewInfos(jNode.closest("div").attr("id"));
 				break;
-			case "printOne":
-				mailing.printOne(this.parentView.selectedID);
+			case "printList":
+				mailing.printList(jNode.closest("div").attr("id"));
 				break;
 			case "printNewMembers":
-				mailing.printNewMembers();
+				mailing.printNewMembers(jNode.closest("div").attr("id"));
 				break;
 			default:
 				haxe_Log.trace(contextAction,{ fileName : "ContextMenu.hx", lineNumber : 363, className : "view.ContextMenu", methodName : "run"});
@@ -3601,6 +3634,8 @@ view_Input.prototype = {
 };
 var view_Mailing = function(data) {
 	View.call(this,data);
+	this.host = window.location.host;
+	this.proto = window.location.protocol;
 	this.init();
 };
 $hxClasses["view.Mailing"] = view_Mailing;
@@ -3608,13 +3643,37 @@ view_Mailing.__name__ = ["view","Mailing"];
 view_Mailing.__super__ = View;
 view_Mailing.prototype = $extend(View.prototype,{
 	cMenu: null
+	,host: null
+	,proto: null
 	,mailingID: null
-	,printNewMembers: function() {
-		window.postMessage({ action : "printAllWelcomeMessages", bin : "C:\\" + App.appName + "\\" + App.company + "\\bin\\druckeAnschreibenKinder.lnk", template : "C:/" + App.appName + "/" + App.company + "/Anschreiben/Kinder-Neu.odt"},window.location.origin);
+	,printNewMembers: function(mID) {
+		var url = "" + this.proto + "//" + this.host + "/cgi-bin/mailing.pl?action=PRINTNEW";
+		haxe_Log.trace(url,{ fileName : "Mailing.hx", lineNumber : 31, className : "view.Mailing", methodName : "printNewMembers"});
+		var res = $.ajax({ async : false, url : url, dataType : "json"}).responseText;
+		var json = $.parseJSON(res);
+		json.id = "clients";
+		haxe_Log.trace(Reflect.fields(json),{ fileName : "Mailing.hx", lineNumber : 39, className : "view.Mailing", methodName : "printNewMembers"});
+		haxe_Log.trace(json,{ fileName : "Mailing.hx", lineNumber : 40, className : "view.Mailing", methodName : "printNewMembers"});
+		App.info(json);
 	}
-	,printOne: function(mID) {
-		haxe_Log.trace(mID,{ fileName : "Mailing.hx", lineNumber : 32, className : "view.Mailing", methodName : "printOne"});
-		window.postMessage({ action : "printWelcomeMessage", bin : "C:\\" + App.appName + "\\" + App.company + "\\bin\\druckeAnschreibenKinder.lnk", memberID : mID, template : "C:/" + App.appName + "/" + App.company + "/Anschreiben/Kinder-Neu.odt"},window.location.origin);
+	,printList: function(mID) {
+		var list = new $("#" + mID + " #printListe").val();
+		var url = "" + this.proto + "//" + this.host + "/cgi-bin/mailing.pl?action=PRINTLIST&list=" + encodeURIComponent(list);
+		haxe_Log.trace(url,{ fileName : "Mailing.hx", lineNumber : 48, className : "view.Mailing", methodName : "printList"});
+		var res = $.ajax({ async : false, url : url, dataType : "json"}).responseText;
+		var json = $.parseJSON(res);
+		json.id = "clients";
+		haxe_Log.trace(Reflect.fields(json),{ fileName : "Mailing.hx", lineNumber : 56, className : "view.Mailing", methodName : "printList"});
+		haxe_Log.trace(json,{ fileName : "Mailing.hx", lineNumber : 57, className : "view.Mailing", methodName : "printList"});
+		App.info(json);
+	}
+	,printNewInfos: function(mID) {
+		var url = "" + this.proto + "//" + this.host + "/cgi-bin/mailing.pl?action=S_POST";
+		haxe_Log.trace(url,{ fileName : "Mailing.hx", lineNumber : 64, className : "view.Mailing", methodName : "printNewInfos"});
+		this.wait(null,null,1);
+		var result = $.ajax({ async : false, url : url}).responseText;
+		haxe_Log.trace(result,{ fileName : "Mailing.hx", lineNumber : 70, className : "view.Mailing", methodName : "printNewInfos"});
+		this.wait();
 	}
 	,previewOne: function(mID) {
 	}
