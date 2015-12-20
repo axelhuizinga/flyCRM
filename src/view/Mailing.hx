@@ -29,7 +29,7 @@ class Mailing extends View
 	{
 		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=PRINTNEW';		
 		trace(url);
-		JQueryStatic.fileDownload(url,
+		
 		var res:String = JQueryStatic.ajax({
 			async: false,
 			url:url,
@@ -47,6 +47,18 @@ class Mailing extends View
 		var list:String = J('#$mID #printListe').val();
 		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=PRINTLIST&list=' + list.urlEncode();		
 		trace(url);
+		JQueryStatic.fileDownload(url, {
+			successCallback: function(url)
+			{													
+				$preparingFileModal.dialog('close');
+			},
+			failCallback: function(responseHtml, url)
+			{													
+				$preparingFileModal.dialog('close');
+				$("#error-modal").dialog({ modal: true });
+			}
+		} );
+		return;
 		var res:String = JQueryStatic.ajax({
 			async: false,
 			url:url,
