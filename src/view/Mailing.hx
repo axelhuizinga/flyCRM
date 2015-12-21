@@ -47,15 +47,18 @@ class Mailing extends View
 		var list:String = J('#$mID #printListe').val();
 		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=PRINTLIST&list=' + list.urlEncode();		
 		trace(url);
+		J('#preparing-file-download').show();
 		JQueryStatic.fileDownload(url, {
 			successCallback: function(url)
-			{													
-				$preparingFileModal.dialog('close');
+			{										
+				trace('OK: $url');
+				//J('#$mID #preparing-file-download').hide();
 			},
 			failCallback: function(responseHtml, url)
-			{													
-				$preparingFileModal.dialog('close');
-				$("#error-modal").dialog({ modal: true });
+			{										
+				trace('oops $url $responseHtml');
+				//J('#$mID #preparing-file-download').hide();
+				J("#error-download").show();
 			}
 		} );
 		return;

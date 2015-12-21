@@ -34,9 +34,4 @@ import jQuery.*;
 		}, options);
 	}	
 	
-	public static function fileDownload(e:JQueryStatic,fileUrl:String, ?options:Dynamic)
-	{
-		return untyped e.fileDownload(fileUrl, options);
-	}
-	
 }
