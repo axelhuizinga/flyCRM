@@ -421,6 +421,7 @@ class View
 		data.hidden = vData.hidden;
 		data.primary_id = primary_id;
 		trace(id + ':' + data.fields + ':' + data.hidden + ':' + data.primary_id + ':' +  root.length);
+		//trace(data);
 		if ( J('#' + id + '-list').length > 0)
 			J('#' + id + '-list').replaceWith(J('#t-' + id + '-list').tmpl(data));
 		else

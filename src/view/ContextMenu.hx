@@ -353,12 +353,12 @@ typedef ContextMenuData =
 				trace(contextAction);
 				switch(contextAction)
 				{
-					case 'previewOne':
-						mailing.previewOne(parentView.selectedID);
-					case 'printOne':
-						mailing.printOne(parentView.selectedID);
+					case 'printNewInfos':
+						mailing.printNewInfos(jNode.closest('div').attr('id'));
+					case 'printList':
+						mailing.printList(jNode.closest('div').attr('id'));
 					case 'printNewMembers':
-						mailing.printNewMembers();
+						mailing.printNewMembers(jNode.closest('div').attr('id'));
 					default:
 						trace(contextAction);
 				}
