@@ -1,7 +1,7 @@
 <?php
 
 	require("php/functions.php");
-	require("/srv/www/config/flyCRM.db.php");
+	require("../config/flyCRM.db.php");
 	//edump($_SERVER);
 	session_start();
 	$user = (isset($_SESSION['PHP_AUTH_USER']) ? $_SESSION['PHP_AUTH_USER'] : 'NONO');
