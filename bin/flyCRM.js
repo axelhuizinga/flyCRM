@@ -1,4 +1,4 @@
-(function (console, $hx_exports, $global) { "use strict";
+(function (console, $hx_exports) { "use strict";
 $hx_exports.me = $hx_exports.me || {};
 $hx_exports.me.cunity = $hx_exports.me.cunity || {};
 $hx_exports.me.cunity.debug = $hx_exports.me.cunity.debug || {};
@@ -31,35 +31,35 @@ App.main = function() {
 App.inputError = function(form,inputs) {
 	haxe_Log.trace(form.attr("id") + ":" + Std.string(inputs),{ fileName : "App.hx", lineNumber : 77, className : "App", methodName : "inputError"});
 	form.find("input").each(function(i,n) {
-		if(Lambda.has(inputs,$(n).attr("name"))) $(n).addClass("error");
+		if(Lambda.has(inputs,new $(n).attr("name"))) new $(n).addClass("error");
 	});
 };
 App.choice = $hx_exports.choice = function(data) {
 	if(data != null && data.id != null) {
-		$("#t-choice").tmpl(data).appendTo("#" + Std.string(data.id)).css({ width : jQuery_JHelper.J(window).width(), height : jQuery_JHelper.J(window).height()}).animate({ opacity : 1});
-		haxe_Log.trace(Std.string(data.id) + ":" + $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 95, className : "App", methodName : "choice"});
-		$("#" + Std.string(data.id) + " .overlay .scrollbox").height($("#" + Std.string(data.id) + " .overlay").height());
-	} else $("#choice").hide(300,null,function() {
-		$("#choice").remove();
+		new $("#t-choice").tmpl(data).appendTo("#" + Std.string(data.id)).css({ width : jQuery_JHelper.J(window).width(), height : jQuery_JHelper.J(window).height()}).animate({ opacity : 1});
+		haxe_Log.trace(Std.string(data.id) + ":" + new $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + new $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 95, className : "App", methodName : "choice"});
+		new $("#" + Std.string(data.id) + " .overlay .scrollbox").height(new $("#" + Std.string(data.id) + " .overlay").height());
+	} else new $("#choice").hide(300,null,function() {
+		new $("#choice").remove();
 	});
 };
 App.modal = $hx_exports.modal = function(mID,data) {
 	haxe_Log.trace(data,{ fileName : "App.hx", lineNumber : 105, className : "App", methodName : "modal"});
 	if(data != null && data.mID != null) {
-		$("#t-" + mID).tmpl(data).appendTo("#" + Std.string(data.id)).css({ width : jQuery_JHelper.J(window).width(), height : jQuery_JHelper.J(window).height()}).animate({ opacity : 1});
-		haxe_Log.trace(Std.string(data.id) + ":" + $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 109, className : "App", methodName : "modal"});
-		$("#" + Std.string(data.id) + " .overlay .scrollbox").height($("#" + Std.string(data.id) + " .overlay").height());
-	} else $("#" + mID).hide(300,null,function() {
-		$("#" + mID).remove();
+		new $("#t-" + mID).tmpl(data).appendTo("#" + Std.string(data.id)).css({ width : jQuery_JHelper.J(window).width(), height : jQuery_JHelper.J(window).height()}).animate({ opacity : 1});
+		haxe_Log.trace(Std.string(data.id) + ":" + new $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + new $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 109, className : "App", methodName : "modal"});
+		new $("#" + Std.string(data.id) + " .overlay .scrollbox").height(new $("#" + Std.string(data.id) + " .overlay").height());
+	} else new $("#" + mID).hide(300,null,function() {
+		new $("#" + mID).remove();
 	});
 };
 App.info = $hx_exports.info = function(data) {
 	haxe_Log.trace(data,{ fileName : "App.hx", lineNumber : 119, className : "App", methodName : "info"});
 	if(data.target == null && data.id != null) {
-		$("#t-info").tmpl(data).appendTo("#" + Std.string(data.id)).css({ width : jQuery_JHelper.J(window).width() - 440 + "px", height : "100px", margin : jQuery_JHelper.J(window).height() - 200 + "px 0 0 100px"}).animate({ opacity : 1});
-		haxe_Log.trace(Std.string(data.id) + ":" + $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 124, className : "App", methodName : "info"});
-	} else $("#" + Std.string(data) + " #info").hide(300,null,function() {
-		$("#" + Std.string(data) + " #info").remove();
+		new $("#t-info").tmpl(data).appendTo("#" + Std.string(data.id)).css({ width : jQuery_JHelper.J(window).width() - 440 + "px", height : "100px", margin : jQuery_JHelper.J(window).height() - 200 + "px 0 0 100px"}).animate({ opacity : 1});
+		haxe_Log.trace(Std.string(data.id) + ":" + new $("#" + Std.string(data.id) + " .overlay .scrollbox").length + ":" + new $("#" + Std.string(data.id) + " .overlay").height(),{ fileName : "App.hx", lineNumber : 124, className : "App", methodName : "info"});
+	} else new $("#" + Std.string(data) + " #info").hide(300,null,function() {
+		new $("#" + Std.string(data) + " #info").remove();
 	});
 };
 App.init = $hx_exports.initApp = function(config) {
@@ -87,8 +87,8 @@ App.init = $hx_exports.initApp = function(config) {
 	return App.ist;
 };
 App.getMainSpace = function() {
-	var navH = $(".ui-tabs-nav").outerHeight();
-	return { top : navH + 5, left : 0, height : jQuery_JHelper.J(window).height() - Std.parseFloat($("#mtabs").css("padding-top")) - Std.parseFloat($("#mtabs").css("padding-bottom")) - navH, width : jQuery_JHelper.J(window).width() * .7};
+	var navH = new $(".ui-tabs-nav").outerHeight();
+	return { top : navH + 5, left : 0, height : jQuery_JHelper.J(window).height() - Std.parseFloat(new $("#mtabs").css("padding-top")) - Std.parseFloat(new $("#mtabs").css("padding-bottom")) - navH, width : jQuery_JHelper.J(window).width() * .7};
 };
 App.getViews = function() {
 	return App.ist.views;
@@ -321,14 +321,6 @@ EReg.prototype = {
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
 HxOverrides.__name__ = ["HxOverrides"];
-HxOverrides.dateStr = function(date) {
-	var m = date.getMonth() + 1;
-	var d = date.getDate();
-	var h = date.getHours();
-	var mi = date.getMinutes();
-	var s = date.getSeconds();
-	return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d < 10?"0" + d:"" + d) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
-};
 HxOverrides.strDate = function(s) {
 	var _g = s.length;
 	switch(_g) {
@@ -615,9 +607,6 @@ Reflect.fields = function(o) {
 var Std = function() { };
 $hxClasses["Std"] = Std;
 Std.__name__ = ["Std"];
-Std.instance = function(value,c) {
-	if((value instanceof c)) return value; else return null;
-};
 Std.string = function(s) {
 	return js_Boot.__string_rec(s,"");
 };
@@ -816,8 +805,8 @@ var View = function(data) {
 	if(((this instanceof view_TabBox)?this:null) == null) this.dbLoader.push(new haxe_ds_StringMap());
 	if(data1.attach2 == null) this.attach2 = "#" + this.id; else this.attach2 = data1.attach2;
 	this.name = Type.getClassName(js_Boot.getClass(this)).split(".").pop();
-	this.root = $("#" + this.id).css({ opacity : 0});
-	haxe_Log.trace(this.name + ":" + this.id + ":" + this.root.length + ":" + $(this.attach2).attr("id") + ":" + this.dbLoaderIndex,{ fileName : "View.hx", lineNumber : 120, className : "View", methodName : "new"});
+	this.root = new $("#" + this.id).css({ opacity : 0});
+	haxe_Log.trace(this.name + ":" + this.id + ":" + this.root.length + ":" + new $(this.attach2).attr("id") + ":" + this.dbLoaderIndex,{ fileName : "View.hx", lineNumber : 120, className : "View", methodName : "new"});
 	this.interactionStates = new haxe_ds_StringMap();
 	this.listening = new haxe_ds_ObjectMap();
 	this.suspended = new haxe_ds_StringMap();
@@ -904,7 +893,7 @@ View.prototype = {
 	,addListener: function(jListener) {
 		var _g = this;
 		jListener.each(function(i,n) {
-			_g.listening.set($(n),$(n).data("contextaction"));
+			_g.listening.set(new $(n),new $(n).data("contextaction"));
 		});
 	}
 	,addView: function(v) {
@@ -934,17 +923,17 @@ View.prototype = {
 		}
 	}
 	,initState: function() {
-		haxe_Log.trace(this.id + ":" + (this.loadingComplete()?"Y":"N") + " :" + $("button[data-contextaction]").length,{ fileName : "View.hx", lineNumber : 249, className : "View", methodName : "initState"});
+		haxe_Log.trace(this.id + ":" + (this.loadingComplete()?"Y":"N") + " :" + new $("button[data-contextaction]").length,{ fileName : "View.hx", lineNumber : 249, className : "View", methodName : "initState"});
 		if(!this.loadingComplete()) {
 			haxe_Timer.delay($bind(this,this.initState),1000);
 			return;
 		}
-		this.addListener($("#" + this.id + " button[data-contextaction]"));
+		this.addListener(new $("#" + this.id + " button[data-contextaction]"));
 		this.set_interactionState("init");
-		$("td").attr("tabindex",-1);
-		var el = $("#" + this.id).get()[0];
+		new $("td").attr("tabindex",-1);
+		var el = new $("#" + this.id).get()[0];
 		haxe_Log.trace(this.id + " initState complete - we can show up :)" + ":" + Std.string(el),{ fileName : "View.hx", lineNumber : 259, className : "View", methodName : "initState"});
-		$("#" + this.id).animate({ opacity : 1},300,"linear",function() {
+		new $("#" + this.id).animate({ opacity : 1},300,"linear",function() {
 		});
 	}
 	,loadingComplete: function() {
@@ -1051,26 +1040,26 @@ View.prototype = {
 		data.hidden = this.vData.hidden;
 		data.primary_id = this.primary_id;
 		haxe_Log.trace(this.id + ":" + Std.string(data.fields) + ":" + Std.string(data.hidden) + ":" + Std.string(data.primary_id) + ":" + this.root.length,{ fileName : "View.hx", lineNumber : 423, className : "View", methodName : "update"});
-		if($("#" + this.id + "-list").length > 0) $("#" + this.id + "-list").replaceWith($("#t-" + this.id + "-list").tmpl(data)); else $("#t-" + this.id + "-list").tmpl(data).appendTo(jQuery_JHelper.J(data.loaderId).first());
-		$("#" + this.id + "-list th").each(function(i,el) {
-			$(el).click(function(_) {
-				_g.order($(el));
+		if(new $("#" + this.id + "-list").length > 0) new $("#" + this.id + "-list").replaceWith(new $("#t-" + this.id + "-list").tmpl(data)); else new $("#t-" + this.id + "-list").tmpl(data).appendTo(jQuery_JHelper.J(data.loaderId).first());
+		new $("#" + this.id + "-list th").each(function(i,el) {
+			new $(el).click(function(_) {
+				_g.order(new $(el));
 			});
 		});
-		$("#" + this.id + "-list tr").first().siblings().click($bind(this,this.select)).find("td").off("click");
+		new $("#" + this.id + "-list tr").first().siblings().click($bind(this,this.select)).find("td").off("click");
 		var limit;
 		if(this.vData.limit > 0) limit = this.vData.limit; else limit = App.limit;
 		haxe_Log.trace("data.count:" + Std.string(data.count) + (" - limit " + limit + ":") + Std.string(this.vData.limit) + " _ " + App.limit,{ fileName : "View.hx", lineNumber : 435, className : "View", methodName : "update"});
 		if(limit < data.count) {
 			var pager = new view_Pager({ count : data.count, id : this.vData.id, limit : limit, page : data.page, parentView : this});
 		}
-		$(".main-left").width(Std.string($("#" + this.id + "-menu").offset().left - 35));
-		haxe_Log.trace(Std.string($("#" + this.id + "-menu").offset().left - 35) + " reloadID:" + this.reloadID,{ fileName : "View.hx", lineNumber : 449, className : "View", methodName : "update"});
+		new $(".main-left").width(Std.string(new $("#" + this.id + "-menu").offset().left - 35));
+		haxe_Log.trace(Std.string(new $("#" + this.id + "-menu").offset().left - 35) + " reloadID:" + this.reloadID,{ fileName : "View.hx", lineNumber : 449, className : "View", methodName : "update"});
 		this.wait(false);
 		if(this.reloadID != null) {
-			haxe_Log.trace("#" + this.reloadID + " : " + $("#" + this.reloadID).length,{ fileName : "View.hx", lineNumber : 453, className : "View", methodName : "update"});
-			$("#" + this.reloadID).children().first().trigger("click");
-			haxe_Log.trace(this.id + ":" + $("#" + this.id + "-list tr[class~=\"selected\"]").length,{ fileName : "View.hx", lineNumber : 455, className : "View", methodName : "update"});
+			haxe_Log.trace("#" + this.reloadID + " : " + new $("#" + this.reloadID).length,{ fileName : "View.hx", lineNumber : 453, className : "View", methodName : "update"});
+			new $("#" + this.reloadID).children().first().trigger("click");
+			haxe_Log.trace(this.id + ":" + new $("#" + this.id + "-list tr[class~=\"selected\"]").length,{ fileName : "View.hx", lineNumber : 455, className : "View", methodName : "update"});
 			this.reloadID = null;
 		}
 	}
@@ -1087,17 +1076,17 @@ View.prototype = {
 		var _g = this;
 		if(!start && this.waiting != null) {
 			this.waiting.stop();
-			haxe_Log.trace($("#wait").length,{ fileName : "View.hx", lineNumber : 477, className : "View", methodName : "wait"});
-			$("#wait").animate({ opacity : 0.0},300,null,function() {
-				$("#wait").detach();
-				haxe_Log.trace($("#wait").length,{ fileName : "View.hx", lineNumber : 478, className : "View", methodName : "wait"});
+			haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 477, className : "View", methodName : "wait"});
+			new $("#wait").animate({ opacity : 0.0},300,null,function() {
+				new $("#wait").detach();
+				haxe_Log.trace(new $("#wait").length,{ fileName : "View.hx", lineNumber : 478, className : "View", methodName : "wait"});
 			});
 			this.spinner.stop();
 		}
 		if(!start) return;
 		if(message == null) message = App.uiMessage.wait;
 		if(timeout == null) timeout = App.waitTime;
-		$("#t-wait").tmpl({ wait : message}).appendTo("#" + this.id).css({ width : jQuery_JHelper.J(window).width(), height : jQuery_JHelper.J(window).height(), zIndex : 8000}).animate({ opacity : 0.8});
+		new $("#t-wait").tmpl({ wait : message}).appendTo("#" + this.id).css({ width : jQuery_JHelper.J(window).width(), height : jQuery_JHelper.J(window).height(), zIndex : 8000}).animate({ opacity : 0.8});
 		this.spinner = window.spin("wait");
 		if(message == App.uiMessage.retry || message == App.uiMessage.timeout) this.waiting = haxe_Timer.delay(function() {
 			_g.wait(false);
@@ -1485,7 +1474,7 @@ jQuery_FormData.save = function(jForm) {
 	var ret = jForm.serializeArray();
 	var checkBoxes = jForm.find("input[type=\"checkbox\"]");
 	checkBoxes.each(function(i,n) {
-		var checkBox = $(n);
+		var checkBox = new $(n);
 		if(!Lambda.forone(ret,function(fd) {
 			return fd.name == checkBox.attr("name");
 		})) ret.push({ name : checkBox.attr("name"), value : checkBox.prop("checked")?1:0}); else ret = ret.map(function(fd1) {
@@ -1505,7 +1494,7 @@ jQuery_FormData.save = function(jForm) {
 			var method = sForm[0];
 			callParam.push(fd2.value);
 			if(itemName.indexOf("_") == 0) {
-				callParam.push($("input[name=\"" + fd2.name + "\"]").data("value"));
+				callParam.push(new $("input[name=\"" + fd2.name + "\"]").data("value"));
 				fd2.name = HxOverrides.substr(fd2.name,1,null);
 			}
 			fd2.value = Reflect.callMethod(window,Reflect.field(window,method),callParam);
@@ -1727,7 +1716,7 @@ var jQuery_JHelper = function() { };
 $hxClasses["jQuery.JHelper"] = jQuery_JHelper;
 jQuery_JHelper.__name__ = ["jQuery","JHelper"];
 jQuery_JHelper.J = function(html) {
-	return $(html);
+	return new $(html);
 };
 jQuery_JHelper.vsprintf = function(format,args) {
 	return vsprintf(format,args);
@@ -1900,7 +1889,7 @@ js_Boot.__isNativeObj = function(o) {
 	return js_Boot.__nativeClassName(o) != null;
 };
 js_Boot.__resolveNativeClass = function(name) {
-	return $global[name];
+	return (Function("return typeof " + name + " != \"undefined\" ? " + name + " : null"))();
 };
 var js_Browser = function() { };
 $hxClasses["js.Browser"] = js_Browser;
@@ -1986,7 +1975,7 @@ me_cunity_debug_Out.log2 = function(v,i) {
 };
 me_cunity_debug_Out.dumpLayout = function(dI,recursive,i) {
 	if(recursive == null) recursive = false;
-	me_cunity_debug_Out.dumpJLayout($(dI),recursive,i);
+	me_cunity_debug_Out.dumpJLayout(new $(dI),recursive,i);
 };
 me_cunity_debug_Out.dumpJLayout = function(jQ,recursive,i) {
 	if(recursive == null) recursive = false;
@@ -2416,209 +2405,68 @@ pushstate_PushState.__name__ = ["pushstate","PushState"];
 pushstate_PushState.basePath = null;
 pushstate_PushState.preventers = null;
 pushstate_PushState.listeners = null;
-pushstate_PushState.uploadCache = null;
+pushstate_PushState.history = null;
 pushstate_PushState.currentPath = null;
 pushstate_PushState.currentState = null;
-pushstate_PushState.currentUploads = null;
-pushstate_PushState.init = function(basePath,triggerFirst,ignoreAnchors) {
-	if(ignoreAnchors == null) ignoreAnchors = true;
-	if(triggerFirst == null) triggerFirst = true;
+pushstate_PushState.init = function(basePath) {
 	if(basePath == null) basePath = "";
 	pushstate_PushState.listeners = [];
 	pushstate_PushState.preventers = [];
-	pushstate_PushState.uploadCache = new haxe_ds_StringMap();
+	pushstate_PushState.history = window.history;
 	pushstate_PushState.basePath = basePath;
-	pushstate_PushState.ignoreAnchors = ignoreAnchors;
-	window.document.addEventListener("DOMContentLoaded",function(event) {
-		window.document.addEventListener("click",function(e) {
-			if(e.button == 0 && !e.metaKey && !e.ctrlKey) {
-				var link = null;
-				var node = Std.instance(e.target,Node);
-				while(link == null && node != null) {
-					link = (node instanceof HTMLAnchorElement)?node:null;
-					node = node.parentNode;
-				}
-				if(link != null && (link.rel == "pushstate" || link.classList.contains("pushstate"))) {
-					pushstate_PushState.push(link.pathname + link.search + link.hash);
-					e.preventDefault();
-				}
-			}
-		});
-		window.document.addEventListener("submit",function(e1) {
-			var form = Std.instance(e1.target,HTMLFormElement);
-			if(form.classList.contains("pushstate")) {
-				e1.preventDefault();
-				pushstate_PushState.interceptFormSubmit(form);
-			}
+	((function($this) {
+		var $r;
+		var html = window;
+		$r = js.JQuery(html);
+		return $r;
+	}(this))).ready(function(e) {
+		pushstate_PushState.handleOnPopState(null);
+		((function($this) {
+			var $r;
+			var html1 = window.document.body;
+			$r = js.JQuery(html1);
+			return $r;
+		}(this))).delegate("a[rel=pushstate]","click",function(e1) {
+			pushstate_PushState.push(js.JQuery(this).attr("href"));
+			e1.preventDefault();
 		});
 		window.onpopstate = pushstate_PushState.handleOnPopState;
-		if(triggerFirst) pushstate_PushState.handleOnPopState(null); else {
-			pushstate_PushState.currentPath = pushstate_PushState.stripURL(window.document.location.pathname + window.document.location.search + window.document.location.hash);
-			pushstate_PushState.currentState = null;
-			pushstate_PushState.currentUploads = null;
-		}
 	});
 };
-pushstate_PushState.hasClass = function(elm,className) {
-	return elm.classList.contains(className);
-};
-pushstate_PushState.interceptFormSubmit = function(form) {
-	var params = [];
-	var uploads = null;
-	var addParam = function(name,val) {
-		if(name == null || name == "") return;
-		params.push({ name : name, val : val});
-	};
-	var addUpload = function(name1,files) {
-		var _g1 = 0;
-		var _g = files.length;
-		while(_g1 < _g) {
-			var i = _g1++;
-			addParam(name1,files[i].name);
-		}
-		if(uploads == null) uploads = { };
-		uploads[name1] = files;
-	};
-	var _g11 = 0;
-	var _g2 = form.elements.length;
-	while(_g11 < _g2) {
-		var i1 = _g11++;
-		var elm = form.elements.item(i1);
-		var _g21 = elm.nodeName.toUpperCase();
-		switch(_g21) {
-		case "INPUT":
-			var input;
-			input = (elm instanceof HTMLInputElement)?elm:null;
-			var _g3 = input.type;
-			switch(_g3) {
-			case "text":case "hidden":case "password":case "search":case "email":case "url":case "tel":case "number":case "range":case "date":case "month":case "week":case "time":case "datetime":case "datetime-local":case "color":
-				addParam(input.name,input.value);
-				break;
-			case "checkbox":
-				if(input.checked) addParam(input.name,input.value);
-				break;
-			case "radio":
-				if(input.checked) addParam(input.name,input.value);
-				break;
-			case "file":
-				if(input.files != null && input.files.length > 0) addUpload(input.name,input.files);
-				break;
-			}
-			break;
-		case "TEXTAREA":
-			var ta;
-			ta = (elm instanceof HTMLTextAreaElement)?elm:null;
-			addParam(ta.name,ta.value);
-			break;
-		case "SELECT":
-			var select;
-			select = (elm instanceof HTMLSelectElement)?elm:null;
-			var _g31 = select.type;
-			switch(_g31) {
-			case "select-one":
-				addParam(select.name,select.value);
-				break;
-			case "select-multiple":
-				var _g5 = 0;
-				var _g4 = select.options.length;
-				while(_g5 < _g4) {
-					var j = _g5++;
-					var option = select.options[j];
-					if(option.selected) addParam(select.name,option.value);
-				}
-				break;
-			}
-			break;
-		}
-	}
-	var activeInput = Std.instance(window.document.activeElement,HTMLInputElement);
-	var activeBtn = Std.instance(window.document.activeElement,HTMLButtonElement);
-	if(activeInput != null && activeInput.type == "submit") addParam(activeInput.name,activeInput.value); else if(activeBtn != null && activeBtn.type == "submit") addParam(activeBtn.name,activeBtn.value); else {
-		var defaultSubmit = form.querySelector("input[type=submit], button[type=submit]");
-		var defaultInput;
-		defaultInput = (defaultSubmit instanceof HTMLInputElement)?defaultSubmit:null;
-		var defaultBtn;
-		defaultBtn = (defaultSubmit instanceof HTMLButtonElement)?defaultSubmit:null;
-		if(defaultInput != null) addParam(defaultInput.name,defaultInput.value); else if(defaultBtn != null) addParam(defaultBtn.name,defaultBtn.value);
-	}
-	var paramString = params.map(function(p) {
-		return "" + p.name + "=" + encodeURIComponent(p.val);
-	}).join("&");
-	if(form.method.toUpperCase() == "POST") {
-		var paramsObj = { };
-		var _g6 = 0;
-		while(_g6 < params.length) {
-			var p1 = params[_g6];
-			++_g6;
-			if(Object.prototype.hasOwnProperty.call(paramsObj,p1.name)) Reflect.field(paramsObj,p1.name).push(p1.val); else paramsObj[p1.name] = [p1.val];
-		}
-		paramsObj.__postData = paramString;
-		if(uploads != null) pushstate_PushState.setUploadsForState(form.action,paramsObj,uploads);
-		pushstate_PushState.push(form.action,paramsObj,uploads);
-	} else pushstate_PushState.push(form.action + "?" + paramString,null);
-};
-pushstate_PushState.setUploadsForState = function(url,state,uploads) {
-	var timestamp;
-	var _this = new Date();
-	timestamp = HxOverrides.dateStr(_this);
-	var random = Math.random();
-	var uploadCacheID = "" + url + "-" + timestamp + "-" + random;
-	{
-		pushstate_PushState.uploadCache.set(uploadCacheID,uploads);
-		uploads;
-	}
-	state.__postFilesCacheID = uploadCacheID;
-};
-pushstate_PushState.getUploadsForState = function(state) {
-	if(state == null || Object.prototype.hasOwnProperty.call(state,"__postFilesCacheID") == false) return null;
-	var uploadCacheID = state.__postFilesCacheID;
-	if(pushstate_PushState.uploadCache.exists(uploadCacheID) == false) {
-		haxe_Log.trace("Upload files with cache ID " + uploadCacheID + " is not available anymore",{ fileName : "PushState.hx", lineNumber : 214, className : "pushstate.PushState", methodName : "getUploadsForState"});
-		return null;
-	} else return pushstate_PushState.uploadCache.get(uploadCacheID);
-};
 pushstate_PushState.handleOnPopState = function(e) {
-	var path = pushstate_PushState.stripURL(window.document.location.pathname + window.document.location.search + window.document.location.hash);
+	var path = pushstate_PushState.stripURL(window.document.location.pathname);
 	var state;
 	if(e != null) state = e.state; else state = null;
-	var uploads;
-	if(state != null && state.__postFilesCacheID != null) uploads = pushstate_PushState.uploadCache.get(state.__postFilesCacheID); else uploads = null;
-	if(pushstate_PushState.ignoreAnchors && path == pushstate_PushState.currentPath) return;
 	if(e != null) {
 		var _g = 0;
 		var _g1 = pushstate_PushState.preventers;
 		while(_g < _g1.length) {
 			var p = _g1[_g];
 			++_g;
-			if(!p(path,state,uploads)) {
+			if(!p(path,e.state)) {
 				e.preventDefault();
-				window.history.replaceState(pushstate_PushState.currentState,"",pushstate_PushState.currentPath);
+				pushstate_PushState.history.replaceState(pushstate_PushState.currentState,"",pushstate_PushState.currentPath);
 				return;
 			}
 		}
 	}
 	pushstate_PushState.currentPath = path;
 	pushstate_PushState.currentState = state;
-	pushstate_PushState.currentUploads = pushstate_PushState.getUploadsForState(state);
-	pushstate_PushState.dispatch(pushstate_PushState.currentPath,pushstate_PushState.currentState,pushstate_PushState.currentUploads);
+	pushstate_PushState.dispatch(path,state);
 	return;
 };
 pushstate_PushState.stripURL = function(path) {
 	if(HxOverrides.substr(path,0,pushstate_PushState.basePath.length) == pushstate_PushState.basePath) path = HxOverrides.substr(path,pushstate_PushState.basePath.length,null);
-	if(pushstate_PushState.ignoreAnchors && path.indexOf("#") > -1) {
-		var len = path.indexOf("#");
-		path = HxOverrides.substr(path,0,len);
-	}
 	return path;
 };
-pushstate_PushState.addEventListener = function(l1,l2,l3) {
-	var l;
-	if(l1 != null) l = l1; else if(l2 != null) l = function(url,state,_) {
-		l2(url,state);
-	}; else if(l3 != null) l = function(url1,_1,_2) {
-		l3(url1);
-	}; else throw new js__$Boot_HaxeError("No listener provided");
-	pushstate_PushState.listeners.push(l);
+pushstate_PushState.addEventListener = function(l,s) {
+	if(l != null) pushstate_PushState.listeners.push(l); else if(s != null) {
+		l = function(url,_) {
+			s(url);
+			return;
+		};
+		pushstate_PushState.listeners.push(l);
+	}
 	return l;
 };
 pushstate_PushState.removeEventListener = function(l) {
@@ -2627,14 +2475,13 @@ pushstate_PushState.removeEventListener = function(l) {
 pushstate_PushState.clearEventListeners = function() {
 	while(pushstate_PushState.listeners.length > 0) pushstate_PushState.listeners.pop();
 };
-pushstate_PushState.addPreventer = function(p1,p2,p3) {
-	var p;
-	if(p1 != null) p = p1; else if(p2 != null) p = function(url,state,_) {
-		return p2(url,state);
-	}; else if(p3 != null) p = function(url1,_1,_2) {
-		return p3(url1);
-	}; else throw new js__$Boot_HaxeError("No preventer provided");
-	pushstate_PushState.preventers.push(p);
+pushstate_PushState.addPreventer = function(p,s) {
+	if(p != null) pushstate_PushState.preventers.push(p); else if(s != null) {
+		p = function(url,_) {
+			return s(url);
+		};
+		pushstate_PushState.preventers.push(p);
+	}
 	return p;
 };
 pushstate_PushState.removePreventer = function(p) {
@@ -2643,55 +2490,44 @@ pushstate_PushState.removePreventer = function(p) {
 pushstate_PushState.clearPreventers = function() {
 	while(pushstate_PushState.preventers.length > 0) pushstate_PushState.preventers.pop();
 };
-pushstate_PushState.dispatch = function(url,state,uploads) {
+pushstate_PushState.dispatch = function(url,state) {
 	var _g = 0;
 	var _g1 = pushstate_PushState.listeners;
 	while(_g < _g1.length) {
 		var l = _g1[_g];
 		++_g;
-		l(url,state,uploads);
+		l(url,state);
 	}
 };
-pushstate_PushState.push = function(url,state,uploads) {
-	var strippedURL = pushstate_PushState.stripURL(url);
+pushstate_PushState.push = function(url,state) {
 	if(state == null) state = { };
 	var _g = 0;
 	var _g1 = pushstate_PushState.preventers;
 	while(_g < _g1.length) {
 		var p = _g1[_g];
 		++_g;
-		if(!p(strippedURL,state,uploads)) return false;
+		if(!p(url,state)) return false;
 	}
-	pushstate_PushState.setUploadsForState(strippedURL,state,uploads);
-	window.history.pushState(state,"",url);
-	pushstate_PushState.currentPath = strippedURL;
+	pushstate_PushState.history.pushState(state,"",url);
+	pushstate_PushState.currentPath = url;
 	pushstate_PushState.currentState = state;
-	pushstate_PushState.currentUploads = uploads;
-	pushstate_PushState.dispatch(strippedURL,state,uploads);
+	pushstate_PushState.dispatch(url,state);
 	return true;
 };
-pushstate_PushState.replace = function(url,state,uploads) {
-	var strippedURL = pushstate_PushState.stripURL(url);
-	if(state == null) state = { };
+pushstate_PushState.replace = function(url,state) {
+	if(state == null) state = Dynamic;
 	var _g = 0;
 	var _g1 = pushstate_PushState.preventers;
 	while(_g < _g1.length) {
 		var p = _g1[_g];
 		++_g;
-		if(!p(strippedURL,state,uploads)) return false;
+		if(!p(url,state)) return false;
 	}
-	pushstate_PushState.silentReplace(url,state,uploads);
-	pushstate_PushState.dispatch(strippedURL,state,uploads);
-	return true;
-};
-pushstate_PushState.silentReplace = function(url,state,uploads) {
-	var strippedURL = pushstate_PushState.stripURL(url);
-	if(state == null) state = { };
-	pushstate_PushState.setUploadsForState(strippedURL,state,uploads);
-	window.history.replaceState(state,"",url);
-	pushstate_PushState.currentPath = strippedURL;
+	pushstate_PushState.history.replaceState(state,"",url);
+	pushstate_PushState.currentPath = url;
 	pushstate_PushState.currentState = state;
-	pushstate_PushState.currentUploads = uploads;
+	pushstate_PushState.dispatch(url,state);
+	return true;
 };
 var view_Campaigns = function(data) {
 	View.call(this,data);
@@ -2699,7 +2535,7 @@ var view_Campaigns = function(data) {
 	this.listattach2 = campaignData.listattach2;
 	if(!(data.limit > 0)) data.limit = 15;
 	haxe_Log.trace("#t-" + this.id + " attach2:" + Std.string(data.attach2),{ fileName : "Campaigns.hx", lineNumber : 38, className : "view.Campaigns", methodName : "new"});
-	$("#t-" + this.id).tmpl(data).appendTo(data.attach2);
+	new $("#t-" + this.id).tmpl(data).appendTo(data.attach2);
 	if(data.views != null) this.addViews(data.views);
 	this.init();
 };
@@ -2735,7 +2571,7 @@ var view_Editor = function(data) {
 	View.call(this,data);
 	this.cMenu = js_Boot.__cast(this.parentView.views.get(this.parentView.instancePath + "." + this.parentView.id + "-menu") , view_ContextMenu);
 	this.name = this.parentView.name;
-	this.templ = $("#t-" + this.id);
+	this.templ = new $("#t-" + this.id);
 	haxe_Log.trace(this.id,{ fileName : "Editor.hx", lineNumber : 46, className : "view.Editor", methodName : "new"});
 	this.init();
 	this.accountSelector = this.parentView.id + "-edit-form " + "input[name=\"account\"]";
@@ -2760,13 +2596,13 @@ view_Editor.prototype = $extend(View.prototype,{
 	,blzSelector: null
 	,ibanSelector: null
 	,checkIban: function() {
-		var iban = $("#" + this.ibanSelector).val();
+		var iban = new $("#" + this.ibanSelector).val();
 		return me_cunity_js_data_IBAN.checkIBAN(iban);
 	}
 	,checkAccountAndBLZ: function(ok2submit) {
 		var _g = this;
-		var account = $("#" + this.accountSelector).val();
-		var blz = $("#" + this.blzSelector).val();
+		var account = new $("#" + this.accountSelector).val();
+		var blz = new $("#" + this.blzSelector).val();
 		haxe_Log.trace("accountSelector: #" + this.accountSelector,{ fileName : "Editor.hx", lineNumber : 65, className : "view.Editor", methodName : "checkAccountAndBLZ"});
 		haxe_Log.trace(account + ":" + blz,{ fileName : "Editor.hx", lineNumber : 66, className : "view.Editor", methodName : "checkAccountAndBLZ"});
 		if(!(account.length > 0 && blz.length > 0)) {
@@ -2775,7 +2611,7 @@ view_Editor.prototype = $extend(View.prototype,{
 		}
 		me_cunity_js_data_IBAN.buildIBAN(account,blz,function(success) {
 			if(me_cunity_js_data_IBAN.checkIBAN(success.iban)) {
-				$("#" + _g.ibanSelector).val(success.iban);
+				new $("#" + _g.ibanSelector).val(success.iban);
 				ok2submit(true);
 			}
 		},function(error) {
@@ -2820,7 +2656,7 @@ view_Editor.prototype = $extend(View.prototype,{
 				if(displayFormat.indexOf("%") > -1) val = window.sprintf(displayFormat,Reflect.field(cData,f)); else {
 					if(displayFormat.indexOf("_") == 0) {
 						haxe_Log.trace("input[name=\"_" + f + "\"]",{ fileName : "Editor.hx", lineNumber : 133, className : "view.Editor", methodName : "compareEdit"});
-						val = Reflect.callMethod(window,Reflect.field(window,"display"),[displayFormat,dbData,$("input[name=\"_" + f + "\"]").data("value")]);
+						val = Reflect.callMethod(window,Reflect.field(window,"display"),[displayFormat,dbData,new $("input[name=\"_" + f + "\"]").data("value")]);
 					} else val = Reflect.callMethod(window,Reflect.field(window,"display"),[displayFormat,dbData]);
 					haxe_Log.trace(Std.string(dbData) + ":" + displayFormat + ":" + Std.string(val),{ fileName : "Editor.hx", lineNumber : 138, className : "view.Editor", methodName : "compareEdit"});
 				}
@@ -2840,7 +2676,7 @@ view_Editor.prototype = $extend(View.prototype,{
 		}
 		if(errors.b.length > 0) {
 			haxe_Log.trace("edit check failed :(" + errors.b + "<-\r\n",{ fileName : "Editor.hx", lineNumber : 168, className : "view.Editor", methodName : "compareEdit"});
-			var fD = jQuery_FormData.save($("#" + this.parentView.id + "-edit-form"));
+			var fD = jQuery_FormData.save(new $("#" + this.parentView.id + "-edit-form"));
 			var fDs = "";
 			Lambda.iter(fD,function(d) {
 				fDs += "\n" + d.name + "=>" + Std.string(d.value);
@@ -2893,10 +2729,10 @@ view_Editor.prototype = $extend(View.prototype,{
 	}
 	,close: function() {
 		var _g = this;
-		haxe_Log.trace("going to close:" + $("#overlay").length,{ fileName : "Editor.hx", lineNumber : 237, className : "view.Editor", methodName : "close"});
+		haxe_Log.trace("going to close:" + new $("#overlay").length,{ fileName : "Editor.hx", lineNumber : 237, className : "view.Editor", methodName : "close"});
 		this.cMenu.root.find(".recordings").remove();
 		this.cMenu.root.data("disabled",0);
-		$(this.cMenu.attach2).find("tr").removeClass("selected");
+		new $(this.cMenu.attach2).find("tr").removeClass("selected");
 		if(this.parentView.interactionState == "call") this.cMenu.activePanel.find("button[data-contextaction=\"call\"]").html("Anrufen");
 		this.parentView.set_interactionState("init");
 		this.overlay.animate({ opacity : 0.0},300,null,function() {
@@ -2917,7 +2753,7 @@ view_Editor.prototype = $extend(View.prototype,{
 					if(_g.parentView.interactionState == "call") _g.cMenu.hangup(_g,function() {
 						_g.save(action);
 					}); else _g.save(action);
-				} else App.inputError($("#" + _g.parentView.id + "-edit-form"),["account","blz","iban"]);
+				} else App.inputError(new $("#" + _g.parentView.id + "-edit-form"),["account","blz","iban"]);
 			}); else if(this.parentView.interactionState == "call") this.cMenu.hangup(this,function() {
 				_g.save(action);
 			}); else this.save(action);
@@ -2969,7 +2805,7 @@ view_Editor.prototype = $extend(View.prototype,{
 				return;
 			}
 		}
-		var p = jQuery_FormData.save($("#" + this.parentView.id + "-edit-form"));
+		var p = jQuery_FormData.save(new $("#" + this.parentView.id + "-edit-form"));
 		p.push({ name : "className", value : this.parentView.name});
 		p.push({ name : "action", value : "save"});
 		p.push({ name : "user", value : App.user});
@@ -3041,14 +2877,14 @@ view_Editor.prototype = $extend(View.prototype,{
 			if(r.match(rec.location)) rec.filename = r.matched(1); else rec.filename = rec.location;
 			return rec;
 		})};
-		var recordings = $("#t-" + this.parentView.id + "-recordings").tmpl(rData);
+		var recordings = new $("#t-" + this.parentView.id + "-recordings").tmpl(rData);
 		this.cMenu.activePanel.find("form").append(recordings);
 		var oMargin = 8;
 		var mSpace = App.getMainSpace();
-		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat($("#overlay").css("padding-top")) - Std.parseFloat($("#overlay").css("padding-bottom"))) + "px", width : Std.string($("#" + Std.string(this.parentView.vData.id) + "-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
-		haxe_Log.trace(mSpace.height + ":" + 2 * oMargin + ":" + Std.parseFloat($("#overlay").css("padding-top")) + ":" + Std.parseFloat($("#overlay").css("padding-bottom")),{ fileName : "Editor.hx", lineNumber : 426, className : "view.Editor", methodName : "update"});
-		$("#" + this.parentView.id + " .scrollbox").height($("#" + this.parentView.id + " #overlay").height());
-		haxe_Log.trace(this.id + ":" + this.parentView.id + ":" + $("#" + this.parentView.id + " .scrollbox").length + ":" + $("#" + this.parentView.id + " .scrollbox").height(),{ fileName : "Editor.hx", lineNumber : 428, className : "view.Editor", methodName : "update"});
+		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#" + Std.string(this.parentView.vData.id) + "-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
+		haxe_Log.trace(mSpace.height + ":" + 2 * oMargin + ":" + Std.parseFloat(new $("#overlay").css("padding-top")) + ":" + Std.parseFloat(new $("#overlay").css("padding-bottom")),{ fileName : "Editor.hx", lineNumber : 426, className : "view.Editor", methodName : "update"});
+		new $("#" + this.parentView.id + " .scrollbox").height(new $("#" + this.parentView.id + " #overlay").height());
+		haxe_Log.trace(this.id + ":" + this.parentView.id + ":" + new $("#" + this.parentView.id + " .scrollbox").length + ":" + new $("#" + this.parentView.id + " .scrollbox").height(),{ fileName : "Editor.hx", lineNumber : 428, className : "view.Editor", methodName : "update"});
 	}
 	,__class__: view_Editor
 });
@@ -3073,7 +2909,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		this.action = action;
 		switch(action) {
 		case "close":
-			haxe_Log.trace("going to close:" + $("#overlay").length,{ fileName : "ClientEditor.hx", lineNumber : 41, className : "view.ClientEditor", methodName : "contextAction"});
+			haxe_Log.trace("going to close:" + new $("#overlay").length,{ fileName : "ClientEditor.hx", lineNumber : 41, className : "view.ClientEditor", methodName : "contextAction"});
 			var _g = this.activeScreen;
 			switch(_g) {
 			case "pay_plan":case "pay_source":case "pay_history":case "client_history":
@@ -3086,7 +2922,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 			default:
 				this.cMenu.root.find(".recordings").remove();
 				this.cMenu.root.data("disabled",0);
-				$(this.cMenu.attach2).find("tr").removeClass("selected");
+				new $(this.cMenu.attach2).find("tr").removeClass("selected");
 				this.parentView.set_interactionState("init");
 				this.overlay.animate({ opacity : 0.0},300,null,function() {
 					_g1.overlay.detach();
@@ -3101,7 +2937,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 				if(!this.checkIban()) this.checkAccountAndBLZ(function(ok) {
 					haxe_Log.trace(ok,{ fileName : "ClientEditor.hx", lineNumber : 63, className : "view.ClientEditor", methodName : "contextAction"});
 					if(ok) {
-					} else App.inputError($("#" + _g1.parentView.id + "-edit-form"),["account[","blz[","iban["]);
+					} else App.inputError(new $("#" + _g1.parentView.id + "-edit-form"),["account[","blz[","iban["]);
 				}); else this.save_sub_screen();
 				break;
 			case "pay_plan":case "pay_history":case "client_history":
@@ -3136,7 +2972,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 	}
 	,save_sub_screen: function() {
 		var _g = this;
-		var p = jQuery_FormData.save($("#" + this.activeScreen + "-form"));
+		var p = jQuery_FormData.save(new $("#" + this.activeScreen + "-form"));
 		p.push({ name : "className", value : this.parentView.name});
 		p.push({ name : "action", value : "save_" + this.activeScreen});
 		p.push({ name : "user", value : App.user});
@@ -3229,10 +3065,10 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 				sData.rows.push({ Termin : r1.Termin, info : "baID " + Std.string(r1.buchungsanforderungID), Betrag : r1.Betrag, extra : null});
 			}
 			view_ClientEditor.dateSort("Termin",sData.rows);
-			this.screens.set(name,$("#t-pay-history-editor").tmpl(sData).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat($("#overlay").css("padding-top")) - Std.parseFloat($("#overlay").css("padding-bottom"))) + "px", width : Std.string($("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1}));
-		} else this.screens.set(name,$("#t-pay-editor").tmpl(sData).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat($("#overlay").css("padding-top")) - Std.parseFloat($("#overlay").css("padding-bottom"))) + "px", width : Std.string($("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1}));
+			this.screens.set(name,new $("#t-pay-history-editor").tmpl(sData).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1}));
+		} else this.screens.set(name,new $("#t-pay-editor").tmpl(sData).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1}));
 		this.activeScreen = name;
-		$("#" + this.parentView.id + " .scrollbox").height($("#" + this.parentView.id + " #overlay").height());
+		new $("#" + this.parentView.id + " .scrollbox").height(new $("#" + this.parentView.id + " #overlay").height());
 	}
 	,save: function(status) {
 		var _g = this;
@@ -3246,7 +3082,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 				return;
 			}
 		}
-		var p = jQuery_FormData.save($("#" + this.parentView.id + "-edit-form"));
+		var p = jQuery_FormData.save(new $("#" + this.parentView.id + "-edit-form"));
 		p.push({ name : "className", value : this.parentView.name});
 		p.push({ name : "action", value : "save"});
 		p.push({ name : "user", value : App.user});
@@ -3313,7 +3149,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 			if(r.match(rec.location)) rec.filename = r.matched(1); else rec.filename = rec.location;
 			return rec;
 		})};
-		var recordings = $("#t-" + this.parentView.id + "-recordings").tmpl(rData);
+		var recordings = new $("#t-" + this.parentView.id + "-recordings").tmpl(rData);
 		this.cMenu.activePanel.find("form").append(recordings);
 		var oMargin = 8;
 		var mSpace = App.getMainSpace();
@@ -3321,14 +3157,14 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		haxe_Log.trace(data.userMap.a.find(function(uM) {
 			return uM.user == data.editData.pay_plan.h[0].agent;
 		}),{ fileName : "ClientEditor.hx", lineNumber : 317, className : "view.ClientEditor", methodName : "update"});
-		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat($("#overlay").css("padding-top")) - Std.parseFloat($("#overlay").css("padding-bottom"))) + "px", width : Std.string($("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
-		haxe_Log.trace(this.parentView.id + ":" + $("#" + this.parentView.id + "-edit-form .datepicker").length,{ fileName : "ClientEditor.hx", lineNumber : 326, className : "view.ClientEditor", methodName : "update"});
-		$("#" + this.parentView.id + "-edit-form .datepicker").each(function(i,n) {
-			haxe_Log.trace($(n).attr("name"),{ fileName : "ClientEditor.hx", lineNumber : 329, className : "view.ClientEditor", methodName : "update"});
-			var dateString = _g.editData.clients.h[0][$(n).attr("name")];
-			if(dateString != "" && dateString != "0000-00-00") js_JqueryUI.datepicker($(n),{ dateFormat : "dd.mm.yy"}).val(DateTools.format(HxOverrides.strDate(dateString),"%d.%m.%Y")); else js_JqueryUI.datepicker($(n),{ dateFormat : "dd.mm.yy"}).attr("placeholder",DateTools.format(DateTools.delta(new Date(),-86400000 * 365 * 80),"%d.%m.%Y"));
+		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null?"null":"" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(new $("#overlay").css("padding-top")) - Std.parseFloat(new $("#overlay").css("padding-bottom"))) + "px", width : Std.string(new $("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
+		haxe_Log.trace(this.parentView.id + ":" + new $("#" + this.parentView.id + "-edit-form .datepicker").length,{ fileName : "ClientEditor.hx", lineNumber : 326, className : "view.ClientEditor", methodName : "update"});
+		new $("#" + this.parentView.id + "-edit-form .datepicker").each(function(i,n) {
+			haxe_Log.trace(new $(n).attr("name"),{ fileName : "ClientEditor.hx", lineNumber : 329, className : "view.ClientEditor", methodName : "update"});
+			var dateString = _g.editData.clients.h[0][new $(n).attr("name")];
+			if(dateString != "" && dateString != "0000-00-00") js_JqueryUI.datepicker(new $(n),{ dateFormat : "dd.mm.yy"}).val(DateTools.format(HxOverrides.strDate(dateString),"%d.%m.%Y")); else js_JqueryUI.datepicker(new $(n),{ dateFormat : "dd.mm.yy"}).attr("placeholder",DateTools.format(DateTools.delta(new Date(),-86400000 * 365 * 80),"%d.%m.%Y"));
 		});
-		$("#" + this.parentView.id + " .scrollbox").height($("#" + this.parentView.id + " #overlay").height());
+		new $("#" + this.parentView.id + " .scrollbox").height(new $("#" + this.parentView.id + " #overlay").height());
 		haxe_Log.trace(this.leadID,{ fileName : "ClientEditor.hx", lineNumber : 347, className : "view.ClientEditor", methodName : "update"});
 	}
 	,__class__: view_ClientEditor
@@ -3338,8 +3174,8 @@ var view_ClientHistory = function(data) {
 	View.call(this,data);
 	this.listattach2 = data.listattach2;
 	if(!(data.limit > 0)) data.limit = 15;
-	haxe_Log.trace("#t-" + this.id + " attach2:" + Std.string(data.attach2) + ":" + this.dbLoaderIndex + ":" + $("#t-" + this.id).length,{ fileName : "ClientHistory.hx", lineNumber : 27, className : "view.ClientHistory", methodName : "new"});
-	$("#t-" + this.id).tmpl(data).appendTo(data.attach2);
+	haxe_Log.trace("#t-" + this.id + " attach2:" + Std.string(data.attach2) + ":" + this.dbLoaderIndex + ":" + new $("#t-" + this.id).length,{ fileName : "ClientHistory.hx", lineNumber : 27, className : "view.ClientHistory", methodName : "new"});
+	new $("#t-" + this.id).tmpl(data).appendTo(data.attach2);
 	if(data.table != null) this.parentView.addDataLoader(this.listattach2,{ callBack : $bind(this,this.update), prepare : function() {
 		_g.resetParams();
 		if(_g.vData.order != null) _g.params.order = _g.vData.order;
@@ -3359,9 +3195,9 @@ view_ClientHistory.prototype = $extend(View.prototype,{
 	,edit: null
 	,select: function(evt) {
 		evt.preventDefault();
-		haxe_Log.trace($(evt.target).get()[0].nodeName,{ fileName : "ClientHistory.hx", lineNumber : 58, className : "view.ClientHistory", methodName : "select"});
+		haxe_Log.trace(new $(evt.target).get()[0].nodeName,{ fileName : "ClientHistory.hx", lineNumber : 58, className : "view.ClientHistory", methodName : "select"});
 		if(App.ist.ctrlPressed) haxe_Log.trace("ctrlPressed",{ fileName : "ClientHistory.hx", lineNumber : 60, className : "view.ClientHistory", methodName : "select"});
-		var jTarget = $(evt.target).parent();
+		var jTarget = new $(evt.target).parent();
 		if(jTarget.hasClass("selected")) jTarget.removeClass("selected"); else {
 			jTarget.siblings().removeClass("selected");
 			jTarget.addClass("selected");
@@ -3375,9 +3211,9 @@ view_ClientHistory.prototype = $extend(View.prototype,{
 		haxe_Log.trace(data,{ fileName : "ClientHistory.hx", lineNumber : 81, className : "view.ClientHistory", methodName : "update"});
 		View.prototype.update.call(this,data);
 		return;
-		haxe_Log.trace("#" + this.id + "-list tr[data-status]" + $("#" + this.id + "-list data-status").length,{ fileName : "ClientHistory.hx", lineNumber : 84, className : "view.ClientHistory", methodName : "update"});
-		$("#" + this.id + "-list tr[data-status]").each(function(i,n) {
-			if($(n).data("state") == "passive") $(n).addClass("MPASS"); else $(n).addClass($(n).data("status"));
+		haxe_Log.trace("#" + this.id + "-list tr[data-status]" + new $("#" + this.id + "-list data-status").length,{ fileName : "ClientHistory.hx", lineNumber : 84, className : "view.ClientHistory", methodName : "update"});
+		new $("#" + this.id + "-list tr[data-status]").each(function(i,n) {
+			if(new $(n).data("state") == "passive") new $(n).addClass("MPASS"); else new $(n).addClass(new $(n).data("status"));
 		});
 	}
 	,__class__: view_ClientHistory
@@ -3388,7 +3224,7 @@ var view_Clients = function(data) {
 	this.listattach2 = data.listattach2;
 	if(!(data.limit > 0)) data.limit = 15;
 	haxe_Log.trace("#t-" + this.id + " attach2:" + data.attach2 + ":" + this.dbLoaderIndex,{ fileName : "Clients.hx", lineNumber : 40, className : "view.Clients", methodName : "new"});
-	$("#t-" + this.id).tmpl(data).appendTo(data.attach2);
+	new $("#t-" + this.id).tmpl(data).appendTo(data.attach2);
 	if(data.table != null) this.parentView.addDataLoader(this.listattach2,{ callBack : $bind(this,this.update), prepare : function() {
 		_g.resetParams();
 		if(_g.vData.order != null) _g.params.order = _g.vData.order;
@@ -3410,9 +3246,9 @@ view_Clients.prototype = $extend(View.prototype,{
 	,edit: null
 	,select: function(evt) {
 		evt.preventDefault();
-		haxe_Log.trace($(evt.target).get()[0].nodeName,{ fileName : "Clients.hx", lineNumber : 70, className : "view.Clients", methodName : "select"});
+		haxe_Log.trace(new $(evt.target).get()[0].nodeName,{ fileName : "Clients.hx", lineNumber : 70, className : "view.Clients", methodName : "select"});
 		if(App.ist.ctrlPressed) haxe_Log.trace("ctrlPressed",{ fileName : "Clients.hx", lineNumber : 72, className : "view.Clients", methodName : "select"});
-		var jTarget = $(evt.target).parent();
+		var jTarget = new $(evt.target).parent();
 		if(jTarget.hasClass("selected")) jTarget.removeClass("selected"); else {
 			jTarget.siblings().removeClass("selected");
 			jTarget.addClass("selected");
@@ -3424,9 +3260,9 @@ view_Clients.prototype = $extend(View.prototype,{
 	}
 	,update: function(data) {
 		View.prototype.update.call(this,data);
-		haxe_Log.trace("#" + this.id + "-list tr[data-status]" + $("#" + this.id + "-list data-status").length,{ fileName : "Clients.hx", lineNumber : 95, className : "view.Clients", methodName : "update"});
-		$("#" + this.id + "-list tr[data-status]").each(function(i,n) {
-			if($(n).data("state") == "passive") $(n).addClass("MPASS"); else $(n).addClass($(n).data("status"));
+		haxe_Log.trace("#" + this.id + "-list tr[data-status]" + new $("#" + this.id + "-list data-status").length,{ fileName : "Clients.hx", lineNumber : 95, className : "view.Clients", methodName : "update"});
+		new $("#" + this.id + "-list tr[data-status]").each(function(i,n) {
+			if(new $(n).data("state") == "passive") new $(n).addClass("MPASS"); else new $(n).addClass(new $(n).data("status"));
 		});
 	}
 	,__class__: view_Clients
@@ -3445,20 +3281,20 @@ var view_ContextMenu = function(data) {
 		data.optionsMap.owner = App.ist.prepareAgentMap();
 		data.typeMap.owner = "SELECT";
 	} else data.optionsMap.agent = App.ist.prepareAgentMap();
-	var tmp = $("#t-" + this.id).tmpl(data);
+	var tmp = new $("#t-" + this.id).tmpl(data);
 	tmp.appendTo(jQuery_JHelper.J(data.attach2));
 	this.createInputs();
 	this.set_active(0);
-	this.root = $("#" + this.id).accordion({ active : 0, activate : $bind(this,this.activate), 'autoHeight' : false, beforeActivate : function(event,ui) {
-		if(_g.root.data("disabled")) event.preventDefault(); else _g.activePanel = $(ui.newPanel[0]);
+	this.root = new $("#" + this.id).accordion({ active : 0, activate : $bind(this,this.activate), 'autoHeight' : false, beforeActivate : function(event,ui) {
+		if(_g.root.data("disabled")) event.preventDefault(); else _g.activePanel = new $(ui.newPanel[0]);
 	}, create : $bind(this,this.create), fillSpace : true, heightStyle : this.contextData.heightStyle});
 	this.accordion = this.root.accordion("instance");
-	haxe_Log.trace($("#" + this.id).find(".datepicker").length,{ fileName : "ContextMenu.hx", lineNumber : 98, className : "view.ContextMenu", methodName : "new"});
-	js_JqueryUI.datepicker($("#" + this.id).find(".datepicker"),{ beforeShow : function(el,ui1) {
-		var jq = $(el);
+	haxe_Log.trace(new $("#" + this.id).find(".datepicker").length,{ fileName : "ContextMenu.hx", lineNumber : 98, className : "view.ContextMenu", methodName : "new"});
+	js_JqueryUI.datepicker(new $("#" + this.id).find(".datepicker"),{ beforeShow : function(el,ui1) {
+		var jq = new $(el);
 		if(jq.val() == "") jq.val(jq.attr("placeholder"));
 	}});
-	$("#" + this.id + " button[data-contextaction]").click($bind(this,this.run));
+	new $("#" + this.id + " button[data-contextaction]").click($bind(this,this.run));
 	this.init();
 };
 $hxClasses["view.ContextMenu"] = view_ContextMenu;
@@ -3478,9 +3314,9 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		return act;
 	}
 	,activate: function(event,ui) {
-		this.action = $(ui.newPanel[0]).find("input[name=\"action\"]").first().val();
+		this.action = new $(ui.newPanel[0]).find("input[name=\"action\"]").first().val();
 		this.set_active(this.getIndexOf(this.action));
-		haxe_Log.trace(this.action + ":" + this.activePanel.attr("id") + " == " + $(ui.newPanel[0]).attr("id"),{ fileName : "ContextMenu.hx", lineNumber : 130, className : "view.ContextMenu", methodName : "activate"});
+		haxe_Log.trace(this.action + ":" + this.activePanel.attr("id") + " == " + new $(ui.newPanel[0]).attr("id"),{ fileName : "ContextMenu.hx", lineNumber : 130, className : "view.ContextMenu", methodName : "activate"});
 	}
 	,call: function(editor,onComplete) {
 		var _g = this;
@@ -3512,8 +3348,8 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		}
 	}
 	,create: function(event,ui) {
-		this.action = $(ui.panel[0]).find("input[name=\"action\"]").first().val();
-		if(ui.panel.length > 0) this.activePanel = $(ui.panel[0]);
+		this.action = new $(ui.panel[0]).find("input[name=\"action\"]").first().val();
+		if(ui.panel.length > 0) this.activePanel = new $(ui.panel[0]);
 		haxe_Log.trace(this.action,{ fileName : "ContextMenu.hx", lineNumber : 185, className : "view.ContextMenu", methodName : "create"});
 	}
 	,getIndexOf: function(act) {
@@ -3554,7 +3390,7 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		var _g = jP.length;
 		while(_g1 < _g) {
 			var p1 = _g1++;
-			var jEl = $(jP[p1]);
+			var jEl = new $(jP[p1]);
 			if(p1 != this.get_active()) jEl.css("visibility","hidden").show();
 			maxWidth = Math.max(jEl.width(),maxWidth);
 			maxHeight = Math.max(jEl.height(),maxHeight);
@@ -3582,7 +3418,7 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 				tableNames.push(table);
 				haxe_Log.trace(table,{ fileName : "ContextMenu.hx", lineNumber : 288, className : "view.ContextMenu", methodName : "findPage"});
 			}
-			var form = $("#" + this.parentView.id + "-menu .ui-accordion-content-active form");
+			var form = new $("#" + this.parentView.id + "-menu .ui-accordion-content-active form");
 			var where = jQuery_FormData.where(form,findFields);
 			haxe_Log.trace(where,{ fileName : "ContextMenu.hx", lineNumber : 293, className : "view.ContextMenu", methodName : "findPage"});
 			var wM = new haxe_ds_StringMap();
@@ -3682,21 +3518,21 @@ view_ContextMenu.prototype = $extend(View.prototype,{
 		haxe_Log.trace(this.id + ":" + this.root.find("tr[data-table]").length,{ fileName : "ContextMenu.hx", lineNumber : 404, className : "view.ContextMenu", methodName : "initState"});
 		this.layout();
 		this.root.find("tr[data-table]").each(function(i,n) {
-			var table = $(n).data("table");
+			var table = new $(n).data("table");
 			if(!_g.contextData.tableData.exists(table)) _g.contextData.tableData.set(table,[]);
 		});
 		var tables = this.contextData.tableData.keys();
 		while(tables.hasNext()) {
 			var table1 = [tables.next()];
 			haxe_Log.trace(table1[0],{ fileName : "ContextMenu.hx", lineNumber : 420, className : "view.ContextMenu", methodName : "initState"});
-			$("tr[data-table^=" + table1[0] + "] input").each((function(table1) {
+			new $("tr[data-table^=" + table1[0] + "] input").each((function(table1) {
 				return function(_,inp) {
-					if($(inp).attr("name").indexOf("_match_option") == -1) _g.contextData.tableData.get(table1[0]).push($(inp).attr("name"));
+					if(new $(inp).attr("name").indexOf("_match_option") == -1) _g.contextData.tableData.get(table1[0]).push(new $(inp).attr("name"));
 				};
 			})(table1));
-			$("tr[data-table^=" + table1[0] + "] select").each((function(table1) {
+			new $("tr[data-table^=" + table1[0] + "] select").each((function(table1) {
 				return function(_1,inp1) {
-					_g.contextData.tableData.get(table1[0]).push($(inp1).attr("name"));
+					_g.contextData.tableData.get(table1[0]).push(new $(inp1).attr("name"));
 				};
 			})(table1));
 		}
@@ -3711,7 +3547,7 @@ var view_DateTime = function(data) {
 	this.format = data.format;
 	var t = new haxe_Timer(this.interval);
 	var d = new Date();
-	this.template = $("#t-" + this.id).tmpl({ datetime : jQuery_JHelper.vsprintf(this.format,[view_DateTime.wochentage[d.getDay()],d.getDate(),d.getMonth() + 1,d.getFullYear(),d.getHours(),d.getMinutes()])});
+	this.template = new $("#t-" + this.id).tmpl({ datetime : jQuery_JHelper.vsprintf(this.format,[view_DateTime.wochentage[d.getDay()],d.getDate(),d.getMonth() + 1,d.getFullYear(),d.getHours(),d.getMinutes()])});
 	this.draw();
 	var start = d.getSeconds();
 	if(start == 0) t.run = $bind(this,this.draw); else haxe_Timer.delay(function() {
@@ -3813,38 +3649,54 @@ view_Mailing.prototype = $extend(View.prototype,{
 	,printNewMembers: function(mID) {
 		var url = "" + this.proto + "//" + this.host + "/cgi-bin/mailing.pl?action=PRINTNEW";
 		haxe_Log.trace(url,{ fileName : "Mailing.hx", lineNumber : 31, className : "view.Mailing", methodName : "printNewMembers"});
-		var res = $.ajax({ async : false, url : url, dataType : "json"}).responseText;
-		var json = $.parseJSON(res);
-		json.id = "clients";
-		haxe_Log.trace(Reflect.fields(json),{ fileName : "Mailing.hx", lineNumber : 40, className : "view.Mailing", methodName : "printNewMembers"});
-		haxe_Log.trace(json,{ fileName : "Mailing.hx", lineNumber : 41, className : "view.Mailing", methodName : "printNewMembers"});
-		App.info(json);
-	}
-	,printList: function(mID) {
-		var list = $("#" + mID + " #printListe").val();
-		var url = "" + this.proto + "//" + this.host + "/cgi-bin/mailing.pl?action=PRINTLIST&list=" + encodeURIComponent(list);
-		haxe_Log.trace(url,{ fileName : "Mailing.hx", lineNumber : 49, className : "view.Mailing", methodName : "printList"});
-		$("#preparing-file-download").show();
+		new $("#" + mID + " #preparing-file-download").show();
+		new $("#" + mID + " #success-download").hide();
 		$.fileDownload(url,{ successCallback : function(url1) {
-			haxe_Log.trace("OK: " + url1,{ fileName : "Mailing.hx", lineNumber : 54, className : "view.Mailing", methodName : "printList"});
+			haxe_Log.trace("OK: " + url1,{ fileName : "Mailing.hx", lineNumber : 37, className : "view.Mailing", methodName : "printNewMembers"});
+			new $("#" + mID + " #preparing-file-download").hide();
+			new $("#" + mID + " #success-download").show();
 		}, failCallback : function(responseHtml,url2) {
-			haxe_Log.trace("oops " + url2 + " " + responseHtml,{ fileName : "Mailing.hx", lineNumber : 59, className : "view.Mailing", methodName : "printList"});
-			$("#error-download").show();
+			haxe_Log.trace("oops " + url2 + " " + responseHtml,{ fileName : "Mailing.hx", lineNumber : 43, className : "view.Mailing", methodName : "printNewMembers"});
+			new $("#" + mID + " #preparing-file-download").hide();
+			new $("#error-download").show();
 		}});
 		return;
 		var res = $.ajax({ async : false, url : url, dataType : "json"}).responseText;
 		var json = $.parseJSON(res);
 		json.id = "clients";
-		haxe_Log.trace(Reflect.fields(json),{ fileName : "Mailing.hx", lineNumber : 72, className : "view.Mailing", methodName : "printList"});
-		haxe_Log.trace(json,{ fileName : "Mailing.hx", lineNumber : 73, className : "view.Mailing", methodName : "printList"});
+		haxe_Log.trace(Reflect.fields(json),{ fileName : "Mailing.hx", lineNumber : 56, className : "view.Mailing", methodName : "printNewMembers"});
+		haxe_Log.trace(json,{ fileName : "Mailing.hx", lineNumber : 57, className : "view.Mailing", methodName : "printNewMembers"});
+		App.info(json);
+	}
+	,printList: function(mID) {
+		var list = new $("#" + mID + " #printListe").val();
+		var url = "" + this.proto + "//" + this.host + "/cgi-bin/mailing.pl?action=PRINTLIST&list=" + encodeURIComponent(list);
+		haxe_Log.trace(url,{ fileName : "Mailing.hx", lineNumber : 65, className : "view.Mailing", methodName : "printList"});
+		new $("#" + mID + " #preparing-file-download").show();
+		new $("#" + mID + " #success-download").hide();
+		$.fileDownload(url,{ successCallback : function(url1) {
+			haxe_Log.trace("OK: " + url1,{ fileName : "Mailing.hx", lineNumber : 71, className : "view.Mailing", methodName : "printList"});
+			new $("#" + mID + " #preparing-file-download").hide();
+			new $("#" + mID + " #success-download").show();
+		}, failCallback : function(responseHtml,url2) {
+			haxe_Log.trace("oops " + url2 + " " + responseHtml,{ fileName : "Mailing.hx", lineNumber : 77, className : "view.Mailing", methodName : "printList"});
+			new $("#" + mID + " #preparing-file-download").hide();
+			new $("#error-download").show();
+		}});
+		return;
+		var res = $.ajax({ async : false, url : url, dataType : "json"}).responseText;
+		var json = $.parseJSON(res);
+		json.id = "clients";
+		haxe_Log.trace(Reflect.fields(json),{ fileName : "Mailing.hx", lineNumber : 90, className : "view.Mailing", methodName : "printList"});
+		haxe_Log.trace(json,{ fileName : "Mailing.hx", lineNumber : 91, className : "view.Mailing", methodName : "printList"});
 		App.info(json);
 	}
 	,printNewInfos: function(mID) {
 		var url = "" + this.proto + "//" + this.host + "/cgi-bin/mailing.pl?action=S_POST";
-		haxe_Log.trace(url,{ fileName : "Mailing.hx", lineNumber : 80, className : "view.Mailing", methodName : "printNewInfos"});
+		haxe_Log.trace(url,{ fileName : "Mailing.hx", lineNumber : 98, className : "view.Mailing", methodName : "printNewInfos"});
 		this.wait(null,null,1);
 		var result = $.ajax({ async : false, url : url}).responseText;
-		haxe_Log.trace(result,{ fileName : "Mailing.hx", lineNumber : 86, className : "view.Mailing", methodName : "printNewInfos"});
+		haxe_Log.trace(result,{ fileName : "Mailing.hx", lineNumber : 104, className : "view.Mailing", methodName : "printNewInfos"});
 		this.wait();
 	}
 	,previewOne: function(mID) {
@@ -3853,7 +3705,7 @@ view_Mailing.prototype = $extend(View.prototype,{
 });
 var view_Pager = function(data) {
 	var _g = this;
-	var colspan = $("#" + Std.string(data.id) + "-list tr").first().children().length;
+	var colspan = new $("#" + Std.string(data.id) + "-list tr").first().children().length;
 	data.colspan = colspan;
 	this.count = data.count;
 	this.limit = data.limit;
@@ -3861,9 +3713,9 @@ var view_Pager = function(data) {
 	this.last = Math.ceil(this.count / this.limit);
 	this.parentView = data.parentView;
 	haxe_Log.trace(Std.string(data.id) + ":" + this.page + ":" + this.count,{ fileName : "Pager.hx", lineNumber : 29, className : "view.Pager", methodName : "new"});
-	$("#t-pager").tmpl(data).appendTo($("#" + Std.string(data.id) + "-list"));
-	$("#" + Std.string(data.id) + "-pager *[data-action]").each(function(i,n) {
-		$(n).click($bind(_g,_g.go));
+	new $("#t-pager").tmpl(data).appendTo(new $("#" + Std.string(data.id) + "-list"));
+	new $("#" + Std.string(data.id) + "-pager *[data-action]").each(function(i,n) {
+		new $(n).click($bind(_g,_g.go));
 	});
 };
 $hxClasses["view.Pager"] = view_Pager;
@@ -3876,14 +3728,14 @@ view_Pager.prototype = {
 	,parentView: null
 	,go: function(evt) {
 		evt.preventDefault();
-		var action = $(evt.target).data("action");
+		var action = new $(evt.target).data("action");
 		haxe_Log.trace(action + ":" + this.page + ":" + this.count + ":" + this.last,{ fileName : "Pager.hx", lineNumber : 42, className : "view.Pager", methodName : "go"});
 		switch(action) {
 		case "go2page":
-			var iVal = Std.parseInt($("#" + this.parentView.id + "-pager input[name=\"page\"]").val());
+			var iVal = Std.parseInt(new $("#" + this.parentView.id + "-pager input[name=\"page\"]").val());
 			if(iVal > this.last) {
 				iVal = this.last;
-				$("#" + this.parentView.id + "-pager input[name=\"page\"]").val(Std.string(this.last));
+				new $("#" + this.parentView.id + "-pager input[name=\"page\"]").val(Std.string(this.last));
 			}
 			if(iVal != this.page) this.loadPage(iVal);
 			break;
@@ -3902,7 +3754,7 @@ view_Pager.prototype = {
 		}
 	}
 	,loadPage: function(p) {
-		var form = $("#" + this.parentView.id + "-menu .ui-accordion-content-active form");
+		var form = new $("#" + this.parentView.id + "-menu .ui-accordion-content-active form");
 		haxe_Log.trace(form.find("button[data-contextaction]").data("contextaction"),{ fileName : "Pager.hx", lineNumber : 75, className : "view.Pager", methodName : "loadPage"});
 		haxe_Log.trace(Type["typeof"](this.parentView.contextMenu),{ fileName : "Pager.hx", lineNumber : 78, className : "view.Pager", methodName : "loadPage"});
 		this.parentView.contextMenu.findPage(p == null?"null":"" + p,(p - 1) * this.limit + "," + (p + this.limit <= this.count?this.limit:this.count - (p - 1) * this.limit));
@@ -3918,7 +3770,7 @@ var view_QC = function(data) {
 	this.listattach2 = data.listattach2;
 	if(!(data.limit > 0)) data.limit = 15;
 	haxe_Log.trace("#t-" + this.id + " attach2:" + data.attach2 + ":" + this.dbLoaderIndex,{ fileName : "QC.hx", lineNumber : 35, className : "view.QC", methodName : "new"});
-	$("#t-" + this.id).tmpl(data).appendTo(data.attach2);
+	new $("#t-" + this.id).tmpl(data).appendTo(data.attach2);
 	if(data.table != null) this.parentView.addDataLoader(this.listattach2,{ callBack : $bind(this,this.update), prepare : function() {
 		_g.resetParams();
 		if(_g.vData.order != null) _g.params.order = _g.vData.order;
@@ -3937,9 +3789,9 @@ view_QC.prototype = $extend(View.prototype,{
 	,edit: null
 	,select: function(evt) {
 		evt.preventDefault();
-		haxe_Log.trace($(evt.target).get()[0].nodeName,{ fileName : "QC.hx", lineNumber : 63, className : "view.QC", methodName : "select"});
+		haxe_Log.trace(new $(evt.target).get()[0].nodeName,{ fileName : "QC.hx", lineNumber : 63, className : "view.QC", methodName : "select"});
 		if(App.ist.ctrlPressed) haxe_Log.trace("ctrlPressed",{ fileName : "QC.hx", lineNumber : 65, className : "view.QC", methodName : "select"});
-		var jTarget = $(evt.target).parent();
+		var jTarget = new $(evt.target).parent();
 		if(jTarget.hasClass("selected")) {
 			this.wait(false);
 			jTarget.removeClass("selected");
@@ -3988,7 +3840,7 @@ view_Select.prototype = $extend(view_Input.prototype,{
 	}
 	,update: function(data) {
 		haxe_Log.trace("#t-" + Std.string(this.vData.name) + " appending2:" + this.id,{ fileName : "Select.hx", lineNumber : 72, className : "view.Select", methodName : "update"});
-		$("#t-" + Std.string(this.vData.name)).tmpl(data).appendTo($("#" + this.id));
+		new $("#t-" + Std.string(this.vData.name)).tmpl(data).appendTo(new $("#" + this.id));
 	}
 	,__class__: view_Select
 });
@@ -4001,7 +3853,7 @@ var view_TabBox = function(data) {
 		this.tabBoxData = data;
 		if(this.tabBoxData.isNav) {
 			pushstate_PushState.init();
-			pushstate_PushState.addEventListener(null,null,$bind(this,this.go));
+			pushstate_PushState.addEventListener(null,$bind(this,this.go));
 		}
 		this.active = 0;
 		var _g1 = 0;
@@ -4015,29 +3867,29 @@ var view_TabBox = function(data) {
 			this.dbLoader.push(new haxe_ds_StringMap());
 		}
 		haxe_Log.trace(this.id + ":" + this.dbLoader.length,{ fileName : "TabBox.hx", lineNumber : 82, className : "view.TabBox", methodName : "new"});
-		$("#t-" + this.id).tmpl(this.tabBoxData.tabs).appendTo(this.root.find("ul:first"));
+		new $("#t-" + this.id).tmpl(this.tabBoxData.tabs).appendTo(this.root.find("ul:first"));
 		this.tabObj = js_JqueryUI.tabs(this.root,{ active : 0, activate : function(event,ui) {
 			haxe_Log.trace(jQuery_JHelper.J(ui.newPanel),{ fileName : "TabBox.hx", lineNumber : 91, className : "view.TabBox", methodName : "new"});
 			var selector = ui.newPanel.selector;
 			var template = "";
 			try {
-				haxe_Log.trace("" + selector + " a:" + $("" + selector).attr("aria-labelledby"),{ fileName : "TabBox.hx", lineNumber : 96, className : "view.TabBox", methodName : "new"});
-				selector = $("" + selector).attr("aria-labelledby");
-				template = Reflect.field(App.ist.globals.templates,$("#" + selector).attr("href"));
+				haxe_Log.trace("" + selector + " a:" + new $("" + selector).attr("aria-labelledby"),{ fileName : "TabBox.hx", lineNumber : 96, className : "view.TabBox", methodName : "new"});
+				selector = new $("" + selector).attr("aria-labelledby");
+				template = Reflect.field(App.ist.globals.templates,new $("#" + selector).attr("href"));
 				if(!Util.any2bool(template)) {
-					haxe_Log.trace("loading templates/" + $("#" + selector).attr("href") + ".html...",{ fileName : "TabBox.hx", lineNumber : 102, className : "view.TabBox", methodName : "new"});
-					$.get("templates/" + $("#" + selector).attr("href") + ".html",function(data1,textStatus,xhr) {
+					haxe_Log.trace("loading templates/" + new $("#" + selector).attr("href") + ".html...",{ fileName : "TabBox.hx", lineNumber : 102, className : "view.TabBox", methodName : "new"});
+					$.get("templates/" + new $("#" + selector).attr("href") + ".html",function(data1,textStatus,xhr) {
 						haxe_Log.trace(textStatus,{ fileName : "TabBox.hx", lineNumber : 104, className : "view.TabBox", methodName : "new"});
 						if(textStatus == "success") {
-							$("body").append(data1);
-							Reflect.setField(App.ist.globals.templates,$("#" + selector).attr("href"),true);
+							new $("body").append(data1);
+							Reflect.setField(App.ist.globals.templates,new $("#" + selector).attr("href"),true);
 							haxe_Log.trace(window.lastView,{ fileName : "TabBox.hx", lineNumber : 110, className : "view.TabBox", methodName : "new"});
 							_g.tabBoxData.tabs[_g.tabsInstance.options.active].views.push(window.lastView);
 							haxe_Log.trace(Std.string(_g.tabsInstance.options.active) + ":" + _g.tabBoxData.tabs[_g.tabsInstance.options.active].views.length,{ fileName : "TabBox.hx", lineNumber : 113, className : "view.TabBox", methodName : "new"});
 							var v = _g.tabBoxData.tabs[_g.tabsInstance.options.active].views[_g.tabBoxData.tabs[_g.tabsInstance.options.active].views.length - 1];
 							v.attach2 = _g.tabsInstance.panels[_g.tabsInstance.options.active];
 							v.dbLoaderIndex = _g.tabsInstance.options.active;
-							var jP = $(_g.tabsInstance.panels[_g.tabsInstance.options.active]);
+							var jP = new $(_g.tabsInstance.panels[_g.tabsInstance.options.active]);
 							haxe_Log.trace("adding:" + _g.tabBoxData.tabs[_g.tabsInstance.options.active].id + " to:" + _g.id + " @:" + Std.string(_g.tabsInstance.options.active),{ fileName : "TabBox.hx", lineNumber : 122, className : "view.TabBox", methodName : "new"});
 							_g.addView(v);
 							_g.loadAllData(v.dbLoaderIndex);
@@ -4054,10 +3906,10 @@ var view_TabBox = function(data) {
 			_g.runLoaders();
 		}, create : function(event1,ui1) {
 			haxe_Log.trace("ready2load content4tabs:" + _g.tabBoxData.tabs.length,{ fileName : "TabBox.hx", lineNumber : 143, className : "view.TabBox", methodName : "new"});
-			_g.tabsInstance = js_JqueryUI.tabs($("#" + _g.id),"instance");
+			_g.tabsInstance = js_JqueryUI.tabs(new $("#" + _g.id),"instance");
 			if(_g.tabBoxData.append2header != null) {
 				var views = App.getViews();
-				views.get(App.appName + "." + _g.tabBoxData.append2header).template.appendTo($("#" + _g.id + " ul"));
+				views.get(App.appName + "." + _g.tabBoxData.append2header).template.appendTo(new $("#" + _g.id + " ul"));
 			}
 			var tabIndex = 0;
 			var _g12 = 0;
@@ -4072,7 +3924,7 @@ var view_TabBox = function(data) {
 					++_g3;
 					v1.dbLoaderIndex = tabIndex;
 					v1.attach2 = _g.tabsInstance.panels[tabIndex];
-					var jP1 = $(_g.tabsInstance.panels[tabIndex]);
+					var jP1 = new $(_g.tabsInstance.panels[tabIndex]);
 					if(tabIndex != _g.active) jP1.css("visibility","hidden").show();
 					haxe_Log.trace("adding:" + t.id + " to:" + _g.id + " @:" + tabIndex,{ fileName : "TabBox.hx", lineNumber : 167, className : "view.TabBox", methodName : "new"});
 					_g.addView(v1);
@@ -4167,6 +4019,9 @@ if(Array.prototype.filter == null) Array.prototype.filter = function(f1) {
 	return a1;
 };
 var __map_reserved = {}
+var q = window.jQuery;
+var js = js || {}
+js.JQuery = q;
 haxe_ds_ObjectMap.count = 0;
 js_Boot.__toStr = {}.toString;
 me_cunity_debug_Out.suspended = false;
@@ -4174,8 +4029,7 @@ me_cunity_debug_Out.skipFunctions = true;
 me_cunity_debug_Out.traceToConsole = false;
 me_cunity_debug_Out.traceTarget = me_cunity_debug_DebugOutput.NATIVE;
 me_cunity_debug_Out.aStack = haxe_CallStack.callStack;
-pushstate_PushState.ignoreAnchors = true;
 view_DateTime.wochentage = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
 view_DateTime.monate = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
 App.main();
-})(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : exports, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+})(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : exports);

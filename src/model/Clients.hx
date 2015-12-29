@@ -211,11 +211,12 @@ typedef CustomField =
 		var sb:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();		
 		var p:StringMap<String> = new StringMap();
-		p.set('table', 'vicidial_users');
+		p.set('table', 'asterisk.vicidial_users');
 		p.set('fields', 'user,full_name');
 		p.set('where', 'user_group|AGENTS_A');
 		var owner:Int = Std.parseInt(Lib.hashOfAssociativeArray(untyped editTables.get('clients').get('0')).get('owner'));
 		trace(owner);
+		//TODO: CHECK WE SHOULDNT NEED TO PULL THE USERMAP HERE
 		data.userMap = new Users().get_info();
 		//data.userMap = new Users().get_info(owner<1000?Std.string(owner):null);
 		return json_encode();		

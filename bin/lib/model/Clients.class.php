@@ -158,7 +158,7 @@ class model_Clients extends Model {
 		$sb1 = new StringBuf();
 		$phValues1 = new _hx_array(array());
 		$p1 = new haxe_ds_StringMap();
-		$p1->set("table", "vicidial_users");
+		$p1->set("table", "asterisk.vicidial_users");
 		$p1->set("fields", "user,full_name");
 		$p1->set("where", "user_group|AGENTS_A");
 		$owner = Std::parseInt(model_Clients_12($this, $eF, $editTables, $fieldNames, $keys, $optionsMap, $p1, $param, $phValues1, $recordings, $sb1, $tableFields, $tableNames, $ti, $typeMap, $userMap));

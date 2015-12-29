@@ -9,7 +9,7 @@ class model_Users extends Model {
 		$phValues = new _hx_array(array());
 		$result = new _hx_array(array());
 		$param = new haxe_ds_StringMap();
-		$param->set("table", "vicidial_users");
+		$param->set("table", "asterisk.vicidial_users");
 		$param->set("fields", "user,user_level, pass,full_name");
 		$param->set("where", model_Users_0($this, $param, $phValues, $result, $sb, $user));
 		$param->set("limit", "50");

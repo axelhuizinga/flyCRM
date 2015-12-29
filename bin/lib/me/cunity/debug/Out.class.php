@@ -79,7 +79,7 @@ class me_cunity_debug_Out {
 			print_r($v);
 			$ret =  ob_get_clean();
 		;
-		me_cunity_debug_Out::_trace($ret, _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 316, "className" => "me.cunity.debug.Out", "methodName" => "dumpVar")));
+		me_cunity_debug_Out::_trace($ret, _hx_anonymous(array("fileName" => "Out.hx", "lineNumber" => 319, "className" => "me.cunity.debug.Out", "methodName" => "dumpVar")));
 	}
 	static function dumpObject($ob, $i = null) {
 		$tClass = Type::getClass($ob);
@@ -104,6 +104,46 @@ class me_cunity_debug_Out {
 						null;
 					}
 					$m .= _hx_string_or_null($name) . ":" . Std::string(Reflect::field($ob, $name)) . ":" . _hx_string_or_null($t) . "\x0A";
+					unset($t);
+				}catch(Exception $__hx__e) {
+					$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
+					$ex = $_ex_;
+					{
+						$m .= _hx_string_or_null($name) . ":" . Std::string($ex);
+					}
+				}
+				unset($name,$ex);
+			}
+		}
+		me_cunity_debug_Out::_trace($m, $i);
+	}
+	static function dumpObjectRsafe($ob, $i = null) {
+		$tClass = Type::getClass($ob);
+		$m = "dumpObjectRsafe:" . Std::string((($ob !== null) ? Type::getClass($ob) : $ob)) . "\x0A";
+		$names = new _hx_array(array());
+		if(Type::getClass($ob) !== null) {
+			$names = Type::getInstanceFields(Type::getClass($ob));
+		} else {
+			$names = Reflect::fields($ob);
+		}
+		if(Type::getClass($ob) !== null) {
+			$m = _hx_string_or_null(Type::getClassName(Type::getClass($ob))) . ":\x0A";
+		}
+		{
+			$_g = 0;
+			while($_g < $names->length) {
+				$name = $names[$_g];
+				++$_g;
+				try {
+					$t = Std::string(Type::typeof(Reflect::field($ob, $name)));
+					if(me_cunity_debug_Out::$skipFunctions && $t === "TFunction") {
+						null;
+					}
+					if($name === "parentView" || $name === "ContextMenu" || $name === "cMenu") {
+						$m .= _hx_string_or_null($name) . ":" . Std::string($ob->parentView->id) . "\x0A";
+					} else {
+						$m .= _hx_string_or_null($name) . ":" . Std::string(Reflect::field($ob, $name)) . ":" . _hx_string_or_null($t) . "\x0A";
+					}
 					unset($t);
 				}catch(Exception $__hx__e) {
 					$_ex_ = ($__hx__e instanceof HException) ? $__hx__e->e : $__hx__e;
