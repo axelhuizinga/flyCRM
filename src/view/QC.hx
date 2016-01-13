@@ -12,7 +12,7 @@ import view.Campaigns;
 
 import View;
 
-using jQuery.FormData;
+using view.FormData;
 
 
 @:keep class QC extends View

@@ -8,7 +8,7 @@ import haxe.ds.StringMap;
 import haxe.Timer;
 import jQuery.*;
 import jQuery.JHelper.J;
-import jQuery.FormData.FData;
+import view.FormData.FData;
 import js.Browser;
 import App.Rectangle;
 import js.html.Audio;

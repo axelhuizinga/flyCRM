@@ -11,7 +11,7 @@ import js.html.Element;
 import js.html.Node;
 import View;
 
-using jQuery.FormData;
+using view.FormData;
 
 
 typedef ClientsData =

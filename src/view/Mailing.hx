@@ -96,13 +96,24 @@ class Mailing extends View
 	{
 		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=S_POST';		
 		trace(url);
-		wait(1);
-		var result:String = JQueryStatic.ajax({
-			async: false,
-			url:url
-		}).responseText;			
-		trace(result);
-		wait();
+		J('#$mID #preparing-file-download').show();
+		J('#$mID #success-download').hide();
+		//wait(1);
+		JQueryStatic.fileDownload(url, {
+			successCallback: function(url)
+			{										
+				trace('OK: $url');
+				J('#$mID #preparing-file-download').hide();
+				J('#$mID #success-download').show();
+				//wait();
+			},
+			failCallback: function(responseHtml, url)
+			{										
+				trace('oops $url $responseHtml');
+				J('#$mID #preparing-file-download').hide();
+				J("#error-download").show();
+			}
+		} );
 	}
 	
 	public function previewOne(mID:String):Void

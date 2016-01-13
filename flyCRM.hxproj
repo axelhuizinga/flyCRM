@@ -15,13 +15,9 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="E:\www\remotion4.me\httpdocs\lib" />
+    <class path="..\..\..\..\www\remotion4.me\httpdocs\lib" />
     <class path="src" />
     <class path="lib" />
-<<<<<<< HEAD
-=======
-    <class path="\\10.11.1.4\technik\dev\axel\lib" />
->>>>>>> 75e54f5e67050f104f001cea32d724361a075dca
   </classpaths>
   <!-- Build options -->
   <build>
@@ -49,11 +45,7 @@
   <!-- Executed before build -->
   <preBuildCommand />
   <!-- Executed after build -->
-<<<<<<< HEAD
-  <postBuildCommand alwaysRun="False">copyGlob.bat $(OutputDir)  E:\www\kenya4.me\httpdocs</postBuildCommand>
-=======
   <postBuildCommand alwaysRun="False" />
->>>>>>> 75e54f5e67050f104f001cea32d724361a075dca
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />

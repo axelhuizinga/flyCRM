@@ -10,7 +10,7 @@ import haxe.Json;
 import haxe.Timer;
 import jQuery.*;
 import jQuery.JHelper.J;
-import jQuery.FormData.FData;
+import view.FormData.FData;
 import js.Browser;
 import App.Rectangle;
 import js.html.Audio;
@@ -390,7 +390,7 @@ class Editor extends View
 		}
 		data.user = eData.data('owner');
 		optionsMap = data.optionsMap = dataOptions;
-		data.typeMap.buchungs_tag = 'SELECT';
+		data.typeMap.buchungs_tag = 'TEXT';
 		typeMap = data.typeMap;
 		var dRows:Array<Dynamic> = data.rows;
 		var fieldDefault:Dynamic = data.fieldDefault;
