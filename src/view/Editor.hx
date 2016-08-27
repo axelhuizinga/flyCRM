@@ -341,7 +341,7 @@ class Editor extends View
 			}
 		}
 		var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
-		//trace(p);
+		trace(p);
 		p.push( { name:'className', value:parentView.name });
 		p.push( { name:'action', value:'save' } );
 		p.push( { name:'user', value:App.user});

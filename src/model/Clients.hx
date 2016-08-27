@@ -29,7 +29,7 @@ typedef CustomField =
  class Clients extends Model
 {
 	private static var vicdial_list_fields = 'lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id'.split(',');		
-	private static var clients_fields = 'client_id,lead_id,creation_date,state,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date'.split(',');	
+	private static var clients_fields = 'client_id,lead_id,creation_date,state,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,old_active'.split(',');	
 	private static var pay_history_fields = 'buchungsanforderungID,Mandat-ID,Betrag,Termin'.split(',');
 	private static var pay_source_fields = 'pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date'.split(',');
 	private static var pay_plan_fields = 'pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason'.split(',');
@@ -494,10 +494,10 @@ typedef CustomField =
 	{
 		var clientID = q.get('client_id');
 		var user:String = S.user;
-		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,$user AS log_user,NULL AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=$clientID');
+		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,old_active,$user AS log_user,NULL AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=$clientID');
 		if (!res.any2bool())
 		{
-			trace('failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,$user AS log_user,NULL AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=$clientID');
+			trace('failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,old_active,$user AS log_user,NULL AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=$clientID');
 			return false;
 		}
 		return cast S.my.insert_id;

@@ -15,7 +15,7 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="..\..\..\..\www\remotion4.me\httpdocs\lib" />
+    <class path="\\10.11.1.4\technik\dev\axel\lib" />
     <class path="src" />
     <class path="lib" />
   </classpaths>

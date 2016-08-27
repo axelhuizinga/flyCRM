@@ -256,7 +256,7 @@ class QC extends Clients
 					}
 					else
 						list_id = 1800;
-
+					trace('list_id:$list_id');
 					var entry_list_id:String = q.get('entry_list_id');
 					values2bind[i++] = q.get('status');
 					bindTypes += 's';

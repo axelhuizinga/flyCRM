@@ -200,6 +200,7 @@ class model_QC extends model_Clients {
 					} else {
 						$list_id = 1800;
 					}
+					haxe_Log::trace("list_id:" . _hx_string_rec($list_id, ""), _hx_anonymous(array("fileName" => "QC.hx", "lineNumber" => 259, "className" => "model.QC", "methodName" => "save")));
 					$entry_list_id = $q->get("entry_list_id");
 					$values2bind[$i++] = $q->get("status");
 					$bindTypes .= "s";
