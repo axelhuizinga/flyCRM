@@ -6,7 +6,7 @@ package view;
  */
 import haxe.Timer;
 import jQuery.*;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 import js.html.Element;
 import view.Campaigns;
 

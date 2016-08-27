@@ -7,7 +7,7 @@ package view;
 import haxe.ds.StringMap;
 import haxe.Timer;
 import jQuery.*;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 import view.FormData.FData;
 import js.Browser;
 import App.Rectangle;
@@ -17,12 +17,14 @@ import me.cunity.debug.Out;
 
 using js.JqueryUI;
 using Lambda;
+using Util;
 
 class ClientEditor extends Editor
 {	
 	var screens:StringMap<JQuery>;
 	var activeScreen:String;
 	var editData:Dynamic;	
+	var client_id:Int;
 	
 	public function new(?data:Dynamic)
 	{
@@ -111,6 +113,56 @@ class ClientEditor extends Editor
 		//edit(J('#' + cMenu.parentView.id + 'tr[class~="selected"]'));
 	}
 	
+	function go(evt:Event)
+	{
+		evt.preventDefault();
+		var jNode:JQuery = J(cast( evt.target, Node));		
+		var contextAction = jNode.data('action');
+		//action = J( evt.target).data('action');
+		trace(action + ':' + contextAction);
+		switch(contextAction)
+		{
+			case 'pay_erstattung':
+				saveBlock(jNode.closest('#edit-client-erstattung'));
+			case 'pay_history':
+				loadBlock(contextAction);			
+			
+		}
+	}
+	
+	function saveBlock(jB:JQuery):Bool
+	{
+		client_id = Std.parseInt(J('#edit-client input[name="client_id"]').val());
+		//trace(jB);
+		trace(client_id);
+		//jB.find('*').each(function(i, el){trace(el.nodeName); });
+		var p:Array<FData> = FormData.save(jB.find('*'));
+		p.push( { name:'className', value:parentView.name });
+		p.push( { name:'action', value:'savePayBack' } );
+		p.push( { name:'user', value:App.user});
+		p.push( { name:'client_id', value: client_id} );
+
+		parentView.loadData('server.php', p, function(data:Dynamic) { 
+			//trace('>' + data + ':' + Type.typeof(data) + ': ' + (data ? 'Y':'N'));
+			if (data) 
+			{
+				//trace(data);
+				if (data.response != 'OK')
+					trace(data);
+				else
+				{
+					jB.find('textarea, input').each(function(i,el)
+					{
+						J(el).val('');
+					});
+					loadBlock('pay_history');
+				}
+			}
+		});		
+		Out.dumpObjectRSafe(p, true);
+		return false;
+	}
+	
 	function save_sub_screen()
 	{
 		var p:Array<FData> = FormData.save(J('#' + activeScreen + '-form'));
@@ -144,6 +196,75 @@ class ClientEditor extends Editor
 		});
 	}
 	
+	function loadBlock(name:String):Void
+	{
+		trace(name);
+		var sData:Dynamic = Reflect.field(editData, name);// { h:[] };
+		var dRows:Array<Dynamic> = (sData!=null ? Reflect.field(editData, name).h:[]);
+		trace(name);
+		trace(dRows);
+		sData.table = name;
+		optionsMap.agent = App.ist.prepareAgentMap();
+		sData.optionsMap = optionsMap;
+		sData.typeMap = typeMap;
+		sData.fieldNames = fieldNames;
+		
+		//trace(sData.optionsMap);
+		var oMargin:Int = 8;
+		var mSpace:Rectangle = App.getMainSpace();
+		if (name == 'pay_history')
+		{
+			sData = {rows:[],m_ID:editData.clients.h[0].client_id};
+			var kontoRows:Array<Dynamic> = Reflect.field(editData, 'konto_auszug').h;
+			for (r in kontoRows)
+			{
+				sData.rows.push( 
+				{ 
+					Termin:r.d,
+					info:switch(r.reason)
+					{
+						case "AC01":'IBAN FEHLER';
+						case "AC04":'KONTO AUFGELOEST';
+						case "MD06":'WIDERSPRUCH DURCH ZAHLER';
+						case "MS03":'SONSTIGE GRUENDE';
+						default: "''";
+					},
+					Betrag:r.amount,
+					extra:r.IBAN
+				});
+			}
+			
+			for (r in dRows)
+			{
+				sData.rows.push( 
+				{ 
+					Termin:r.Termin,
+					info:'baID ' + r.buchungsanforderungID,
+					Betrag:r.Betrag,
+					extra:null
+				});
+			}
+			if (sData.rows.length == 0)
+				return;
+			//sData.rows = dateSort('Termin', sData.rows);
+			var tString:String = "{{each(i,v) $data.rows}}				
+				<tr class=\"${((i+1) % 2 ? 'odd' : 'even')}\">
+					<td>${display(displayFormats['Termin'],v.Termin)} </td>
+					<td>${display(displayFormats['Betrag'],v.Betrag)}</td>
+					<td>${v.info}</td>
+					<td>${v.extra}</td>					
+				</tr>
+				{{/each}}";
+			JQueryStatic.template('buchungen', tString);
+			dateSort('Termin', sData.rows);
+			trace(sData);
+			var jTarget:JQuery = J('#${parentView.id} *[data-action="$name"]');
+			jTarget.siblings().remove();
+			JQueryStatic.tmpl('buchungen', sData).appendTo(jTarget.parent());	
+		}
+			
+	}
+
 	function showScreen(name:String):Void
 	{
 		if (activeScreen != null)
@@ -151,9 +272,9 @@ class ClientEditor extends Editor
 			var s:JQuery = screens.get(activeScreen);
 			s.animate( { opacity:0.0 }, 300, null, function() { s.detach(); } );			
 		}
-		var dRows:Array<Dynamic> = Reflect.field(editData, name).h;
+		
 		var sData:Dynamic = Reflect.field(editData, name);// { h:[] };
-
+		var dRows:Array<Dynamic> = (sData!=null ? Reflect.field(editData, name).h:[]);
 		trace(name);
 		trace(dRows);
 		sData.table = name;
@@ -282,7 +403,8 @@ class ClientEditor extends Editor
 		editData = data.editData;
 		//trace('birth_date:' + editData.clients.h[0].birth_date);
 		//Reflect.deleteField(editData.clients.h[0], 'owner');
-		//trace(editData.pay_plan.h);
+		trace(data.fieldNames);
+		trace(editData.clients.h);
 		agent = data.agent;
 		screens = new StringMap();
 		var dataOptions:Dynamic = {};
@@ -318,7 +440,7 @@ class ClientEditor extends Editor
 		//data.editData.pay_plan.h[0].agent = data.userMap.a.find(function(uM) return uM.user == data.editData.pay_plan.h[0].agent).full_name;
 		//trace(data.editData.pay_plan.h);
 		overlay = templ.tmpl(data).appendTo('#' + parentView.id).css( {
-			marginTop:Std.string(mSpace.top + oMargin ) + 'px',
+			marginTop:Std.string(mSpace.top + oMargin -2) + 'px',
 			marginLeft:Std.string(oMargin ) + 'px',
 			height:Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px',
 			width:Std.string( J('#clients-menu').offset().left - 35 ) + 'px'
@@ -329,13 +451,15 @@ class ClientEditor extends Editor
 			trace(J(n).attr('name'));
 			//Out.dumpObjectTree(J(n).datepicker( { dateFormat: "dd.mm.yy" } ));
 			var dateString:String = untyped editData.clients.h[0][J(n).attr('name')];
-			if (dateString != '' && dateString != '0000-00-00')
+			trace(dateString);
+			if (dateString.any2bool() && dateString != '0000-00-00')
 			{				
 				//dateString = DateTools.delta(Date.now(), -1000 * 3600 * 24 * 365 * 80).toString();
 				J(n).datepicker( { dateFormat: "dd.mm.yy" } ).val(DateTools.format(Date.fromString(dateString), '%d.%m.%Y'));
 			}
 			else
-				J(n).datepicker( { dateFormat: "dd.mm.yy" } ).attr("placeholder",DateTools.format(DateTools.delta(Date.now(), -1000 * 3600 * 24 * 365 * 80), '%d.%m.%Y'));
+				J(n).datepicker( { dateFormat: "dd.mm.yy" } ).attr("placeholder",DateTools.format(Date.now(), '%d.%m.%Y'));
+				//J(n).datepicker( { dateFormat: "dd.mm.yy" } ).attr("placeholder",DateTools.format(DateTools.delta(Date.now(), -1000 * 3600 * 24 * 365 * 80), '%d.%m.%Y'));
 			
 			//untyped J(n).setDate(editData.clients[0]);
 			//dp.datepicker(options).attr("placeholder", DateTools.format(Date.now(), '%d.%m.%Y'));
@@ -345,7 +469,8 @@ class ClientEditor extends Editor
 		J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());
 		//trace(id + ':' + parentView.id + ':' + J('#' + parentView.id +' .scrollbox').length + ':' +   J('#' + parentView.id +' .scrollbox').height());
 		trace(leadID);
-		
+		trace('$id: data-actions:' + J('#' + parentView.id  +' #overlay' + ' *[data-action]').length);
+		J('#' + parentView.id + ' *[data-action]').css({cursor:'pointer'}).click(go);
 		//cMenu.root.accordion("refresh");
 	}
 	

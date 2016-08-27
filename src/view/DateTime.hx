@@ -1,8 +1,8 @@
 package view;
 import haxe.Timer;
-import jQuery.JHelper;
+import js.jQuery.JHelper;
 import jQuery.*;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 
 using js.JqueryUI;
 /**

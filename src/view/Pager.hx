@@ -2,8 +2,8 @@ package view;
 
 import haxe.ds.StringMap;
 import jQuery.Event;
-import jQuery.JHelper.J;
 import jQuery.JQuery;
+import js.jQuery.JHelper.J;
 
 /**
  * ...

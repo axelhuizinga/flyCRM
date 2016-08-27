@@ -1,4 +1,5 @@
 package model;
+import comments.CommentString.*;
 import haxe.ds.StringMap;
 import haxe.extern.EitherType;
 import haxe.Json;
@@ -145,16 +146,26 @@ class QC extends Clients
 		return null;
 	}	
 	
+	function errSale(q:StringMap<Dynamic>):Bool
+	{
+		var lead_id = Std.parseInt(q.get('lead_id'));
+		var user:String = S.user;	
+		
+		var sql:String = comment(unindent, format) /**
+            UPDATE vicidial_list SET status='NI', list_id=`entry_list_id` WHERE lead_id=$lead_id
+        **/;
+		query(sql);
+		return S.my.affected_rows == 1;		
+	}
+		
+	
 	override public function save(q:StringMap<Dynamic>):Bool
 	{
 		var lead_id = Std.parseInt(q.get('lead_id'));
 		var user:String = S.user;
-		//COPY LEAD TO VICIDIAL_LEAD_LOG + CUSTOM_LOG
-		//return false;
-		/*var newStatus:String = q.get('status');
-		var res:EitherType < MySQLi_Result, Bool > = S.my.query(
-			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id,$lead_id AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,"$newStatus",comments,called_count,last_local_call_time,rank,owner,entry_list_id,$user AS log_user,NULL AS ref_id FROM `vicidial_list` WHERE `lead_id`=$lead_id)AS vl'
-			);*/
+		//RESET ERRSALES
+		if (q.exists('status') && q.get('status') == 'ERRSALE')
+			return errSale(q);
 		var log_id:EitherType < Int, Bool > = false;
 		if (log_id  = saveLog(q))
 		{
@@ -256,7 +267,7 @@ class QC extends Clients
 					}
 					else
 						list_id = 1800;
-
+					trace('list_id:$list_id');
 					var entry_list_id:String = q.get('entry_list_id');
 					values2bind[i++] = q.get('status');
 					bindTypes += 's';

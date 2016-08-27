@@ -9,7 +9,7 @@ import js.html.Node;
 import js.html.XMLHttpRequest;
 import View;
 import jQuery.*;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 import js.JqueryUI;
 import pushstate.PushState;
 import me.cunity.debug.Out;
@@ -208,6 +208,18 @@ typedef TabBoxData =
 			//trace('full reload');
 			//Browser.window.location.reload();
 		}*/
+		
+		if (url.indexOf('?') >-1)
+		{
+			if (tabLinks[tabsInstance.options.active] != 'clients')
+			{
+				//tabLinks[tabsInstance.options.active] = 1;
+				if(tabObj!=null)
+				tabObj.tabs( "option", "active", 1 );
+				Browser.document.title = App.company + " " + App.appName + '  ' + tabLabel[tabsInstance.options.active];
+				return;
+			}
+		}
 		
 		if (!Std.is(url, String))
 		{

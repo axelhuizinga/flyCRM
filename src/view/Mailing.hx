@@ -1,6 +1,6 @@
 package view;
 import jQuery.*;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 import jQuery.JQueryStatic;
 import js.Browser;
 

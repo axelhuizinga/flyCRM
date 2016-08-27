@@ -351,7 +351,7 @@ class Model
 	{
 		trace(sql);
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query(sql, MySQLi.MYSQLI_USE_RESULT);
-		if (res)
+		if (res && sql.indexOf('UPDATE')==-1)
 		{
 			var data:NativeArray = cast(res, MySQLi_Result).fetch_all(MySQLi.MYSQLI_ASSOC);
 			return(data);		
