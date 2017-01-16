@@ -4,7 +4,7 @@ import haxe.xml.Check.Attrib;
 import js.Browser;
 import js.html.Node;
 import jQuery.JQuery;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 
 /**
  * ...

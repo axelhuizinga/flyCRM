@@ -1,4 +1,5 @@
 package model;
+import comments.CommentString.*;
 import haxe.ds.StringMap;
 import haxe.extern.EitherType;
 import haxe.Json;
@@ -30,10 +31,11 @@ typedef CustomField =
 {
 	private static var vicdial_list_fields = 'lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id'.split(',');		
 	private static var clients_fields = 'client_id,lead_id,creation_date,state,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,old_active'.split(',');	
-	private static var pay_history_fields = 'buchungsanforderungID,Mandat-ID,Betrag,Termin'.split(',');
+	private static var pay_history_fields = 'buchungsanforderungID,Mandat-ID,Betrag,Termin,tracking_status'.split(',');
 	private static var pay_source_fields = 'pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date'.split(',');
 	private static var pay_plan_fields = 'pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason'.split(',');
-	//private static var pay_source_fields = '';
+	private static var booking_fields = ''.split(',');	
+	
 	
 	private static var custom_fields_map:StringMap<String> = [
 		'title'=>'anrede',
@@ -169,8 +171,7 @@ typedef CustomField =
 			p.set('primary_id', param.get('primary_id'));
 			//FETCH VICIDIAL DATA ALONG WITH MEMBER DATA
 			switch(table) {
-			case 'clients':
-			
+			case 'clients':			
 				p.set('table', 'vicidial_list');
 				p.set('jointable', 'fly_crm.' + table);
 				//p.set('joincond', 'vicidial_list.lead_id=fly_crm.clients.lead_id');
@@ -183,7 +184,11 @@ typedef CustomField =
 				p.set('table', 'fly_crm.'+ table);
 				p.set('fields', pay_history_fields.map(function(el:String) return '`$el`').join(','));
 				p.set('where', '`Mandat-ID`|' +  param.get('client_id') + 'K1');
+				//var limit = p.get('limit');
+				p.set('limit', '2400');// WE NEED ALL ENTRIES IN THE PAY HISTORY HERE
 				editTables.set('pay_history', Lib.hashOfAssociativeArray(doSelect(p, sb, phValues)));
+				//if(limit != null)
+					//p.set('limit', limit);
 			default:
 				p.set('table', (table == 'vicidial_list'?table:'fly_crm.'+ table));
 				p.set('fields', tableFields.get(table).join(','));
@@ -199,7 +204,8 @@ typedef CustomField =
 			}
 		}
 		var recordings:NativeArray = getRecordings(Std.parseInt(param.get('lead_id')));
-		editTables.set('konto_auszug', Lib.hashOfAssociativeArray(new ClientHistory().findClient(["where" => 'reason|AC01 AC04 MD06 MS03,m_ID|' +  param.get('client_id')], true)));
+		editTables.set('konto_auszug', Lib.hashOfAssociativeArray(cast( new ClientHistory().findClient(
+			["where" => 'reason|AC01 AC04 MD06 MS03,m_ID|' +  param.get('client_id'),"limit"=>150], true),NativeArray)));
 		data =  {
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),
 			editData:Lib.associativeArrayOfHash(editTables),
@@ -247,44 +253,6 @@ typedef CustomField =
 		return ret;
 	}
 	
-	/*function getEditorFields(?table_name:String):StringMap<Array<StringMap<String>>>
-	{
-		var sb:StringBuf = new StringBuf();
-		var phValues:Array<Array<Dynamic>> = new Array();
-		var param:StringMap<String> = new StringMap();
-		param.set('table', 'fly_crm.editor_fields');
-		
-		param.set('where', 'field_cost|>-2' + (table_name != null ? 
-		',table_name|' + S.my.real_escape_string(table_name): ''));
-		param.set('fields', 'field_name,field_label,field_type,field_options,table_name');
-		param.set('order', 'table_name,field_rank,field_order');
-		param.set('limit', '100');
-		//trace(param);
-		var eFields:Array<Dynamic> = Lib.toHaxeArray( doSelect(param, sb, phValues));
-		//var eFields:NativeArray = doSelect(param, sb, phValues);
-		//var eFields:Dynamic = doSelect(param, sb, phValues);
-		//trace(eFields);
-		//trace(eFields.length);
-		var ret:StringMap<Array<StringMap<String>>> = new StringMap();
-		//var ret:Array<StringMap<String>> = new Array();
-		for (ef in eFields)
-		{
-			var table:String = untyped ef['table_name'];
-			if (!ret.exists(table))
-			{
-				ret.set(table, []);
-			}
-			//var field:StringMap<String> = Lib.hashOfAssociativeArray(ef);
-			//trace(field.get('field_label')+ ':' + field);
-			var a:Array<StringMap<String>> = ret.get(table);
-			a.push(Lib.hashOfAssociativeArray(ef));
-			ret.set(table, a);
-			//return ret;
-		}
-		//trace(ret);
-		return ret;
-	}*/
-	
 	function getRecordings(lead_id:Int):NativeArray
 	{
 		var records:Array<Dynamic> = Lib.toHaxeArray(query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " 
@@ -319,6 +287,41 @@ typedef CustomField =
 				if (S.my.error == '')
 					return log_id;
 			}
+		}
+		return false;
+	}
+	
+	public function savePayBack(q:StringMap<Dynamic>):EitherType<String, Bool>
+	{
+		trace(q);
+		var client_id:String =  S.my.real_escape_string(q.get('client_id'));
+		var buchungs_datum = S.my.real_escape_string(q.get('buchungs_datum'));
+		var reason:String = S.my.real_escape_string(q.get('reason'));
+		var sql:String = comment(unindent)
+		/*
+		INSERT IGNORE buchungs_anforderungen
+		SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'SEPA',
+			'$buchungs_datum',
+		CONCAT('MITGLIEDS-NR. ',ps.client_id),'$reason',
+		'','','','','','','',NULL,'neu',
+		CURDATE(),'0000-00-00', 
+		'once','', 
+		CONCAT(pp.client_id,pp.product,'1'), ps.sign_date,'DE28ZZZ00001362509','', '' 
+		FROM pay_source AS ps, pay_target AS pt, pay_plan AS pp 
+		INNER JOIN clients cl ON cl.client_id=pp.client_id  
+		WHERE `pay_source_state`!='passive'
+		AND pp.pay_plan_state='active'
+		AND pp.cycle='monthly'
+		AND pp.start_day='$sday'
+		AND pp.start_date<'$sdate'
+		AND pp.client_id=ps.client_id
+		AND pp.pay_source_id=ps.pay_source_id
+		AND pt.id=1 
+		*/;
+		query(sql);
+		if (S.my.error == '')
+		{
+			return json_response('OK');
 		}
 		return false;
 	}
@@ -566,7 +569,7 @@ typedef CustomField =
 	public function save_pay_plan_log(pay_plan_id:Int, ref_id:Int=0):EitherType < Int, Bool >
 	{
 		var user = S.user;
-		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,repeat_date,$user AS log_user,NOW() AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
+		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,agency_project,pay_plan_state,pay_method,end_date,end_reason,repeat_date,$user AS log_user,NOW() AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
 		if (!res.any2bool())
 		{
 			trace ('Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,repeat_date,$user AS log_user,NOW() AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
@@ -581,7 +584,7 @@ typedef CustomField =
 		var product:StringMap<Dynamic> = Lib.hashOfAssociativeArray(q.get('product'));
 		var user:String = S.user;
 		//trace(product + ':' + product.length);
-		trace(product + ':' + product.count);
+		trace(product + ':' + product.count() + ':' + product.keys().hasNext());
 		//return true;
 		//for (i in 0...product.length)
 		var pIt:Iterator<Dynamic> = product.keys();
@@ -589,6 +592,7 @@ typedef CustomField =
 		{
 			var pay_plan_id = pIt.next();
 			var log_id:EitherType < Int, Bool > = save_pay_plan_log(pay_plan_id);
+			trace(log_id);
 			// SAVE TO LOG
 			if (!log_id)
 				return false;
@@ -664,7 +668,7 @@ typedef CustomField =
 		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.pay_source_log SELECT  pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NOW() AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
 		if (!res.any2bool())
 		{
-			trace ('Failed to:  INSERT INTO fly_crm.pay_source_log SELECT pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NOW() AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
+			trace('Failed to:  INSERT INTO fly_crm.pay_source_log SELECT pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date,$user AS log_user,NOW() AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.pay_source WHERE pay_source_id=$pay_source_id');
 			return false;
 		}		
 		return cast S.my.insert_id;
@@ -773,4 +777,5 @@ typedef CustomField =
 		else trace('num_rows:' + res.num_rows);
 		return true;
 	}
+	
 }

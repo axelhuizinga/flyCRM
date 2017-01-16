@@ -1,7 +1,7 @@
 package view;
 import haxe.ds.StringMap;
 import haxe.Timer;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 //import FormData.FData;
 import jQuery.*;
 import js.html.Element;

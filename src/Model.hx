@@ -6,6 +6,7 @@ import php.Lib;
 import php.NativeArray;
 import model.*;
 import me.cunity.php.db.*;
+import sys.db.*;
 import model.Users;
 
 using Lambda;
@@ -280,7 +281,7 @@ class Model
 		trace(sql);	
 		var stmt =  S.my.stmt_init();
 		//var success:Bool = stmt.prepare(sql);
-		var success:EitherType<MySQLi_STMT,Bool> = stmt.prepare(sql);
+		var success:EitherType<MySQLi_STMT ,Bool> = stmt.prepare(sql);
 		trace (success);
 		if (!success)
 		{
@@ -350,15 +351,19 @@ class Model
 	public  function query(sql:String):NativeArray
 	{
 		trace(sql);
-		var res:EitherType < MySQLi_Result, Bool > = S.my.query(sql, MySQLi.MYSQLI_USE_RESULT);
-		if (res)
+		//var res:EitherType <MySQLi_Result , Bool > = S.my.real_query(sql, MySQLi.MYSQLI_USE_RESULT);
+		var ok:Bool = S.my.real_query(sql);
+		//if (res && sql.indexOf('UPDATE')==-1)
+		if (ok && S.my.field_count > 0)
 		{
-			var data:NativeArray = cast(res, MySQLi_Result).fetch_all(MySQLi.MYSQLI_ASSOC);
+			var res:MySQLi_Result = S.my.store_result();
+			trace(res);
+			var data:NativeArray = res.fetch_all(MySQLi.MYSQLI_ASSOC);
+			res.free();
 			return(data);		
-			//return Lib.hashOfAssociativeArray(data);
 		}
 		else
-			trace(res + ':' + S.my.error);
+			trace(ok);
 		return null;
 	}
 	

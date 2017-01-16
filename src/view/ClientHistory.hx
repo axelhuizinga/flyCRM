@@ -3,7 +3,7 @@ package view;
 import jQuery.Event;
 import haxe.Timer;
 import jQuery.*;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 import js.html.Element;
 import js.html.Node;
 import View;

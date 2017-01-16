@@ -15,7 +15,7 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="\\10.11.1.4\technik\dev\axel\lib" />
+    <class path="C:\www\remotion4.me\httpdocs\lib" />
     <class path="src" />
     <class path="lib" />
   </classpaths>
@@ -26,7 +26,7 @@
     <option noInlineOnDebug="False" />
     <option mainClass="App" />
     <option enabledebug="False" />
-    <option additional="-dce std&#xA;--macro jQuery.haxe.Config.addPlugin('jQuery.Accordion')&#xA;--macro jQuery.haxe.Config.addPlugin('jQuery.Template')&#xA;--macro jQuery.haxe.Config.addPlugin('jQuery.Utils')" />
+    <option additional="-dce std&#xA;--macro jQuery.haxe.Config.addPlugin('js.jQuery.Accordion')&#xA;--macro jQuery.haxe.Config.addPlugin('js.jQuery.Template')&#xA;--macro jQuery.haxe.Config.addPlugin('jQuery.Utils')" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
@@ -45,7 +45,7 @@
   <!-- Executed before build -->
   <preBuildCommand />
   <!-- Executed after build -->
-  <postBuildCommand alwaysRun="False" />
+  <postBuildCommand alwaysRun="False">C:\bin\build_sftp.bat $(OutputDir)\$(OutputName)</postBuildCommand>
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />

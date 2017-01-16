@@ -9,7 +9,7 @@ import haxe.ds.StringMap;
 import haxe.Json;
 import haxe.Timer;
 import jQuery.*;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 import view.FormData.FData;
 import js.Browser;
 import App.Rectangle;
@@ -283,6 +283,11 @@ class Editor extends View
 					cMenu.hangup(this, function() save(action));
 				else				
 					save(action);
+			case 'errsal':
+				if (parentView.interactionState == 'call')
+					cMenu.hangup(this, function() save(action));
+				else				
+					save(action);
 			case 'call':
 				if (parentView.interactionState == 'call')					
 					cMenu.call(this, function() save(action));
@@ -350,6 +355,8 @@ class Editor extends View
 		trace (status);
 		switch (status)
 		{
+			case 'errsal':
+			p.push( { name:'status', value: 'ERRSALE'});
 			case 'qcok','qcbad','call':
 			p.push( { name:'status', value: (status=='call' ? 'QCOPEN': status.toUpperCase()) });
 		}

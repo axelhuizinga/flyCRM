@@ -117,6 +117,7 @@ class ClientHistory extends Clients
 	}
 	
 	public function findClient(param:StringMap<Dynamic>,?dataOnly:Bool):EitherType<EitherType<NativeArray,String>,Bool>
+	//public function findClient(param:StringMap<Dynamic>,?dataOnly:Bool):NativeArray
 	{
 		var sql:StringBuf = new StringBuf();
 		var phValues:Array<Array<Dynamic>> = new Array();

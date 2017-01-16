@@ -6,7 +6,7 @@ import view.Pager;
 import haxe.Timer;
 import js.Browser;
 import js.html.Element;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 import jQuery.*;
 import js.html.Node;
 import js.html.Rect;
@@ -383,7 +383,7 @@ class View
 				Reflect.setField(aData, f, Reflect.field(pData, f));
 		}
 		fields = aData.fields.any2bool()?aData.fields.split(','):null;
-		trace(fields);
+		//trace(fields);
 		//trace(aData.hidden);
 		//trace(aData.joincond);
 		var order:String = (params == null ? null : params.order);

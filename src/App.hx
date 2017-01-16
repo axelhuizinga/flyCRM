@@ -7,7 +7,7 @@ import haxe.Log;
 import haxe.Timer;
 import js.Browser;
 import jQuery.*;
-import jQuery.JHelper.J;
+import js.jQuery.JHelper.J;
 import js.html.Node;
 import js.Lib;
 //import js.Spinner;
