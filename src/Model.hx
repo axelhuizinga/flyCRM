@@ -363,9 +363,13 @@ class Model
 			return(data);		
 		}
 		else
+<<<<<<< HEAD
 			trace(ok?'OK':'NOTOK' + S.my.error);
 		if (S.my.connect_error != null)
 			trace(S.my.connect_error);
+=======
+			trace(ok);
+>>>>>>> a32fff50bcc6512f1e0fbc14f62d7da0632f1c7d
 		return null;
 	}
 	

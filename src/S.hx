@@ -70,7 +70,11 @@ class S
 			return;
 		}
 			
+<<<<<<< HEAD
 		my = new MySQLi('127.0.0.1', dbUser, dbPass, db);
+=======
+		my = new MySQLi('localhost', dbUser, dbPass, db);
+>>>>>>> a32fff50bcc6512f1e0fbc14f62d7da0632f1c7d
 		my.set_charset("utf8");
 		//trace(my);
 		var auth:Bool = checkAuth();
