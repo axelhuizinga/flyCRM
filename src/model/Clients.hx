@@ -296,7 +296,6 @@ typedef CustomField =
 		trace(q);
 		var client_id:String =  S.my.real_escape_string(q.get('client_id'));
 		var buchungs_datum = S.my.real_escape_string(q.get('buchungs_datum'));
-<<<<<<< HEAD
 		var verwendungszweck:String = S.my.real_escape_string(q.get('verwendungszweck'));
 		var crm_db:String = (q.exists('crm_db') ? S.my.real_escape_string(q.get('crm_db')) : 'fly_crm');
 		var sql:String = comment(unindent, format)
@@ -305,37 +304,15 @@ typedef CustomField =
 		SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'SEPA',
 			'$buchungs_datum',
 		CONCAT('MITGLIEDS-NR. ',ps.client_id),'$verwendungszweck',
-=======
-		var reason:String = S.my.real_escape_string(q.get('reason'));
-		var sql:String = comment(unindent)
-		/*
-		INSERT IGNORE buchungs_anforderungen
-		SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'SEPA',
-			'$buchungs_datum',
-		CONCAT('MITGLIEDS-NR. ',ps.client_id),'$reason',
->>>>>>> a32fff50bcc6512f1e0fbc14f62d7da0632f1c7d
 		'','','','','','','',NULL,'neu',
 		CURDATE(),'0000-00-00', 
 		'once','', 
 		CONCAT(pp.client_id,pp.product,'1'), ps.sign_date,'DE28ZZZ00001362509','', '' 
-<<<<<<< HEAD
 		FROM $crm_db.pay_source AS ps, $crm_db.pay_target AS pt, $crm_db.pay_plan AS pp 
 		INNER JOIN $crm_db.clients cl ON cl.client_id=pp.client_id  
 		WHERE pp.client_id=ps.client_id
 		AND pp.pay_source_id=ps.pay_source_id
 		AND pt.id=1 AND cl.client_id = $client_id 
-=======
-		FROM pay_source AS ps, pay_target AS pt, pay_plan AS pp 
-		INNER JOIN clients cl ON cl.client_id=pp.client_id  
-		WHERE `pay_source_state`!='passive'
-		AND pp.pay_plan_state='active'
-		AND pp.cycle='monthly'
-		AND pp.start_day='$sday'
-		AND pp.start_date<'$sdate'
-		AND pp.client_id=ps.client_id
-		AND pp.pay_source_id=ps.pay_source_id
-		AND pt.id=1 
->>>>>>> a32fff50bcc6512f1e0fbc14f62d7da0632f1c7d
 		*/;
 		query(sql);
 		if (S.my.error == '')

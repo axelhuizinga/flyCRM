@@ -138,10 +138,7 @@ class ClientEditor extends Editor
 		//jB.find('*').each(function(i, el){trace(el.nodeName); });
 		var p:Array<FData> = FormData.save(jB.find('*'));
 		p.push( { name:'className', value:parentView.name });
-<<<<<<< HEAD
-=======
 		p.push( { name:'action', value:'savePayBack' } );
->>>>>>> a32fff50bcc6512f1e0fbc14f62d7da0632f1c7d
 		p.push( { name:'user', value:App.user});
 		p.push( { name:'client_id', value: client_id} );
 
