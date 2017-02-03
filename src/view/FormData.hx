@@ -77,6 +77,8 @@ class FormData
 		//PREPARE EDITOR DATA FOR POSTING
 		var ret: Array<FData> = cast jForm.serializeArray();
 		var checkBoxes = jForm.find('input[type="checkbox"]');
+		var missing:StringMap<Bool> = new StringMap();
+		
 		checkBoxes.each(function(i:Int, n:Node) {
 			var checkBox:JQuery = J(n);
 			//trace(checkBox.attr('name') + ':' + checkBox.prop('checked'));
@@ -90,9 +92,16 @@ class FormData
 					fd.value = (checkBox.prop('checked')?1:0);
 				return fd;
 			});
+			if (checkBox.data('required') == 'true' && !checkBox.prop('checked'))
+			{
+				missing.set(checkBox.attr('name'), true);
+			}
+			else
+				missing.set(checkBox.attr('name'), false);
 			//trace(ret);
 		});
 		//trace(ret);
+		//TODO: RADIO!!!
 		for (fd in ret)
 		{
 			var itemName:String = fd.name.split('[')[0];
@@ -112,8 +121,13 @@ class FormData
 				}
 				fd.value = Reflect.callMethod(Browser.window, Reflect.field(Browser.window, method), callParam);
 			}
+			if (!missing.exists(fd.name) && J('input[name="' + fd.name + '"]').data('required') == 'true' && J('input[name="' + fd.name + '"]').val() == '')
+			{
+				missing.set(fd.name, true);
+			}
 		}
 		//trace(ret);
+		ret.push({name:'missing', value:missing});
 		return ret;
 	}
 	

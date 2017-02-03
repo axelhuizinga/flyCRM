@@ -8,13 +8,15 @@ import haxe.ds.StringMap;
 class Util
 {
 
-	public static function any2bool(v:Dynamic) :Bool
+	public static inline function any2bool(v:Dynamic) :Bool
 	{
 		#if js
 		//trace(untyped __js__("v?true:false"));
-		return (untyped __js__("v?true:false"));
+		//return (untyped __js__(true,v));
+		//return (untyped __strict_neq__(v, true));
+		return (v != null && v != 0 && v !='');
 		#elseif php
-		return untyped __php__("true ==$v");
+		return (v != null && v != 0 && v !='');
 		#end
 	}
 	

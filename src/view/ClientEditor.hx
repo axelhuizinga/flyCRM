@@ -113,7 +113,7 @@ class ClientEditor extends Editor
 		//edit(J('#' + cMenu.parentView.id + 'tr[class~="selected"]'));
 	}
 	
-	function go(evt:Event)
+	function run(evt:Event)
 	{
 		evt.preventDefault();
 		var jNode:JQuery = J(cast( evt.target, Node));		
@@ -138,7 +138,6 @@ class ClientEditor extends Editor
 		//jB.find('*').each(function(i, el){trace(el.nodeName); });
 		var p:Array<FData> = FormData.save(jB.find('*'));
 		p.push( { name:'className', value:parentView.name });
-		p.push( { name:'action', value:'savePayBack' } );
 		p.push( { name:'user', value:App.user});
 		p.push( { name:'client_id', value: client_id} );
 
@@ -470,7 +469,7 @@ class ClientEditor extends Editor
 		//trace(id + ':' + parentView.id + ':' + J('#' + parentView.id +' .scrollbox').length + ':' +   J('#' + parentView.id +' .scrollbox').height());
 		trace(leadID);
 		trace('$id: data-actions:' + J('#' + parentView.id  +' #overlay' + ' *[data-action]').length);
-		J('#' + parentView.id + ' *[data-action]').css({cursor:'pointer'}).click(go);
+		J('#' + parentView.id + ' *[data-action]').css({cursor:'pointer'}).click(run);
 		//cMenu.root.accordion("refresh");
 	}
 	

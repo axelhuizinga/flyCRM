@@ -95,19 +95,26 @@ typedef TabBoxData =
 					{
 						trace('$selector a:' + J('$selector').attr('aria-labelledby'));
 						selector = J('$selector').attr('aria-labelledby');
+						trace(App.ist.globals.templates);
+						trace('selector:$selector');
 						template = Reflect.field(App.ist.globals.templates, J('#$selector').attr('href'));
 						if (!template.any2bool())
 						{
 							//LOAD TEMPLATE
 							trace('loading templates/' +  J('#$selector').attr('href') + '.html...');
 							JQueryStatic.get('templates/' +  J('#$selector').attr('href') + '.html',function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest){
-								trace(textStatus);
-								//trace(data);
+								trace('$textStatus:${xhr.responseURL}' +  xhr.getAllResponseHeaders());
+								if(data.length>0)
+								trace(data.substr(0,100));
 								if (textStatus == 'success')
-								{									
+								{					
+									if (data == 'NOTFOUND')
+										return;
 									J('body').append(data);
 									Reflect.setField(App.ist.globals.templates, J('#$selector').attr('href'), true);
 									trace(untyped Browser.window.lastView);
+									if(untyped Browser.window.lastView == null)
+										return;
 									//addView(untyped Browser.window.lastView);
 									tabBoxData.tabs[tabsInstance.options.active].views.push(untyped Browser.window.lastView);
 									trace(tabsInstance.options.active+':' + tabBoxData.tabs[tabsInstance.options.active].views.length);

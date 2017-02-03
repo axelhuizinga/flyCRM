@@ -1,4 +1,5 @@
 package model;
+import comments.CommentString.*;
 import haxe.ds.StringMap;
 import haxe.extern.EitherType;
 import haxe.Json;
@@ -33,7 +34,8 @@ typedef CustomField =
 	private static var pay_history_fields = 'buchungsanforderungID,Mandat-ID,Betrag,Termin,tracking_status'.split(',');
 	private static var pay_source_fields = 'pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date'.split(',');
 	private static var pay_plan_fields = 'pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason'.split(',');
-	private static var pay_back_fields = 'id,pay_plan_id,Betrag,creation_date,verwendungszweck,buchungs_datum,status,user';
+	private static var booking_fields = ''.split(',');	
+	
 	
 	private static var custom_fields_map:StringMap<String> = [
 		'title'=>'anrede',
@@ -202,8 +204,8 @@ typedef CustomField =
 			}
 		}
 		var recordings:NativeArray = getRecordings(Std.parseInt(param.get('lead_id')));
-		editTables.set('konto_auszug', Lib.hashOfAssociativeArray(new ClientHistory().findClient(
-			["where" => 'reason|AC01 AC04 MD06 MS03,m_ID|' +  param.get('client_id'),"limit"=>150], true)));
+		editTables.set('konto_auszug', Lib.hashOfAssociativeArray(cast( new ClientHistory().findClient(
+			["where" => 'reason|AC01 AC04 MD06 MS03,m_ID|' +  param.get('client_id'),"limit"=>150], true),NativeArray)));
 		data =  {
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),
 			editData:Lib.associativeArrayOfHash(editTables),
@@ -251,44 +253,6 @@ typedef CustomField =
 		return ret;
 	}
 	
-	/*function getEditorFields(?table_name:String):StringMap<Array<StringMap<String>>>
-	{
-		var sb:StringBuf = new StringBuf();
-		var phValues:Array<Array<Dynamic>> = new Array();
-		var param:StringMap<String> = new StringMap();
-		param.set('table', 'fly_crm.editor_fields');
-		
-		param.set('where', 'field_cost|>-2' + (table_name != null ? 
-		',table_name|' + S.my.real_escape_string(table_name): ''));
-		param.set('fields', 'field_name,field_label,field_type,field_options,table_name');
-		param.set('order', 'table_name,field_rank,field_order');
-		param.set('limit', '100');
-		//trace(param);
-		var eFields:Array<Dynamic> = Lib.toHaxeArray( doSelect(param, sb, phValues));
-		//var eFields:NativeArray = doSelect(param, sb, phValues);
-		//var eFields:Dynamic = doSelect(param, sb, phValues);
-		//trace(eFields);
-		//trace(eFields.length);
-		var ret:StringMap<Array<StringMap<String>>> = new StringMap();
-		//var ret:Array<StringMap<String>> = new Array();
-		for (ef in eFields)
-		{
-			var table:String = untyped ef['table_name'];
-			if (!ret.exists(table))
-			{
-				ret.set(table, []);
-			}
-			//var field:StringMap<String> = Lib.hashOfAssociativeArray(ef);
-			//trace(field.get('field_label')+ ':' + field);
-			var a:Array<StringMap<String>> = ret.get(table);
-			a.push(Lib.hashOfAssociativeArray(ef));
-			ret.set(table, a);
-			//return ret;
-		}
-		//trace(ret);
-		return ret;
-	}*/
-	
 	function getRecordings(lead_id:Int):NativeArray
 	{
 		var records:Array<Dynamic> = Lib.toHaxeArray(query("SELECT location ,  start_time, length_in_sec FROM recording_log WHERE lead_id = " 
@@ -330,51 +294,31 @@ typedef CustomField =
 	public function savePayBack(q:StringMap<Dynamic>):EitherType<String, Bool>
 	{
 		trace(q);
-			var client_id:String =  S.my.real_escape_string(q.get('client_id'));
-			var sql:StringBuf  = new StringBuf();
-			sql.add('UPDATE $cTable SET ');
-			var cFields = S.tableFields('$cTable');
-			trace('$cTable fields:' + cFields.toString());
-			cFields.remove(primary_id);
-			var bindTypes:String = '';
-			var values2bind:NativeArray = null;
-			var i:Int = 0;
-			var dbFieldTypes:StringMap<String> = Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject(S.conf.get('dbFieldTypes')));
-			var sets:Array<String> = new Array();
-			for (c in cFields)
-			{
-				var val:Dynamic = q.get(c);
-				if (val != null)
-				{
-					//TODO: MULTIVAL SELECT OR CHECKBOX
-					values2bind[i++] = (Std.is(val,String) ? val: val[0] );
-					var type:String = dbFieldTypes.get(c);
-					bindTypes += (type.any2bool() ?  type : 's');	
-					sets.push(c + '=?');
-				}
-			}
-			sql.add(sets.join(','));
-			sql.add(' WHERE lead_id=$lead_id');
-			var stmt =  S.my.stmt_init();
-			trace(sql.toString());
-			var success:Bool = stmt.prepare(sql.toString());
-			if (!success)
-			{
-				trace(stmt.error);
-				return false;
-			}
-			success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
-			trace ('success:' + success);
-			if (success)
-			{
-				success = stmt.execute();
-				if (!success)
-				{
-					trace(stmt.error);
-					return false;
-				}					
-		return json_response('OK');
-		pay_back_fields
+		var client_id:String =  S.my.real_escape_string(q.get('client_id'));
+		var buchungs_datum = S.my.real_escape_string(q.get('buchungs_datum'));
+		var verwendungszweck:String = S.my.real_escape_string(q.get('verwendungszweck'));
+		var crm_db:String = (q.exists('crm_db') ? S.my.real_escape_string(q.get('crm_db')) : 'fly_crm');
+		var sql:String = comment(unindent, format)
+		/*
+		INSERT IGNORE $crm_db.buchungs_anforderungen
+		SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'SEPA',
+			'$buchungs_datum',
+		CONCAT('MITGLIEDS-NR. ',ps.client_id),'$verwendungszweck',
+		'','','','','','','',NULL,'neu',
+		CURDATE(),'0000-00-00', 
+		'once','', 
+		CONCAT(pp.client_id,pp.product,'1'), ps.sign_date,'DE28ZZZ00001362509','', '' 
+		FROM $crm_db.pay_source AS ps, $crm_db.pay_target AS pt, $crm_db.pay_plan AS pp 
+		INNER JOIN $crm_db.clients cl ON cl.client_id=pp.client_id  
+		WHERE pp.client_id=ps.client_id
+		AND pp.pay_source_id=ps.pay_source_id
+		AND pt.id=1 AND cl.client_id = $client_id 
+		*/;
+		query(sql);
+		if (S.my.error == '')
+		{
+			return json_response('OK');
+		}
 		return false;
 	}
 	
