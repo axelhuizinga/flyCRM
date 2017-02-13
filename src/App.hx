@@ -208,7 +208,7 @@ class App
 		var users:Array<Dynamic> = App.ist.globals.userMap.users;
 		for (u in users) 
 		{
-			if (u.user_group == 'AGENTS_A' && u.active == 'Y')
+			if (u.user_group.indexOf('AGENT')==0 && u.active == 'Y')
 			{
 				agents.push([u.user ,u.full_name]);		
 			}

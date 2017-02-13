@@ -15,11 +15,7 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-<<<<<<< HEAD
-    <class path="\\AXEL-PC\cunity_lib" />
-=======
     <class path="C:\www\remotion4.me\httpdocs\lib" />
->>>>>>> a32fff50bcc6512f1e0fbc14f62d7da0632f1c7d
     <class path="src" />
     <class path="lib" />
   </classpaths>
@@ -49,11 +45,7 @@
   <!-- Executed before build -->
   <preBuildCommand />
   <!-- Executed after build -->
-<<<<<<< HEAD
-  <postBuildCommand alwaysRun="False">D:\bin\build_sftp.bat $(OutputDir)\$(OutputName)</postBuildCommand>
-=======
   <postBuildCommand alwaysRun="False">C:\bin\build_sftp.bat $(OutputDir)\$(OutputName)</postBuildCommand>
->>>>>>> a32fff50bcc6512f1e0fbc14f62d7da0632f1c7d
   <!-- Other project options -->
   <options>
     <option showHiddenPaths="False" />

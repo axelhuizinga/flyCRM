@@ -283,7 +283,7 @@ class ClientEditor extends Editor
 		sData.typeMap = typeMap;
 		sData.fieldNames = fieldNames;
 		
-		//trace(sData.optionsMap);
+		trace(sData.optionsMap);
 		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
 		if (name == 'pay_history')
