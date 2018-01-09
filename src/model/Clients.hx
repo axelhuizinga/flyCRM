@@ -268,8 +268,6 @@ typedef CustomField =
 		var lead_id = Std.parseInt(q.get('lead_id'));
 		var user:String = S.user;
 		//COPY LEAD TO VICIDIAL_LEAD_LOG + CUSTOM_LOG
-		//return false;
-		//var newStatus:String = q.get('status');
 		if( S.my.query(
 			'INSERT INTO vicidial_lead_log SELECT * FROM (SELECT NULL AS log_id,$lead_id AS lead_id,NOW() AS entry_date) AS ll JOIN (SELECT modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id,$user AS log_user,$ref_id as ref_id FROM `vicidial_list` WHERE `lead_id`=$lead_id)AS vl'
 		))
@@ -295,13 +293,14 @@ typedef CustomField =
 	{
 		trace(q);
 		var client_id:String =  S.my.real_escape_string(q.get('client_id'));
+		var amount:Int = Std.parseInt(q.get('Betrag'));
 		var buchungs_datum = S.my.real_escape_string(q.get('buchungs_datum'));
 		var verwendungszweck:String = S.my.real_escape_string(q.get('verwendungszweck'));
 		var crm_db:String = (q.exists('crm_db') ? S.my.real_escape_string(q.get('crm_db')) : 'fly_crm');
 		var sql:String = comment(unindent, format)
 		/*
 		INSERT IGNORE $crm_db.buchungs_anforderungen
-		SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'SEPA',
+		SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', $amount, '', 'SEPA',
 			'$buchungs_datum',
 		CONCAT('MITGLIEDS-NR. ',ps.client_id),'$verwendungszweck',
 		'','','','','','','',NULL,'neu',

@@ -445,6 +445,7 @@ class View
 			});
 		}
 		//if(J('#clients-menu').length>0 && 
+		trace(Std.string( J('#'+id+'-menu').offset().left - 35 ) +' reloadID:' + reloadID);
 		J('.main-left').width(Std.string( J('#'+id+'-menu').offset().left - 35 ) );
 		trace(Std.string( J('#'+id+'-menu').offset().left - 35 ) +' reloadID:' + reloadID);
 		wait(false);

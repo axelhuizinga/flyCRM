@@ -5,8 +5,10 @@ import haxe.Http;
 import haxe.Json;
 import haxe.Log;
 import haxe.Timer;
+import jQuery.JQuery;
+import jQuery.JQueryStatic;
 import js.Browser;
-import jQuery.*;
+//import jQuery.*;
 import js.jQuery.JHelper.J;
 import js.html.Node;
 import js.Lib;
@@ -126,6 +128,22 @@ class App
 		else
 			J('#$data #info').hide(300, null, function() J('#$data #info').remove());
 	}		
+	
+	public  function logTrace(logMsg:String, file:String = '/var/log/flyCRM/dev.log'):Void
+	{
+		trace(logMsg);
+		var p:Dynamic = {
+			logFile:'/var/log/flyCRM/app.log',
+			user:App.user,
+			log:logMsg
+		};
+		JQueryStatic.post('/flyCRM/formLog2.php', p).done(function() {
+			trace( "log success" );
+		  })
+		  .fail(function() {
+			trace( "error" );
+		  });
+	}
 	
 	@:expose("initApp") 
 	public static function init(config:Dynamic):App

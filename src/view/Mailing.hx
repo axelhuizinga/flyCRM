@@ -27,7 +27,8 @@ class Mailing extends View
 	
 	public function printNewMembers(mID:String):Void
 	{
-		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=PRINTNEW';		
+		var product:String = J('#$mID input[name="product"]:checked').val();
+		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=PRINTNEW&product=$product';		
 		trace(url);
 		J('#$mID #preparing-file-download').show();
 		J('#$mID #success-download').hide();
@@ -61,7 +62,8 @@ class Mailing extends View
 	public function printList(mID:String):Void
 	{
 		var list:String = J('#$mID #printListe').val();
-		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=PRINTLIST&list=' + list.urlEncode();		
+		var product:String = J('#$mID input[name="product"]:checked').val();
+		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=PRINTLIST&list=${list.urlEncode()}&product=$product';// + list.urlEncode();		
 		trace(url);
 		J('#$mID #preparing-file-download').show();
 		J('#$mID #success-download').hide();
@@ -94,7 +96,8 @@ class Mailing extends View
 
 	public function printNewInfos(mID:String):Void
 	{
-		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=S_POST';		
+		var product:String = J('#$mID input[name="product"]:checked').val();
+		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=S_POST&product=$product';		
 		trace(url);
 		J('#$mID #preparing-file-download').show();
 		J('#$mID #success-download').hide();

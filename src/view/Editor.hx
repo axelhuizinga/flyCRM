@@ -35,6 +35,8 @@ class Editor extends View
 	var accountSelector:String;
 	var blzSelector:String;
 	var ibanSelector:String;
+	var maxSaveLoop:Int;
+	
 	public function new(?data:Dynamic)  
 	{
 		super(data);
@@ -143,11 +145,16 @@ class Editor extends View
 			}
 			else
 				val = Reflect.field(cData, f);
-			
+			var shouldDVal = val;
 			cOK = switch(Reflect.field(data.typeMap, f))
 			{
-				case 'RADIO','CHECKBOX':
-					val == overlay.find('[name="$f"]:checked').val();
+				case 'RADIO', 'CHECKBOX':
+					var fData = overlay.find('[name="$f"]:checked').val();
+					if (fData==null) 
+					{
+						fData = '';
+					}
+					val == fData;
 				default:
 					//val == dbData;
 					if (displayFormat != null && displayFormat.indexOf('_') == 0)
@@ -158,14 +165,14 @@ class Editor extends View
 			
 			if (!cOK)
 			{
-				trace('$dbData< oops - $f: >$val< not = >' + overlay.find('[name="$f"]').val() + '<');
-				errors.add('oops - $f: $val not = ' + overlay.find('[name="$f"]').val() + '\r\n');
+				trace('$dbData< oops - $f: >$shouldDVal< not = >' + overlay.find('[name="$f"]').val() + '<');
+				errors.add('oops - $f: $shouldDVal not = ' + overlay.find('[name="$f"]').val() + '<-\r\n');
 				//break;
 			}			
 		}
 		if (errors.length > 0)
 		{
-			trace('edit check failed :(' +errors.toString()  + '<-\r\n');
+			trace('edit check failed :(' +errors.toString()  + '\r\n');
 			var fD:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
 			var fDs:String = '';
 			fD.iter(function(d:FData) fDs += "\n" + d.name + '=>' + d.value);
@@ -338,10 +345,12 @@ class Editor extends View
 		trace(parentView.interactionState);
 		if (parentView.interactionState == 'call')
 		{
+			maxSaveLoop = 3;
 			if (!ready4save())
 			{//	SET WAIT TIMEOUT
 				trace ("have to wait...");
-				Timer.delay(function() save(status), 500);
+				Timer.delay(function() save(status), 1500);
+				maxSaveLoop--;
 				return;				
 			}
 		}
@@ -405,12 +414,12 @@ class Editor extends View
 		{
 			for (f in Reflect.fields(row))
 			{
-				if (Reflect.field(row,f)=='' && Reflect.hasField(fieldDefault, f))
+				if (Reflect.field(row,f)=='' && f != 'period'  && Reflect.hasField(fieldDefault, f))
 					Reflect.setField(row, f, Reflect.field(fieldDefault, f));
 			}
 			
 		}
-		//trace(data);
+		trace(data);
 		//trace(data.typeMap);
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;
 		var rData = { recordings:data.recordings.map(function(rec) {
@@ -429,7 +438,24 @@ class Editor extends View
 			marginLeft:Std.string(oMargin ) + 'px',
 			height:Std.string(mSpace.height - 2 * oMargin - Std.parseFloat(J('#overlay').css('padding-top')) -  Std.parseFloat(J('#overlay').css('padding-bottom'))) + 'px',
 			width:Std.string( J('#'+parentView.vData.id+'-menu').offset().left - 35 ) + 'px'
-		}).animate( { opacity:1 } );
+		}).animate( { opacity:1 }, {
+			done:function (el)
+			{
+				trace(J('#' + parentView.id).find('input[name="period"]').length);
+				var unchecked = true;
+				J('#' + parentView.id).find('input[name="period"]').each(function(i, n){
+					trace(J(n).prop('checked'));
+					if (J(n).prop('checked'))
+					{						
+						unchecked = false;
+					}
+				});
+				if (unchecked)
+				{
+					J('#' + parentView.id).find('button:contains("Einmalspende")').css('color', 'rgb(114,150,100)');
+				}
+			}
+		});
 		trace(mSpace.height + ':' +  2 * oMargin + ':' + Std.parseFloat(J('#overlay').css('padding-top')) + ':' + Std.parseFloat(J('#overlay').css('padding-bottom')));
 		J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());
 		trace(id + ':' + parentView.id + ':' + J('#' + parentView.id +' .scrollbox').length + ':' +   J('#' + parentView.id +' .scrollbox').height());

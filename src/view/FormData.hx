@@ -78,7 +78,9 @@ class FormData
 		var ret: Array<FData> = cast jForm.serializeArray();
 		var checkBoxes = jForm.find('input[type="checkbox"]');
 		var missing:StringMap<Bool> = new StringMap();
-		
+		trace(jForm.length);
+		//trace(ret);
+		App.ist.logTrace(jForm.length + ':' + Std.string(ret));
 		checkBoxes.each(function(i:Int, n:Node) {
 			var checkBox:JQuery = J(n);
 			//trace(checkBox.attr('name') + ':' + checkBox.prop('checked'));
@@ -96,8 +98,8 @@ class FormData
 			{
 				missing.set(checkBox.attr('name'), true);
 			}
-			else
-				missing.set(checkBox.attr('name'), false);
+			//else
+				//missing.set(checkBox.attr('name'), false);
 			//trace(ret);
 		});
 		//trace(ret);
@@ -127,7 +129,7 @@ class FormData
 				missing.set(fd.name, true);
 			}
 		}
-		//trace(ret);
+		trace(ret);
 		ret.push({name:'missing', value:missing});
 		return ret;
 	}
@@ -193,7 +195,7 @@ class FormData
 					if (tDn == 'pay_source.pay_source_state')
 					{
 						if (jForm.find('[name="' + tDn +'"]').prop('checked'))
-							ret.push (tDn + '|IN|active|neu');
+							ret.push (tDn + '|IN|active|new');
 					}
 					else
 					ret.push (tDn + '|' + jForm.find('[name="' + tDn +'"]').val() );

@@ -101,5 +101,13 @@ typedef ClientsData =
 			else
 				J(n).addClass(J(n).data('status')) ;
 		});
+		//	PREFIX T | K PRODUKT ID @ CLIENT_ID
+		J('#' + id + '-list tr[data-entry_list_id]').each(function(i:Int, n:Node)
+		{
+			var entry_list_id:Int = J(n).data('entry_list_id');
+			var prefix:String = (entry_list_id > 1900 && entry_list_id < 3000 ? 'T' : 'K');
+			//trace(J(n).data('$entry_list_id => $prefix'));
+			J(n).find('td[data-name="client_id"]').text(prefix + J(n).attr('id'));
+		});
 	}
 }

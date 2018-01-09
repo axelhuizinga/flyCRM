@@ -125,7 +125,19 @@ class ClientEditor extends Editor
 			case 'pay_erstattung':
 				saveBlock(jNode.closest('#edit-client-erstattung'));
 			case 'pay_history':
-				loadBlock(contextAction);			
+				loadBlock(contextAction);	
+			case 'switch_state':
+				trace(jNode.data('displaystate'));
+				if (jNode.data('displaystate') == 'hidden')
+				{
+					jNode.siblings().show();
+					JQueryStatic.data(jNode.get()[0],'displaystate','visible');
+				}
+				else
+				{
+					JQueryStatic.data(jNode.get()[0],'displaystate','hidden');
+					jNode.siblings().hide();
+				}
 			
 		}
 	}
@@ -134,6 +146,18 @@ class ClientEditor extends Editor
 	{
 		client_id = Std.parseInt(J('#edit-client input[name="client_id"]').val());
 		//trace(jB);
+		var date = jB.find('input[name="buchungs_datum"]').val();
+		var bdJq = jB.find('input[name="buchungs_datum"]');
+		trace(date);
+		trace(bdJq);
+		trace(bdJq.val());
+		if (bdJq.val() == null || bdJq.val() == '')
+		//if (date == null || date == '')
+		{
+			trace('::' + bdJq.attr('placeholder'));
+			//jB.find('input[name="buchungs_datum"]').val(now);
+			bdJq.val(bdJq.attr('placeholder'));
+		}
 		trace(client_id);
 		//jB.find('*').each(function(i, el){trace(el.nodeName); });
 		var p:Array<FData> = FormData.save(jB.find('*'));
@@ -155,7 +179,7 @@ class ClientEditor extends Editor
 					{
 						J(el).val('');
 					});
-					loadBlock('pay_history');
+					//loadBlock('pay_erstattung');
 				}
 			}
 		});		
@@ -202,7 +226,7 @@ class ClientEditor extends Editor
 		var sData:Dynamic = Reflect.field(editData, name);// { h:[] };
 		var dRows:Array<Dynamic> = (sData!=null ? Reflect.field(editData, name).h:[]);
 		trace(name);
-		trace(dRows);
+		//trace(dRows);
 		sData.table = name;
 		optionsMap.agent = App.ist.prepareAgentMap();
 		sData.optionsMap = optionsMap;
@@ -212,6 +236,10 @@ class ClientEditor extends Editor
 		//trace(sData.optionsMap);
 		var oMargin:Int = 8;
 		var mSpace:Rectangle = App.getMainSpace();
+		if (name == 'pay_erstattung')
+		{
+			trace(dRows);
+		}
 		if (name == 'pay_history')
 		{
 			sData = {rows:[],m_ID:editData.clients.h[0].client_id};
@@ -258,7 +286,7 @@ class ClientEditor extends Editor
 			JQueryStatic.template('buchungen', tString);
 			dateSort('Termin', sData.rows);
 			trace(sData);
-			var jTarget:JQuery = J('#${parentView.id} *[data-action="$name"]');
+			var jTarget:JQuery = J('#${parentView.id} *[data-loadblock="$name"]');
 			jTarget.siblings().remove();
 			JQueryStatic.tmpl('buchungen', sData).appendTo(jTarget.parent());	
 		}
@@ -471,7 +499,18 @@ class ClientEditor extends Editor
 		trace(leadID);
 		trace('$id: data-actions:' + J('#' + parentView.id  +' #overlay' + ' *[data-action]').length);
 		J('#' + parentView.id + ' *[data-action]').css({cursor:'pointer'}).click(run);
-		//cMenu.root.accordion("refresh");
+		J('#' + parentView.id + ' *[data-displaystate="hidden"]').each(function(i, el)
+		{
+			J(el).css('width', J(el).width() + 'px');	
+			trace(J(el).data('displaystate'));		
+			J(el).siblings().hide();
+			//J(el).siblings().each(function(i, el){trace(J(el).is(':visible')); });
+		});
+		J('#' + parentView.id + ' *[data-loadblock]').each(function(i, el)
+		{
+			trace(J(el).data('loadblock'));
+			loadBlock(J(el).data('loadblock'));
+		});
 	}
 	
 	static function dateSort(field:String, a:Array<Dynamic>):Array<Dynamic>

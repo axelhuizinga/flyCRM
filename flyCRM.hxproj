@@ -26,16 +26,16 @@
     <option noInlineOnDebug="False" />
     <option mainClass="App" />
     <option enabledebug="False" />
-    <option additional="-dce std&#xA;--macro jQuery.haxe.Config.addPlugin('js.jQuery.Accordion')&#xA;--macro jQuery.haxe.Config.addPlugin('js.jQuery.Template')&#xA;--macro jQuery.haxe.Config.addPlugin('jQuery.Utils')" />
+    <option additional="-dce std&#xA;--macro jQuery.haxe.Config.addPlugin('js.jQuery.Accordion')&#xA;--macro jQuery.haxe.Config.addPlugin('js.jQuery.Template')&#xA;--macro jQuery.haxe.Config.addPlugin('js.jQuery.Utils')" />
   </build>
   <!-- haxelib libraries -->
   <haxelib>
     <library name="jQueryExtern " />
+    <library name="CommentString" />
     <library name="pushstate" />
   </haxelib>
   <!-- Class files to compile (other referenced classes will automatically be included) -->
   <compileTargets>
-    <compile path="src\Main.hx" />
     <compile path="src\App.hx" />
   </compileTargets>
   <!-- Paths to exclude from the Project Explorer tree -->

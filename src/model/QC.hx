@@ -169,18 +169,9 @@ class QC extends Clients
 		var log_id:EitherType < Int, Bool > = false;
 		if (log_id  = saveLog(q))
 		{
+			//SAVE QC DATA ONLY AFTER SUCCESSFUL LOG ENTRY
 			var cTable:String = 'custom_' + q.get('entry_list_id');
 			trace(cTable + ' log_id:' + log_id);
-			/*if (checkOrCreateCustomTable(cTable))
-			{
-				var cLogTable =  cTable + '_log';
-				res = S.my.query(
-					'INSERT INTO $cLogTable SELECT * FROM (SELECT $log_id AS log_id) AS ll JOIN (SELECT * FROM `$cTable`WHERE `lead_id`=$lead_id)AS cl'
-				);
-				trace ('INSERT INTO $cLogTable SELECT * FROM (SELECT $log_id AS log_id) AS ll JOIN (SELECT * FROM `$cTable`WHERE `lead_id`=$lead_id)AS cl ' + S.my.error + '<');
-				if (S.my.error == '')
-				{*/
-			//SAVE QC DATA ONLY AFTER SUCCESSFUL LOG ENTRY
 			var primary_id:String =  S.my.real_escape_string(q.get('primary_id'));
 			var sql:StringBuf  = new StringBuf();
 			sql.add('UPDATE $cTable SET ');
@@ -198,6 +189,7 @@ class QC extends Clients
 				if (val != null)
 				{
 					//TODO: MULTIVAL SELECT OR CHECKBOX
+					if (c == 'period' && val == '') val = "''";
 					values2bind[i++] = (Std.is(val,String) ? val: val[0] );
 					var type:String = dbFieldTypes.get(c);
 					bindTypes += (type.any2bool() ?  type : 's');	
@@ -208,23 +200,26 @@ class QC extends Clients
 			sql.add(' WHERE lead_id=$lead_id');
 			var stmt =  S.my.stmt_init();
 			trace(sql.toString());
+			trace(values2bind);
 			var success:Bool = stmt.prepare(sql.toString());
-			if (!success)
+			if (i>0 && !success)
 			{
 				trace(stmt.error);
 				return false;
 			}
-			success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+			//success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+			success = (i>0 ? untyped __call__('myBindParam', stmt, values2bind, bindTypes):true);
 			trace ('success:' + success);
 			if (success)
 			{
-				success = stmt.execute();
+				success = (i==0 || stmt.execute());
 				if (!success)
 				{
 					trace(stmt.error);
 					return false;
 				}			
-				//CUSTOM SAVED 
+				//CUSTOM SAVED || nothing custom to save?
+				if (i == 0) trace('i:$i custom fields saved???');
 				sql = new StringBuf();
 				var uFields = vicdial_list_fields;
 				uFields.remove(primary_id);
@@ -292,8 +287,8 @@ class QC extends Clients
 					trace(stmt.error);
 					return false;
 				}
-				//trace(' values:' );
-				//trace(values2bind);
+				trace('$i values:' );
+				trace(values2bind);
 				success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
 				trace ('success:' + success);
 				if (success)

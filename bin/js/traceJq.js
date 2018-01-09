@@ -60,7 +60,7 @@ function getEline(e)
 function dumpObject(o, deep){
 	var lastError;
 	try{
-		Throw('');
+		throw('');
 	}
 	catch(e){lastError = e;}
 	dumpObjectE(o, deep, getEline(lastError));
