@@ -1,8 +1,7 @@
 package view;
 
-import jQuery.*;
-import js.jQuery.JHelper.J;
-
+import js.jquery.*;
+import js.jquery.Helper.*;
 using Lambda;
 /**
  * ...

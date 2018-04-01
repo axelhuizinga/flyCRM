@@ -38,6 +38,7 @@ class S
 	public static var host:String;
 	public static var user:String;
 	public static  var db:String;
+	public static  var dbHost:String;
 	public static  var dbUser:String;
 	public static  var dbPass:String;	
 	public static var vicidialUser:String;
@@ -70,7 +71,7 @@ class S
 			return;
 		}
 			
-		my = new MySQLi('127.0.0.1', dbUser, dbPass, db);
+		my = new MySQLi(dbHost, dbUser, dbPass, db);
 		my.set_charset("utf8");
 		//trace(my);
 		var auth:Bool = checkAuth();
@@ -170,12 +171,14 @@ class S
 	}
 	
 	static function __init__() {
-		untyped __call__('require_once', '/srv/www/htdocs/flyCRM/php/functions.php');
 		untyped __call__('require_once', '../../config/flyCRM.db.php');
+		untyped __call__('require_once', 'php/functions.php');
+		untyped __call__('require_once', 'php/loadAstguiclientConf.php');
 		Debug.logFile = untyped __php__("$appLog");
 		edump(Debug.logFile);
 		//Debug.logFile = untyped __var__("GLOBALS","appLog");
 		db = untyped __php__("$VARDB");
+		dbHost = untyped __php__("$VARDB_server");
 		dbUser = untyped __php__("$VARDB_user");
 		dbPass = untyped __php__("$VARDB_pass");		
 		host = Web.getHostName();

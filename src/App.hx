@@ -5,14 +5,10 @@ import haxe.Http;
 import haxe.Json;
 import haxe.Log;
 import haxe.Timer;
-import jQuery.JQuery;
-import jQuery.JQueryStatic;
 import js.Browser;
-//import jQuery.*;
-import js.jQuery.JHelper.J;
 import js.html.Node;
 import js.Lib;
-//import js.Spinner;
+import js.jquery.*;
 import me.cunity.debug.Out;
 import view.Campaigns;
 import view.Clients;
@@ -25,6 +21,7 @@ import view.History;
 import view.QC;
 import view.TabBox;
 import me.cunity.debug.Out;
+import js.jquery.Helper.*;
 using Lambda;
 
 /**
@@ -38,6 +35,8 @@ typedef Rectangle =
 	@:optional var left:Float;
 	@:optional var top:Float;
 }
+
+
 
 class App
 {
@@ -137,7 +136,7 @@ class App
 			user:App.user,
 			log:logMsg
 		};
-		JQueryStatic.post('/flyCRM/formLog2.php', p).done(function() {
+		JQuery.post('/flyCRM/formLog2.php', p).done(function() {
 			trace( "log success" );
 		  })
 		  .fail(function() {

@@ -6,16 +6,16 @@ package view;
  */
 import haxe.ds.StringMap;
 import haxe.Timer;
-import jQuery.*;
-import js.jQuery.JHelper.J;
+import js.jquery.*;
 import view.FormData.FData;
 import js.Browser;
 import App.Rectangle;
 import js.html.Audio;
 import js.html.Node;
 import me.cunity.debug.Out;
+import js.jquery.Helper.*;
+import me.cunity.js.JqueryUI;
 
-using js.JqueryUI;
 using Lambda;
 using Util;
 
@@ -131,11 +131,11 @@ class ClientEditor extends Editor
 				if (jNode.data('displaystate') == 'hidden')
 				{
 					jNode.siblings().show();
-					JQueryStatic.data(jNode.get()[0],'displaystate','visible');
+					js.jquery.JQuery.data(jNode.get()[0],'displaystate','visible');
 				}
 				else
 				{
-					JQueryStatic.data(jNode.get()[0],'displaystate','hidden');
+					js.jquery.JQuery.data(jNode.get()[0],'displaystate','hidden');
 					jNode.siblings().hide();
 				}
 			
@@ -268,7 +268,7 @@ class ClientEditor extends Editor
 				{ 
 					Termin:r.Termin,
 					info:'baID ' + r.buchungsanforderungID,
-					Betrag:r.Betrag,
+					Betrag:(r.Zahlart == 'SEPA' ? r.Betrag*-1:r.Betrag),
 					extra:null
 				});
 			}
@@ -283,12 +283,12 @@ class ClientEditor extends Editor
 					<td>${v.extra}</td>					
 				</tr>
 				{{/each}}";
-			JQueryStatic.template('buchungen', tString);
+			js.jquery.JQuery.template('buchungen', tString);
 			dateSort('Termin', sData.rows);
 			trace(sData);
 			var jTarget:JQuery = J('#${parentView.id} *[data-loadblock="$name"]');
 			jTarget.siblings().remove();
-			JQueryStatic.tmpl('buchungen', sData).appendTo(jTarget.parent());	
+			js.jquery.JQuery.tmpl('buchungen', sData).appendTo(jTarget.parent());	
 		}
 			
 	}

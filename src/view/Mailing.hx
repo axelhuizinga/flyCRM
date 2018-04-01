@@ -1,8 +1,8 @@
 package view;
-import jQuery.*;
-import js.jQuery.JHelper.J;
-import jQuery.JQueryStatic;
+import js.jquery.*;
+import js.jquery.Helper.*;
 import js.Browser;
+import me.cunity.js.jqPlugin.JMore;
 
 using StringTools;
 /**
@@ -32,10 +32,10 @@ class Mailing extends View
 		trace(url);
 		J('#$mID #preparing-file-download').show();
 		J('#$mID #success-download').hide();
-		JQueryStatic.fileDownload(url, {
+		JQuery.fileDownload(url, {
 			successCallback: function(url)
 			{										
-				trace('OK: $url');
+				trace('OK:) $url');
 				J('#$mID #preparing-file-download').hide();
 				J('#$mID #success-download').show();
 			},
@@ -47,12 +47,12 @@ class Mailing extends View
 			}
 		} );
 		return;		
-		var res:String = JQueryStatic.ajax({
+		var res:String = js.jquery.JQuery.ajax({
 			async: false,
 			url:url,
 			dataType:'json'
 		}).responseText;			
-		var json:Dynamic = JQueryStatic.parseJSON(res);
+		var json:Dynamic = js.jquery.JQuery.parseJSON(res);
 		json.id = 'clients';
 		trace(Reflect.fields(json));	
 		trace(json);	
@@ -67,7 +67,7 @@ class Mailing extends View
 		trace(url);
 		J('#$mID #preparing-file-download').show();
 		J('#$mID #success-download').hide();
-		JQueryStatic.fileDownload(url, {
+		JQuery.fileDownload(url, {
 			successCallback: function(url)
 			{										
 				trace('OK: $url');
@@ -82,12 +82,12 @@ class Mailing extends View
 			}
 		} );
 		return;
-		var res:String = JQueryStatic.ajax({
+		var res:String = js.jquery.JQuery.ajax({
 			async: false,
 			url:url,
 			dataType:'json'
 		}).responseText;			
-		var json:Dynamic = JQueryStatic.parseJSON(res);
+		var json:Dynamic = js.jquery.JQuery.parseJSON(res);
 		json.id = 'clients';
 		trace(Reflect.fields(json));	
 		trace(json);	
@@ -102,7 +102,7 @@ class Mailing extends View
 		J('#$mID #preparing-file-download').show();
 		J('#$mID #success-download').hide();
 		//wait(1);
-		JQueryStatic.fileDownload(url, {
+		JQuery.fileDownload(url, {
 			successCallback: function(url)
 			{										
 				trace('OK: $url');

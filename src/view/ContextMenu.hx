@@ -1,18 +1,15 @@
 package view;
 import haxe.ds.StringMap;
 import haxe.Timer;
-import js.jQuery.JHelper.J;
 //import FormData.FData;
-import jQuery.*;
+import js.jquery.*;
 import js.html.Element;
 import js.html.HtmlElement;
 import js.html.Node;
-import js.JqueryUI;
-
+import js.jquery.Helper.*;
 import me.cunity.debug.Out;
 import View;
 
-using js.JqueryUI;
 using Lambda;
 
 //typedef Accordion = Dynamic;
@@ -20,7 +17,7 @@ using Lambda;
 typedef MenuItem =
 {
 	var link:String;
-	var action:jQuery.Event->Void;
+	var action:Event->Void;
 }
 
 typedef ContextMenuData = 
@@ -71,7 +68,8 @@ typedef ContextMenuData =
 		tmp.appendTo(J(data.attach2)) ;
 		//J('#t-' + id).tmpl(data).appendTo(J(data.attach2)) ;
 		createInputs();
-		active = 0;
+		//active = 0;
+		//trace(active);
 		root = J('#' + id).accordion( 
 		{ 
 			active:0,
@@ -83,8 +81,7 @@ typedef ContextMenuData =
 					event.preventDefault();
 				}
 				else
-				{
-					
+				{					
 					activePanel = J(ui.newPanel[0]);
 				}
 			},
@@ -109,7 +106,8 @@ typedef ContextMenuData =
 	
 	public function get_active():Int
 	{
-		return root.accordion('option', 'active');
+		trace(root.accordion('option', 'active'));
+		return cast(root.accordion('option', 'active'),Int);
 	}
 	
 	public function set_active(act:Int):Int
@@ -162,7 +160,7 @@ typedef ContextMenuData =
 	function createInputs():Void
 	{
 		var cData:ContextMenuData = cast vData;
-		var i:Int = 0;
+		//var i:Int = 0;
 		for (aI in cData.items)
 		{
 			//trace(aI.Select);
@@ -175,6 +173,7 @@ typedef ContextMenuData =
 				addInputs(aI.Select, 'Select');
 			}
 		}
+		//trace(cData);
 	}	
 	
 	function create( event:Event, ui ) 

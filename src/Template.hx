@@ -5,7 +5,7 @@ package;
  * @author axel@cunity.me
  */
 
-import jQuery.*;
+import js.jquery.*;
 import jQuery.JHelper.J;
 //import js.JqueryUI;
 import pushstate.PushState;

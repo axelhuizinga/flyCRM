@@ -5,9 +5,9 @@ package view;
  * @author axel@cunity.me
  */
 import haxe.Timer;
-import jQuery.*;
-import js.jQuery.JHelper.J;
+import js.jquery.*;
 import js.html.Element;
+import js.jquery.Helper.*;
 import view.Campaigns;
 
 import View;
@@ -52,7 +52,13 @@ using view.FormData;
 		}
 		if(data.views != null)
 			addViews(data.views);
-		edit = cast views.get(instancePath + '.' + id + '-editor');		
+		try{			
+			edit = cast views.get(instancePath + '.' + id + '-editor');		
+		}
+		catch (ex:Dynamic)
+		{
+			trace(ex);
+		}
 		trace('found editor:' + instancePath + '.' +  id + '-editor :' + edit.vData.id);			
 		init();
 	}

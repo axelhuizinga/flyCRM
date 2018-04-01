@@ -1,10 +1,9 @@
 package view;
 import haxe.Timer;
-import js.jQuery.JHelper;
-import jQuery.*;
-import js.jQuery.JHelper.J;
+import js.jquery.*;
+import js.jquery.Helper.*;
+import me.cunity.js.JHelper.vsprintf;
 
-using js.JqueryUI;
 /**
  * ...
  * @author axel@cunity.me
@@ -24,7 +23,7 @@ using js.JqueryUI;
 		format = data.format;
 		var t:Timer = new Timer(interval);
 		var d:Date = Date.now();
-		template = J('#t-' + id).tmpl( { datetime:JHelper.vsprintf(format, [wochentage[d.getDay()] , d.getDate(), d.getMonth()+1, d.getFullYear(), d.getHours(), d.getMinutes()]) } );
+		template = J('#t-' + id).tmpl( { datetime:vsprintf(format, [wochentage[d.getDay()] , d.getDate(), d.getMonth()+1, d.getFullYear(), d.getHours(), d.getMinutes()]) } );
 		draw();
 		var start:Int = d.getSeconds();
 		if (start == 0)
@@ -42,7 +41,7 @@ using js.JqueryUI;
 	public function draw():Void
 	{
 		var d:Date = Date.now();
-		template.html(JHelper.vsprintf(format, [wochentage[d.getDay()] , d.getDate(), d.getMonth() + 1, d.getFullYear(), d.getHours(), d.getMinutes()]));
+		template.html(vsprintf(format, [wochentage[d.getDay()] , d.getDate(), d.getMonth() + 1, d.getFullYear(), d.getHours(), d.getMinutes()]));
 	}
 	
 }

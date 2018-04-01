@@ -30,8 +30,8 @@ typedef CustomField =
  class Clients extends Model
 {
 	private static var vicdial_list_fields = 'lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,gmt_offset_now,called_since_last_reset,phone_code,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner,entry_list_id'.split(',');		
-	private static var clients_fields = 'client_id,lead_id,creation_date,state,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,old_active'.split(',');	
-	private static var pay_history_fields = 'buchungsanforderungID,Mandat-ID,Betrag,Termin,tracking_status'.split(',');
+	private static var clients_fields = 'client_id,lead_id,creation_date,state,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,anrede,namenszusatz,co_field,storno_grund,birth_date,old_active'.split(',');	
+	private static var pay_history_fields = 'buchungsanforderungID,Mandat-ID,Betrag,Termin,tracking_status,Textschlüssel bzw. Zahlart'.split(',');
 	private static var pay_source_fields = 'pay_source_id,client_id,lead_id,debtor,bank_name,account,blz,iban,sign_date,pay_source_state,creation_date'.split(',');
 	private static var pay_plan_fields = 'pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason'.split(',');
 	private static var booking_fields = ''.split(',');	
@@ -125,13 +125,11 @@ typedef CustomField =
 	
 	public function edit(param:StringMap<Dynamic>):EitherType<String,Bool>
 	{
-		//var entry_list_id:String = param.get('entry_list_id');
-
+		var entry_list_id:String = S.my.real_escape_string(param.get('entry_list_id'));
 		var fieldNames:StringMap<String> = new StringMap();
 		//var typeMap:StringMap<String> = new StringMap();
 		var typeMap:StringMap<String> = ['buchungsanforderungID'=>'HIDDEN','Mandat-ID'=>'TEXT','Betrag'=>'TEXT','Termin'=>'TEXT'];
-		var optionsMap:StringMap<String> = new StringMap();		
-		
+		var optionsMap:StringMap<String> = ['anrede' => 'Frau,Frau\r\nHerr,Herr\r\nFamilie,Familie\r\nFirma,Firma'];//new StringMap();		
 		var eF:StringMap<Array<StringMap<String>>> = getEditorFields();
 		//trace(eF);
 		var keys:Iterator<String> = eF.keys();		
@@ -178,12 +176,13 @@ typedef CustomField =
 				p.set('joincond', param.get('joincond'));
 				p.set('fields', param.get('fields').split(',').map(function(f:String) return (f.indexOf('vicidial_list.') !=0 ? 'vicidial_list.' + f:f)).join(',')
 					+ ',' + tableFields.get(table).map(function(f:String) return table + '.' + f).join(','));
-				p.set('where', 'vicidial_list.lead_id|' + param.get('lead_id'));
+				p.set('where', 'vicidial_list.lead_id|' + Std.parseInt(param.get('lead_id')));
 				editTables.set(table, Lib.hashOfAssociativeArray(doJoin(p, sb, phValues)));
+				trace(editTables);
 			case 'buchungs_anforderungen':
 				p.set('table', 'fly_crm.'+ table);
 				p.set('fields', pay_history_fields.map(function(el:String) return '`$el`').join(','));
-				p.set('where', '`Mandat-ID`|' +  param.get('client_id') + 'K1');
+				p.set('where', '`Mandat-ID`|LIKE|' +  Std.parseInt(param.get('client_id')) + '_1');
 				//var limit = p.get('limit');
 				p.set('limit', '2400');// WE NEED ALL ENTRIES IN THE PAY HISTORY HERE
 				editTables.set('pay_history', Lib.hashOfAssociativeArray(doSelect(p, sb, phValues)));
@@ -193,9 +192,9 @@ typedef CustomField =
 				p.set('table', (table == 'vicidial_list'?table:'fly_crm.'+ table));
 				p.set('fields', tableFields.get(table).join(','));
 				if (table == 'vicidial_list')
-				p.set('where', 'vendor_lead_code|' +  param.get('client_id'));
+				p.set('where', 'vendor_lead_code|' +  Std.parseInt(param.get('client_id')));
 				else
-				p.set('where', 'client_id|' +  param.get('client_id'));
+				p.set('where', 'client_id|' +  Std.parseInt(param.get('client_id')));
 				editTables.set(table, Lib.hashOfAssociativeArray(doSelect(p, sb, phValues)));
 			
 			//trace(p);			
@@ -205,7 +204,8 @@ typedef CustomField =
 		}
 		var recordings:NativeArray = getRecordings(Std.parseInt(param.get('lead_id')));
 		editTables.set('konto_auszug', Lib.hashOfAssociativeArray(cast( new ClientHistory().findClient(
-			["where" => 'reason|AC01 AC04 MD06 MS03,m_ID|' +  param.get('client_id'),"limit"=>150], true),NativeArray)));
+			["where" => 'reason|AC01 AC04 MD06 MS03,m_ID|' +  Std.parseInt(param.get('client_id')),"limit"=>150], true),NativeArray)));
+		//me.cunity.php.NArray.push(, cData);
 		data =  {
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),
 			editData:Lib.associativeArrayOfHash(editTables),
@@ -492,7 +492,7 @@ typedef CustomField =
 	{
 		var clientID = q.get('client_id');
 		var user:String = S.user;
-		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,old_active,$user AS log_user,NULL AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=$clientID');
+		var res:EitherType < MySQLi_Result, Bool > = S.my.query('INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,anrede,namenszusatz,co_field,storno_grund,birth_date,old_active,$user AS log_user,NULL AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=$clientID');
 		if (!res.any2bool())
 		{
 			trace('failed to: INSERT INTO fly_crm.client_log SELECT client_id,lead_id,creation_date,state,pay_obligation,use_email,register_on,register_off,register_off_to,teilnahme_beginn,title,namenszusatz,co_field,storno_grund,birth_date,old_active,$user AS log_user,NULL AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.clients WHERE client_id=$clientID');

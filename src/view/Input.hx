@@ -1,6 +1,6 @@
 package view;
 import haxe.Timer;
-import jQuery.JQueryStatic;
+import js.jquery.*;
 import js.html.XMLHttpRequest;
 
 /**
@@ -63,7 +63,7 @@ class Input
 		//trace(data);
 		//return;
 		loading++;
-		JQueryStatic.post('server.php', data , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
+		js.jquery.JQuery.post('server.php', data , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
 		{
 			//trace(data);
 			callBack(data);

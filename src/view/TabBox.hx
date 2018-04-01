@@ -8,14 +8,11 @@ import js.html.Element;
 import js.html.Node;
 import js.html.XMLHttpRequest;
 import View;
-import jQuery.*;
-import js.jQuery.JHelper.J;
-import js.JqueryUI;
+import js.jquery.*;
 import pushstate.PushState;
+import js.jquery.Helper.*;
 import me.cunity.debug.Out;
 
-
-using js.JqueryUI;
 using Util;
 
 /**
@@ -102,7 +99,7 @@ typedef TabBoxData =
 						{
 							//LOAD TEMPLATE
 							trace('loading templates/' +  J('#$selector').attr('href') + '.html...');
-							JQueryStatic.get('templates/' +  J('#$selector').attr('href') + '.html',function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest){
+							js.jquery.JQuery.get('templates/' +  J('#$selector').attr('href') + '.html',function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest){
 								trace('$textStatus:${xhr.responseURL}' +  xhr.getAllResponseHeaders());
 								if(data.length>0)
 								trace(data.substr(0,100));

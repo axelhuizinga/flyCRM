@@ -233,7 +233,7 @@ class Model
 		var fieldsWithFormat:Array<String> = new Array();
 		var sF:Array<String> = fields.split(',');
 		var dbQueryFormats:StringMap<Array<String>> = Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject((S.conf.get('dbQueryFormats'))));
-		//trace(dbQueryFormats);
+		trace(dbQueryFormats);
 		
 		var qKeys:Array<String> = new Array();
 		var it:Iterator<String> = dbQueryFormats.keys(); 
@@ -248,6 +248,9 @@ class Model
 			{
 				var format:Array<String> = dbQueryFormats.get(f);
 				//trace(format);
+				if (format[0] == 'ALIAS')
+				fieldsWithFormat.push(S.my.real_escape_string( f ) + ' AS ' + format[1]);	
+				else
 				fieldsWithFormat.push(format[0] + '(' + S.my.real_escape_string(f) + ', "' + format[1] + '") AS `' + f + '`');
 			}
 			else

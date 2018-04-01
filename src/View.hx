@@ -6,8 +6,7 @@ import view.Pager;
 import haxe.Timer;
 import js.Browser;
 import js.html.Element;
-import js.jQuery.JHelper.J;
-import jQuery.*;
+import js.jquery.*;
 import js.html.Node;
 import js.html.Rect;
 import js.html.XMLHttpRequest;
@@ -15,12 +14,11 @@ import me.cunity.util.Data;
 import view.ContextMenu;
 import view.Input;
 import view.TabBox;
-
+import js.jquery.Helper.*;
 import me.cunity.debug.Out;
 
 
 using Lambda;
-using js.JqueryUI;
 using Util;
 using me.cunity.util.Data;
 
@@ -320,7 +318,7 @@ class View
 	{
 		//trace(Std.string(p));
 		loading++;
-		JQueryStatic.post(url, p , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
+		js.jquery.JQuery.post(url, p , function(data:Dynamic, textStatus:String, xhr:XMLHttpRequest)
 		{
 			//trace(data);
 			callBack(data);

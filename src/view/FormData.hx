@@ -3,8 +3,8 @@ import haxe.ds.StringMap;
 import haxe.xml.Check.Attrib;
 import js.Browser;
 import js.html.Node;
-import jQuery.JQuery;
-import js.jQuery.JHelper.J;
+import js.jquery.*;
+import js.jquery.Helper.*;
 
 /**
  * ...

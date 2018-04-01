@@ -8,13 +8,13 @@ package view;
 import haxe.ds.StringMap;
 import haxe.Json;
 import haxe.Timer;
-import jQuery.*;
-import js.jQuery.JHelper.J;
+import js.jquery.*;
 import view.FormData.FData;
 import js.Browser;
 import App.Rectangle;
 import js.html.Audio;
 import js.html.Node;
+import js.jquery.Helper.*;
 import me.cunity.debug.Out;
 import me.cunity.js.data.IBAN;
 
@@ -182,7 +182,7 @@ class Editor extends View
 				data:Std.string(data) + '\r\n',
 				errors:errors.toString()  + '\r\n'
 			};
-			JQueryStatic.post('/flyCRM/editorLog.php', content,function(d:Dynamic, s:String, _) { trace(d); trace(s); } ).fail(function() {
+			js.jquery.JQuery.post('/flyCRM/editorLog.php', content,function(d:Dynamic, s:String, _) { trace(d); trace(s); } ).fail(function() {
 				trace( "error" );
 			});
 			
@@ -225,13 +225,13 @@ class Editor extends View
 				Reflect.setField(p, k, eData.data(k));
 			}
 		}
-		trace(p);	
 		leadID = p.lead_id;
 		trace(leadID);
 		p.action = 'edit';
 		//var eFields:Array<String> = vData.fields;
 		//p.fields = parentView.vData.fields.split(',').filter(function(f:String) return (eFields.has(f) ? ;
 		p.fields = (vData.fields != null ? vData.fields : parentView.vData.fields);
+		trace(p);	
 		//cMenu.active    cMenu.getIndexOf(vData.action));
 		cMenu.active = cMenu.getIndexOf(p.action);
 		trace(p.action + ':' + cMenu.active);
@@ -312,7 +312,7 @@ class Editor extends View
 		p.push( { name:'action', value:'check4Update' });
 		p.push( { name:'lead_id', value:leadID } );
 		var amReady:Bool = false;
-		JQueryStatic.ajax({
+		js.jquery.JQuery.ajax({
 			type: 'POST',
 			url: 'server.php',
 			data: p,
