@@ -172,8 +172,8 @@ class S
 	
 	static function __init__() {
 		untyped __call__('require_once', '../../config/flyCRM.db.php');
-		untyped __call__('require_once', 'php/functions.php');
-		untyped __call__('require_once', 'php/loadAstguiclientConf.php');
+		untyped __call__('require_once', '../../crm/functions.php');
+		untyped __call__('require_once', '../../crm/loadAstguiclientConf.php');
 		Debug.logFile = untyped __php__("$appLog");
 		edump(Debug.logFile);
 		//Debug.logFile = untyped __var__("GLOBALS","appLog");

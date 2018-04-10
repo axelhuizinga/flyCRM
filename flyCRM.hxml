@@ -1,0 +1,14 @@
+-lib jQueryExtern 
+-lib CommentString
+-lib pushstate
+-cp ../../lib
+-cp src
+-cp lib
+-js bin/flyCRM.js
+-main App
+-dce std
+--macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.Accordion')
+--macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.DatePicker')
+--macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.Template')
+--macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.Tabs')
+--macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.JMore')

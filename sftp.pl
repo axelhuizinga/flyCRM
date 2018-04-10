@@ -1,8 +1,9 @@
 $conf = {
-	host => '10.11.1.174',
+	host => 'bi4.me',
 	local => 'bin',
-	remote => '/srv/www/htdocs/flyCRM',
+	remote => '/var/www/vhosts/cunity.me/crm.cunity.me/flyCRM',
 	proto => 'sftp',
+	port => '60666',
 	user => 'root'
 };
 1;

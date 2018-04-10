@@ -31,12 +31,13 @@ class Mailing extends View
 		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=PRINTNEW&product=$product';		
 		trace(url);
 		J('#$mID #preparing-file-download').show();
+		J("#error-download").hide();
 		J('#$mID #success-download').hide();
 		JQuery.fileDownload(url, {
 			successCallback: function(url)
 			{										
 				trace('OK:) $url');
-				J('#$mID #preparing-file-download').hide();
+				J('#$mID #preparing-file-download').hide();				
 				J('#$mID #success-download').show();
 			},
 			failCallback: function(responseHtml, url)
@@ -66,6 +67,7 @@ class Mailing extends View
 		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=PRINTLIST&list=${list.urlEncode()}&product=$product';// + list.urlEncode();		
 		trace(url);
 		J('#$mID #preparing-file-download').show();
+		J("#error-download").hide();
 		J('#$mID #success-download').hide();
 		JQuery.fileDownload(url, {
 			successCallback: function(url)
@@ -100,6 +102,7 @@ class Mailing extends View
 		var url:String = '$proto//$host/cgi-bin/mailing.pl?action=S_POST&product=$product';		
 		trace(url);
 		J('#$mID #preparing-file-download').show();
+		J("#error-download").hide();
 		J('#$mID #success-download').hide();
 		//wait(1);
 		JQuery.fileDownload(url, {

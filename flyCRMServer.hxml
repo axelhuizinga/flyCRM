@@ -1,0 +1,8 @@
+-lib CommentString
+-cp //AXEL-PC/cunity_lib
+-cp lib
+-cp src
+-php bin
+-main S
+--php-front server.php
+-dce std
