@@ -36,6 +36,7 @@ class S
 	public static var conf:StringMap<Dynamic>;
 	public static var my:MySQLi;
 	public static var host:String;
+	public static var request_scheme:String;
 	public static var user:String;
 	public static  var db:String;
 	public static  var dbHost:String;
@@ -52,6 +53,7 @@ class S
 		Session.start();
 
 		var pd:Dynamic = Web.getPostData();
+		var now:String = DateTools.format(Date.now(), "%d.%m.%y %H:%M:%S");
 		trace(pd);
 		var params:StringMap<String> = Web.getParams();
 		if (params.get('debug') == '1')
@@ -108,10 +110,21 @@ class S
 			new Model().query("SELECT use_non_latin,webroot_writable,pass_hash_enabled,pass_key,pass_cost,hosted_settings FROM system_settings")
 			);
 		//trace(res + ':' + res.get('pass_hash_enabled'));	
-		if (Lib.hashOfAssociativeArray(cast res.get('0')).get('pass_hash_enabled') == '1')
+		if (true||Lib.hashOfAssociativeArray(cast res.get('0')).get('pass_hash_enabled') == '1')
 		{
 			//TODO: IMPLEMENT ENCRYPTED PASSWORDS;
-			exit('ENCRYPTED PASSWORDS NOT IMPLEMENTED');
+			//exit('ENCRYPTED PASSWORDS NOT IMPLEMENTED');
+			//#function user_authorization($user,$pass,$user_option,$user_update,$bcrypt,$return_hash,$api_call)
+			var auth:String = '';
+			try{
+				auth = untyped __call__('user_authorization',user, pass, '', 1, -1, 1, 0);
+				trace(auth);
+			}
+			catch (ex:Dynamic)
+			{
+				trace(ex);
+			}
+			return auth.indexOf('GOOD') == 0;
 		}
 		
 		//var re
@@ -174,14 +187,16 @@ class S
 		untyped __call__('require_once', '../../config/flyCRM.db.php');
 		untyped __call__('require_once', '../../crm/functions.php');
 		untyped __call__('require_once', '../../crm/loadAstguiclientConf.php');
+		untyped __call__('require_once', '../agc/functions.fix.php');
 		Debug.logFile = untyped __php__("$appLog");
-		edump(Debug.logFile);
+		//edump(Debug.logFile);
 		//Debug.logFile = untyped __var__("GLOBALS","appLog");
 		db = untyped __php__("$VARDB");
 		dbHost = untyped __php__("$VARDB_server");
 		dbUser = untyped __php__("$VARDB_user");
 		dbPass = untyped __php__("$VARDB_pass");		
 		host = Web.getHostName();
+		request_scheme = untyped __php__("$_SERVER['REQUEST_SCHEME']");
 		//trace(host);
 		vicidialUser = untyped __php__("$user");
 		vicidialPass = untyped __php__("$pass");

@@ -204,7 +204,7 @@ typedef CustomField =
 		}
 		var recordings:NativeArray = getRecordings(Std.parseInt(param.get('lead_id')));
 		editTables.set('konto_auszug', Lib.hashOfAssociativeArray(cast( new ClientHistory().findClient(
-			["where" => 'reason|AC01 AC04 MD06 MS03,m_ID|' +  Std.parseInt(param.get('client_id')),"limit"=>150], true),NativeArray)));
+			["where" => 'reason|AC01 AC04 AC06 MD06 MS03,m_ID|' +  Std.parseInt(param.get('client_id')),"limit"=>150], true),NativeArray)));
 		//me.cunity.php.NArray.push(, cData);
 		data =  {
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),

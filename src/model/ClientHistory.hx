@@ -189,9 +189,11 @@ class ClientHistory extends Clients
 				sql.add('UNION ');
 			//### MD06 WIDERSPRUCH DURCH ZAHLER
 			
-			sql.add('(SELECT d, e AS amount, SUBSTR(j,17,8) AS m_ID, z AS IBAN, "MD06" AS reason FROM `konto_auszug` WHERE i LIKE "%MD06 WIDERSPRUCH DURCH ZAHLER%" $cond  LIMIT 0,10000)');
+			sql.add('(SELECT d, e AS amount, SUBSTR(j,17,8) AS m_ID, z AS IBAN, "MD06" AS reason FROM `konto_auszug` 
+			WHERE (i LIKE "%MD06%" OR i LIKE "%AC06%"
+			$cond  LIMIT 0,10000)');
 			sql.add('UNION ');
-			sql.add('(SELECT d, e AS amount, SUBSTR(k, 17, 8) AS m_ID, z AS IBAN, "MD06" AS reason FROM `konto_auszug` WHERE j LIKE "%MD06 WIDERSPRUCH DURCH ZAHLER%" $cond  LIMIT 0, 10000)');		
+			sql.add('(SELECT d, e AS amount, SUBSTR(k, 17, 8) AS m_ID, z AS IBAN, "MD06" AS reason FROM `konto_auszug` WHERE j LIKE "%MD06%" $cond  LIMIT 0, 10000)');		
 		}
 
 		if (reasons.indexOf('MS03') > -1)

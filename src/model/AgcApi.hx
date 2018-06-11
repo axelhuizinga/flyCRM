@@ -34,7 +34,7 @@ class AgcApi extends Model
 	public function external_dial(param:StringMap<String>):EitherType<String,Bool>
 	{
 		//TODO: GET HOST FROM CONFIG OR SYSTEM
-		var url:String = 'http://xpress.mein-dialer.com/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_dial&search=NO&preview=NO&focus=NO&lead_id='
+		var url:String = '${S.request_scheme}://${S.host}/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_dial&search=NO&preview=NO&focus=NO&lead_id='
 		+ param.get('lead_id') + '&agent_user=' + param.get('agent_user');
 		trace(url);
 		var agcResponse:String = Http.requestUrl(url);
@@ -45,8 +45,8 @@ class AgcApi extends Model
 	public function external_hangup(param:StringMap<String>):EitherType<String,Bool>
 	{
 		if(param.get('pause')=='Y')
-			Http.requestUrl('http://xpress.mein-dialer.com/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=PAUSE&agent_user=' + param.get('agent_user'));
-		var url:String = 'http://xpress.mein-dialer.com/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_hangup&value=1&agent_user=' + param.get('agent_user');
+			Http.requestUrl('${S.request_scheme}://${S.host}/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=PAUSE&agent_user=' + param.get('agent_user'));
+		var url:String = '${S.request_scheme}://${S.host}/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_hangup&value=1&agent_user=' + param.get('agent_user');
 		trace(url);
 		var agcResponse:String = Http.requestUrl(url);
 		trace(agcResponse);
@@ -74,7 +74,7 @@ class AgcApi extends Model
 	public function external_status(param:StringMap<String>):EitherType<String,Bool>
 	{
 		var status:String = param.get('dispo');
-		var url = 'http://xpress.mein-dialer.com/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_status&value=$status&agent_user=' + param.get('agent_user');
+		var url = '${S.request_scheme}://${S.host}/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_status&value=$status&agent_user=' + param.get('agent_user');
 		trace(url);
 		var agcResponse:String = Http.requestUrl(url);
 		return json_response(agcResponse.indexOf('SUCCESS') == 0 ? 'OK' : agcResponse);
@@ -84,7 +84,7 @@ class AgcApi extends Model
 	{
 		var state:String = param.get('state');
 		/*var user = param.get('agent_user');
-		var url = 'http://xpress.mein-dialer.com/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=update_fields&agent_user=$user&state=$state' ;
+		var url = '/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=update_fields&agent_user=$user&state=$state' ;
 		trace(url);
 		var agcResponse:String = Http.requestUrl(url);*/
 		var lead_id:Dynamic = Std.parseInt(param.get('lead_id'));
