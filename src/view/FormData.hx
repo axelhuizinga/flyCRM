@@ -129,7 +129,7 @@ class FormData
 				missing.set(fd.name, true);
 			}
 		}
-		trace(ret);
+		//trace(ret);
 		ret.push({name:'missing', value:missing});
 		return ret;
 	}

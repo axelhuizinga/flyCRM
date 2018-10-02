@@ -233,7 +233,7 @@ class Model
 		var fieldsWithFormat:Array<String> = new Array();
 		var sF:Array<String> = fields.split(',');
 		var dbQueryFormats:StringMap<Array<String>> = Lib.hashOfAssociativeArray(Lib.associativeArrayOfObject((S.conf.get('dbQueryFormats'))));
-		trace(dbQueryFormats);
+		//trace(dbQueryFormats);
 		
 		var qKeys:Array<String> = new Array();
 		var it:Iterator<String> = dbQueryFormats.keys(); 

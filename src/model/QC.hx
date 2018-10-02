@@ -243,9 +243,9 @@ class QC extends Clients
 				values2bind[i++] = S.user;
 				bindTypes += 's';
 				sets.push('security_phrase=?');//STORE QC AGENT
-				values2bind[i++] = 'XX';
+				/*values2bind[i++] = 'XX';
 				bindTypes += 's';						
-				sets.push('state=?');//RESTORE SAVING FLAG
+				sets.push('state=?');//RESTORE SAVING FLAG*/
 				if (q.get('status') == 'QCOK' || q.get('status') == 'QCBAD')
 				{//	MOVE INTO MITGLIEDER LISTE (10000) OR QCBAD (1800)
 					var list_id:Int = 10000;
@@ -301,18 +301,16 @@ class QC extends Clients
 					}	
 					else
 					{
+						trace(query('SELECT * FROM asterisk.vicidial_list WHERE lead_id=$lead_id'));
 						return saveLog(q, log_id) != false;
 					}
 				}			
 				return false;
-			}
-		
+			}		
 		}
 		else
 			trace('oops');
-			/*}
-			
-		}*/
+
 		return false;
 	}
 	

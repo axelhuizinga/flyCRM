@@ -7,8 +7,11 @@
 -js bin/flyCRM.js
 -main App
 -dce std
+-debug
 --macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.Accordion')
 --macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.DatePicker')
 --macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.Template')
 --macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.Tabs')
 --macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.JMore')
+
+-cmd C:\bin\build_sftp.bat bin\flyCRM.js

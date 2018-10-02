@@ -368,15 +368,15 @@ class ClientEditor extends Editor
 		J('#' + parentView.id +' .scrollbox').height(J('#' + parentView.id +' #overlay').height());
 	}
 	
-	override public function save(?status:String):Void
+	override public function save(?status:String, maxSaveLoop:Int = 3):Void
 	{
 		trace(parentView.interactionState);
 		if (parentView.interactionState == 'call')
 		{
-			if (!ready4save())
+			if (maxSaveLoop<1 || !ready4save())
 			{//	SET WAIT TIMEOUT
 				trace ("have to wait...");
-					Timer.delay(function() save(status), 500);
+					Timer.delay(function() save(status, --maxSaveLoop), 500);
 				return;				
 			}
 		}		

@@ -28,13 +28,14 @@ class AgcApi extends Model
 	{
 		var lead_id:Dynamic = Std.parseInt(param.get('lead_id'));
 		trace(S.host + ':' + lead_id);
-		return json_response(query('SELECT state FROM vicidial_list WHERE lead_id=$lead_id')[0]);
+		//trace(query('SELECT * FROM vicidial_live_agents WHERE user=$vicidialUser')[0]);
+		return json_response(query('SELECT state, status FROM vicidial_list WHERE lead_id=$lead_id')[0]);
 	}
 	
 	public function external_dial(param:StringMap<String>):EitherType<String,Bool>
 	{
 		//TODO: GET HOST FROM CONFIG OR SYSTEM
-		var url:String = '${S.request_scheme}://${S.host}/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_dial&search=NO&preview=NO&focus=NO&lead_id='
+		var url:String = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_dial&search=NO&preview=NO&focus=NO&lead_id='
 		+ param.get('lead_id') + '&agent_user=' + param.get('agent_user');
 		trace(url);
 		var agcResponse:String = Http.requestUrl(url);
@@ -45,8 +46,8 @@ class AgcApi extends Model
 	public function external_hangup(param:StringMap<String>):EitherType<String,Bool>
 	{
 		if(param.get('pause')=='Y')
-			Http.requestUrl('${S.request_scheme}://${S.host}/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=PAUSE&agent_user=' + param.get('agent_user'));
-		var url:String = '${S.request_scheme}://${S.host}/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_hangup&value=1&agent_user=' + param.get('agent_user');
+			Http.requestUrl('${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=PAUSE&agent_user=' + param.get('agent_user'));
+		var url:String = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_hangup&value=1&agent_user=' + param.get('agent_user');
 		trace(url);
 		var agcResponse:String = Http.requestUrl(url);
 		trace(agcResponse);
@@ -70,11 +71,21 @@ class AgcApi extends Model
 
 		return json_response(agcResponse);		
 	}
+
+	public function external_pause(param:StringMap<String>):EitherType<String,Bool>
+	{
+		var pause:String = param.get('value');
+		var url = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=$pause&agent_user=' + param.get('agent_user');
+		trace(url);
+		var agcResponse:String = Http.requestUrl(url);
+		return json_response(agcResponse.indexOf('SUCCESS') == 0 ? 'OK' : agcResponse);
+	}
+		
 	
 	public function external_status(param:StringMap<String>):EitherType<String,Bool>
 	{
 		var status:String = param.get('dispo');
-		var url = '${S.request_scheme}://${S.host}/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_status&value=$status&agent_user=' + param.get('agent_user');
+		var url = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_status&value=$status&agent_user=' + param.get('agent_user');
 		trace(url);
 		var agcResponse:String = Http.requestUrl(url);
 		return json_response(agcResponse.indexOf('SUCCESS') == 0 ? 'OK' : agcResponse);
@@ -83,8 +94,9 @@ class AgcApi extends Model
 	public function update_fields_x(param:StringMap<String>):EitherType<String,Bool>
 	{
 		var state:String = param.get('state');
+		trace(state);
 		/*var user = param.get('agent_user');
-		var url = '/agc/api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=update_fields&agent_user=$user&state=$state' ;
+		var url = '/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=update_fields&agent_user=$user&state=$state' ;
 		trace(url);
 		var agcResponse:String = Http.requestUrl(url);*/
 		var lead_id:Dynamic = Std.parseInt(param.get('lead_id'));

@@ -8,6 +8,7 @@ import me.cunity.php.db.MySQLi;
 import me.cunity.php.db.MySQLi_Result;
 import me.cunity.php.db.MySQLi_STMT;
 import me.cunity.php.Services_JSON;
+import model.AdminApi;
 import model.AgcApi;
 import model.App;
 import model.Campaigns;
@@ -76,7 +77,7 @@ class S
 		my = new MySQLi(dbHost, dbUser, dbPass, db);
 		my.set_charset("utf8");
 		//trace(my);
-		var auth:Bool = checkAuth();
+		var auth:Bool = checkAuth(params);
 		
 		trace (action + ':' + auth);
 		if (!auth)
@@ -86,7 +87,7 @@ class S
 		}
 		var result:EitherType<String,Bool> = Model.dispatch(params);
 		
-		trace(result);
+		//trace(result);
 		if (!headerSent)
 		{
 			Web.setHeader('Content-Type', 'application/json');
@@ -96,9 +97,15 @@ class S
 
 	}
 	
-	static function checkAuth():Bool
+	static function checkAuth(params:StringMap<String>):Bool
 	{
 		user = Session.get('PHP_AUTH_USER');
+		if (user == null)
+		{
+			var sysLogin:Bool = AdminApi.systemLogin(params);
+			if (sysLogin)
+				return true;
+		}
 		trace(user);
 		if (user == null)
 			return false;
@@ -173,7 +180,7 @@ class S
 	public static function tableFields(table:String, db:String = 'asterisk'): Array<String>
 	{		
 		var res:MySQLi_Result = S.my.query(
-			'SELECT GROUP_CONCAT(COLUMN_NAME) FROM information_schema.columns WHERE table_schema = "$db" AND table_name = "$table";');
+			'SELECT GROUP_CONCAT(COLUMN_NAME ORDER BY ORDINAL_POSITION) FROM information_schema.columns WHERE table_schema = "$db" AND table_name = "$table";');
 		if (res.any2bool() && res.num_rows == 1)
 		{
 			//trace(res.fetch_array(MySQLi.MYSQLI_NUM)[0]);

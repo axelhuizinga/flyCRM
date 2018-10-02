@@ -1,5 +1,4 @@
-bin/php/config/config.private.php
-bin/dokumente
+.tmp.drivedownload
 bin/lib
 sftp.pl
 

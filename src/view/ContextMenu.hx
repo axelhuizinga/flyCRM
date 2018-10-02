@@ -203,21 +203,25 @@ typedef ContextMenuData =
 	public function hangup(editor:Editor, ?onCompletion:Void->Void )
 	{	
 		trace('OK');
+		//api.php?source=test&user=6666&pass=1234&function=update_fields&agent_user=6666&vendor_lead_code=1234567&address1=
+		//var fData:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
 		var p:Dynamic = 
 		{
 			className:'AgcApi',
-			action:'update_fields_x',
+			//className:'Clients',
+			//action:'update_fields_x',
+			action:'external_pause',
 			lead_id:editor.leadID,
-			//agent_user:editor.agent,
-			state:''
+			agent_user:editor.agent,
+			value:'PAUSE'
 		};
 		
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			//trace(data);
 			if (data.response == 'OK') 
 			{//state CLEARED
-				trace('OK state CLEARED');		
-				p = {
+				trace('OK state CLEARED');
+				var p:Dynamic = {
 					className:'AgcApi',
 					action:'external_hangup',
 					lead_id:editor.leadID,
@@ -387,7 +391,7 @@ typedef ContextMenuData =
 			{
 				
 				if (onCompletion != null)
-					onCompletion();
+					Timer.delay(onCompletion, 1500);
 				else
 					parentView.interactionState = 'init';
 			}

@@ -130,7 +130,7 @@ class App
 	
 	public  function logTrace(logMsg:String, file:String = '/var/log/flyCRM/dev.log'):Void
 	{
-		trace(logMsg);
+		//trace(logMsg);
 		var p:Dynamic = {
 			logFile:'/var/log/flyCRM/app.log',
 			user:App.user,

@@ -1,9 +1,9 @@
 $conf = {
-	host => 'bi4.me',
+	host => 'xpress.mein-dialer.com',
 	local => 'bin',
-	remote => '/var/www/vhosts/cunity.me/crm.cunity.me/flyCRM',
+	remote => '/srv/www/htdocs/flyCRM',
 	proto => 'sftp',
-	port => '60666',
+	port => '22',
 	user => 'root'
 };
 1;

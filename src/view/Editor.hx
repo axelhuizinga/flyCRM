@@ -35,7 +35,7 @@ class Editor extends View
 	var accountSelector:String;
 	var blzSelector:String;
 	var ibanSelector:String;
-	var maxSaveLoop:Int;
+	//var maxSaveLoop:Int;
 	
 	public function new(?data:Dynamic)  
 	{
@@ -75,6 +75,7 @@ class Editor extends View
 			if (IBAN.checkIBAN(success.iban))
 			{
 				J('#' + ibanSelector ).val(success.iban);
+				trace(success.iban + ':' + J('#' + ibanSelector ).val());
 				ok2submit(true);
 			}
 		},
@@ -269,6 +270,7 @@ class Editor extends View
 						{
 							//TODO: TEST THE CHANGE FROM ACTION TO ENDACTION
 							if (parentView.interactionState == 'call')
+								//hangup(this);
 								cMenu.hangup(this, function() save(action));
 							else
 								save(action);
@@ -281,6 +283,7 @@ class Editor extends View
 				}
 				else {
 					if (parentView.interactionState == 'call')
+						//hangup(this);
 						cMenu.hangup(this, function() save(action));
 					else
 						save(action);
@@ -304,6 +307,61 @@ class Editor extends View
 				trace(action);
 		}//DONE END ACTION CASE EDIT
 	}
+
+public function hangup(editor:Editor, ?onCompletion:Void->Void )
+	{	
+		trace('OK');
+		//api.php?source=test&user=6666&pass=1234&function=update_fields&agent_user=6666&vendor_lead_code=1234567&address1=
+		var fData:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
+		trace(fData);
+		var p:Dynamic = 
+		{
+			className:'AgcApi',
+			action:'update_fields_x',
+			lead_id:editor.leadID,
+			agent_user:agent
+		};
+		var fd:FData;
+		for (fd in fData)
+		{
+			Reflect.setField(p,fd.name, fd.value);
+		}		
+		trace(p);
+		parentView.loadData('server.php', p, function(data:Dynamic) { 
+			//trace(data);
+			if (data.response == 'OK') 
+			{//state CLEARED
+				//trace('OK state CLEARED');	
+				trace('OK => agent screen updated');	
+				var p:Dynamic = {
+					className:'AgcApi',
+					action:'external_hangup',
+					lead_id:editor.leadID,
+					agent_user:editor.agent
+				};		
+				
+				parentView.loadData('server.php', p, function(data:Dynamic) { 
+					//trace(data);
+					if (data.response == 'OK') 
+					{//HUNG UP - SET DISPO STATUS
+						trace('OK');		
+						//trace(data.choice);	
+						cMenu.setCallStatus(this, onCompletion);
+						//SHOW DISPO CHOICE DIALOG
+						//parentView.interactionState = 'init';
+					}
+					else
+					{
+						App.choice( { header:data.response, id:parentView.id } );
+					}
+				});
+			}
+			else
+			{
+				App.choice( { header:data.response, id:parentView.id } );
+			}	
+		});
+	}
 	
 	function ready4save():Bool
 	{
@@ -321,9 +379,11 @@ class Editor extends View
 				trace(result);
 				try
 				{
-					if (result.response.state == 'XX')
+					//if (result.response.state == 'XX')
+					if (result.response.status != 'INCALL')
 					{
-						trace('OK - XX HAS BEEN RESTORED');
+						trace('OK - CALL ENDED');
+						//trace('OK - XX HAS BEEN RESTORED');
 						amReady = true;
 					}				
 				}
@@ -340,20 +400,22 @@ class Editor extends View
 		return amReady;
 	}
 	
-	public function save(?status:String):Void
+	public function save(?status:String, maxSaveLoop:Int = 3):Void
 	{
 		trace(parentView.interactionState);
+		
 		if (parentView.interactionState == 'call')
 		{
-			maxSaveLoop = 3;
-			if (!ready4save())
+			///parentView.interactionState = 'save';
+						
+			if (maxSaveLoop<1 || !ready4save())
 			{//	SET WAIT TIMEOUT
-				trace ("have to wait...");
-				Timer.delay(function() save(status), 1500);
-				maxSaveLoop--;
+				trace ('have to wait...$maxSaveLoop');
+				Timer.delay(function() save(status, --maxSaveLoop), 1500);
 				return;				
 			}
 		}
+		
 		var p:Array<FData> = FormData.save(J('#' + parentView.id + '-edit-form'));
 		trace(p);
 		p.push( { name:'className', value:parentView.name });
@@ -379,12 +441,14 @@ class Editor extends View
 			}													
 		}
 		//trace(p);
+		Timer.delay(function(){
 		parentView.loadData('server.php', p, function(data:Dynamic) { 
 			trace(data +': ' + (data ? 'Y':'N'));
 			if (data) {
 				editCheck(eData);
 			}
 		});
+		} , 1500);
 	}
 	
 	override public function update(data:Dynamic):Void
@@ -393,7 +457,7 @@ class Editor extends View
 		//primary_id,hidden,
 		agent = data.agent;
 		//trace(data.agent);
-		//trace(data);
+		trace(data);
 		var dataOptions:Dynamic = {};
 		var keys:Array<String> = Reflect.fields(data.optionsMap);
 		for (k in keys)
@@ -409,6 +473,7 @@ class Editor extends View
 		data.typeMap.buchungs_tag = 'TEXT';
 		typeMap = data.typeMap;
 		var dRows:Array<Dynamic> = data.rows;
+		trace(dRows.length);
 		var fieldDefault:Dynamic = data.fieldDefault;
 		for (row in dRows)
 		{
@@ -419,7 +484,7 @@ class Editor extends View
 			}
 			
 		}
-		trace(data);
+		//trace(data);
 		//trace(data.typeMap);
 		var r:EReg = ~/([a-z0-9_-]+.mp3)$/;
 		var rData = { recordings:data.recordings.map(function(rec) {

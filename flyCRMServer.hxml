@@ -3,6 +3,6 @@
 -cp lib
 -cp src
 -php bin
+-D php5
 -main S
---php-front server.php
 -dce std
