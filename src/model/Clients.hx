@@ -768,7 +768,7 @@ class Clients extends Model
 	function checkOrCreateCustomTable(srcTable:String, ?suffix:String='log'):Bool
 	{
 		var newTable:String = S.my.real_escape_string(srcTable + '_' + suffix);
-		//trace('SHOW TABLES LIKE  "$newTable"');
+		trace('SHOW TABLES LIKE  "$newTable"');
 		var res:MySQLi_Result = S.my.query('SHOW TABLES LIKE  "$newTable"');
 		if (res.any2bool() && res.num_rows == 0)
 		{

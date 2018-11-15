@@ -69,5 +69,14 @@ class AdminApi extends Model
 		param.set('limit', '1000');
 		return find(param);
 	}	
-	
+
+		/*
+	 * GET a List of fly_crm storno_grund 
+	 */
+	public function storno_grund(param:StringMap<String>):EitherType<String,Bool>
+	{
+		param.set('table', 'fly_crm.storno_grund');
+		param.set('limit', '1000');
+		return find(param);
+	}	
 }

@@ -163,9 +163,9 @@ class ClientHistory extends Clients
 		{
 			if (first)
 				first = false;			
-			sql.add('(SELECT d, e AS amount, SUBSTR(j,17,8) AS m_ID, z AS IBAN, "AC04" AS reason FROM `konto_auszug` WHERE i LIKE "%AC04 KONTO AUFGELOEST%" $cond  LIMIT 0,10000)');
+			sql.add('(SELECT d, e AS amount, SUBSTR(IF(k LIKE "Mandatsref%",k,j),17,8) AS m_ID, z AS IBAN, "AC04" AS reason FROM `konto_auszug` WHERE i LIKE "%AC04%" $cond  LIMIT 0,10000)');
 			sql.add("\r\nUNION\r\n");
-			sql.add('(SELECT d, e AS amount, SUBSTR(k, 17, 8) AS m_ID, z AS IBAN, "AC04" AS reason FROM `konto_auszug` WHERE j LIKE "%AC04 KONTO AUFGELOEST%" $cond  LIMIT 0, 10000)');			
+			sql.add('(SELECT d, e AS amount, SUBSTR(IF(k LIKE "Mandatsref%",k,j), 17, 8) AS m_ID, z AS IBAN, "AC04" AS reason FROM `konto_auszug` WHERE j LIKE "%AC04%" $cond  LIMIT 0, 10000)');			
 		}
 
 		if (reasons.indexOf('AC01') > -1)
@@ -177,10 +177,10 @@ class ClientHistory extends Clients
 				sql.add("\r\nUNION\r\n");
 			//### AC01 IBAN FEHLERHAFT
 
-			sql.add('(SELECT d, e AS amount, SUBSTR(j,17,8) AS m_ID, z AS IBAN, "AC01" AS reason FROM `konto_auszug` WHERE i LIKE "%AC01 IBAN FEHLERHAFT%" $cond  LIMIT 0,10000)');
+			sql.add('(SELECT d, e AS amount, SUBSTR(IF(k LIKE "Mandatsref%",k,j),17,8) AS m_ID, z AS IBAN, "AC01" AS reason FROM `konto_auszug` WHERE i LIKE "%AC01%" $cond  LIMIT 0,10000)');
 			//sql.add('UNION ');
 			sql.add("\r\nUNION\r\n");
-			sql.add('(SELECT d, e AS amount, SUBSTR(k, 17, 8) AS m_ID, z AS IBAN, "AC01" AS reason FROM `konto_auszug` WHERE j LIKE "%AC01 IBAN FEHLERHAFT%" $cond  LIMIT 0, 10000)');		
+			sql.add('(SELECT d, e AS amount, SUBSTR(IF(k LIKE "Mandatsref%",k,j), 17, 8) AS m_ID, z AS IBAN, "AC01" AS reason FROM `konto_auszug` WHERE j LIKE "%AC01%" $cond  LIMIT 0, 10000)');		
 		}
 
 		if (reasons.indexOf('MD06') > -1)
@@ -192,10 +192,10 @@ class ClientHistory extends Clients
 				sql.add("\r\nUNION\r\n");
 			//### MD06 WIDERSPRUCH DURCH ZAHLER
 			
-			sql.add('(SELECT d, e AS amount, SUBSTR(j,17,8) AS m_ID, z AS IBAN, "MD06" AS reason FROM `konto_auszug` WHERE (i LIKE "%MD06%" OR i LIKE "%AC06%") $cond  LIMIT 0,10000)');
+			sql.add('(SELECT d, e AS amount, SUBSTR(IF(k LIKE "Mandatsref%",k,j),17,8) AS m_ID, z AS IBAN, "MD06" AS reason FROM `konto_auszug` WHERE (i LIKE "%MD06%" OR i LIKE "%AC06%") $cond  LIMIT 0,10000)');
 			//sql.add('UNION ');
 			sql.add("\r\nUNION\r\n");
-			sql.add('(SELECT d, e AS amount, SUBSTR(k, 17, 8) AS m_ID, z AS IBAN, "MD06" AS reason FROM `konto_auszug` WHERE j LIKE "%MD06%" $cond  LIMIT 0, 10000)');		
+			sql.add('(SELECT d, e AS amount, SUBSTR(IF(k LIKE "Mandatsref%",k,j), 17, 8) AS m_ID, z AS IBAN, "MD06" AS reason FROM `konto_auszug` WHERE j LIKE "%MD06%" $cond  LIMIT 0, 10000)');		
 		}
 
 		if (reasons.indexOf('MS03') > -1)
@@ -207,10 +207,10 @@ class ClientHistory extends Clients
 				sql.add("\r\nUNION\r\n");
 			//### MS03 SONSTIGE GRUENDE
 			
-			sql.add('(SELECT d, e AS amount, SUBSTR(j,17,8) AS m_ID, z AS IBAN, "MS03" AS reason FROM `konto_auszug` WHERE i LIKE "%MS03 SONSTIGE GRUENDE%" $cond  LIMIT 0,10000)');
+			sql.add('(SELECT d, e AS amount, SUBSTR(IF(k LIKE "Mandatsref%",k,j),17,8) AS m_ID, z AS IBAN, "MS03" AS reason FROM `konto_auszug` WHERE i LIKE "%MS03%" $cond  LIMIT 0,10000)');
 			//sql.add('UNION ');
 			sql.add("\r\nUNION\r\n");
-			sql.add('(SELECT d, e AS amount, SUBSTR(k, 17, 8) AS m_ID, z AS IBAN, "MS03" AS reason FROM `konto_auszug` WHERE j LIKE "%MS03 SONSTIGE GRUENDE%" $cond  LIMIT 0, 10000)');		
+			sql.add('(SELECT d, e AS amount, SUBSTR(IF(k LIKE "Mandatsref%",k,j), 17, 8) AS m_ID, z AS IBAN, "MS03" AS reason FROM `konto_auszug` WHERE j LIKE "%MS03%" $cond  LIMIT 0, 10000)');		
 		}
 		sql.add(' )_lim $globalCond LIMIT $limit');
 		

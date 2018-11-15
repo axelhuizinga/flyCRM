@@ -79,7 +79,7 @@ class S
 		//trace(my);
 		var auth:Bool = checkAuth(params);
 		
-		trace (action + ':' + auth);
+		trace (action + ' $dbUser:' + auth);
 		if (!auth)
 		{
 			exit('AUTH FAILURE');
@@ -191,9 +191,9 @@ class S
 	}
 	
 	static function __init__() {
-		untyped __call__('require_once', '../../config/flyCRM.db.php');
 		untyped __call__('require_once', '../../crm/functions.php');
 		untyped __call__('require_once', '../../crm/loadAstguiclientConf.php');
+		untyped __call__('require_once', '../../config/flyCRM.db.php');
 		untyped __call__('require_once', '../agc/functions.fix.php');
 		Debug.logFile = untyped __php__("$appLog");
 		//edump(Debug.logFile);
