@@ -56,7 +56,7 @@ class Editor extends View
 	{
 		var iban:String = J('#' + ibanSelector).val();
 		//trace('#' + ibanSelector);
-		//trace(iban);
+		trace(iban + IBAN.checkIBAN(iban));
 		return IBAN.checkIBAN(iban);
 	}
 	

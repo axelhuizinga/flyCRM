@@ -1,9 +1,13 @@
 package model;
+import haxe.Curl;
 import haxe.ds.StringMap;
 import haxe.extern.EitherType;
 import haxe.Http;
 import php.Lib;
 import php.Web;
+import php.Curl.CurlOpt.*;
+import php.Curl;
+import php.Syntax;
 import sys.io.File;
 using Util;
 /**
@@ -15,6 +19,7 @@ class AgcApi extends Model
 	var vicidialUser:String;
 	var vicidialPass:String;
 	var statuses:StringMap<String>;
+	var _serverAddr:String = Syntax.code("$_SERVER['SERVER_ADDR']");
 	
 	public static function create(param:StringMap<String>):EitherType<String,Bool>
 	{
@@ -35,10 +40,12 @@ class AgcApi extends Model
 	public function external_dial(param:StringMap<String>):EitherType<String,Bool>
 	{
 		//TODO: GET HOST FROM CONFIG OR SYSTEM
-		var url:String = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_dial&search=NO&preview=NO&focus=NO&lead_id='
+		//var url:String = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_dial&search=NO&preview=NO&focus=NO&lead_id='
+		var url:String = '${S.request_scheme}://${_serverAddr}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_dial&search=NO&preview=NO&focus=NO&lead_id='
 		+ param.get('lead_id') + '&agent_user=' + param.get('agent_user');
 		trace(url);
-		var agcResponse:String = Http.requestUrl(url);
+		//var agcResponse:String = Http.requestUrl(url);
+		var agcResponse:String = curl_exec(url);
 		trace(agcResponse);
 		return json_response(agcResponse.indexOf('SUCCESS') == 0 ? 'OK' : agcResponse);
 	}
@@ -46,10 +53,13 @@ class AgcApi extends Model
 	public function external_hangup(param:StringMap<String>):EitherType<String,Bool>
 	{
 		if(param.get('pause')=='Y')
-			Http.requestUrl('${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=PAUSE&agent_user=' + param.get('agent_user'));
-		var url:String = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_hangup&value=1&agent_user=' + param.get('agent_user');
+			//Http.requestUrl('${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=PAUSE&agent_user=' + param.get('agent_user'));
+			curl_exec('${S.request_scheme}://${_serverAddr}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=PAUSE&agent_user=' + param.get('agent_user'));
+		//var url:String = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_hangup&value=1&agent_user=' + param.get('agent_user');
+		var url:String = '${S.request_scheme}://${_serverAddr}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_hangup&value=1&agent_user=' + param.get('agent_user');
 		trace(url);
-		var agcResponse:String = Http.requestUrl(url);
+		//var agcResponse:String = Http.requestUrl(url);
+		var agcResponse:String = curl_exec(url);
 		trace(agcResponse);
 		if (agcResponse.indexOf('SUCCESS') == 0)
 		{
@@ -75,9 +85,11 @@ class AgcApi extends Model
 	public function external_pause(param:StringMap<String>):EitherType<String,Bool>
 	{
 		var pause:String = param.get('value');
-		var url = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=$pause&agent_user=' + param.get('agent_user');
+		//var url = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=$pause&agent_user=' + param.get('agent_user');
+		var url = '${S.request_scheme}://${_serverAddr}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_pause&value=$pause&agent_user=' + param.get('agent_user');
 		trace(url);
-		var agcResponse:String = Http.requestUrl(url);
+		//var agcResponse:String = Http.requestUrl(url);
+		var agcResponse:String = curl_exec(url);
 		return json_response(agcResponse.indexOf('SUCCESS') == 0 ? 'OK' : agcResponse);
 	}
 		
@@ -85,9 +97,11 @@ class AgcApi extends Model
 	public function external_status(param:StringMap<String>):EitherType<String,Bool>
 	{
 		var status:String = param.get('dispo');
-		var url = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_status&value=$status&agent_user=' + param.get('agent_user');
+		//var url = '${S.request_scheme}://${S.host}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_status&value=$status&agent_user=' + param.get('agent_user');
+		var url = '${S.request_scheme}://${_serverAddr}/agc/fly_api.php?source=flyCRM&user=$vicidialUser&pass=$vicidialPass&function=external_status&value=$status&agent_user=' + param.get('agent_user');
 		trace(url);
-		var agcResponse:String = Http.requestUrl(url);
+		//var agcResponse:String = Http.requestUrl(url);
+		var agcResponse:String = curl_exec(url);
 		return json_response(agcResponse.indexOf('SUCCESS') == 0 ? 'OK' : agcResponse);
 	}
 	
@@ -106,6 +120,30 @@ class AgcApi extends Model
 		//return json_response(agcResponse.indexOf('SUCCESS') == 0 ? 'OK' : agcResponse);
 	}
 	
-	
-	
+	public static function curl_exec(url:String):String {
+		var ch:String = Curl.init(url);
+		Curl.multi_setopt_array(ch,[
+			CurlOpt.HEADER=>false,
+			CurlOpt.RETURNTRANSFER=>true,
+			CurlOpt.SSL_VERIFYHOST=>false,
+			CurlOpt.SSL_VERIFYPEER=>false
+		]);
+		/*Curl.multi_setopt_array(ch,{
+			CurlOpt.HEADER:false,
+			CurlOpt.RETURNTRANSFER:true,
+			CurlOpt.SSL_VERIFYHOST:false,
+			CurlOpt.SSL_VERIFYPEER:false
+		});		*/
+		var response = Curl.exec(ch);
+		var errno = Curl.errno(ch);
+		if(errno==0)
+		{
+			trace(Curl.getinfo(ch));
+		}
+		else
+		{
+			trace(Curl.error(ch));
+		}
+		return response;
+	}
 }

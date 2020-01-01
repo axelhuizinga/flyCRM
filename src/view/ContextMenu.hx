@@ -316,7 +316,7 @@ typedef ContextMenuData =
 		//var active:Int = get_active();
 		var jNode:JQuery = J(cast( evt.target, Node));
 		action = vData.items[active].action;
-		trace( action + ':' + active); 		
+		trace( action + ':' + active);
 		var contextAction = jNode.data('contextaction');
 		//action = J( evt.target).data('action');
 		trace(action + ':' + contextAction);

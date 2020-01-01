@@ -1,7 +1,7 @@
--lib jQueryExtern 
+#-lib jQueryExtern 
 -lib CommentString
 -lib pushstate
--cp ../../lib
+-cp ../lib
 -cp src
 -cp lib
 -js bin/flyCRM.js
@@ -14,4 +14,4 @@
 --macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.Tabs')
 --macro js.jquery.Config.addPlugin('me.cunity.js.jqPlugin.JMore')
 
--cmd C:\bin\build_sftp.bat bin\flyCRM.js
+

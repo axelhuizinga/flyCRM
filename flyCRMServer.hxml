@@ -1,8 +1,11 @@
 -lib CommentString
--cp //AXEL-PC/cunity_lib
+-lib curl
+-cp ../lib
 -cp lib
 -cp src
 -php bin
--D php5
+#-D php5
 -main S
 -dce std
+#-cmd rsync -rav --size-only -e "ssh -p 666 -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --progress bin/  root@pbx.pitverwaltung.de:/var/www/html/flyCRM
+#scp -P 666 -r /opt/src/flyCRM/bin/* root@pbx.pitverwaltung.de:/var/www/html/flyCRM

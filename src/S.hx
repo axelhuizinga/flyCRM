@@ -113,11 +113,11 @@ class S
 		if (pass == null)
 			return false;
 		//trace(pass);
-		var res:StringMap<String> = Lib.hashOfAssociativeArray(
+		/*var res:StringMap<String> = Lib.hashOfAssociativeArray(
 			new Model().query("SELECT use_non_latin,webroot_writable,pass_hash_enabled,pass_key,pass_cost,hosted_settings FROM system_settings")
 			);
 		//trace(res + ':' + res.get('pass_hash_enabled'));	
-		if (true||Lib.hashOfAssociativeArray(cast res.get('0')).get('pass_hash_enabled') == '1')
+		if (false||Lib.hashOfAssociativeArray(cast res.get('0')).get('pass_hash_enabled') == '1')
 		{
 			//TODO: IMPLEMENT ENCRYPTED PASSWORDS;
 			//exit('ENCRYPTED PASSWORDS NOT IMPLEMENTED');
@@ -132,10 +132,10 @@ class S
 				trace(ex);
 			}
 			return auth.indexOf('GOOD') == 0;
-		}
+		}*/
 		
 		//var re
-		res = Lib.hashOfAssociativeArray(
+		var res = Lib.hashOfAssociativeArray(
 			new Model().query('SELECT count(*) AS cnt FROM vicidial_users WHERE user="$user" and pass="$pass" and user_level > 7 and active="Y"')
 			);
 		//trace(res);
@@ -194,7 +194,7 @@ class S
 		untyped __call__('require_once', '../../crm/functions.php');
 		untyped __call__('require_once', '../../crm/loadAstguiclientConf.php');
 		untyped __call__('require_once', '../../config/flyCRM.db.php');
-		untyped __call__('require_once', '../agc/functions.fix.php');
+		//untyped __call__('require_once', '../agc/functions.fix.php');
 		Debug.logFile = untyped __php__("$appLog");
 		//edump(Debug.logFile);
 		//Debug.logFile = untyped __var__("GLOBALS","appLog");

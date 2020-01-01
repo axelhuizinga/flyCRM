@@ -205,8 +205,10 @@ class Clients extends Model
 			}
 		}
 		var recordings:NativeArray = getRecordings(Std.parseInt(param.get('lead_id')));
-		editTables.set('konto_auszug', Lib.hashOfAssociativeArray(cast( new ClientHistory().findClient(
-			["where" => 'reason|AC01 AC04 AC06 MD06 MS03,m_ID|' +  Std.parseInt(param.get('client_id')),"limit"=>150], true),NativeArray)));
+		var cH:NativeArray = new ClientHistory().findClient(
+			["where" => 'reason|AC01 AC04 AC06 MD06 MS03,m_ID|' +  Std.parseInt(param.get('client_id')),"limit"=>150], true);
+		//S.exit(Type.getClass(cH));
+		editTables.set('konto_auszug', Lib.hashOfAssociativeArray(cH));
 		//me.cunity.php.NArray.push(, cData);
 		data =  {
 			fieldNames:Lib.associativeArrayOfHash(fieldNames),
@@ -341,6 +343,8 @@ class Clients extends Model
 	{
 		var lead_id = Std.parseInt(q.get('lead_id'));
 		var ref_id:EitherType<Int, Bool> = false;
+		var cState:String = q.get('state');
+		q.remove('state');
 		if (ref_id = saveLog(q))
 		{
 			var cTable:String = 'custom_' + q.get('entry_list_id');
@@ -474,7 +478,7 @@ class Clients extends Model
 					return false;
 				}
 				//trace(' values:' );
-				//trace(values2bind);
+				trace(values2bind);
 				success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
 				trace ('success:' + success);
 				if (success)
@@ -485,6 +489,7 @@ class Clients extends Model
 						trace(stmt.error);
 						return false;
 					}		
+					q.set('state',cState);
 					if ( !saveClientData(q))
 					{
 						trace('oops:' + S.my.error);
@@ -578,10 +583,10 @@ class Clients extends Model
 	public function save_pay_plan_log(pay_plan_id:Int, ref_id:Int=0):EitherType<Int, Bool>
 	{
 		var user = S.user;
-		var res:EitherType<MySQLi_Result, Bool> = S.my.query('INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,agency_project,pay_plan_state,pay_method,end_date,end_reason,repeat_date,$user AS log_user,NOW() AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
+		var res:EitherType<MySQLi_Result, Bool> = S.my.query('INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,agency_project,pay_plan_state,pay_method,end_date,end_reason,repeat_date,cycle_start_date,$user AS log_user,NOW() AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
 		if (!res.any2bool())
 		{
-			trace ('Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,repeat_date,$user AS log_user,NOW() AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
+			trace ('Failed to:  INSERT INTO fly_crm.pay_plan_log SELECT pay_plan_id,client_id,creation_date,pay_source_id,target_id,start_day,start_date,buchungs_tag,cycle,amount,product,agent,pay_plan_state,pay_method,end_date,end_reason,repeat_date,cycle_start_date,$user AS log_user,NOW() AS log_date,$ref_id AS ref_id, NULL as log_id FROM fly_crm.pay_plan WHERE pay_plan_id=$pay_plan_id');
 			return false;
 		}
 		return cast S.my.insert_id;

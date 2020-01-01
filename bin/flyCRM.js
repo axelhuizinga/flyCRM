@@ -95,7 +95,7 @@ App.init = $hx_exports["initApp"] = function(config) {
 	}
 	App.basePath = window.location.pathname.split(config.appName)[0] + Std.string(config.appName) + "/";
 	App.ist.globals = { firstLoad : true};
-	App.ist.globals = { };
+	App.ist.globals = {};//optionsMap:new haxe_ds_StringMap() 
 	return App.ist;
 };
 App.getMainSpace = function() {
@@ -118,9 +118,9 @@ App.prototype = {
 	,views: null
 	,logTrace: function(logMsg,file) {
 		if(file == null) {
-			file = "/var/log/flyCRM/dev.log";
+			file = "/var/www/crm/dev.log";
 		}
-		var p = { logFile : "/var/log/flyCRM/app.log", user : App.user, log : logMsg};
+		var p = { logFile : "/var/www/crm/app.log", user : App.user, log : logMsg};
 		$.post("/flyCRM/formLog2.php",p).done(function() {
 			haxe_Log.trace("log success",{ fileName : "App.hx", lineNumber : 140, className : "App", methodName : "logTrace"});
 		}).fail(function() {
@@ -128,6 +128,7 @@ App.prototype = {
 		});
 	}
 	,initUI: function(viewConfigs) {
+		//dumpObject(this.globals.optionsMap,1);
 		var _gthis = this;
 		var _g = 0;
 		while(_g < viewConfigs.length) {
@@ -144,6 +145,7 @@ App.prototype = {
 					_this.setReserved(key,av);
 				} else {
 					_this.h[key] = av;
+					//_this[key] = av;
 				}
 				haxe_Log.trace("views.set(" + av.instancePath + ")",{ fileName : "App.hx", lineNumber : 191, className : "App", methodName : "initUI"});
 			}
@@ -2189,7 +2191,7 @@ me_cunity_debug_Out.dumpJLayout = function(jQ,recursive,i) {
 		me_cunity_debug_Out.dumpJLayout(jQ.parent(),true,i);
 	}
 };
-me_cunity_debug_Out.dumpObjectRSafe = function(root,recursive,i) {
+window.dumpObjectRSafe = me_cunity_debug_Out.dumpObjectRSafe = function(root,recursive,i) {
 	if(recursive == null) {
 		recursive = false;
 	}
@@ -2207,7 +2209,7 @@ me_cunity_debug_Out.dumpObjectRSafe = function(root,recursive,i) {
 	}
 	me_cunity_debug_Out.dumpObject(oCopy,i);
 };
-me_cunity_debug_Out.dumpObjectTree = $hx_exports["me"]["cunity"]["debug"]["Out"]["dumpObjectTree"] = function(root,recursive,i) {
+window.dumpObjectTree = me_cunity_debug_Out.dumpObjectTree = $hx_exports["me"]["cunity"]["debug"]["Out"]["dumpObjectTree"] = function(root,recursive,i) {
 	if(recursive == null) {
 		recursive = false;
 	}
@@ -2260,7 +2262,7 @@ me_cunity_debug_Out._dumpObjectTree = function(root,parent,recursive,i) {
 		haxe_Log.trace(ex,{ fileName : "Out.hx", lineNumber : 330, className : "me.cunity.debug.Out", methodName : "_dumpObjectTree"});
 	}
 };
-me_cunity_debug_Out.dumpObject = function(ob,i) {
+window.dumpObject = me_cunity_debug_Out.dumpObject = function(ob,i) {
 	var o = ob;
 	var tClass = o == null ? null : js_Boot.getClass(o);
 	var m;
@@ -2397,6 +2399,7 @@ me_cunity_js_data_IBAN.buildIBAN = function(account,bankCode,onSuccess,onError) 
 	return;
 };
 me_cunity_js_data_IBAN.checkIBAN = function(iban) {
+	console.log(iban + ':' + checkIBAN(iban));
 	return checkIBAN(iban);
 };
 var me_cunity_tools_ArrayTools = function() { };
@@ -3174,6 +3177,7 @@ view_Editor.prototype = $extend(View.prototype,{
 	,ibanSelector: null
 	,checkIban: function() {
 		var iban = $("#" + this.ibanSelector).val();
+ haxe_Log.trace("checkIban:" + me_cunity_js_data_IBAN.checkIBAN(iban),{ fileName : "Editor.hx", lineNumber : 59, className : "view.Editor", methodName : "checkIban"});
 		return me_cunity_js_data_IBAN.checkIBAN(iban);
 	}
 	,checkAccountAndBLZ: function(ok2submit) {
@@ -3590,6 +3594,10 @@ view_Editor.prototype = $extend(View.prototype,{
 });
 var view_ClientEditor = function(data) {
 	view_Editor.call(this,data);
+	dumpObjectRSafe(data,1);
+	dumpObject({ClientEditor:'data=>instance'},1)
+	dumpObjectRSafe(this,1);
+	dumpObjectRSafe(this.vData,1);
 	this.accountSelector = "pay_source-form input[name^='account']";
 	this.blzSelector = "pay_source-form input[name^='blz']";
 	this.ibanSelector = "pay_source-form input[name^='iban']";
@@ -3690,16 +3698,18 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		evt.preventDefault();
 		var jNode = $(js_Boot.__cast(evt.target , Node));
 		var contextAction = jNode.data("action");
-		haxe_Log.trace(this.action + ":" + contextAction,{ fileName : "ClientEditor.hx", lineNumber : 122, className : "view.ClientEditor", methodName : "run"});
+		//haxe_Log.trace(this.action + ":" + contextAction,{ fileName : "ClientEditor.hx", lineNumber : 122, className : "view.ClientEditor", methodName : "run"});
 		switch(contextAction) {
 		case "pay_erstattung":
+			if(this.action == null)
+				return;
 			this.saveBlock(jNode.closest("#edit-client-erstattung"));
 			break;
 		case "pay_history":
 			this.loadBlock(contextAction);
 			break;
 		case "switch_state":
-			haxe_Log.trace(jNode.data("displaystate"),{ fileName : "ClientEditor.hx", lineNumber : 130, className : "view.ClientEditor", methodName : "run"});
+			//haxe_Log.trace(jNode.data("displaystate"),{ fileName : "ClientEditor.hx", lineNumber : 130, className : "view.ClientEditor", methodName : "run"});
 			if(jNode.data("displaystate") == "hidden") {
 				jNode.siblings().show();
 				$.data(jNode.get()[0],"displaystate","visible");
@@ -3785,21 +3795,22 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 	,loadBlock: function(name) {
 		haxe_Log.trace(name,{ fileName : "ClientEditor.hx", lineNumber : 225, className : "view.ClientEditor", methodName : "loadBlock"});
 		var sData = Reflect.field(this.editData,name);
-		var dRows = sData != null ? Reflect.field(this.editData,name).h : [];
-		haxe_Log.trace(name,{ fileName : "ClientEditor.hx", lineNumber : 228, className : "view.ClientEditor", methodName : "loadBlock"});
+		var dRows = sData != null ? Reflect.field(this.editData,name).data : [];
+		haxe_Log.trace(dRows,{ fileName : "ClientEditor.hx", lineNumber : 228, className : "view.ClientEditor", methodName : "loadBlock"});
 		sData.table = name;
 		this.optionsMap.agent = App.ist.prepareAgentMap();
 		sData.optionsMap = this.optionsMap;
 		sData.typeMap = this.typeMap;
 		sData.fieldNames = this.fieldNames;
-		var oMargin = 8;
-		var mSpace = App.getMainSpace();
+		//var oMargin = 8;
+		//var mSpace = App.getMainSpace();
 		if(name == "pay_erstattung") {
 			haxe_Log.trace(dRows,{ fileName : "ClientEditor.hx", lineNumber : 241, className : "view.ClientEditor", methodName : "loadBlock"});
 		}
 		if(name == "pay_history") {
-			sData = { rows : [], m_ID : this.editData.clients.h[0].client_id};
-			var kontoRows = Reflect.field(this.editData,"konto_auszug").h;
+			sData = { rows : [], m_ID : this.editData.clients.data[0].client_id};
+			//dumpObject(this.editData.konto_auszug);
+			var kontoRows = Reflect.field(this.editData,"konto_auszug").data;
 			var _g = 0;
 			while(_g < kontoRows.length) {
 				var r = kontoRows[_g];
@@ -3833,9 +3844,17 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 			if(sData.rows.length == 0) {
 				return;
 			}
-			var tString = "{{each(i,v) $data.rows}}\t\t\t\t\r\n\t\t\t\t<tr class=\"${((i+1) % 2 ? 'odd' : 'even')}\">\r\n\t\t\t\t\t<td>${display(displayFormats['Termin'],v.Termin)} </td>\r\n\t\t\t\t\t<td>${display(displayFormats['Betrag'],v.Betrag)}</td>\r\n\t\t\t\t\t<td>${v.info}</td>\r\n\t\t\t\t\t<td>${v.extra}</td>\t\t\t\t\t\r\n\t\t\t\t</tr>\r\n\t\t\t\t{{/each}}";
+			var tString = "{{each(i,v) $data.rows}}\t\t\t\t\r\n\t\t\t\t<tr class=\"${((i+1) % 2 ? 'odd' : 'even')}\">\r\n\t\t\t\t\t<td>${v.Termin}</td>\r\n\t\t\t\t\t<td>${v.Betrag}</td>\r\n\t\t\t\t\t<td>${v.info}</td>\r\n\t\t\t\t\t<td>${v.extra}</td>\t\t\t\t\t\r\n\t\t\t\t</tr>\r\n\t\t\t\t{{/each}}";
 			$.template("buchungen",tString);
-			view_ClientEditor.dateSort("Termin",sData.rows);
+			
+			sData.rows = dateSort("Termin",sData.rows).map(function(v){
+				return{
+					Termin:display(displayFormats['d'],v.Termin),
+					Betrag:display(displayFormats['amount'],v.Betrag),
+					info:v.info,
+					extra:v.extra
+				}
+			});
 			haxe_Log.trace(sData,{ fileName : "ClientEditor.hx", lineNumber : 288, className : "view.ClientEditor", methodName : "loadBlock"});
 			var jTarget = $("#" + this.parentView.id + " *[data-loadblock=\"" + name + "\"]");
 			jTarget.siblings().remove();
@@ -3845,6 +3864,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 	,showScreen: function(name) {
 		if(this.activeScreen != null) {
 			var _this = this.screens;
+			//dumpObjectRSafe(_this,1);
 			var key = this.activeScreen;
 			var s = __map_reserved[key] != null ? _this.getReserved(key) : _this.h[key];
 			s.animate({ opacity : 0.0},300,null,function() {
@@ -3852,7 +3872,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 			});
 		}
 		var sData = Reflect.field(this.editData,name);
-		var dRows = sData != null ? Reflect.field(this.editData,name).h : [];
+		var dRows = sData != null ? Reflect.field(this.editData,name).data : [];
 		haxe_Log.trace(name,{ fileName : "ClientEditor.hx", lineNumber : 306, className : "view.ClientEditor", methodName : "showScreen"});
 		haxe_Log.trace(dRows,{ fileName : "ClientEditor.hx", lineNumber : 307, className : "view.ClientEditor", methodName : "showScreen"});
 		sData.table = name;
@@ -3860,12 +3880,12 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		sData.optionsMap = this.optionsMap;
 		sData.typeMap = this.typeMap;
 		sData.fieldNames = this.fieldNames;
-		haxe_Log.trace(sData.optionsMap,{ fileName : "ClientEditor.hx", lineNumber : 314, className : "view.ClientEditor", methodName : "showScreen"});
+		//haxe_Log.trace(sData.optionsMap,{ fileName : "ClientEditor.hx", lineNumber : 314, className : "view.ClientEditor", methodName : "showScreen"});
 		var oMargin = 8;
 		var mSpace = App.getMainSpace();
 		if(name == "pay_history") {
-			sData = { rows : [], m_ID : this.editData.clients.h[0].client_id};
-			var kontoRows = Reflect.field(this.editData,"konto_auszug").h;
+			sData = { rows : [], m_ID : this.editData.clients.data[0].client_id};
+			var kontoRows = Reflect.field(this.editData,"konto_auszug").data;
 			var _g = 0;
 			while(_g < kontoRows.length) {
 				var r = kontoRows[_g];
@@ -3898,7 +3918,9 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 			}
 			view_ClientEditor.dateSort("Termin",sData.rows);
 			var _this1 = this.screens;
-			var value = $("#t-pay-history-editor").tmpl(sData).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null ? "null" : "" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - parseFloat($("#overlay").css("padding-top")) - parseFloat($("#overlay").css("padding-bottom"))) + "px", width : Std.string($("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
+			//dumpObject(_this1,1);, width : Std.string($("#clients-menu").offset().left - 35) + "px"
+			//dumpObject(sData,1);
+			var value = $("#t-pay-history-editor").tmpl(sData).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null ? "null" : "" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - parseFloat($("#overlay").css("padding-top")) - parseFloat($("#overlay").css("padding-bottom"))) + "px"}).animate({ opacity : 1});
 			if(__map_reserved[name] != null) {
 				_this1.setReserved(name,value);
 			} else {
@@ -3906,7 +3928,8 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 			}
 		} else {
 			var _this2 = this.screens;
-			var value1 = $("#t-pay-editor").tmpl(sData).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null ? "null" : "" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - parseFloat($("#overlay").css("padding-top")) - parseFloat($("#overlay").css("padding-bottom"))) + "px", width : Std.string($("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
+			//dumpObject(sData,1);, width : Std.string($("#clients-menu").offset().left - 35) + "px"
+			var value1 = $("#t-pay-editor").tmpl(sData).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin) + "px", marginLeft : (oMargin == null ? "null" : "" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - parseFloat($("#overlay").css("padding-top")) - parseFloat($("#overlay").css("padding-bottom"))) + "px"}).animate({ opacity : 1});
 			if(__map_reserved[name] != null) {
 				_this2.setReserved(name,value1);
 			} else {
@@ -3975,7 +3998,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		this.parentView.wait(false);
 		this.editData = data.editData;
 		haxe_Log.trace(data.fieldNames,{ fileName : "ClientEditor.hx", lineNumber : 434, className : "view.ClientEditor", methodName : "update"});
-		haxe_Log.trace(this.editData.clients.h,{ fileName : "ClientEditor.hx", lineNumber : 435, className : "view.ClientEditor", methodName : "update"});
+		//haxe_Log.trace(this.editData.clients,{ fileName : "ClientEditor.hx", lineNumber : 435, className : "view.ClientEditor", methodName : "update"});
 		this.agent = data.agent;
 		this.screens = new haxe_ds_StringMap();
 		var dataOptions = { };
@@ -4006,16 +4029,17 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		var recordings = $("#t-" + this.parentView.id + "-recordings").tmpl(rData);
 		this.cMenu.activePanel.find("form").append(recordings);
 		var oMargin = 8;
-		var mSpace = App.getMainSpace();
-		haxe_Log.trace(data.editData.pay_plan.h[0].agent,{ fileName : "ClientEditor.hx", lineNumber : 465, className : "view.ClientEditor", methodName : "update"});
-		haxe_Log.trace(data.userMap.a.find(function(uM) {
-			return uM.user == data.editData.pay_plan.h[0].agent;
+		var mSpace = App.getMainSpace();//.h[0].agent
+		//haxe_Log.trace(data.editData.pay_plan.data[0].agent,{ fileName : "ClientEditor.hx", lineNumber : 465, className : "view.ClientEditor", methodName : "update"});//data.userMap.a.find(
+		haxe_Log.trace(data.userMap.arr.find(function(uM) {
+			return uM.user == data.editData.pay_plan.data[0].agent;
 		}),{ fileName : "ClientEditor.hx", lineNumber : 467, className : "view.ClientEditor", methodName : "update"});
+		//dumpObject(data.editData.clients, 1);
 		this.overlay = this.templ.tmpl(data).appendTo("#" + this.parentView.id).css({ marginTop : Std.string(mSpace.top + oMargin - 2) + "px", marginLeft : (oMargin == null ? "null" : "" + oMargin) + "px", height : Std.string(mSpace.height - 2 * oMargin - parseFloat($("#overlay").css("padding-top")) - parseFloat($("#overlay").css("padding-bottom"))) + "px", width : Std.string($("#clients-menu").offset().left - 35) + "px"}).animate({ opacity : 1});
 		haxe_Log.trace(this.parentView.id + ":" + $("#" + this.parentView.id + "-edit-form .datepicker").length,{ fileName : "ClientEditor.hx", lineNumber : 476, className : "view.ClientEditor", methodName : "update"});
 		$("#" + this.parentView.id + "-edit-form .datepicker").each(function(i,n) {
 			haxe_Log.trace($(n).attr("name"),{ fileName : "ClientEditor.hx", lineNumber : 479, className : "view.ClientEditor", methodName : "update"});
-			var dateString = _gthis.editData.clients.h[0][$(n).attr("name")];
+			var dateString = _gthis.editData.clients.data[0][$(n).attr("name")];
 			haxe_Log.trace(dateString,{ fileName : "ClientEditor.hx", lineNumber : 482, className : "view.ClientEditor", methodName : "update"});
 			if(dateString != null && dateString != 0 && dateString != "" && dateString != "0000-00-00") {
 				$(n).datepicker({ dateFormat : "dd.mm.yy"}).val(DateTools.format(HxOverrides.strDate(dateString),"%d.%m.%Y"));
@@ -4028,7 +4052,7 @@ view_ClientEditor.prototype = $extend(view_Editor.prototype,{
 		haxe_Log.trace("" + this.id + ": data-actions:" + $("#" + this.parentView.id + " #overlay" + " *[data-action]").length,{ fileName : "ClientEditor.hx", lineNumber : 500, className : "view.ClientEditor", methodName : "update"});
 		$("#" + this.parentView.id + " *[data-action]").css({ cursor : "pointer"}).click($bind(this,this.run));
 		$("#" + this.parentView.id + " *[data-displaystate=\"hidden\"]").each(function(i1,el) {
-			$(el).css("width",$(el).width() + "px");
+			//$(el).css("width",$(el).width() + "px");
 			haxe_Log.trace($(el).data("displaystate"),{ fileName : "ClientEditor.hx", lineNumber : 505, className : "view.ClientEditor", methodName : "update"});
 			$(el).siblings().hide();
 		});
@@ -4183,12 +4207,14 @@ var view_ContextMenu = function(data) {
 	this.parentView.contextMenu = this;
 	this.contextData = data;
 	this.contextData.tableData = new haxe_ds_StringMap();
+	//dumpObject(this.contextData.tableData);
 	haxe_Log.trace(this.id + " heightStyle:" + this.contextData.heightStyle + " attach2:" + Std.string(data.attach2),{ fileName : "ContextMenu.hx", lineNumber : 50, className : "view.ContextMenu", methodName : "new"});
 	if(this.contextData.heightStyle == null) {
 		this.contextData.heightStyle = "auto";
 	}
-	data.optionsMap = App.ist.globals.optionsMap.h;
-	data.typeMap = App.ist.globals.typeMap.h;
+	//dumpObject(App.ist.globals.optionsMap,1);
+	data.optionsMap = App.ist.globals.optionsMap;
+	data.typeMap = App.ist.globals.typeMap;
 	if(this.id == "qc-menu") {
 		data.optionsMap.owner = App.ist.prepareAgentMap();
 		data.typeMap.owner = "SELECT";

@@ -216,6 +216,7 @@ class ClientHistory extends Clients
 		
 		S.my.select_db('fly_crm');
 		var rows:NativeArray = execute(sql.toString(), phValues);
+		trace(dataOnly?'y':'n');
 		if (dataOnly)
 			return rows;
 		data =  {
@@ -223,7 +224,7 @@ class ClientHistory extends Clients
 			page:(param.exists('page') ? Std.parseInt( param.get('page') ) : 1),
 			rows: rows
 		};
-		
+		trace(data);
 		return json_encode();
 	}
 	

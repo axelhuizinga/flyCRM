@@ -2,7 +2,7 @@
 {
 	font-family:verdana,sans;
 	color:#555555;
-	/*font-size: 0.98em;*/
+	/*font-size: 0.98rem;*/
 }
 
 audio
@@ -10,9 +10,10 @@ audio
 /*-moz-border-radius:5px 5px 5px 5px ;
 -webkit-border-radius:5px 5px 5px 5px ;
 border-radius:5px 5px 5px 5px ;*/
--webkit-transform: scale(0.75);
--moz-transform: scale(0.75);
-transform: scale(0.75);
+margin-top: 10px;
+-webkit-transform: scale(1.25);
+-moz-transform: scale(1.25);
+transform: scale(1.25);
 width:250px;
 }
 body,html{
@@ -23,6 +24,7 @@ body,html{
 	overflow:hidden;
 	margin:0;
 	padding:0;
+	font-size: 16px;
 }
 body ul
 {
@@ -40,7 +42,7 @@ li span.pad
 }
 :focus{outline:0;}
 .app{display:none;}
-
+.tRight{text-align: right;}
 div.lpad
 {
 	float: left;
@@ -49,7 +51,7 @@ div.lpad
 }
 .lh32
 {
-	height: 1.9em;
+	height: 1.9rem;
 	position: relative;
 }
 .app-right{
@@ -61,7 +63,12 @@ div.lpad
 	float:right;
 	clear:right;
 }
-
+.rpad select.menu-end-right
+{
+	width:0px;
+	opacity: 0.0;
+	margin:0;
+}
 .right-end-option
 {
 	position: absolute;
@@ -73,6 +80,127 @@ div.lpad
 	margin-right: 3px;
 	width:140px;
 }
+
+/* FLEX TABLE LAYOUT */
+.flex-row-box
+{
+	display: -webkit-flex;
+	display: flex;
+	padding: 0;
+	-webkit-flex-flow: column nowrap;
+	flex-flow:  column nowrap;
+	-webkit-justify-content: flex-start;
+	justify-content: flex-start;
+	/*flex: 1 0 auto;*/
+}
+
+.flex-row-box:nth-child(3n-1)
+{
+	margin-top:1.5rem;
+}
+
+.flex-row
+{
+	display: -webkit-flex;
+	display: flex 1 1 auto;
+	padding: 0.22rem;
+	flex-flow:  row;
+	/* -webkit-justify-content: space-around;flex: 0; */
+	justify-content:stretch;
+	
+}
+
+.main-left-flexrow
+{
+	display: grid;
+	padding: 1.88rem;
+	grid-template-columns: 50% 50%;
+/*	-webkit-flex-flow: row wrap;
+	flex-flow:  row wrap;*/
+	/*-webkit-justify-content: space-around;
+	justify-content:         space-around;
+	-webkit-justify-content: space-between;
+	justify-content:         space-between;
+	align-content: stretch;*/
+}
+
+.main-left-flexrow .flex-item
+{
+	margin:20px;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex: 1 1 auto;
+	flex: 1 1 auto;
+	-webkit-flex-flow: column nowrap;
+	flex-flow:  column nowrap;
+	-webkit-justify-content: space-between;
+	justify-content: start;
+}
+
+.main-left-flexrow .flex-item-cont-s
+{
+	/*padding: 2rem;
+	align-self: flex-start;*/
+	margin: 10px;
+	/*display: -webkit-flex;
+	display: flex;
+  display: -webkit-inline-flex;
+  display: inline-flex;
+	-webkit-flex: flex: 0 1 220px;
+	flex: 0 1 220px;*/
+	/*min-width:  220px;
+	flex: 1 1 auto;*/
+	-webkit-flex-flow: column nowrap;
+	flex-flow:  column nowrap;
+	/*-webkit-justify-content: space-between;
+	justify-content: space-between;	*/
+	overflow: auto;
+}
+
+.flex-item-grow{flex-grow: 1;}
+.flex-item-grow-margin{flex-grow: 1;margin:0 1.1rem;}
+
+.label-col
+{
+	width:11rem;
+	flex: 1 0 auto;
+	padding: 0.15rem 1.1rem;
+}
+
+.input-col
+{
+	/*display: -webkit-flex;  Safari */
+	display: flex;
+	width:20rem;
+	flex: 1 0 auto;
+	justify-content: flex-end;
+	margin-right: 1.1rem;
+	padding:0.15rem 1.1rem;
+}
+
+.input-col-r8 {
+    width: 8rem;
+    text-align: right;
+    padding-right: 0.8rem;
+	 margin-right: 1.1rem;
+	 margin-left: auto;
+}
+
+.i-right{
+	text-align: right;
+}
+
+.input-col-cont
+{
+	/*display: -webkit-flex;  Safari */
+	display: flex;
+	width:20rem;
+	flex: 1 0 auto;
+	justify-content: flex-end;
+	padding:0;
+}
+
+
 
 .main-left
 {
@@ -98,27 +226,27 @@ div.lpad
 }
 .ui-tabs-nav .tabs-header{
 	float:right!important;
-	padding: .5em 1em!important;
+	padding: .5rem 1rem!important;
 }
 .datepicker
 {
-	margin:0px 22px;
-	float: right; 
-	clear: right;
+
+/*	float: right;
+	clear: right;*/
 	text-align:right;
-	/*width:8em;*/
+	/*width:8rem;*/
 }
 .ui-datepicker {
-    width: 11em;
+    width: 11rem;
 	float: none;
-	margin-left: -1em;
+	margin-left: -1rem;
 }
 .ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
-    height: 1.5em;
+    height: 1.5rem;
     overflow: hidden;
     position: absolute;
     top: 0px;
-    width: 1.1em;
+    width: 1.1rem;
 }
 .ui-datepicker .ui-datepicker-prev-hover, .ui-datepicker .ui-datepicker-next-hover {
     top: 1px;
@@ -137,16 +265,16 @@ div.lpad
 }
 .ui-datepicker table {
     border-collapse: collapse;
-    font-size: 0.8em!important;
+    font-size: 0.8rem!important;
 	width:auto;
 	margin: auto;
 }
 .ui-datepicker th {
-    padding: 0.15em 0.15em;
+    padding: 0.15rem 0.15rem;
 }
 .ui-datepicker td a
 {
-	padding: 0.15em 0.11em;
+	padding: 0.15rem 0.11rem;
 }
 .bgBox{
 	top:0;
@@ -155,7 +283,7 @@ div.lpad
 	right:0;
 	position:absolute;
 	/*padding:8px;*/
-	
+
 }
 .ui-tabs-panel>div
 {
@@ -163,11 +291,11 @@ div.lpad
 }
 .ui-tabs .ui-tabs-panel
 {
-	 padding: 0.88em!important;
+	 padding: 0.88rem!important;
 }
 .ui-helper-reset, .ui-widget,
 .ui-tabs-panel table{
-	font-size: 0.88em!important;
+	font-size: 0.88rrem;
 	border-spacing: 0;
 	border-collapse: collapse;
 }
@@ -175,29 +303,33 @@ div.lpad
 .ui-tabs-panel table input[type="text"]{
 	/*border: 0;
 	outline: none;*/
-	font-size: 0.88em;
+	font-size: 0.88rem;
 }
 
-.ui-tabs-panel th
+.ui-tabs-panel th, .ui-tabs-panel caption, .caption
 {
 	background-color: #777;
 	color:#fff;
+	text-align: center;
+	padding: 0.5rem;
 }
-.ui-tabs-panel th,.ui-tabs-panel td
+.ui-tabs-panel th,.ui-tabs-panel td, .ui-tabs-panel caption
 {
-	padding:2px 5px;
+	padding:2px 1rem;
 }
+
+.ui-tabs-panel caption{border-radius: 4.5px 4.5px 0 0;}
 .ui-accordion-header-icon {display: none;}
 /*table {
 	width: 100%;
 }*/
 .ui-datepicker-div *
 {
-	font-size: 0.8em!important;
+	font-size: 0.8rem!important;
 }
 .ui-datepicker .ui-datepicker-title {
-    line-height: 1.3em!important;
-	font-size: 0.8em!important;
+    line-height: 1.3rem!important;
+	font-size: 0.8rem!important;
     text-align: center;
 }
 tr.even{ background-color: #aaa;}
@@ -221,7 +353,7 @@ th:only-child{
 form button{
 	display:table;
 	margin: 2px auto;
-	min-width: 40%;
+	min-width: 80%;
 }
 
 tr.selected
@@ -233,7 +365,7 @@ tr.selected
 	 text-align: left;
 }
 
-#choice-content 
+#choice-content
 {
 	margin:15px auto;
 }
@@ -245,7 +377,7 @@ tr.selected
 #choice-content button
 {
 	width:100%;
-	font-size: 0.8em;
+	font-size: 0.8rem;
 }
 .menuTable
 {
@@ -270,13 +402,17 @@ tr.selected
 {
 	width:100%;
 }
-
+.no_min{
+	min-width: 40%!important;
+	display: inline-block;
+	margin-left: 10px;
+}
 #clients-menu li
 {
-	height: 2em;
+	height: 2rem;
 }
 
-#clients-list tr, .tabContent tr{
+#clients-list tr, .tabContent button, .tabContent .button {
 	cursor: pointer;
 }
 
@@ -311,9 +447,9 @@ tr.selected
 .overlay-left
 {
 	display: block;
-	
+
 	/*width:70%;overflow-x: hidden;*/
-	
+
 	padding: 10px 0px 10px 15px;
 	border-radius: 4.5px;
 }
@@ -323,13 +459,13 @@ tr.selected
 }
 .overlay-left td textarea
 {
-	 width:100%;
+	 width:98%;
 }
-.overlay-left form
+.overlay-left .form
 {
 	display: block;
 	/*overflow-y: scroll;*/
-	padding: 0.88em;
+	padding: 0.88rem;
 }
 .overlay .content
 {
@@ -338,17 +474,17 @@ tr.selected
 	text-align: center;
 	padding-bottom: 100px;
 }
-#overlay input:not([type])
+/*#overlay input:not([type])
 {
-	 width:20em;
-}
+	 width:20rem;
+}*/
 form .error
 {
 	 color: #800000;
 	 /*font-weight: bold;
 	 position: absolute;
-	 height: 1em;
-	 width: 1em;*/
+	 height: 1rem;
+	 width: 1rem;*/
 }
 #choice.overlay
 {
@@ -363,12 +499,12 @@ form .error
 .pager a:link, .pager a:visited
 {
 	 text-decoration: none;
-	 font-weight: bold;	 
+	 font-weight: bold;
 }
 
 .scrollbox
 {
-	overflow: auto;	
+	overflow: auto;
 }
 
 .recordings
@@ -378,7 +514,13 @@ form .error
 
 .recordings .label
 {
-	font-size: 0.8em;
+	font-size: 0.8rem;
+}
+
+.roundborder
+{
+	border: 1px solid grey;
+	border-radius: 5px;
 }
 
 td.nowrap
@@ -386,9 +528,22 @@ td.nowrap
 	 white-space: nowrap;
 }
 
-tr.MNEW td
+
+tr.QCOK td
 {
-	 color: #217e01!important;
+	 color: #D1A104!important;
+}
+tr.QCOKM td
+{
+	 color: #750075!important;
+}
+tr.QCDUP td
+{
+	 color: #ff99ff!important;
+}
+tr.MITGL td
+{
+	 color: #155100!important;
 }
 tr.MDUP td
 {
@@ -398,15 +553,30 @@ tr.MPRINT td
 {
 	 color: #a86602!important;
 }
-tr.QCOK td, tr.QCOKM td
-{
-	 color: #750075!important;
-}
-tr.QCDUP td
-{
-	 color: #ff99ff!important;
-}
 tr.MPASS td
 {
 	 color: #880000!important;
+}
+
+ul.statiColorList{
+	list-style-type: none;
+	max-width: 15rem;
+}
+
+ul.statiColorList li{
+	/*display:   table-cell;*/
+	vertical-align:   middle;
+	margin: 3px 45px 0px 15px;
+	padding: 5px;
+	color:white;
+	font-weight: 500;
+}
+/*Farben*/
+
+.kblau td{
+	color:rgb(40, 40, 122);
+}
+
+.tgreen td{
+	color:rgb(3, 94, 9);
 }

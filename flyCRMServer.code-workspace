@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "SSH FS - pbx.pitverwaltung",
+			"uri": "ssh://pbx.pitverwaltung/"
+		}
+	]
+}

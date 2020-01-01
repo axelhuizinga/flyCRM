@@ -1,0 +1,200 @@
+DATE_FORMAT(`Termin`,"%d.%m.%Y"),`VWZ1`,'Förderbeitrag', 'SchutzengelWerk ',
+IF(VWZ9='K','Die Kinder sagen Danke ', IF(VWZ9='T','Die Tiere sagen Danke ', '')),
+`VWZ5`,`VWZ6`,`VWZ7`,`VWZ8`,`VWZ9`,`buchungsanforderungID`,`tracking_status`,
+DATE_FORMAT(`anforderungs_datum`,"%d.%m.%Y"),`rueck_datum`,`cycle`,`Ref-ID`,`Mandat-ID`,DATE_FORMAT(`Mandat-Datum`,"%d.%m.%Y"),
+`AG Gläubiger-ID`,`Sequenz`,`Übergeordneter Auftraggeber Name` FROM buchungs_anforderungen
+WHERE tracking_status='neu'
+
+AND `Sequenz`='RCUR'
+
+INTO OUTFILE '/srv/www/documents/exports/KINDERHILFE/wieder_buchungen.15.01.19.csv'
+CHARACTER SET 'latin1'
+FIELDS TERMINATED BY ';' LINES TERMINATED BY '
+'
+
+12:01:47 /srv/www/cgi-bin/createBookings.pl:301:{"script":"createBookings.pl","buchungstag":"15","Datum":"23.01.19","info":"Erstbuchungen:4<br>Wiederholungsbuchungen:0<br>2019-01-15 => booking_date:2019-01-15 => buchungs_datum:15.01.19<br>/srv/www/documents/exports/KINDERHILFE/erst_buchungen.15.01.19.csv<br>/srv/www/documents/exports/KINDERHILFE/wieder_buchungen.15.01.19.csv<br>erst_buchungen.15.01.19.csv:4<br>wieder_buchungen.15.01.19.csv:0<br>"}
+12:31:09 /srv/www/cgi-bin/createBookings.pl:83:{"param":{"action":"erzeugeBuchungen","debug":"0","user":"6666","pass":"dial4NICHTS","buchungstag":"15","sid":"aj36hslnota1anp9jv7ktu428d02276iaju8t8qb15fapeuneuv1"},"script":"createBookings.pl","Datum":"23.01.19"}
+12:31:09 /srv/www/cgi-bin/lib/config.pl:48:$VAR1 = {
+          'user' => '6666',
+          'buchungstag' => '15',
+          'sid' => 'aj36hslnota1anp9jv7ktu428d02276iaju8t8qb15fapeuneuv1',
+          'pass' => '***',
+          'debug' => '0',
+          'action' => 'erzeugeBuchungen'
+        };
+
+12:31:09 /srv/www/cgi-bin/createBookings.pl:145:
+	INSERT IGNORE buchungs_anforderungen
+	SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'BASIS',
+	IF(pp.buchungs_tag!='' AND SUBSTR('2019-01-15',9)!=pp.buchungs_tag,
+	IF ( pp.buchungs_tag<DAY('2019-01-15'),
+		CONCAT(SUBSTR(adddate(last_day(CURDATE()), 1),1,8),pp.buchungs_tag),
+		CONCAT(SUBSTR('2019-01-15',1,8),pp.buchungs_tag)
+		),
+	'2019-01-15'),
+	CONCAT('Förderer-NR. ',ps.client_id),'Förderbeitrag',
+	'','',pp.agent,'','','',pp.product,NULL,'neu',
+	CURDATE(),'0000-00-00',
+	pp.cycle,'',
+	CONCAT(pp.client_id,pp.product,'1'), ps.sign_date,'DE28ZZZ00001362509','FRST', ''
+	FROM pay_source AS ps, pay_target AS pt, pay_plan AS pp
+	INNER JOIN clients cl ON cl.client_id=pp.client_id
+	WHERE  `pay_source_state`!='passive' 
+	AND pp.pay_plan_state!='passive'
+	AND (pp.product='K' OR pp.product='T')
+	AND pp.client_id=ps.client_id
+	AND pp.start_day='15'
+	AND pp.pay_source_id=ps.pay_source_id
+    AND pt.id=IF(pp.product='T',3,1)
+	AND cl.state='active'
+	AND (cl.register_off_to='0000-00-00' OR cl.register_off_to>'2019-01-15')
+	AND (pp.`start_date`='2019-01-15')
+
+12:31:09 /srv/www/cgi-bin/createBookings.pl:287:
+	INSERT IGNORE buchungs_anforderungen
+	SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'BASIS',
+	IF(pp.buchungs_tag!='' AND SUBSTR('2019-01-15',9)!=pp.buchungs_tag,
+	IF ( pp.buchungs_tag<DAY('2019-01-15'),
+		CONCAT(SUBSTR(adddate(last_day(CURDATE()), 1),1,8),pp.buchungs_tag),
+		CONCAT(SUBSTR('2019-01-15',1,8),pp.buchungs_tag)
+		),
+	'2019-01-15'),
+	CONCAT('Förderer-NR. ',ps.client_id),'Förderbeitrag',
+	'','',pp.agent,'','','',pp.product,NULL,'neu',
+	CURDATE(),'0000-00-00',
+	pp.cycle,'',
+	CONCAT(pp.client_id,pp.product,'1'), ps.sign_date,'DE28ZZZ00001362509','FRST', ''
+	FROM pay_source AS ps, pay_target AS pt, pay_plan AS pp
+	INNER JOIN clients cl ON cl.client_id=pp.client_id
+	WHERE  `pay_source_state`!='passive' 
+	AND pp.pay_plan_state!='passive'
+	AND (pp.product='K' OR pp.product='T')
+	AND pp.client_id=ps.client_id
+	AND pp.start_day='15'
+	AND pp.pay_source_id=ps.pay_source_id
+    AND pt.id=IF(pp.product='T',3,1)
+	AND cl.state='active'
+	AND (cl.register_off_to='0000-00-00' OR cl.register_off_to>'2019-01-15')
+	AND (pp.`start_date`='2019-01-15')
+
+12:31:09 /srv/www/cgi-bin/createBookings.pl:149:Erstbuchungen:0
+
+12:31:09 /srv/www/cgi-bin/createBookings.pl:155:INSERT IGNORE buchungs_anforderungen
+
+
+(SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'BASIS',
+IF(pp.buchungs_tag!='' AND SUBSTR('2019-01-15',9)!=pp.buchungs_tag,
+	IF ( pp.buchungs_tag<DAY('2019-01-15'),
+		CONCAT(SUBSTR(adddate(last_day(CURDATE()), 1),1,8),pp.buchungs_tag),
+		CONCAT(SUBSTR('2019-01-15',1,8),pp.buchungs_tag)
+		),
+	'2019-01-15'),
+CONCAT('Förderer-NR. ',ps.client_id),'Förderbeitrag',
+'','',pp.agent,'','','',pp.product,NULL,'neu',
+CURDATE(),'0000-00-00',
+pp.cycle,'',
+CONCAT(pp.client_id,pp.product,'1'), ps.sign_date, pt.creditor_id,'RCUR', ''
+FROM pay_source AS ps,  pay_plan AS pp
+INNER JOIN clients cl ON cl.client_id=pp.client_id
+INNER JOIN pay_target AS pt
+ON pt.id=pp.target_id
+WHERE `pay_source_state`!='passive'
+AND pp.pay_plan_state='active'
+AND pp.cycle='monthly'
+AND (pp.product='K' OR pp.product='T')
+AND pp.start_day='15'
+AND pp.start_date<'2019-01-15'
+AND pp.client_id=ps.client_id
+AND pp.pay_source_id=ps.pay_source_id
+AND cl.state='active'
+AND (cl.register_off_to='0000-00-00' OR cl.register_off_to>'2019-01-15') LIMIT 10000)
+
+UNION
+
+(SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'BASIS',
+IF(pp.buchungs_tag!='' AND SUBSTR('2019-01-15',9)!=pp.buchungs_tag,
+	IF ( pp.buchungs_tag<DAY('2019-01-15'),
+		CONCAT(SUBSTR(adddate(last_day(CURDATE()), 1),1,8),pp.buchungs_tag),
+		CONCAT(SUBSTR('2019-01-15',1,8),pp.buchungs_tag)
+		),
+	'2019-01-15'),
+CONCAT('Förderer-NR. ',ps.client_id),'Förderbeitrag',
+'','',pp.agent,'','','',pp.product,NULL,'neu',
+CURDATE(),'0000-00-00',
+pp.cycle,'',
+CONCAT(pp.client_id,pp.product,'1'), ps.sign_date, pt.creditor_id,'RCUR', ''
+FROM pay_source AS ps,  pay_plan AS pp
+INNER JOIN clients cl ON cl.client_id=pp.client_id
+INNER JOIN pay_target AS pt
+ON pt.id=pp.target_id
+WHERE `pay_source_state`!='passive'
+AND pp.pay_plan_state='active'
+AND pp.cycle='quarterly' AND MOD(TIMESTAMPDIFF(MONTH, pp.`start_date`, '2019-01-15'),3)=0 
+AND (pp.product='K' OR pp.product='T')
+AND pp.start_day='15'
+AND pp.start_date<'2019-01-15'
+AND pp.client_id=ps.client_id
+AND pp.pay_source_id=ps.pay_source_id
+AND cl.state='active'
+AND (cl.register_off_to='0000-00-00' OR cl.register_off_to>'2019-01-15') LIMIT 10000)
+
+UNION
+
+(SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'BASIS',
+IF(pp.buchungs_tag!='' AND SUBSTR('2019-01-15',9)!=pp.buchungs_tag,
+	IF ( pp.buchungs_tag<DAY('2019-01-15'),
+		CONCAT(SUBSTR(adddate(last_day(CURDATE()), 1),1,8),pp.buchungs_tag),
+		CONCAT(SUBSTR('2019-01-15',1,8),pp.buchungs_tag)
+		),
+	'2019-01-15'),
+CONCAT('Förderer-NR. ',ps.client_id),'Förderbeitrag',
+'','',pp.agent,'','','',pp.product,NULL,'neu',
+CURDATE(),'0000-00-00',
+pp.cycle,'',
+CONCAT(pp.client_id,pp.product,'1'), ps.sign_date, pt.creditor_id,'RCUR', ''
+FROM pay_source AS ps,  pay_plan AS pp
+INNER JOIN clients cl ON cl.client_id=pp.client_id
+INNER JOIN pay_target AS pt
+ON pt.id=pp.target_id
+WHERE `pay_source_state`!='passive'
+AND pp.pay_plan_state='active'
+AND pp.cycle='semiannual' AND MOD(TIMESTAMPDIFF(MONTH, pp.`start_date`, '2019-01-15'),6)=0
+AND (pp.product='K' OR pp.product='T')
+AND pp.start_day='15'
+AND pp.start_date<'2019-01-15'
+AND pp.client_id=ps.client_id
+AND pp.pay_source_id=ps.pay_source_id
+AND cl.state='active'
+AND (cl.register_off_to='0000-00-00' OR cl.register_off_to>'2019-01-15') LIMIT 10000)
+
+UNION
+
+(SELECT pt.name, pt.iban, pt.bic, ps.debtor, '', '', '',  ps.iban, '', pp.amount, '', 'BASIS',
+IF(pp.buchungs_tag!='' AND SUBSTR('2019-01-15',9)!=pp.buchungs_tag,
+	IF ( pp.buchungs_tag<DAY('2019-01-15'),
+		CONCAT(SUBSTR(adddate(last_day(CURDATE()), 1),1,8),pp.buchungs_tag),
+		CONCAT(SUBSTR('2019-01-15',1,8),pp.buchungs_tag)
+		),
+	'2019-01-15'),
+CONCAT('Förderer-NR. ',ps.client_id),'Förderbeitrag',
+'','',pp.agent,'','','',pp.product,NULL,'neu',
+CURDATE(),'0000-00-00',
+pp.cycle,'',
+CONCAT(pp.client_id,pp.product,'1'), ps.sign_date, pt.creditor_id,'RCUR', ''
+FROM pay_source AS ps,  pay_plan AS pp
+INNER JOIN clients cl ON cl.client_id=pp.client_id
+INNER JOIN pay_target AS pt
+ON pt.id=pp.target_id
+WHERE `pay_source_state`!='passive'
+AND pp.pay_plan_state='active'
+AND pp.cycle='annual' AND MOD(TIMESTAMPDIFF(MONTH, pp.`start_date`, '2019-01-15'),12)=0
+AND (pp.product='K' OR pp.product='T')
+AND pp.start_day='15'
+AND pp.start_date<'2019-01-15'
+AND pp.client_id=ps.client_id
+AND pp.pay_source_id=ps.pay_source_id
+AND cl.state='active'
+AND (cl.register_off_to='0000-00-00' OR cl.register_off_to>'2019-01-15') LIMIT 10000)
+
+
+
