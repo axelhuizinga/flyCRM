@@ -9,6 +9,7 @@ import me.cunity.php.db.MySQLi_STMT;
 import php.Lib;
 import php.NativeArray;
 import php.Web;
+import php.Syntax;
 
 using Lambda;
 using Util;
@@ -207,8 +208,8 @@ class QC extends Clients
 				trace(stmt.error);
 				return false;
 			}
-			//success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
-			success = (i>0 ? untyped __call__('myBindParam', stmt, values2bind, bindTypes):true);
+			//success = Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes);
+			success = (i>0 ? Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes):true);
 			trace ('success:' + success);
 			if (success)
 			{
@@ -289,7 +290,7 @@ class QC extends Clients
 				}
 				trace('$i values:' );
 				trace(values2bind);
-				success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+				success = Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes);
 				trace ('success:' + success);
 				if (success)
 				{

@@ -103,6 +103,8 @@ var displayFormats =
 	amount:'gFloat',
 	phone_number:'0%d',
 	d:'date',
+	co_field:'co_feld',
+	co_feld:'co_field',
 	reason:'grund',
 	register_on:'date',
 	register_off:'date',

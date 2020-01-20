@@ -20,7 +20,7 @@ class Users extends Model
 	public static function create(param:StringMap<String>):EitherType<String,Bool>
 	{
 		var me:Users = new Users(param);
-		return untyped __call__("json_encode",  me.globals, 64|256);//JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
+		return php.Syntax.code("json_encode({0},{1})",  me.globals, 64|256);//JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
 	}
 	
 	public function get_info(?user:String):Array<UserInfo>

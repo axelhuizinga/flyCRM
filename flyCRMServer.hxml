@@ -1,5 +1,4 @@
 -lib CommentString
--lib curl
 -cp ../lib
 -cp lib
 -cp src

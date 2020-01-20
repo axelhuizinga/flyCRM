@@ -6,6 +6,10 @@
 		{
 			"name": "SSH FS - pbx.pitverwaltung",
 			"uri": "ssh://pbx.pitverwaltung/"
+		},
+		{
+			"name": "SSH FS - pitverwaltung.de",
+			"uri": "ssh://pitverwaltung.de/"
 		}
 	]
 }

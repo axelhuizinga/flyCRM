@@ -108,7 +108,7 @@ var uiData = {
 							hidden:'lead_id,entry_list_id,status,clients.state,state',							
 							id:'clients',
 							limit:15,
-							order:'vendor_lead_code|DESC',
+							order:'client_id|DESC',
 							where:'list_id|10000',
 							jointable:'fly_crm.clients AS clients',
 							joincond:'fly_crm.clients.client_id=vendor_lead_code ',

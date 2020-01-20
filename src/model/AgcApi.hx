@@ -1,12 +1,11 @@
 package model;
-import haxe.Curl;
+
 import haxe.ds.StringMap;
 import haxe.extern.EitherType;
 import haxe.Http;
 import php.Lib;
 import php.Web;
-import php.Curl.CurlOpt.*;
-import php.Curl;
+
 import php.Syntax;
 import sys.io.File;
 using Util;

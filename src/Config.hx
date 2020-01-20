@@ -2,6 +2,7 @@ package;
 import haxe.ds.StringMap;
 //import haxe.Json;
 import me.cunity.php.Services_JSON;
+import php.Syntax;
 import StringTools;
 using StringTools;
 /**
@@ -12,7 +13,7 @@ class Config
 {
 	public static function load(cjs:String) :StringMap<Dynamic>
 	{
-		var js:String = untyped __call__("file_get_contents", cjs);
+		var js:String = Syntax.code("file_get_contents({0})", cjs);
 		//trace(js);
 		var vars:Array<String> = js.split('var');
 		vars.shift();
@@ -27,5 +28,11 @@ class Config
 		}		
 		return result;
 	}
-	
+	static function __init__():Void {
+		#if (haxe_ver >= 4)
+		Syntax.code('require_once({0})', 'php/JSON.php');
+		#else
+		untyped __call__('require_once', 'php/JSON.php');
+		#end
+	}
 }

@@ -21,6 +21,7 @@ import php.Lib;
 import me.cunity.php.Debug;
 import php.NativeArray;
 import php.Session;
+import php.Syntax;
 import php.Web;
 
 using Lambda;
@@ -51,7 +52,11 @@ class S
 		haxe.Log.trace = Debug._trace;	
 		conf =  Config.load('appData.js');
 		//trace(conf);
-		Session.start();
+		if(Syntax.code("session_status() != PHP_SESSION_ACTIVE")){
+			trace('start session');
+			Session.start();
+		}
+		
 
 		var pd:Dynamic = Web.getPostData();
 		var now:String = DateTools.format(Date.now(), "%d.%m.%y %H:%M:%S");
@@ -87,7 +92,7 @@ class S
 		}
 		var result:EitherType<String,Bool> = Model.dispatch(params);
 		
-		//trace(result);
+		trace(result);
 		if (!headerSent)
 		{
 			Web.setHeader('Content-Type', 'application/json');
@@ -150,8 +155,8 @@ class S
 			Web.setHeader('Content-Type', 'application/json');
 			headerSent = true;
 		}			
-		var exitValue =  untyped __call__("json_encode", {'ERROR': d});
-		return untyped __call__("exit", exitValue);
+		var exitValue =  Syntax.code("json_encode({0})", {'ERROR': d});
+		Syntax.code("exit({0})", exitValue);
 	}
 	
 	public static function dump(d:Dynamic):Void
@@ -161,13 +166,13 @@ class S
 			Web.setHeader('Content-Type', 'application/json');
 			headerSent = true;
 		}
-		
+		trace(d);
 		Lib.println(Json.stringify(d));
 	}
 	
 	public static function edump(d:Dynamic):Void
 	{
-		untyped __call__("edump", d);
+		untyped Syntax.code("edump({0})", d);
 	}
 	
 	public static function newMemberID():Int {
@@ -191,22 +196,28 @@ class S
 	}
 	
 	static function __init__() {
-		untyped __call__('require_once', '../../crm/functions.php');
-		untyped __call__('require_once', '../../crm/loadAstguiclientConf.php');
-		untyped __call__('require_once', '../../config/flyCRM.db.php');
+		Syntax.code("require_once({0})", '../../crm/functions.php');
+		Syntax.code("require_once({0})", '../../crm/loadAstguiclientConf.php');
+		Syntax.code("require_once({0})", '../../config/flyCRM.db.php');
 		//untyped __call__('require_once', '../agc/functions.fix.php');
-		Debug.logFile = untyped __php__("$appLog");
+		Debug.logFile = Syntax.code("$appLog");
 		//edump(Debug.logFile);
 		//Debug.logFile = untyped __var__("GLOBALS","appLog");
-		db = untyped __php__("$VARDB");
-		dbHost = untyped __php__("$VARDB_server");
-		dbUser = untyped __php__("$VARDB_user");
-		dbPass = untyped __php__("$VARDB_pass");		
+		//db = untyped __php__("$VARDB");
+		//dbHost = untyped __php__("$VARDB_server");
+		//dbUser = untyped __php__("$VARDB_user");
+		//dbPass = untyped __php__("$VARDB_pass");		
+		db = Syntax.code("$VARDB");
+		dbHost = Syntax.code("$VARDB_server");
+		dbUser = Syntax.code("$VARDB_user");
+		dbPass = Syntax.code("$VARDB_pass");		
 		host = Web.getHostName();
-		request_scheme = untyped __php__("$_SERVER['REQUEST_SCHEME']");
+		request_scheme = php.SuperGlobal._SERVER['REQUEST_SCHEME'];
 		//trace(host);
-		vicidialUser = untyped __php__("$user");
-		vicidialPass = untyped __php__("$pass");
+		//vicidialUser = untyped __php__("$user");
+		//vicidialPass = untyped __php__("$pass");
+		vicidialUser = Syntax.code("$user");
+		vicidialPass = Syntax.code("$pass");
 	}
 
 }

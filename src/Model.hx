@@ -4,6 +4,7 @@ import haxe.extern.EitherType;
 import haxe.Json;
 import php.Lib;
 import php.NativeArray;
+import php.Syntax;
 import model.*;
 import me.cunity.php.db.*;
 import sys.db.*;
@@ -308,7 +309,7 @@ class Model
 		trace(Std.string(values2bind));
 		if (phValues.length > 0)
 		{
-			success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+			success = Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes);
 			trace ('success:' + success);
 			if (success)
 			{
@@ -326,7 +327,8 @@ class Model
 				{
 					num_rows = cast(result, MySQLi_Result).num_rows;
 					data = cast(result, MySQLi_Result).fetch_all(MySQLi.MYSQLI_ASSOC);
-				}			
+				}	
+				trace(data)	;
 				return(data);		
 			}			
 		}
@@ -336,7 +338,7 @@ class Model
 			if (!success)
 			{
 				trace(stmt.error);
-				return untyped __call__("array", 'ERROR', stmt.error);
+				return Syntax.assocDecl({ERROR:stmt.error});
 			}
 			var result:EitherType<MySQLi_Result,Bool> = stmt.get_result();
 			if (result)
@@ -348,7 +350,7 @@ class Model
 			return(data);	
 		}
 
-		return untyped __call__("array", 'ERROR', stmt.error);
+		return Syntax.assocDecl({ERROR:stmt.error});
 	}
 	
 	public  function query(sql:String):NativeArray
@@ -500,12 +502,12 @@ class Model
 	{	
 		data.agent = S.user;
 		data.globals = globals;
-		return untyped __call__("json_encode", data, 64|256);//JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
+		return Syntax.code("json_encode({0},{1})", data, 64|256);//JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
 	}
 	
 	public function json_response(res:String):EitherType<String,Bool>
 	{
-		return untyped __call__("json_encode", {response:res}, 64);//JSON_UNESCAPED_SLASHES
+		return Syntax.code("json_encode({0},{1})", {response:res}, 64);//JSON_UNESCAPED_SLASHES
 	}
 	
 	function getEditorFields(?table_name:String):StringMap<Array<StringMap<String>>>

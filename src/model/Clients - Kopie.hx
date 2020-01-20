@@ -379,7 +379,7 @@ class Clients extends Model
 			}
 			if (customFields2Save)
 			{
-				success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);						
+				success = Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes);						
 			}
 			else
 				success = true;
@@ -462,7 +462,7 @@ class Clients extends Model
 				}
 				//trace(' values:' );
 				//trace(values2bind);
-				success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+				success = Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes);
 				trace ('success:' + success);
 				if (success)
 				{
@@ -547,7 +547,7 @@ class Clients extends Model
 		}
 		//trace(' values:' );
 		trace(values2bind);
-		success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+		success = Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes);
 		trace ('success:' + success);
 		if (success)
 		{
@@ -640,7 +640,7 @@ class Clients extends Model
 			}
 			//trace(' values:' );
 			trace(values2bind);
-			success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+			success = Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes);
 			trace ('success:' + success);
 			if (success)
 			{
@@ -734,7 +734,7 @@ class Clients extends Model
 			}
 			//trace(' values:' );
 			trace(values2bind);
-			success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+			success = Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes);
 			trace ('success:' + success);
 			if (success)
 			{

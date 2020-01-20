@@ -37,7 +37,8 @@ class AdminApi extends Model
 			//return Web.getClientIP() == '85.214.120.132';
 			var auth:String = '';
 			try{
-				auth = untyped __call__('user_authorization',params.get('user'), params.get('pass'), '', 1, -1, 1, 0);
+				auth = php.Syntax.code("user_authorization({0},{1},{2},{3},{4},{5},{6})",
+					params.get('user'), params.get('pass'), '', 1, -1, 1, 0);
 				trace(auth);
 			}
 			catch (ex:Dynamic)

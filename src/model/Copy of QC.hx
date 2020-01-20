@@ -202,7 +202,7 @@ class QC extends Clients
 						trace(stmt.error);
 						return false;
 					}
-					success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+					success = Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes);
 					trace ('success:' + success);
 					if (success)
 					{
@@ -282,7 +282,7 @@ class QC extends Clients
 						}
 						//trace(' values:' );
 						//trace(values2bind);
-						success = untyped __call__('myBindParam', stmt, values2bind, bindTypes);
+						success = Syntax.code("myBindParam({0},{1},{2})", stmt, values2bind, bindTypes);
 						trace ('success:' + success);
 						if (success)
 						{
