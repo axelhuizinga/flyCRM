@@ -1,27 +1,26 @@
 package;
 
+#if php
+
+import haxe.Unserializer;
+import php.db.Mysqli_warning;
+
 import haxe.ds.StringMap;
 import haxe.extern.EitherType;
 import haxe.Json;
-import me.cunity.debug.Out;
+
 import me.cunity.php.db.MySQLi;
 import me.cunity.php.db.MySQLi_Result;
-import me.cunity.php.db.MySQLi_STMT;
-import me.cunity.php.Services_JSON;
+
 import model.AdminApi;
-import model.AgcApi;
-import model.App;
-import model.Campaigns;
-import model.Clients;
-import model.ClientHistory;
-import model.QC;
-import model.Select;
-import model.Users;
+
 import php.Lib;
 import me.cunity.php.Debug;
-import php.NativeArray;
+
 import php.Session;
 import php.Syntax;
+import php.Global;
+import php.SuperGlobal;
 import php.Web;
 
 using Lambda;
@@ -58,13 +57,16 @@ class S
 		}
 		
 
-		var pd:Dynamic = Web.getPostData();
+		var pd:php.NativeArray = php.SuperGlobal._POST;
+		//var pd:Dynamic = SuperGlobal._POST;
 		var now:String = DateTools.format(Date.now(), "%d.%m.%y %H:%M:%S");
 		trace(pd);
-		var params:StringMap<String> = Web.getParams();
+		var params:StringMap<String> = Lib.hashOfAssociativeArray(pd);
+		trace( php.SuperGlobal._GET);
+		//var params:StringMap<String> = cast(php.NativeArray, php.SuperGlobal._GET);
 		if (params.get('debug') == '1')
 		{
-			Web.setHeader('Content-Type', 'text/html; charset=utf-8');
+			php.Global.header("Content-Type: text/html; charset=utf-8");
 			headerSent = true;
 			Lib.println('<div><pre>');
 			Lib.println(params);
@@ -75,7 +77,8 @@ class S
 		var action:String = params.get('action');
 		if (action.length == 0 || params.get('className') == null)
 		{
-			dump( { error:"required params missing" } );
+			dump( {error:"required params missing" } );
+			trace(Global.array_keys(pd));
 			return;
 		}
 			
@@ -95,7 +98,7 @@ class S
 		trace(result);
 		if (!headerSent)
 		{
-			Web.setHeader('Content-Type', 'application/json');
+			Global.header('Content-Type: application/json');
 			headerSent = true;
 		}		
 		Lib.println( result);
@@ -152,7 +155,8 @@ class S
 	{
 		if (!headerSent)
 		{
-			Web.setHeader('Content-Type', 'application/json');
+			//Global.header('Content-Type', 'application/json');
+			Global.header('Content-Type:application/json');
 			headerSent = true;
 		}			
 		var exitValue =  Syntax.code("json_encode({0})", {'ERROR': d});
@@ -163,7 +167,7 @@ class S
 	{
 		if (!headerSent)
 		{
-			Web.setHeader('Content-Type', 'application/json');
+			Global.header('Content-Type:application/json');
 			headerSent = true;
 		}
 		trace(d);
@@ -210,8 +214,9 @@ class S
 		db = Syntax.code("$VARDB");
 		dbHost = Syntax.code("$VARDB_server");
 		dbUser = Syntax.code("$VARDB_user");
+			
 		dbPass = Syntax.code("$VARDB_pass");		
-		host = Web.getHostName();
+		host = php.SuperGlobal._SERVER['SERVER_NAME'];//Syntax.code("gethostname");
 		request_scheme = php.SuperGlobal._SERVER['REQUEST_SCHEME'];
 		//trace(host);
 		//vicidialUser = untyped __php__("$user");
@@ -221,3 +226,4 @@ class S
 	}
 
 }
+#end

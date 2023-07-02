@@ -6,12 +6,7 @@
 	],
 	"settings": {
 		"haxe.configurations": [
-			[
-				"flyCRM.hxml"
-			],
-			[
-				"flyCRMServer.hxml"
-			]
-		]
+			["flyCRMServer.hxml"]
+		],
 	}
 }

@@ -1,0 +1,15 @@
+<?php
+$fieldNames = new Object("first_name", "Vorname", "last_name", "Name", "phone_number", "Telefon", "address1", "Stra\xC3\x9Fe", "postal_code", "PLZ", "city", "Ort", "last_local_call_time", "Anrufzeit", "lead_id", "LeadID", "m_ID", "MitglNr.", "client_id", "MitglNr.", "vendor_lead_code", "MitglNr.", "vicidial_campaigns", "Kampagnen", "vicidial_lists", "Listen", "birth_date", "Geburtsdatum", "entry_date", "Verkauf", "order_date", "Verkauf", "join_date", "Auftragsdatum", "full_name", "Agent", "owner", "Agent", "register_on", "Verkauf", "IBAN", "IBAN", "iban", "IBAN", "d", "Datum", "amount", "Betrag", "reason", "Grund");
+$appLabel = new Object("active", "Nur Aktive", "edit", "Bearbeiten", "filter", "Kontextfilter", "go2page", "Gehe zu Seite", "select", "Ausw\xC3\xA4hlen", "selectStatus", "Status Ausw\xC3\xA4hlen", "close", "Schlie\xC3\x9Fen", "of", "von", "pay_source", "Konto", "pay_plan", "Produkt");
+$matchOptions = new Object("any", "Bestandteil", "exact", "Genauso", "start", "Anfang", "end", "Ende");
+$rangeLabels = new Object("from", "Von:", "to", "Bis:");
+$rangeFields = new Object("last_local_call_time", 1.0, "register_on", 1.0, "order_date", 1.0, "join_date", 1.0);
+$matchKeywords = new Object("LIKE", 1.0, "BETWEEN", 2.0);
+$dbFieldTypes = new Object("active", "s", "birth_date", "s", "first_name", "s", "last_name", "s", "list_id", "s", "phone_number", "s", "address1", "s", "postal_code", "s", "city", "s", "comments", "s", "last_local_call_time", "s", "vendor_lead_code", "s");
+$dbQueryFormats = new Object("hlast_local_call_time", new Arr("DATE_FORMAT", "%d.%m.%Y %H:%i:%s"), "hentry_date", new Arr("DATE_FORMAT", "%d.%m.%Y %H:%i:%s"), "hmodify_date", new Arr("DATE_FORMAT", "%d.%m.%Y %H:%i:%s"), "hstart_time", new Arr("DATE_FORMAT", "%d.%m.%Y %H:%i:%s"));
+$displayClass = new Object("amount", "tRight");
+$displayFormats = new Object("amount", "gFloat", "phone_number", "0%d", "d", "date", "co_field", "co_feld", "co_feld", "co_field", "reason", "grund", "register_on", "date", "register_off", "date", "register_off_to", "date", "sign_date", "date", "start_date", "date", "event_date", "date", "entry_date", "_datetime", "birth_date", "date", "teilnahme_beginn", "date", "creation_date", "datetime", "last_local_call_time", "datetime", "start_time", "datetime");
+$storeFormats = new Object("amount", new Arr("replace", "/,/", "."), "phone_number", new Arr("replace", "/^0+/", ""), "creation_date", new Arr("gDateTime2mysql"), "last_local_call_time", new Arr("gDateTime2mysql"), "start_time", new Arr("gDateTime2mysql"), "register_on", new Arr("gDate2mysql"), "register_off", new Arr("gDate2mysql"), "register_off_to", new Arr("gDate2mysql"), "sign_date", new Arr("gDate2mysql"), "birth_date", new Arr("gDate2mysql"), "_entry_date", new Arr("_gDateTime2mysql"), "start_date", new Arr("gDate2mysql"), "teilnahme_beginn", new Arr("gDate2mysql"), "pay_obligation", new Arr("check2tinyint"));
+$fieldTypes = new Object("title", "select");
+$templates = new Object("qc", true, "clients", true, "stats", false, "settings", false);
+$sql = new Object("LIMIT", 15.0);

@@ -25,7 +25,7 @@ var fieldNames =
 	d:'Datum',
 	amount:'Betrag',
 	reason:'Grund'
-}
+};
 
 var appLabel =
 {
@@ -39,7 +39,7 @@ var appLabel =
 	of:'von',
 	pay_source:'Konto',
 	pay_plan:'Produkt'
-}
+};
 
 var matchOptions =
 {
@@ -47,13 +47,13 @@ var matchOptions =
 	exact:'Genauso',
 	start:'Anfang',
 	end:'Ende'	
-}
+};
 
 var rangeLabels =
 {
 	from:'Von:',
 	to:'Bis:'
-}
+};
 
 var rangeFields =
 {
@@ -61,13 +61,13 @@ var rangeFields =
 	register_on:1,
 	order_date:1,
 	join_date:1
-}
+};
 
 var matchKeywords =
 {
 	LIKE:1,
 	BETWEEN:2
-}
+};
 
 var dbFieldTypes =
 {
@@ -83,7 +83,7 @@ var dbFieldTypes =
 	comments:'s',
 	last_local_call_time:'s',
 	vendor_lead_code:'s'
-}
+};
 
 var dbQueryFormats =
 {
@@ -91,12 +91,12 @@ var dbQueryFormats =
 	hentry_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
 	hmodify_date:['DATE_FORMAT','%d.%m.%Y %H:%i:%s'],
 	hstart_time:['DATE_FORMAT','%d.%m.%Y %H:%i:%s']
-}
+};
 
 var displayClass =
 {
 	amount:'tRight'
-}
+};
 
 var displayFormats =
 {
@@ -118,12 +118,12 @@ var displayFormats =
 	creation_date:'datetime',
 	last_local_call_time:'datetime',
 	start_time:'datetime'
-}
+};
 
 var storeFormats =
 {
-	amount:['replace', /,/,'.'],
-	phone_number:['replace', /^0+/,''],
+	amount:['replace', '/,/','.'],
+	phone_number:['replace', '/^0+/',''],
 	creation_date:['gDateTime2mysql'],
 	last_local_call_time:['gDateTime2mysql'],
 	start_time:['gDateTime2mysql'],
@@ -138,7 +138,7 @@ var storeFormats =
 	teilnahme_beginn:['gDate2mysql'],
 	pay_obligation:['check2tinyint'],
 	//use_email:['check2tinyint']
-}
+};
 
 var fieldTypes =
 {
@@ -151,9 +151,9 @@ var templates =
 	clients:true,
 	stats:false,
 	settings:false
-}
+};
 
 var sql =
 {
 	LIMIT:15
-}
+};

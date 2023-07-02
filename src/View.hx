@@ -8,7 +8,7 @@ import js.Browser;
 import js.html.Element;
 import js.jquery.*;
 import js.html.Node;
-import js.html.Rect;
+//import js.html.Rect;
 import js.html.XMLHttpRequest;
 import me.cunity.util.Data;
 import view.ContextMenu;

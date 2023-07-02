@@ -1,0 +1,8 @@
+{
+	"folders": [],
+	"settings": {
+		"haxe.configurations": [
+			["flyCRM.hxml"]
+		]
+	}
+}

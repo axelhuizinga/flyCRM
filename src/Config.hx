@@ -1,6 +1,7 @@
 package;
 import haxe.ds.StringMap;
 //import haxe.Json;
+#if php
 import me.cunity.php.Services_JSON;
 import php.Syntax;
 import StringTools;
@@ -14,7 +15,8 @@ class Config
 	public static function load(cjs:String) :StringMap<Dynamic>
 	{
 		var js:String = Syntax.code("file_get_contents({0})", cjs);
-		//trace(js);
+		trace('loading:' + cjs);
+		trace(js);
 		var vars:Array<String> = js.split('var');
 		vars.shift();
 		var result:StringMap<Dynamic> = new StringMap();
@@ -36,3 +38,4 @@ class Config
 		#end
 	}
 }
+#end

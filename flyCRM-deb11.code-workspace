@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"name": "SSH FS - deb11",
+			"uri": "ssh://deb11/"
+		}
+	],
+	"settings": {
+		"sshfs.configpaths": []
+	}
+}

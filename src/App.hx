@@ -1,27 +1,16 @@
 package ;
 
 import haxe.ds.StringMap;
-import haxe.Http;
-import haxe.Json;
 import haxe.Log;
 import haxe.Timer;
+
 import js.Browser;
 import js.html.Node;
-import js.Lib;
 import js.jquery.*;
-import me.cunity.debug.Out;
-import view.Campaigns;
-import view.Clients;
-import view.ClientHistory;
-import view.ContextMenu;
-import view.DateTime;
-import view.ClientEditor;
-import view.Editor;
-import view.History;
-import view.QC;
-import view.TabBox;
-import me.cunity.debug.Out;
 import js.jquery.Helper.*;
+
+import me.cunity.debug.Out;
+
 using Lambda;
 
 /**
@@ -168,7 +157,7 @@ class App
 		}
 		basePath = Browser.location.pathname.split(config.appName)[0] + config.appName + '/';
 		//trace(cssStyles);
-		ist.globals = { firstLoad:true};
+		//ist.globals = { firstLoad:true};
 		ist.globals = { };
 		//ist.initUI(config.views);		
 

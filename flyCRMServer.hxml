@@ -3,8 +3,13 @@
 -cp lib
 -cp src
 -php bin
-#-D php5
+#-D php-front=server.php
+#-D php7
 -main S
--dce std
-#-cmd rsync -rav --size-only -e "ssh -p 666 -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --progress bin/  root@pbx.pitverwaltung.de:/var/www/html/flyCRM
-#scp -P 666 -r /opt/src/flyCRM/bin/* root@pbx.pitverwaltung.de:/var/www/html/flyCRM
+-dce no
+#std
+-cmd rsync -rav --size-only -e "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --progress bin/  root@192.168.178.56:/var/www/html/flyCRM
+#-cmd echo "ssh -p 666 -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --progress bin/  root@192.168.178.56:/var/www/html/flCRM
+#-cmd rsync -rav --size-only -e "ssh -p 666 -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" --progress bin/  root@192.168.178.56:/var/www/html/flCRM
+#scp -P 666 -r /opt/src/flyCRM/bin/**.php root@pbx.pitverwaltung.de:/var/www/html/flyCRM
+#scp -P 666 -r /opt/src/flyCRM/bin/**.php  root@192.168.178.56:/var/www/html/flyCRM/bin

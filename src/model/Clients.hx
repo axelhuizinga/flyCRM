@@ -6,11 +6,12 @@ import haxe.Json;
 import me.cunity.php.db.MySQLi;
 import me.cunity.php.db.MySQLi_Result;
 import me.cunity.php.db.MySQLi_STMT;
+#if php
 import php.Lib;
 import php.NativeArray;
 import php.Web;
 import php.Syntax;
-
+#end
 using Lambda;
 using Util;
 

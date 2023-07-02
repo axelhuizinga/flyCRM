@@ -2,6 +2,7 @@ package;
 import haxe.ds.StringMap;
 import haxe.extern.EitherType;
 import haxe.Json;
+#if php
 import php.Lib;
 import php.NativeArray;
 import php.Syntax;
@@ -9,6 +10,7 @@ import model.*;
 import me.cunity.php.db.*;
 import sys.db.*;
 import model.Users;
+#end
 
 using Lambda;
 using Util;
